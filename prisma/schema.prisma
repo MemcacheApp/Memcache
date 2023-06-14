@@ -14,3 +14,12 @@ model Item {
   id    String @id
   title String
 }
+
+model User {
+  id        String @id
+  firstName String
+  lastName  String
+  username  String
+  password  String
+  email     String
+}
