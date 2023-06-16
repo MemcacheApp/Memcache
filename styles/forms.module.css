@@ -100,3 +100,9 @@
 .submit-button:hover {
     background-color: #F1F5F9;
 }
+
+.link-nav {
+    font-size: smaller;
+    margin-left: 10px;
+    margin-right: 10px;
+}

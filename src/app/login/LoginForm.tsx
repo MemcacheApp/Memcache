@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import styles from '@/styles/forms.module.css';
 
 import { UserCircle2 } from 'lucide-react';
@@ -8,6 +8,8 @@ import { trpc } from '@/utils/trpc';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 const loginSchema = z.object({
 	email: z.string().min(1, { message: 'Email is required' }).email({
@@ -18,6 +20,11 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+/*
+TODO:
+send email for resetting password
+*/
+
 export default function LoginForm() {
 	const {
 		register,
@@ -26,6 +33,13 @@ export default function LoginForm() {
 	} = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
 	const loginMutation = trpc.users.login.useMutation();
+
+	const isLoggedInQuery = trpc.users.isLoggedIn.useQuery();
+	useEffect(() => {
+		if (isLoggedInQuery.data) {
+			redirect('/');
+		}
+	}, [isLoggedInQuery.data]);
 
 	return (
 		<form
@@ -84,6 +98,10 @@ export default function LoginForm() {
 			<button type='submit' className={styles['submit-button']}>
 				Login
 			</button>
+
+			<span className={styles['link-nav']}>
+				Don't have an account? <Link href={'/signup'}>Sign up</Link>
+			</span>
 		</form>
 	);
 }

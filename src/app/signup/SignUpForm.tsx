@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from '@/styles/forms.module.css';
 import { UserCircle2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z, ZodType } from 'zod';
 import { trpc } from '@/utils/trpc';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 const userSchema = z.object({
 	firstName: z.string().min(1, { message: 'First name is required' }),
@@ -42,6 +44,13 @@ export default function SignUpForm() {
 		formState: { errors },
 	} = useForm<SignUpFormData>({ resolver: zodResolver(userSchema) });
 	const createUserMutation = trpc.users.createUser.useMutation();
+
+	const isLoggedInQuery = trpc.users.isLoggedIn.useQuery();
+	useEffect(() => {
+		if (isLoggedInQuery.data) {
+			redirect('/');
+		}
+	}, [isLoggedInQuery.data]);
 
 	return (
 		<form
@@ -124,6 +133,10 @@ export default function SignUpForm() {
 			<button type='submit' className={styles['submit-button']}>
 				Create account
 			</button>
+
+			<span className={styles['link-nav']}>
+				Already have an account? <Link href={'/login'}>Log in</Link>
+			</span>
 		</form>
 	);
 }

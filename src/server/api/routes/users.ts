@@ -98,4 +98,7 @@ export const userRouter = router({
 			ctx.resHeaders.set('set-cookie', `jwt=${token};HttpOnly;Secure;`);
 			return user;
 		}),
+	isLoggedIn: protectedProcedure.query(() => {
+		return true;
+	}),
 });
