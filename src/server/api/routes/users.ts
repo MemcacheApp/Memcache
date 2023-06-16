@@ -1,8 +1,9 @@
 import { publicProcedure, router } from '../trpc';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import jwt from 'jsonwebtoken';
 
 export const userRouter = router({
 	createUser: publicProcedure
@@ -46,9 +47,29 @@ export const userRouter = router({
 						}
 					}
 				});
+			// put userId in jwt
+
+			if (user) {
+				const payload = {
+					id: user.id,
+				};
+
+				const token = jwt.sign(payload, 'superSecretTestKey', {
+					expiresIn: 31556926, // 1 year in seconds
+				});
+				ctx.resHeaders.set('set-cookie', `jwt=${token};HttpOnly;`);
+			}
 
 			return user;
 		}),
+	login: publicProcedure
+		.input(
+			z.object({
+				email: z.string(),
+				password: z.string(),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {}),
 	deleteUser: publicProcedure
 		.input(z.object({ id: z.string() }))
 		.mutation(async ({ ctx, input }) => {
