@@ -16,9 +16,16 @@ model Item {
 }
 
 model User {
-  id        String @id
+  id        String    @id
   firstName String
   lastName  String
   password  String
-  email     String @unique
+  email     String    @unique
+  Session   Session[]
+}
+
+model Session {
+  id     String @id
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }

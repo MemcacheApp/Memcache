@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import styles from './page.module.css';
+import styles from '@/styles/forms.module.css';
 import { UserCircle2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,12 +24,14 @@ type SignUpFormData = z.infer<typeof userSchema>;
 /*
 
 TODO: .
-Add next auth
+
+Encrypt password
+Add go to login link
+Add "Make password visible option"
 Change error messages
 Add loading animation (button animation)
 Change button style
-Add go to login link
-Add "Make password visible option"
+Add next auth
 
  */
 
@@ -45,9 +47,9 @@ export default function SignUpForm() {
 		<form
 			className={styles['form-container']}
 			action=''
-			onSubmit={handleSubmit((data: SignUpFormData) =>
-				createUserMutation.mutate(data)
-			)}
+			onSubmit={handleSubmit((data: SignUpFormData) => {
+				createUserMutation.mutate(data);
+			})}
 		>
 			<div className={styles['header']}>
 				<UserCircle2 size={36} />
@@ -98,7 +100,7 @@ export default function SignUpForm() {
 						{errors.email.message}
 					</span>
 				) : (
-					createUserMutation.error && (
+					createUserMutation.error?.data?.code === 'BAD_REQUEST' && (
 						<span className={styles['error-message']}>
 							{createUserMutation.error.message}
 						</span>

@@ -1,7 +1,7 @@
-import { publicProcedure, router } from '../trpc';
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, Session, User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import jwt from 'jsonwebtoken';
 
@@ -47,49 +47,23 @@ export const userRouter = router({
 						}
 					}
 				});
-			// put userId in jwt
 
 			if (user) {
-				const payload = {
-					id: user.id,
-				};
+				const newSession: Session = await ctx.prisma.session.create({
+					data: {
+						id: uuidv4(),
+						userId: user.id,
+					},
+				});
 
-				const token = jwt.sign(payload, 'superSecretTestKey', {
+				const token = jwt.sign(newSession, 'superSecretTestKey', {
 					expiresIn: 31556926, // 1 year in seconds
 				});
-				ctx.resHeaders.set('set-cookie', `jwt=${token};HttpOnly;`);
+				ctx.resHeaders.set(
+					'set-cookie',
+					`jwt=${token};HttpOnly;Secure;`
+				);
 			}
-
 			return user;
-		}),
-	login: publicProcedure
-		.input(
-			z.object({
-				email: z.string(),
-				password: z.string(),
-			})
-		)
-		.mutation(async ({ ctx, input }) => {}),
-	deleteUser: publicProcedure
-		.input(z.object({ id: z.string() }))
-		.mutation(async ({ ctx, input }) => {
-			const item = await ctx.prisma.item.delete({
-				where: {
-					id: input.id,
-				},
-			});
-
-			return item;
-		}),
-	updateUser: publicProcedure
-		.input(z.object({ id: z.string() }))
-		.mutation(async ({ ctx, input }) => {
-			const item = await ctx.prisma.item.delete({
-				where: {
-					id: input.id,
-				},
-			});
-
-			return item;
 		}),
 });
