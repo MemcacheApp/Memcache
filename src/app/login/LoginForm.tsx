@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 import styles from "@/src/app/styles/forms.module.css";
 
 import { UserCircle2 } from "lucide-react";
@@ -99,9 +99,10 @@ export default function LoginForm() {
                 Login
             </button>
 
-            <span className={styles["link-nav"]}>
-                Don&apos;t have an account? <Link href={"/signup"}>Sign up</Link>
-            </span>
+            <p className={styles["link-nav"]}>
+                <span>Don&apos;t have an account? </span>
+                <Link href={"/signup"}>Sign up</Link>
+            </p>
         </form>
     );
 }

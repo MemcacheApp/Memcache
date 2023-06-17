@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "@/src/app/styles/forms.module.css";
 import LoginForm from "./LoginForm";
 
