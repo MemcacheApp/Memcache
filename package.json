@@ -24,7 +24,6 @@
     "bcryptjs": "^2.4.3",
     "classnames": "^2.3.2",
     "cookie": "^0.5.0",
-    "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
     "jsonwebtoken": "^9.0.0",
     "lucide-react": "^0.241.0",
@@ -44,6 +43,13 @@
     "@types/cookie": "^0.5.1",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/uuid": "^9.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
+    "eslint": "^8.43.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "^2.8.8",
     "prisma": "^4.15.0"
   }
 }
