@@ -3,7 +3,7 @@
 import styles from "./page.module.css";
 import Card from "./Card";
 import Form from "./Form";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/src/app/utils/trpc";
 
 export default function Home() {
     const { data, isLoading, isError, error } = trpc.items.getItems.useQuery();

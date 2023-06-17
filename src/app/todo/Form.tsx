@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent, useState } from "react";
 import styles from "./page.module.css";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/src/app/utils/trpc";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Form() {

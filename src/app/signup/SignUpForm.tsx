@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect } from "react";
-import styles from "@/styles/forms.module.css";
+import styles from "@/src/app/styles/forms.module.css";
 import { UserCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z, ZodType } from "zod";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/src/app/utils/trpc";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

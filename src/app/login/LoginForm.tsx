@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useLayoutEffect } from "react";
-import styles from "@/styles/forms.module.css";
+import styles from "@/src/app/styles/forms.module.css";
 
 import { UserCircle2 } from "lucide-react";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/src/app/utils/trpc";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

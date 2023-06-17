@@ -4,7 +4,7 @@ import React from "react";
 import styles from "./page.module.css";
 import { X } from "lucide-react";
 import { Item } from "@prisma/client";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/src/app/utils/trpc";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Card({ item }: { item: Item }) {
