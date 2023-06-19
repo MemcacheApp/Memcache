@@ -7,10 +7,8 @@ export default class ItemController {
     static async createItem(
         title: string,
         url: string,
-        description: string,
         collectionName: string,
         tagNames: string[],
-        thumbnail: string | null,
         userId: string
     ) {
         const collection = await CollectionController.getOrCreateCollection(
@@ -28,8 +26,8 @@ export default class ItemController {
                 },
                 title,
                 url,
-                description,
-                thumbnail,
+                description: "",
+                thumbnail: null,
                 createdAt: new Date(),
                 userId,
             },

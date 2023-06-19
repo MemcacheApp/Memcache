@@ -28,10 +28,8 @@ export const itemRouter = router({
             const item = await ItemController.createItem(
                 input.title,
                 input.url,
-                input.description,
                 input.collectionName,
                 input.tagNames,
-                input.thumbnail,
                 ctx.userId
             );
             return item;
