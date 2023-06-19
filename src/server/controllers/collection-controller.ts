@@ -27,6 +27,15 @@ export default class CollectionController {
         return collection;
     }
 
+    static async getCollections(userId: string) {
+        const collections = await prisma.collection.findMany({
+            where: {
+                userId,
+            },
+        });
+        return collections;
+    }
+
     static async getOrCreateCollection(name: string, userId: string) {
         let collection = await prisma.collection.findFirst({
             where: {
