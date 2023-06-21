@@ -37,8 +37,7 @@ function NavigationItem(props: NavigationItemProps) {
 }
 
 export function Navigation() {
-    const collectionsQuery = trpc.collection.getCollections.useQuery();
-    const collections = collectionsQuery.data;
+    const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
 
     return (
         <nav className="mx-3 flex flex-col">
@@ -61,22 +60,31 @@ export function Navigation() {
                 >
                     Summaries
                 </NavigationItem>
-                <li className="mt-5">
-                    <p className="ml-2 mb-2 font-medium">Collections</p>
-                    <ul>
-                        {collections
-                            ? collections.map((collection) => (
-                                  <NavigationItem
-                                      key={collection}
-                                      href={`/collection/${collection}`}
-                                  >
-                                      {collection}
-                                  </NavigationItem>
-                              ))
-                            : null}
-                    </ul>
-                </li>
+                {isLoggedInQuery.data ? <Collections /> : null}
             </ul>
         </nav>
+    );
+}
+
+function Collections() {
+    const collectionsQuery = trpc.collection.getCollections.useQuery();
+    const collections = collectionsQuery.data;
+
+    return (
+        <li className="mt-5">
+            <p className="ml-2 mb-2 font-medium">Collections</p>
+            <ul>
+                {collections
+                    ? collections.map((collection) => (
+                          <NavigationItem
+                              key={collection}
+                              href={`/collection/${collection}`}
+                          >
+                              {collection}
+                          </NavigationItem>
+                      ))
+                    : null}
+            </ul>
+        </li>
     );
 }
