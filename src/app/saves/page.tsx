@@ -1,0 +1,45 @@
+"use client";
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+    LogInRequired,
+    PageTitle,
+    SaveInput,
+} from "../components";
+import { trpc } from "@/src/app/utils/trpc";
+
+export default function SavesPage() {
+    const itemsQuery = trpc.item.getItems.useQuery();
+    const items = itemsQuery.data;
+
+    return (
+        <div className="flex flex-col">
+            <LogInRequired>
+                <PageTitle>Saves</PageTitle>
+                <SaveInput />
+                <div className="flex flex-col mt-3 gap-3">
+                    {items
+                        ? items.map((item) => (
+                              <Card key={item.id}>
+                                  <CardHeader>
+                                      <CardTitle>{item.title}</CardTitle>
+                                      <CardDescription>
+                                          {item.url}
+                                      </CardDescription>
+                                      <CardContent>
+                                          {item.description}
+                                      </CardContent>
+                                  </CardHeader>
+                              </Card>
+                          ))
+                        : null}
+                </div>
+            </LogInRequired>
+        </div>
+    );
+}
