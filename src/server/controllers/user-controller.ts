@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
+import CollectionController from "./collection-controller";
 
 const SECRET_KEY = "superSecretTestKey"; // TODO: move to .env
 
@@ -37,6 +38,8 @@ export default class UserController {
                     throw err;
                 }
             });
+
+        CollectionController.createCollection("Default", user.id);
 
         const session = await prisma.session.create({
             data: {
