@@ -115,7 +115,7 @@ export function SaveInput() {
                         <div className="flex gap-3 flex-wrap">
                             <div className="flex items-center">
                                 <div className="mx-3">
-                                    <LuPackage2 size={20} />
+                                    <LuPackage2 />
                                 </div>
                                 <CollectionSelector
                                     collections={collectionsQuery.data}
@@ -125,7 +125,7 @@ export function SaveInput() {
                             </div>
                             <div className="flex items-center">
                                 <div className="mx-3">
-                                    <LuTag size={20} />
+                                    <LuTag />
                                 </div>
                                 <div className="flex gap-2">
                                     {tags.map((tag, index) => (
