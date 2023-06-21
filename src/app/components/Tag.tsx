@@ -17,7 +17,7 @@ const Tag = React.forwardRef<
             {...other}
         >
             {children}
-            <span className="absolute right-3 p-1 opacity-0 bg-secondary group-hover:opacity-100">
+            <span className="absolute right-3 p-1 opacity-0 bg-secondary group-hover:opacity-100 group-focus-visible:opacity-100">
                 <LuEdit />
             </span>
         </button>

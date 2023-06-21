@@ -127,7 +127,7 @@ export function SaveInput() {
                                 <div className="mx-3">
                                     <LuTag />
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 flex-wrap">
                                     {tags.map((tag, index) => (
                                         <TagSelector
                                             key={tag}
