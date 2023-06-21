@@ -2,8 +2,8 @@ import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
 
 export default class TagController {
-    static async createTag(name: string, userId: string) {
-        if (await this.getTag(name, userId)) {
+    static async createTag(userId: string, name: string) {
+        if (await this.getTag(userId, name)) {
             throw Error("Tag already exists");
         }
 
@@ -17,7 +17,7 @@ export default class TagController {
         return tag;
     }
 
-    static async getTag(name: string, userId: string) {
+    static async getTag(userId: string, name: string) {
         const tag = await prisma.tag.findFirst({
             where: {
                 name,
@@ -36,7 +36,12 @@ export default class TagController {
         return tags;
     }
 
-    static async getOrCreateTag(name: string, userId: string) {
+    static async getTagNames(userId: string) {
+        const tags = await this.getTags(userId);
+        return tags.map((tag) => tag.name);
+    }
+
+    static async getOrCreateTag(userId: string, name: string) {
         let tag = await prisma.tag.findFirst({
             where: {
                 name,
@@ -57,9 +62,9 @@ export default class TagController {
         return tag;
     }
 
-    static async getOrCreateTags(names: string[], userId: string) {
+    static async getOrCreateTags(userId: string, names: string[]) {
         return Promise.all(
-            names.map((name) => this.getOrCreateTag(name, userId))
+            names.map((name) => this.getOrCreateTag(userId, name))
         );
     }
 }

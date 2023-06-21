@@ -13,30 +13,26 @@ export const itemRouter = router({
         const items = await ItemController.getItems(ctx.userId);
         return items;
     }),
-    createItem: protectedProcedure
+    createFromURL: protectedProcedure
         .input(
             z.object({
-                title: z.string(),
                 url: z.string(),
-                description: z.string(),
                 collectionName: z.string(),
                 tagNames: z.string().array(),
-                thumbnail: z.string().nullable(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const item = await ItemController.createItem(
-                input.title,
+            const item = await ItemController.createFromURL(
+                ctx.userId,
                 input.url,
                 input.collectionName,
-                input.tagNames,
-                ctx.userId
+                input.tagNames
             );
             return item;
         }),
     deleteItem: protectedProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
-            ItemController.deleteItem(input.id, ctx.userId);
+            ItemController.deleteItem(ctx.userId, input.id);
         }),
 });

@@ -25,10 +25,10 @@ export const publicProcedure = t.procedure;
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
     try {
         const cookieString = ctx.req.headers.get("cookie");
-        const userInfo = await UserController.validate(cookieString);
+        const result = await UserController.validate(cookieString);
 
         return next({
-            ctx: userInfo,
+            ctx: result,
         });
 
         // TODO: fix this typescript

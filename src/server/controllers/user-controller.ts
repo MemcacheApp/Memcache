@@ -39,7 +39,7 @@ export default class UserController {
                 }
             });
 
-        CollectionController.createCollection("Default", user.id);
+        CollectionController.createCollection(user.id, "Default");
 
         const session = await prisma.session.create({
             data: {
@@ -120,14 +120,20 @@ export default class UserController {
                 }
             });
 
+        return {
+            userId: session.userId,
+        };
+    }
+
+    static async userInfo(userId: string) {
         const user = await prisma.user.findUniqueOrThrow({
             where: {
-                id: session.userId,
+                id: userId,
             },
         });
 
         return {
-            userId: session.userId,
+            id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,

@@ -2,8 +2,8 @@ import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
 
 export default class CollectionController {
-    static async createCollection(name: string, userId: string) {
-        if (await this.getCollection(name, userId)) {
+    static async createCollection(userId: string, name: string) {
+        if (await this.getCollection(userId, name)) {
             throw Error("Collection already exists");
         }
 
@@ -17,7 +17,7 @@ export default class CollectionController {
         return collection;
     }
 
-    static async getCollection(name: string, userId: string) {
+    static async getCollection(userId: string, name: string) {
         const collection = await prisma.collection.findFirst({
             where: {
                 name,
@@ -36,7 +36,12 @@ export default class CollectionController {
         return collections;
     }
 
-    static async getOrCreateCollection(name: string, userId: string) {
+    static async getCollectionNames(userId: string) {
+        const collections = await this.getCollections(userId);
+        return collections.map((collection) => collection.name);
+    }
+
+    static async getOrCreateCollection(userId: string, name: string) {
         let collection = await prisma.collection.findFirst({
             where: {
                 name,

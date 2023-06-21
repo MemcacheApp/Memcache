@@ -5,17 +5,19 @@ import TagController from "./tag-controller";
 
 export default class ItemController {
     static async createItem(
+        userId: string,
         title: string,
         url: string,
+        description: string,
+        thumbnail: string | null,
         collectionName: string,
-        tagNames: string[],
-        userId: string
+        tagNames: string[]
     ) {
         const collection = await CollectionController.getOrCreateCollection(
-            collectionName,
-            userId
+            userId,
+            collectionName
         );
-        const tags = await TagController.getOrCreateTags(tagNames, userId);
+        const tags = await TagController.getOrCreateTags(userId, tagNames);
         const item = await prisma.item.create({
             data: {
                 id: uuidv4(),
@@ -26,14 +28,31 @@ export default class ItemController {
                 },
                 title,
                 url,
-                description: "",
-                thumbnail: null,
+                description,
+                thumbnail,
                 createdAt: new Date(),
                 userId,
             },
         });
 
         return item;
+    }
+
+    static async createFromURL(
+        userId: string,
+        url: string,
+        collectionName: string,
+        tagNames: string[]
+    ) {
+        return await this.createItem(
+            userId,
+            "Title",
+            url,
+            "Description",
+            null,
+            collectionName,
+            tagNames
+        );
     }
 
     static async getItem(itemId: string) {
@@ -54,7 +73,7 @@ export default class ItemController {
         return items;
     }
 
-    static async deleteItem(itemId: string, userId: string) {
+    static async deleteItem(userId: string, itemId: string) {
         const item = await prisma.item.findUnique({
             where: {
                 id: itemId,
