@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default class CollectionController {
     static async createCollection(userId: string, name: string) {
-        if (await this.getCollection(userId, name)) {
+        if (await this.getCollectionByName(userId, name)) {
             throw Error("Collection already exists");
         }
 
@@ -17,7 +17,16 @@ export default class CollectionController {
         return collection;
     }
 
-    static async getCollection(userId: string, name: string) {
+    static async getCollection(id: string) {
+        const collection = await prisma.collection.findUnique({
+            where: {
+                id,
+            },
+        });
+        return collection;
+    }
+
+    static async getCollectionByName(userId: string, name: string) {
         const collection = await prisma.collection.findFirst({
             where: {
                 name,

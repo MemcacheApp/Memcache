@@ -4,7 +4,6 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
     LogInRequired,
@@ -22,6 +21,8 @@ export default function SavesPage() {
             <LogInRequired>
                 <PageTitle>Saves</PageTitle>
                 <SaveInput />
+
+                {/* Example save list */}
                 <div className="flex flex-col mt-3 gap-3">
                     {items
                         ? items.map((item) => (
@@ -33,6 +34,17 @@ export default function SavesPage() {
                                       </CardDescription>
                                       <CardContent>
                                           {item.description}
+                                          <div>
+                                              Collection: {item.collection.name}
+                                          </div>
+                                          <div className="flex gap-2">
+                                              Tags:
+                                              {item.tags.map((tag) => (
+                                                  <div key={tag.id}>
+                                                      {tag.name}
+                                                  </div>
+                                              ))}
+                                          </div>
                                       </CardContent>
                                   </CardHeader>
                               </Card>

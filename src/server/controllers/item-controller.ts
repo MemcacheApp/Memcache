@@ -60,6 +60,10 @@ export default class ItemController {
             where: {
                 id: itemId,
             },
+            include: {
+                tags: true,
+                collection: true,
+            },
         });
         return item;
     }
@@ -68,6 +72,10 @@ export default class ItemController {
         const items = await prisma.item.findMany({
             where: {
                 userId,
+            },
+            include: {
+                tags: true,
+                collection: true,
             },
         });
         return items;

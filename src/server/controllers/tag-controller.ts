@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default class TagController {
     static async createTag(userId: string, name: string) {
-        if (await this.getTag(userId, name)) {
+        if (await this.getTagByName(userId, name)) {
             throw Error("Tag already exists");
         }
 
@@ -17,7 +17,16 @@ export default class TagController {
         return tag;
     }
 
-    static async getTag(userId: string, name: string) {
+    static async getTag(id: string) {
+        const tag = await prisma.tag.findUnique({
+            where: {
+                id,
+            },
+        });
+        return tag;
+    }
+
+    static async getTagByName(userId: string, name: string) {
         const tag = await prisma.tag.findFirst({
             where: {
                 name,
