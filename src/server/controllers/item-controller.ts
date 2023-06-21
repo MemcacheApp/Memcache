@@ -37,7 +37,7 @@ export default class ItemController {
     }
 
     static async getItem(itemId: string) {
-        const item = await prisma.item.findFirst({
+        const item = await prisma.item.findUnique({
             where: {
                 id: itemId,
             },
@@ -55,7 +55,7 @@ export default class ItemController {
     }
 
     static async deleteItem(itemId: string, userId: string) {
-        const item = await prisma.item.findFirst({
+        const item = await prisma.item.findUnique({
             where: {
                 id: itemId,
             },

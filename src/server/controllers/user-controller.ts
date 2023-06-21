@@ -120,9 +120,17 @@ export default class UserController {
                 }
             });
 
+        const user = await prisma.user.findUniqueOrThrow({
+            where: {
+                id: session.userId,
+            },
+        });
+
         return {
-            sessionId: session.id,
             userId: session.userId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
         };
     }
 }

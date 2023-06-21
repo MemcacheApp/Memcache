@@ -61,13 +61,13 @@ export const userRouter = router({
                 });
             }
         }),
-    isLoggedIn: publicProcedure.query(async ({ ctx }) => {
+    userInfo: publicProcedure.query(async ({ ctx }) => {
         try {
             const cookieString = ctx.req.headers.get("cookie");
-            await UserController.validate(cookieString);
-            return true;
+            const userInfo = await UserController.validate(cookieString);
+            return userInfo;
         } catch (err) {
-            return false;
+            return null;
         }
     }),
 });
