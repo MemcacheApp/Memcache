@@ -12,7 +12,7 @@ export function LogInRequired(props: LogInRequiredProps) {
     if (data === undefined) {
         return <div>Loading...</div>;
     } else if (data) {
-        return props.children;
+        return <>{props.children}</>;
     } else {
         return <div>Log in required</div>;
     }
