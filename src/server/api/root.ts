@@ -1,18 +1,14 @@
-import { itemRouter } from "./routes/items";
-import { z } from "zod";
-import { publicProcedure, router } from "./trpc";
-import { TRPCError } from "@trpc/server";
-import { userRouter } from "./routes/users";
+import { router } from "./trpc";
+import { itemRouter } from "./routes/item";
+import { userRouter } from "./routes/user";
+import { collectionRouter } from "./routes/collection";
+import { tagRouter } from "./routes/tag";
 
 export const appRouter = router({
-    getHello: publicProcedure.query(({ ctx }) => {
-        return { hello: "world" };
-    }),
-    getError: publicProcedure.query(() => {
-        throw new TRPCError({ message: "Test Error", code: "BAD_REQUEST" });
-    }),
-    items: itemRouter,
-    users: userRouter,
+    item: itemRouter,
+    user: userRouter,
+    collection: collectionRouter,
+    tag: tagRouter,
 });
 
 export type AppRouter = typeof appRouter;

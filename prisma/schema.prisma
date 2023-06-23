@@ -10,22 +10,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Item {
-  id    String @id
-  title String
-}
-
 model User {
-  id        String    @id
-  firstName String
-  lastName  String
-  password  String
-  email     String    @unique
-  Session   Session[]
+  id          String       @id
+  firstName   String
+  lastName    String
+  password    String
+  email       String       @unique
+  sessions    Session[]
+  items       Item[]
+  collections Collection[]
+  tags        Tag[]
 }
 
 model Session {
   id     String @id
   userId String
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model Item {
+  id           String     @id
+  status       Int
+  collection   Collection @relation(fields: [collectionId], references: [id])
+  collectionId String
+  tags         Tag[]
+  title        String
+  url          String
+  description  String
+  thumbnail    String?
+  createdAt    DateTime
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+}
+
+model Collection {
+  id     String @id
+  name   String
+  items  Item[]
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Tag {
+  id     String @id
+  name   String
+  items  Item[]
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }
