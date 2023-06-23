@@ -1,16 +1,8 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-    LogInRequired,
-    PageTitle,
-    SaveInput,
-} from "../components";
+import { LogInRequired, PageTitle, SaveInput } from "../components";
 import { trpc } from "@/src/app/utils/trpc";
+import ItemCard from "../components/ItemCard";
 
 export default function SavesPage() {
     return (
@@ -32,24 +24,7 @@ function SaveList() {
     return (
         <div className="flex flex-col mt-3 gap-3">
             {items
-                ? items.map((item) => (
-                      <Card key={item.id}>
-                          <CardHeader>
-                              <CardTitle>{item.title}</CardTitle>
-                              <CardDescription>{item.url}</CardDescription>
-                              <CardContent>
-                                  {item.description}
-                                  <div>Collection: {item.collection.name}</div>
-                                  <div className="flex gap-2">
-                                      Tags:
-                                      {item.tags.map((tag) => (
-                                          <div key={tag.id}>{tag.name}</div>
-                                      ))}
-                                  </div>
-                              </CardContent>
-                          </CardHeader>
-                      </Card>
-                  ))
+                ? items.map((item) => <ItemCard data={item} key={item.id} />)
                 : null}
         </div>
     );
