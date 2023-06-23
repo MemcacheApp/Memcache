@@ -39,29 +39,40 @@ export default function ItemCard({
                         ))}
                     </div>
                 </CardContent>
-            </CardHeader>
-            <div className="flex gap-3 flex-wrap">
-                <div className="flex items-center">
-                    <div className="mx-3">
-                        <LuPackage2 />
+                <div className="flex gap-3 flex-wrap">
+                    <div className="flex items-center rounded-md border-solid border-2">
+                        <div className="mx-3">
+                            <LuPackage2 />
+                        </div>
+                        <CollectionSelector
+                            collections={collectionsQuery.data}
+                            value={collection}
+                            setValue={setCollection}
+                        />
                     </div>
-                    <CollectionSelector
-                        collections={collectionsQuery.data}
-                        value={collection}
-                        setValue={setCollection}
-                    />
-                </div>
-                <div className="flex items-center">
-                    <div className="mx-3">
-                        <LuTag />
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                        {tags.map((tag, index) => (
+                    <div className="flex items-center">
+                        <div className="mx-2">
+                            <LuTag />
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                            {tags.map((tag, index) => (
+                                <TagSelector
+                                    key={tag}
+                                    index={index}
+                                    tags={tagsQuery.data}
+                                    value={tag}
+                                    setValue={(newTag, index) =>
+                                        setTags(setTag(tags, newTag, index))
+                                    }
+                                    remove={(index) =>
+                                        setTags(removeTag(tags, index))
+                                    }
+                                />
+                            ))}
                             <TagSelector
-                                key={tag}
-                                index={index}
                                 tags={tagsQuery.data}
-                                value={tag}
+                                value=""
+                                index={-1}
                                 setValue={(newTag, index) =>
                                     setTags(setTag(tags, newTag, index))
                                 }
@@ -69,19 +80,10 @@ export default function ItemCard({
                                     setTags(removeTag(tags, index))
                                 }
                             />
-                        ))}
-                        <TagSelector
-                            tags={tagsQuery.data}
-                            value=""
-                            index={-1}
-                            setValue={(newTag, index) =>
-                                setTags(setTag(tags, newTag, index))
-                            }
-                            remove={(index) => setTags(removeTag(tags, index))}
-                        />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </CardHeader>
         </Card>
     );
 }
