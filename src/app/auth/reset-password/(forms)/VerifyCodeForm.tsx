@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import styles from "@/src/app/styles/forms.module.css";
+import styles from "@/ui/styles/forms.module.css";
 import { Key } from "lucide-react";
 import Link from "next/link";
 // import OtpInput from "../OtpInput";

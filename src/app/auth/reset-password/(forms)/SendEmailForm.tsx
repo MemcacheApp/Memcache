@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import styles from "@/src/app/styles/forms.module.css";
+import styles from "@/ui/styles/forms.module.css";
 
 import { Key } from "lucide-react";
 import { trpc } from "@/src/app/utils/trpc";
@@ -38,7 +38,7 @@ export default function SendEmailForm({
         resolver: zodResolver(emailFormSchema),
     });
 
-    const { refetch } = trpc.users.isValidEmail.useQuery(
+    const { refetch } = trpc.user.isValidEmail.useQuery(
         { email: watch("email") },
         {
             refetchOnWindowFocus: false,

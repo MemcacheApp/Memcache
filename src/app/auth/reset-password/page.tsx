@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "@/src/app/styles/forms.module.css";
+import styles from "@/ui/styles/forms.module.css";
 import { useState } from "react";
 import { Resend } from "resend";
 import SendEmailForm from "./(forms)/SendEmailForm";
@@ -20,7 +20,7 @@ export default function page() {
     const [page, setPage] = useState<ResetPasswordPage>("reset-password");
     const [email, setEmail] = useState<string>("");
 
-    const sendEmailMutation = trpc.users.sendVerificationEmail.useMutation();
+    const sendEmailMutation = trpc.user.sendVerificationEmail.useMutation();
 
     const sendVerificationCodeEmail = async (email: string) => {
         const code = await sendEmailMutation.mutateAsync({ email });

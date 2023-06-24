@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import styles from "@/src/app/styles/forms.module.css";
+import styles from "@/ui/styles/forms.module.css";
 
 import { Key } from "lucide-react";
 import { trpc } from "@/src/app/utils/trpc";
@@ -32,7 +32,7 @@ export default function ResetPasswordForm({
     } = useForm<ResetPasswordFormData>({
         resolver: zodResolver(resetPasswordSchema),
     });
-    const resetPasswordMutation = trpc.users.updatePassword.useMutation();
+    const resetPasswordMutation = trpc.user.updatePassword.useMutation();
     const onSubmitPasswordReset = async (data: ResetPasswordFormData) => {
         resetPasswordMutation.mutate({ email, newPassword: data.password });
         navigatePage("success");
