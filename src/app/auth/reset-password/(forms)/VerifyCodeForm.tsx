@@ -1,10 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import styles from "@/ui/styles/forms.module.css";
-import { Key, KeyRound, Mail, SquareAsterisk } from "lucide-react";
+import { SquareAsterisk } from "lucide-react";
 import Link from "next/link";
-// import OtpInput from "../OtpInput";
 import OtpInput from "react-otp-input";
 import { ResetPasswordPage } from "../page";
 import { Button } from "@/ui/components";
@@ -22,9 +20,7 @@ export default function VerifyCodeForm({
     email: string;
     resendVerificationCodeEmail: () => void;
 }) {
-    console.log(code);
     const [otp, setOtp] = useState("");
-    const onChange = (value: string) => setOtp(value);
 
     const [error, setError] = useState<InputError>(null);
 
@@ -64,7 +60,6 @@ export default function VerifyCodeForm({
                         inputStyle={inputStyle}
                         inputType="tel"
                     />
-                    {/* <OtpInput value={otp} valueLength={6} onChange={onChange} /> */}
                 </div>
                 {error === "white-space" ? (
                     <span className="text-sm text-red-600/60">

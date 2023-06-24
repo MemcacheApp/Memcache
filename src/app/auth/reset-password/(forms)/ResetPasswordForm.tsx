@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import styles from "@/ui/styles/forms.module.css";
-
-import { Eye, EyeOff, Key, KeyRound } from "lucide-react";
+import { useState } from "react";
+import { Eye, EyeOff, KeyRound } from "lucide-react";
 import { trpc } from "@/src/app/utils/trpc";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ResetPasswordPage } from "../page";
 import { Button, Input, Label } from "@/ui/components";
 

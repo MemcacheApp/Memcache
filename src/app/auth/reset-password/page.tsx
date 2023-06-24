@@ -1,8 +1,6 @@
 "use client";
 
-import styles from "@/ui/styles/forms.module.css";
 import { useState } from "react";
-import { Resend } from "resend";
 import SendEmailForm from "./(forms)/SendEmailForm";
 import { trpc } from "@/src/app/utils/trpc";
 import VerifyCodeForm from "./(forms)/VerifyCodeForm";
@@ -62,10 +60,4 @@ export default function page() {
             )}
         </div>
     );
-}
-
-// TODO:
-// get rid of the console log of the code in the verify form
-{
-    /* TODO: RESEND EMAIL WITH NEW CODE */
 }
