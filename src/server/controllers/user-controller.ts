@@ -125,6 +125,7 @@ export default class UserController {
         };
     }
 
+<<<<<<< HEAD
     static async userInfo(userId: string) {
         const user = await prisma.user.findUniqueOrThrow({
             where: {
@@ -138,5 +139,30 @@ export default class UserController {
             lastName: user.lastName,
             email: user.email,
         };
+=======
+    static async isValidEmail(email: string) {
+        const user = await prisma.user.findUnique({
+            where: {
+                email,
+            },
+        });
+        if (user) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static async updatePassword(email: string, newPassword: string) {
+        const salt = bcrypt.genSaltSync(10);
+        const hashPassword = bcrypt.hashSync(newPassword, salt);
+
+        const user = await prisma.user.update({
+            where: { email },
+            data: { password: hashPassword },
+        });
+
+        return user;
+>>>>>>> feat1-email
     }
 }
