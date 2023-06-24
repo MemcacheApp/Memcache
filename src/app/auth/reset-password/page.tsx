@@ -43,6 +43,7 @@ export default function page() {
                     navigatePage={(newPage: ResetPasswordPage) =>
                         setPage(newPage)
                     }
+                    email={email}
                 />
             ) : page === "new-password" ? (
                 <ResetPasswordForm

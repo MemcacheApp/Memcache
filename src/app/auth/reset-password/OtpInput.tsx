@@ -1,7 +1,7 @@
 "use client";
 
 // Source: https://dominicarrojado.com/posts/how-to-create-your-own-otp-input-in-react-and-typescript-with-tests-part-1/
-import styles from "@/src/app/styles/forms.module.css";
+import styles from "@/ui/styles/forms.module.css";
 import { useMemo } from "react";
 
 export type Props = {
