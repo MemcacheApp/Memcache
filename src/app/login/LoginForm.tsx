@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -20,11 +21,6 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-/*
-TODO:
-send email for resetting password
-*/
-
 export default function LoginForm() {
     const {
         register,
@@ -32,7 +28,14 @@ export default function LoginForm() {
         formState: { errors },
     } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
-    const loginMutation = trpc.users.login.useMutation();
+    const queryClient = useQueryClient();
+    const loginMutation = trpc.users.login.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["users", "isLoggedIn"],
+            });
+        },
+    });
 
     const isLoggedInQuery = trpc.users.isLoggedIn.useQuery();
     useEffect(() => {

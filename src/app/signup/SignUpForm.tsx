@@ -9,6 +9,7 @@ import { z, ZodType } from "zod";
 import { trpc } from "@/src/app/utils/trpc";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const userSchema = z.object({
     firstName: z.string().min(1, { message: "First name is required" }),
@@ -43,8 +44,15 @@ export default function SignUpForm() {
         handleSubmit,
         formState: { errors },
     } = useForm<SignUpFormData>({ resolver: zodResolver(userSchema) });
-    const createUserMutation = trpc.users.createUser.useMutation();
 
+    const queryClient = useQueryClient();
+    const createUserMutation = trpc.users.createUser.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["users", "isLoggedIn"],
+            });
+        },
+    });
     const isLoggedInQuery = trpc.users.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
@@ -58,6 +66,8 @@ export default function SignUpForm() {
             action=""
             onSubmit={handleSubmit((data: SignUpFormData) => {
                 createUserMutation.mutate(data);
+
+                // TODO: need to change pages
             })}
         >
             <div className={styles["header"]}>
