@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import styles from "@/ui/styles/forms.module.css";
 
-import { Key } from "lucide-react";
+import { Key, KeyRound } from "lucide-react";
 import { trpc } from "@/src/app/utils/trpc";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ResetPasswordPage } from "../page";
+import { Button, Input, Label } from "@/ui/components";
 
 const resetPasswordSchema = z.object({
     password: z.string().min(1, { message: "Password is required" }),
@@ -40,42 +41,38 @@ export default function ResetPasswordForm({
 
     return (
         <form
-            className={styles["form-container"]}
+            className="flex flex-col justify-center items-center w-[32rem]"
             action=""
             onSubmit={handleSubmit(onSubmitPasswordReset)}
         >
-            <div className={styles["header"]}>
-                <Key size={36} />
-                <h1 className={styles["form-title"]}>Forgot password?</h1>
-            </div>
-            <span>
-                Enter the email address associated with your account. A
-                verification code will be sent.
+            <KeyRound size={36} strokeWidth={1.75} />
+            <h1 className="text-3xl">Set new password</h1>
+            <span className="m-10 flex flex-col">
+                Please set a new password.
             </span>
 
-            <div className={styles["form-field"]}>
-                <label htmlFor="password-input">Password</label>
-                <input
-                    type="text"
+            <div className="flex flex-col w-full px-10">
+                <Label htmlFor="password-input">Password</Label>
+                <Input
                     id="password-input"
-                    className={styles["input"]}
                     {...register("password", { required: true })}
+                    className="mt-2 mb-1"
                 />
                 {errors.password && (
-                    <span className={styles["error-message"]}>
+                    <span className="text-sm text-red-600/60">
                         {errors.password.message}
                     </span>
                 )}
+                <Button type="submit" className="my-5">
+                    Reset password
+                </Button>
             </div>
 
-            <button type="submit" className={styles["submit-button"]}>
-                Send
-            </button>
-
-            <p className={styles["link-nav"]}>
-                <span>Back to </span>
-                <Link href={"/login"}>Login</Link>
-            </p>
+            <Link href={"/auth/login"}>
+                <Button type="button" variant={"ghost"}>
+                    Back to Login
+                </Button>
+            </Link>
         </form>
     );
 }
