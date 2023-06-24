@@ -28,7 +28,7 @@ export default function page() {
     };
 
     return (
-        <div className={styles["page-container"]}>
+        <div className="flex justify-center h-screen items-center">
             {page === "reset-password" ? (
                 <SendEmailForm
                     sendVerificationCodeEmail={sendVerificationCodeEmail}

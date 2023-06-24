@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ResetPasswordPage } from "../page";
+import { Button, Input, Label } from "@/ui/components";
 
 const emailFormSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -48,53 +49,42 @@ export default function SendEmailForm({
 
     const onSubmitPasswordResetEmail = async () => {
         const { data } = await refetch();
-        // TODO: bug this doesnt return true the first time you click it
         if (data) {
             sendVerificationCodeEmail(watch("email"));
             setEmail(watch("email"));
-            console.log("valid email");
         }
         navigatePage("verification-code");
     };
 
     return (
         <form
-            className={styles["form-container"]}
             action=""
             onSubmit={handleSubmit(onSubmitPasswordResetEmail)}
+            className="flex flex-col justify-center items-center max-w-lg"
         >
-            <div className={styles["header"]}>
-                <Key size={36} />
-                <h1 className={styles["form-title"]}>Forgot password?</h1>
-            </div>
-            <span>
+            <Key size={36} />
+            <h1 className="text-3xl">Forgot password?</h1>
+            <span className="m-10">
                 Enter the email address associated with your account. A
                 verification code will be sent.
             </span>
 
-            <div className={styles["form-field"]}>
-                <label htmlFor="email-input">Email</label>
-                <input
-                    type="text"
+            <div className="flex flex-col w-full px-10">
+                <Label htmlFor="email-input">Email</Label>
+                <Input
                     id="email-input"
-                    className={styles["input"]}
                     {...register("email", { required: true })}
+                    className="mt-2 mb-1"
                 />
                 {errors.email && (
-                    <span className={styles["error-message"]}>
+                    <span className="text-sm text-red-600/60">
                         {errors.email.message}
                     </span>
                 )}
+                <Button type="submit" className="my-5">
+                    Send
+                </Button>
             </div>
-
-            <button type="submit" className={styles["submit-button"]}>
-                Send
-            </button>
-
-            <p className={styles["link-nav"]}>
-                <span>Back to </span>
-                <Link href={"/login"}>Login</Link>
-            </p>
         </form>
     );
 }
