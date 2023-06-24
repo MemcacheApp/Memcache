@@ -60,3 +60,7 @@ export default function page() {
         </div>
     );
 }
+
+// TODO:
+// get rid of the console log of the code in the verify form
+// make the password input of password type in reset
