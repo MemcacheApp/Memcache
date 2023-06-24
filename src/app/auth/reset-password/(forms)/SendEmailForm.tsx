@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import styles from "@/ui/styles/forms.module.css";
 
-import { Key } from "lucide-react";
+import { Key, Mail } from "lucide-react";
 import { trpc } from "@/src/app/utils/trpc";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,7 +62,7 @@ export default function SendEmailForm({
             onSubmit={handleSubmit(onSubmitPasswordResetEmail)}
             className="flex flex-col justify-center items-center max-w-lg"
         >
-            <Key size={36} />
+            <Mail size={36} strokeWidth={1.75} />
             <h1 className="text-3xl">Forgot password?</h1>
             <span className="m-10">
                 Enter the email address associated with your account. A
@@ -88,3 +88,4 @@ export default function SendEmailForm({
         </form>
     );
 }
+// git commit -m 'Fixed verify code form style'
