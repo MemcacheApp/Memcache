@@ -85,7 +85,12 @@ export default function SendEmailForm({
                     Send
                 </Button>
             </div>
+
+            <Link href={"/auth/login"}>
+                <Button type="button" variant={"ghost"}>
+                    Back to Login
+                </Button>
+            </Link>
         </form>
     );
 }
-// git commit -m 'Fixed verify code form style'

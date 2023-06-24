@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import styles from "@/ui/styles/forms.module.css";
-import { Key } from "lucide-react";
+import { Key, KeyRound, Mail, SquareAsterisk } from "lucide-react";
 import Link from "next/link";
 // import OtpInput from "../OtpInput";
 import OtpInput from "react-otp-input";
@@ -20,6 +20,7 @@ export default function VerifyCodeForm({
     navigatePage: (newPage: ResetPasswordPage) => void;
     email: string;
 }) {
+    console.log(code);
     const [otp, setOtp] = useState("");
     const onChange = (value: string) => setOtp(value);
 
@@ -43,7 +44,7 @@ export default function VerifyCodeForm({
             action=""
             onSubmit={submitCode}
         >
-            <Key size={36} />
+            <SquareAsterisk size={36} strokeWidth={1.75} />
             <h1 className="text-3xl">Verify Code</h1>
             <span className="m-10 flex flex-col">
                 Please enter the login verification code sent to <br></br>
@@ -82,10 +83,11 @@ export default function VerifyCodeForm({
 
             {/* TODO: RESEND EMAIL WITH NEW CODE */}
 
-            <p className={styles["link-nav"]}>
-                <span>Back to </span>
-                <Link href={"/login"}>Login</Link>
-            </p>
+            <Link href={"/auth/login"}>
+                <Button type="button" variant={"ghost"}>
+                    Back to Login
+                </Button>
+            </Link>
         </form>
     );
 }
