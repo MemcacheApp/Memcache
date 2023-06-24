@@ -10,6 +10,7 @@ export * from "./Navigation";
 export * from "./Popover";
 export * from "./SaveInput";
 export * from "./Sidebar";
+export * from "./StatusToggle";
 export * from "./Tag";
 export * from "./TagSelector";
 export * from "./typography";

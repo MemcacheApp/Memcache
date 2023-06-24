@@ -9,7 +9,9 @@ import {
     LogInRequired,
     PageTitle,
     SaveInput,
+	StatusToggle,
 } from "../components";
+
 import { trpc } from "@/src/app/utils/trpc";
 
 export default function SavesPage() {
@@ -18,6 +20,7 @@ export default function SavesPage() {
             <LogInRequired>
                 <PageTitle>Saves</PageTitle>
                 <SaveInput />
+				<StatusToggle />
                 <SaveList />
             </LogInRequired>
         </div>
