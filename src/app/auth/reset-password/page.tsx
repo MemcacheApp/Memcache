@@ -44,6 +44,9 @@ export default function page() {
                         setPage(newPage)
                     }
                     email={email}
+                    resendVerificationCodeEmail={() =>
+                        sendVerificationCodeEmail(email)
+                    }
                 />
             ) : page === "new-password" ? (
                 <ResetPasswordForm
@@ -63,4 +66,6 @@ export default function page() {
 
 // TODO:
 // get rid of the console log of the code in the verify form
-// make the password input of password type in reset
+{
+    /* TODO: RESEND EMAIL WITH NEW CODE */
+}
