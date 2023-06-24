@@ -45,7 +45,7 @@ export default function VerifyCodeForm({
             onSubmit={submitCode}
         >
             <SquareAsterisk size={36} strokeWidth={1.75} />
-            <h1 className="text-3xl">Verify Code</h1>
+            <h1 className="text-3xl mt-4">Verify Code</h1>
             <span className="m-10 flex flex-col">
                 Please enter the login verification code sent to <br></br>
                 <span className="self-center">

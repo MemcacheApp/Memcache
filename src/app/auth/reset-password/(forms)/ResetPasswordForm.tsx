@@ -46,7 +46,7 @@ export default function ResetPasswordForm({
             onSubmit={handleSubmit(onSubmitPasswordReset)}
         >
             <KeyRound size={36} strokeWidth={1.75} />
-            <h1 className="text-3xl">Set new password</h1>
+            <h1 className="text-3xl mt-4">Set new password</h1>
             <span className="m-10 flex flex-col">
                 Please set a new password.
             </span>

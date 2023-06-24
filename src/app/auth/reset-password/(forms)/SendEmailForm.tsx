@@ -63,7 +63,7 @@ export default function SendEmailForm({
             className="flex flex-col justify-center items-center max-w-lg"
         >
             <Mail size={36} strokeWidth={1.75} />
-            <h1 className="text-3xl">Forgot password?</h1>
+            <h1 className="text-3xl mt-4">Forgot password?</h1>
             <span className="m-10">
                 Enter the email address associated with your account. A
                 verification code will be sent.
