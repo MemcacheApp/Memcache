@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styles from "@/ui/styles/forms.module.css";
 
-import { Key, KeyRound } from "lucide-react";
+import { Eye, EyeOff, Key, KeyRound } from "lucide-react";
 import { trpc } from "@/src/app/utils/trpc";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,6 +38,7 @@ export default function ResetPasswordForm({
         resetPasswordMutation.mutate({ email, newPassword: data.password });
         navigatePage("success");
     };
+    const [passwordShown, setPasswordShown] = useState<boolean>(false);
 
     return (
         <form
@@ -51,13 +52,25 @@ export default function ResetPasswordForm({
                 Please set a new password.
             </span>
 
-            <div className="flex flex-col w-full px-10">
+            <div className="flex flex-col w-full px-10 relative">
                 <Label htmlFor="password-input">Password</Label>
                 <Input
-                    id="password-input"
+                    id="password-input "
                     {...register("password", { required: true })}
                     className="mt-2 mb-1"
+                    type={passwordShown ? "text" : "password"}
                 />
+                <button
+                    onClick={() => setPasswordShown((prev) => !prev)}
+                    className="w-fit absolute right-12 top-8"
+                    type="button"
+                >
+                    {passwordShown ? (
+                        <EyeOff size={20} color="grey" />
+                    ) : (
+                        <Eye size={20} color="grey" />
+                    )}
+                </button>
                 {errors.password && (
                     <span className="text-sm text-red-600/60">
                         {errors.password.message}
