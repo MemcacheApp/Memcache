@@ -2,6 +2,11 @@ import { publicProcedure, router } from "../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import UserController from "../../controllers/user-controller";
+import { Resend } from "resend";
+import ResetPasswordEmail from "@/react-email-templates/emails/reset-password-email";
+import { prisma } from "../../db/prisma";
+
+const resend = new Resend("re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c");
 
 export const userRouter = router({
     createUser: publicProcedure
@@ -70,4 +75,62 @@ export const userRouter = router({
             return false;
         }
     }),
+    isValidEmail: publicProcedure
+        .input(
+            z.object({
+                email: z.string(),
+            })
+        )
+        .query(async ({ input }) => {
+            return await UserController.isValidEmail(input.email);
+        }),
+    sendVerificationEmail: publicProcedure
+        .input(
+            z.object({
+                email: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const code = Math.floor(Math.random() * 1000000)
+                .toString()
+                .padStart(6, "0");
+
+            await resend.sendEmail({
+                from: "onboarding@resend.dev",
+                to: input.email,
+                subject: "Memcache Password Reset Code",
+                react: <ResetPasswordEmail code={code} />,
+            });
+
+            return code;
+        }),
+    updatePassword: publicProcedure
+        .input(
+            z.object({
+                email: z.string(),
+                newPassword: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            try {
+                return await UserController.updatePassword(
+                    input.email,
+                    input.newPassword
+                );
+            } catch (e) {
+                const message =
+                    e instanceof Error ? e.message : "Unknown Error";
+                throw new TRPCError({
+                    message,
+                    code: "BAD_REQUEST",
+                });
+            }
+        }),
 });
+
+// Resend API keys
+// re_U6PbCMXV_NRrF4vTFmSsRjqG6phfcrtwA
+// re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c
+
+// memcache3900@gmail.com
+// bendermen3900
