@@ -72,12 +72,8 @@ export default class TagController {
     }
 
     static async getOrCreateTags(userId: string, names: string[]) {
-        return prisma.tag.createMany({
-            data: names.map((name) => ({
-                id: uuidv4(),
-                name,
-                userId,
-            })),
-        });
+        return Promise.all(
+            names.map((name) => this.getOrCreateTag(userId, name))
+        );
     }
 }
