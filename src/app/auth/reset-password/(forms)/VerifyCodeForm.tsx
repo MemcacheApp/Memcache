@@ -15,10 +15,12 @@ export default function VerifyCodeForm({
     code,
     navigatePage,
     email,
+    resendVerificationCodeEmail,
 }: {
     code: string;
     navigatePage: (newPage: ResetPasswordPage) => void;
     email: string;
+    resendVerificationCodeEmail: () => void;
 }) {
     console.log(code);
     const [otp, setOtp] = useState("");
@@ -80,8 +82,16 @@ export default function VerifyCodeForm({
                     Verify
                 </Button>
             </div>
-
-            {/* TODO: RESEND EMAIL WITH NEW CODE */}
+            <span className="text-sm mb-4">
+                Didn&apos;t receive the email?{" "}
+                <button
+                    type="button"
+                    onClick={() => resendVerificationCodeEmail()}
+                    className="text-blue-600/60"
+                >
+                    Click to resend
+                </button>
+            </span>
 
             <Link href={"/auth/login"}>
                 <Button type="button" variant={"ghost"}>
