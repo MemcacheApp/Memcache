@@ -5,6 +5,7 @@ import {
     CardTitle,
     CardDescription,
     CardContent,
+    CardFooter,
 } from "./Card";
 import { CollectionSelector } from "./CollectionSelector";
 import { TagSelector } from "./TagSelector";
@@ -39,51 +40,45 @@ export default function ItemCard({
                         ))}
                     </div>
                 </CardContent>
-                <div className="flex gap-3 flex-wrap">
-                    <div className="flex items-center rounded-md border-solid border-2">
-                        <div className="mx-3">
-                            <LuPackage2 />
-                        </div>
-                        <CollectionSelector
-                            collections={collectionsQuery.data}
-                            value={collection}
-                            setValue={setCollection}
-                        />
-                    </div>
-                    <div className="flex items-center">
-                        <div className="mx-2">
-                            <LuTag />
-                        </div>
-                        <div className="flex gap-2 flex-wrap">
-                            {tags.map((tag, index) => (
-                                <TagSelector
-                                    key={tag}
-                                    index={index}
-                                    tags={tagsQuery.data}
-                                    value={tag}
-                                    setValue={(newTag, index) =>
-                                        setTags(setTag(tags, newTag, index))
-                                    }
-                                    remove={(index) =>
-                                        setTags(removeTag(tags, index))
-                                    }
-                                />
-                            ))}
-                            <TagSelector
-                                tags={tagsQuery.data}
-                                value=""
-                                index={-1}
-                                setValue={(newTag, index) =>
-                                    setTags(setTag(tags, newTag, index))
-                                }
-                                remove={(index) =>
-                                    setTags(removeTag(tags, index))
-                                }
-                            />
-                        </div>
-                    </div>
-                </div>
             </CardHeader>
+            <CardFooter>
+                <div className="flex gap-2 flex-wrap items-center w-full pt-2 px-4 border-t-2 border-solid">
+                    {/* <div className="mx-2"> */}
+                    <LuPackage2 />
+                    {/* </div> */}
+                    <CollectionSelector
+                        collections={collectionsQuery.data}
+                        value={collection}
+                        setValue={setCollection}
+                        size={"xs"}
+                    />
+                    <div className="mx-3 border-l-2 border-solid content-[''] h-6"></div>
+                    <div className="mx-2">
+                        <LuTag />
+                    </div>
+                    {tags.map((tag, index) => (
+                        <TagSelector
+                            key={tag}
+                            index={index}
+                            tags={tagsQuery.data}
+                            value={tag}
+                            setValue={(newTag, index) =>
+                                setTags(setTag(tags, newTag, index))
+                            }
+                            remove={(index) => setTags(removeTag(tags, index))}
+                        />
+                    ))}
+                    <TagSelector
+                        tags={tagsQuery.data}
+                        value=""
+                        index={-1}
+                        setValue={(newTag, index) =>
+                            setTags(setTag(tags, newTag, index))
+                        }
+                        remove={(index) => setTags(removeTag(tags, index))}
+                    />
+                </div>
+            </CardFooter>
         </Card>
     );
 }

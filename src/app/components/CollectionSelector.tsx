@@ -10,12 +10,14 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
+    buttonVariants,
 } from ".";
 import { LuCheck, LuChevronsUpDown, LuPlus } from "react-icons/lu";
 import { includeCaseInsensitive } from "../utils";
 import classNames from "classnames";
+import { type VariantProps } from "class-variance-authority";
 
-interface CollectionSelectorProps {
+interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
     collections: string[] | undefined;
     value: string;
     setValue: (s: string) => void;
@@ -25,6 +27,7 @@ export function CollectionSelector({
     collections,
     value,
     setValue,
+    size,
 }: CollectionSelectorProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -42,10 +45,10 @@ export function CollectionSelector({
                     variant="ghost"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[120px] justify-between pl-3 pr-2"
+                    size={size}
                 >
                     {value || "Loading..."}
-                    <div className="ml-2 h-4 w-4 shrink-0 opacity-50">
+                    <div className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end">
                         <LuChevronsUpDown />
                     </div>
                 </Button>
