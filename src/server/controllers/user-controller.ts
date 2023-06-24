@@ -125,7 +125,6 @@ export default class UserController {
         };
     }
 
-<<<<<<< HEAD
     static async userInfo(userId: string) {
         const user = await prisma.user.findUniqueOrThrow({
             where: {
@@ -139,7 +138,8 @@ export default class UserController {
             lastName: user.lastName,
             email: user.email,
         };
-=======
+    }
+
     static async isValidEmail(email: string) {
         const user = await prisma.user.findUnique({
             where: {
@@ -163,6 +163,5 @@ export default class UserController {
         });
 
         return user;
->>>>>>> feat1-email
     }
 }
