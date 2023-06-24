@@ -7,7 +7,7 @@ import { LuPackage2, LuTag } from "react-icons/lu";
 
 import { CollectionSelector } from "./CollectionSelector";
 import { TagSelector } from "./TagSelector";
-import { includeCaseInsensitive } from "../utils";
+import { includeCaseInsensitive } from "../../src/app/utils";
 import { Input } from "./Input";
 import { Button } from "./Button";
 import { useQueryClient } from "@tanstack/react-query";

@@ -8,7 +8,7 @@ import { trpc } from "@/src/app/utils/trpc";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LuUser } from "react-icons/lu";
-import { Button, Input, PageTitle } from "../components";
+import { Button, Input, PageTitle } from "../../../../ui/components";
 
 const userSchema = z.object({
     firstName: z.string().min(1, { message: "First name is required" }),

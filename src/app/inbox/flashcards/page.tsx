@@ -1,4 +1,4 @@
-import { PageTitle } from "../components/typography";
+import { PageTitle } from "../../../../ui/components/typography";
 
 export default function FlashcardsPage() {
     return (
