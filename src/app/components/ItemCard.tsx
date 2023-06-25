@@ -42,17 +42,17 @@ export default function ItemCard({
                 </CardContent>
             </CardHeader>
             <CardFooter>
-                <div className="flex gap-2 flex-wrap items-center w-full pt-2 px-4 border-t-2 border-solid">
-                    {/* <div className="mx-2"> */}
-                    <LuPackage2 />
-                    {/* </div> */}
+                <div className="flex gap-2 flex-wrap items-center w-full pt-2 border-t-2 border-solid">
+                    <div className="mx-2">
+                        <LuPackage2 />
+                    </div>
                     <CollectionSelector
                         collections={collectionsQuery.data}
                         value={collection}
                         setValue={setCollection}
                         size={"xs"}
                     />
-                    <div className="mx-3 border-l-2 border-solid content-[''] h-6"></div>
+                    <div className="ml-4 mr-2 border-l-2 border-solid content-[''] h-6"></div>
                     <div className="mx-2">
                         <LuTag />
                     </div>

@@ -42,7 +42,8 @@ export function CollectionSelector({
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
-                    variant="ghost"
+                    // variant="ghost"
+                    variant="outline"
                     role="combobox"
                     aria-expanded={open}
                     size={size}
