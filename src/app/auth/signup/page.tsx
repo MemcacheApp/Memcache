@@ -101,7 +101,7 @@ export default function page() {
                 </div>
                 <div>
                     <Input
-                        type="email"
+                        type="text" // Leave this as text or else the error message won't appear properly
                         title="Email"
                         placeholder="Email"
                         id="sign-up-email-input"
