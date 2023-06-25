@@ -9,7 +9,7 @@ import {
     LogInRequired,
     PageTitle,
     SaveInput,
-} from "../components";
+} from "../../../../ui/components";
 import { trpc } from "@/src/app/utils/trpc";
 
 export default function SavesPage() {

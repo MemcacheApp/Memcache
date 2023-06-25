@@ -8,9 +8,9 @@ import { useEffect } from "react";
 import { redirect } from "next/navigation";
 import { LuUser } from "react-icons/lu";
 import Link from "next/link";
-import { PageTitle } from "../components/typography";
-import { Input } from "../components/Input";
-import { Button } from "../components/Button";
+import { PageTitle } from "../../../../ui/components/typography";
+import { Input } from "../../../../ui/components/Input";
+import { Button } from "../../../../ui/components/Button";
 
 const loginSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({

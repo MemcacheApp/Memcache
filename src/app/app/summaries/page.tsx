@@ -1,4 +1,4 @@
-import { PageTitle } from "../components";
+import { PageTitle } from "../../../../ui/components";
 
 export default function SummariesPage() {
     return (
