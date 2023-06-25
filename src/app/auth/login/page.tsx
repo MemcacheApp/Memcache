@@ -108,7 +108,7 @@ export default function page() {
                 <Button type="submit">Login</Button>
                 <p className="text-sm">
                     <span>Don&apos;t have an account? </span>
-                    <Link className="underline" href={"/signup"}>
+                    <Link className="underline" href={"/auth/signup"}>
                         Sign up
                     </Link>
                 </p>
