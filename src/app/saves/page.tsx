@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 
 import {
     Card,
@@ -15,27 +16,39 @@ import {
 import { trpc } from "@/src/app/utils/trpc";
 
 export default function SavesPage() {
+    const [activeStatus, setActiveStatus] = React.useState(null);
+
     return (
         <div className="flex flex-col">
             <LogInRequired>
                 <PageTitle>Saves</PageTitle>
                 <SaveInput />
-				<StatusToggle />
-                <SaveList />
+                <StatusToggle activeStatus={activeStatus} setActiveStatus={setActiveStatus} />
+                <SaveList activeStatus={activeStatus} />
             </LogInRequired>
         </div>
     );
 }
 
+
 // Example save list
-function SaveList() {
+function SaveList({ activeStatus }: { activeStatus: string | null }) {
     const itemsQuery = trpc.item.getItems.useQuery();
     const items = itemsQuery.data;
 
+    const filterItems = items?.filter(item => {
+        if (activeStatus === null) return true;
+        if (activeStatus === 'Inbox' && item.status === 0) return true;
+        if (activeStatus === 'Underway' && item.status === 1) return true;
+        if (activeStatus === 'Completed' && item.status === 2) return true;
+        if (activeStatus === 'Archive' && item.status === 3) return true;
+        return false;
+    });
+
     return (
         <div className="flex flex-col mt-3 gap-3">
-            {items
-                ? items.map((item) => (
+            {filterItems
+                ? filterItems.map((item) => (
                       <Card key={item.id}>
                           <CardHeader>
                               <CardTitle>{item.title}</CardTitle>

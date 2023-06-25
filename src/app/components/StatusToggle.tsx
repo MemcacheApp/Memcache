@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import classNames from "classnames";
 
 const StatusToggle = React.forwardRef<
-	HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-    const [activeStatus, setActiveStatus] = React.useState('Inbox');
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement> & { 
+		activeStatus: string | null, setActiveStatus: (status: string | null) => void }
+>(({ className, activeStatus, setActiveStatus, ...props }, ref) => {
     const statuses = ['Inbox', 'Underway', 'Completed', 'Archive'];
 
     return (
