@@ -29,7 +29,7 @@ export default function LoginForm() {
     } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
     const queryClient = useQueryClient();
-    const loginMutation = trpc.users.login.useMutation({
+    const loginMutation = trpc.user.login.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["users", "isLoggedIn"],
@@ -37,7 +37,7 @@ export default function LoginForm() {
         },
     });
 
-    const isLoggedInQuery = trpc.users.isLoggedIn.useQuery();
+    const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
             redirect("/");
