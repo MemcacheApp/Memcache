@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
+    "@next/font": "^13.4.7",
     "@prisma/client": "^4.15.0",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-label": "^2.0.2",
@@ -30,6 +31,7 @@
     "cookie": "^0.5.0",
     "eslint-config-next": "13.4.4",
     "jsonwebtoken": "^9.0.0",
+    "lucide-react": "^0.252.0",
     "next": "13.4.4",
     "postgres": "^3.3.5",
     "react": "18.2.0",

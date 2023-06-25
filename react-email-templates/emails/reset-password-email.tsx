@@ -26,7 +26,7 @@ export const ResetPasswordEmail = ({ code }: ResetPasswordEmailProps) => (
                 <Container className="flex justify-center">
                     <Heading className="text-2xl">Reset Password Code</Heading>
                     <Hr></Hr>
-                    <Text>Hi NAME,</Text>
+                    <Text>Hi,</Text>
                     <Text>
                         Someone recently requested a password change for your
                         Memcache account.

@@ -5,7 +5,7 @@ import { SquareAsterisk } from "lucide-react";
 import Link from "next/link";
 import OtpInput from "react-otp-input";
 import { ResetPasswordPage } from "../page";
-import { Button } from "@/ui/components";
+import { Button } from "@/ui/components/Button";
 
 type InputError = "white-space" | "invalid-code" | null;
 
@@ -29,7 +29,7 @@ export default function VerifyCodeForm({
         if (/\s/g.test(otp) || otp.length < 6) {
             setError("white-space");
             return;
-        } else if (otp !== code) {
+        } else if (otp !== code || email === "") {
             setError("invalid-code");
             return;
         }
@@ -43,8 +43,8 @@ export default function VerifyCodeForm({
             onSubmit={submitCode}
         >
             <SquareAsterisk size={36} strokeWidth={1.75} />
-            <h1 className="text-3xl mt-4">Verify Code</h1>
-            <span className="m-10 flex flex-col">
+            <h1 className="mt-4 text-3xl">Verify Code</h1>
+            <span className="flex flex-col m-10">
                 Please enter the login verification code sent to <br></br>
                 <span className="self-center">
                     <strong>{email}</strong>
@@ -77,7 +77,7 @@ export default function VerifyCodeForm({
                     Verify
                 </Button>
             </div>
-            <span className="text-sm mb-4">
+            <span className="mb-4 text-sm">
                 Didn&apos;t receive the email?{" "}
                 <button
                     type="button"

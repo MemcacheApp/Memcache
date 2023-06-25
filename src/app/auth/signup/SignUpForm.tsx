@@ -46,14 +46,14 @@ export default function SignUpForm() {
     } = useForm<SignUpFormData>({ resolver: zodResolver(userSchema) });
 
     const queryClient = useQueryClient();
-    const createUserMutation = trpc.users.createUser.useMutation({
+    const createUserMutation = trpc.user.createUser.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["users", "isLoggedIn"],
             });
         },
     });
-    const isLoggedInQuery = trpc.users.isLoggedIn.useQuery();
+    const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
             redirect("/");
