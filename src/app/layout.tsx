@@ -1,8 +1,6 @@
 import { TrpcProvider } from "./utils/trpc-provider";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import classNames from "classnames";
-import { Sidebar } from "../../ui/components";
 
 const inter = Inter({ subsets: ["latin"] });
 
