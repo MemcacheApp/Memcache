@@ -83,7 +83,7 @@ export default function SendEmailForm({
             </div>
 
             <Link href={"/auth/login"}>
-                <Button type="button" variant="destructive">
+                <Button type="button" variant="ghost">
                     Back to Login
                 </Button>
             </Link>
