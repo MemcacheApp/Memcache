@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { trpc } from "@/src/app/utils/trpc";
 import classNames from "classnames";
-import { LuPackage2, LuTag } from "react-icons/lu";
 
 import { CollectionSelector } from "./CollectionSelector";
 import { TagSelector } from "./TagSelector";
@@ -11,6 +10,7 @@ import { includeCaseInsensitive } from "../../src/app/utils";
 import { Input } from "./Input";
 import { Button } from "./Button";
 import { useQueryClient } from "@tanstack/react-query";
+import { Package2, Tag } from "lucide-react";
 
 export function SaveInput() {
     const queryClient = useQueryClient();
@@ -115,7 +115,7 @@ export function SaveInput() {
                         <div className="flex gap-3 flex-wrap">
                             <div className="flex items-center">
                                 <div className="mx-3">
-                                    <LuPackage2 />
+                                    <Package2 />
                                 </div>
                                 <CollectionSelector
                                     collections={collectionsQuery.data}
@@ -125,7 +125,7 @@ export function SaveInput() {
                             </div>
                             <div className="flex items-center">
                                 <div className="mx-3">
-                                    <LuTag />
+                                    <Tag />
                                 </div>
                                 <div className="flex gap-2 flex-wrap">
                                     {tags.map((tag, index) => (

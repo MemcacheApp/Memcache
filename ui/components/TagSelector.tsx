@@ -13,9 +13,9 @@ import {
     PopoverTrigger,
     Tag,
 } from ".";
-import { LuCheck, LuPlus, LuTrash } from "react-icons/lu";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import classNames from "classnames";
+import { Check, Plus, Trash } from "lucide-react";
 
 interface TagSelectorProps {
     tags: string[] | undefined;
@@ -44,7 +44,7 @@ export function TagSelector({
                         role="combobox"
                         aria-expanded={open}
                     >
-                        <LuPlus />
+                        <Plus />
                     </Button>
                 ) : (
                     <Tag role="combobox" aria-expanded={open}>
@@ -71,9 +71,7 @@ export function TagSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span className="mr-2 h-4 w-4">
-                                            <LuTrash />
-                                        </span>
+                                        <Trash className="mr-2 h-4 w-4" />
                                         {`Remove "${value}"`}
                                     </CommandItem>
                                 ) : null}
@@ -88,9 +86,7 @@ export function TagSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span className="mr-2 h-4 w-4">
-                                            <LuPlus />
-                                        </span>
+                                        <Plus className="mr-2 h-4 w-4" />
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
                                 )}
@@ -102,16 +98,14 @@ export function TagSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span
+                                        <Check
                                             className={classNames(
                                                 "mr-2 h-4 w-4",
                                                 tag === value
                                                     ? "opacity-100"
                                                     : "opacity-0"
                                             )}
-                                        >
-                                            <LuCheck />
-                                        </span>
+                                        />
                                         {tag}
                                     </CommandItem>
                                 ))}

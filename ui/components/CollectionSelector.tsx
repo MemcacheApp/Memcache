@@ -11,9 +11,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from ".";
-import { LuCheck, LuChevronsUpDown, LuPlus } from "react-icons/lu";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import classNames from "classnames";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
 
 interface CollectionSelectorProps {
     collections: string[] | undefined;
@@ -45,9 +45,7 @@ export function CollectionSelector({
                     className="w-[120px] justify-between pl-3 pr-2"
                 >
                     {value || "Loading..."}
-                    <div className="ml-2 h-4 w-4 shrink-0 opacity-50">
-                        <LuChevronsUpDown />
-                    </div>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] !p-0">
@@ -71,9 +69,7 @@ export function CollectionSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span className="mr-2 h-4 w-4">
-                                            <LuPlus />
-                                        </span>
+                                        <Plus className="mr-2 h-4 w-4" />
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
                                 )}
@@ -85,16 +81,14 @@ export function CollectionSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span
+                                        <Check
                                             className={classNames(
                                                 "mr-2 h-4 w-4",
                                                 collection === value
                                                     ? "opacity-100"
                                                     : "opacity-0"
                                             )}
-                                        >
-                                            <LuCheck />
-                                        </span>
+                                        />
                                         {collection}
                                     </CommandItem>
                                 ))}

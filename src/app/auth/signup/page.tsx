@@ -7,8 +7,8 @@ import { z } from "zod";
 import { trpc } from "@/src/app/utils/trpc";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LuUser } from "react-icons/lu";
 import { Button, Input, PageTitle } from "../../../../ui/components";
+import { User } from "lucide-react";
 
 const userSchema = z.object({
     firstName: z.string().min(1, { message: "First name is required" }),
@@ -55,7 +55,7 @@ export default function page() {
     return (
         <div>
             <div className="flex items-center">
-                <LuUser className="mr-5" size={36} />
+                <User className="mr-5" size={36} />
                 <PageTitle>Sign Up</PageTitle>
             </div>
             <form

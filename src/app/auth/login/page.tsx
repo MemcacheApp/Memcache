@@ -6,11 +6,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { redirect } from "next/navigation";
-import { LuUser } from "react-icons/lu";
 import Link from "next/link";
 import { PageTitle } from "../../../../ui/components/typography";
 import { Input } from "../../../../ui/components/Input";
 import { Button } from "../../../../ui/components/Button";
+import { User } from "lucide-react";
 
 const loginSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -40,7 +40,7 @@ export default function page() {
     return (
         <div>
             <div className="flex items-center">
-                <LuUser className="mr-5" size={36} />
+                <User className="mr-5" size={36} />
                 <PageTitle>Login</PageTitle>
             </div>
             <form

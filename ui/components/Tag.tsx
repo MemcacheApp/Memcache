@@ -1,6 +1,6 @@
 import classNames from "classnames";
+import { Edit } from "lucide-react";
 import React from "react";
-import { LuEdit } from "react-icons/lu";
 
 const Tag = React.forwardRef<
     HTMLButtonElement,
@@ -18,7 +18,7 @@ const Tag = React.forwardRef<
         >
             {children}
             <span className="absolute right-3 p-1 opacity-0 bg-secondary group-hover:opacity-100 group-focus-visible:opacity-100">
-                <LuEdit />
+                <Edit />
             </span>
         </button>
     );
