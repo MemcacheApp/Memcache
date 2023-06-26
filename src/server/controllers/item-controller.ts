@@ -2,6 +2,7 @@ import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
 import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
+import ogs from "open-graph-scraper";
 
 export default class ItemController {
     static async createItem(
@@ -44,12 +45,17 @@ export default class ItemController {
         collectionName: string,
         tagNames: string[]
     ) {
+        const { result } = await ogs({ url });
+
         return await this.createItem(
             userId,
-            "Title",
-            url,
-            "Description",
-            null,
+            result.ogTitle ||
+                result.dcTitle ||
+                result.twitterTitle ||
+                "Untitled",
+            result.ogUrl || url,
+            result.ogDescription || result.dcDescription || "",
+            result.ogImage?.[0].url || result.twitterImage?.[0].url || null,
             collectionName,
             tagNames
         );

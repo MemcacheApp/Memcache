@@ -39,6 +39,9 @@ function SaveList() {
                               <CardDescription>{item.url}</CardDescription>
                               <CardContent>
                                   {item.description}
+                                  {item.thumbnail ? (
+                                      <img src={item.thumbnail} />
+                                  ) : null}
                                   <div>Collection: {item.collection.name}</div>
                                   <div className="flex gap-2">
                                       Tags:
