@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 export default class TagController {
     static async createTag(userId: string, name: string) {
         if (await this.getTagByName(userId, name)) {
-            throw Error("Tag already exists");
+            throw Error(`Tag ${name} already exists for user ${userId}`);
         }
 
         const tag = await prisma.tag.create({

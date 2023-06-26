@@ -2,18 +2,15 @@
 import React from "react";
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-    DeleteContent,
     LogInRequired,
     PageTitle,
     SaveInput,
     StatusToggle,
 } from "../../../../ui/components";
 import { trpc } from "@/src/app/utils/trpc";
+import ItemCard from "../../../../ui/components/ItemCard";
+import Image from "next/image";
+import EmptyInbox from "../../../../public/EmptyInbox.svg";
 
 export default function SavesPage() {
     const [activeStatus, setActiveStatus] = React.useState<string | null>(null);
@@ -36,9 +33,9 @@ export default function SavesPage() {
 // Example save list
 function SaveList({ activeStatus }: { activeStatus: string | null }) {
     const itemsQuery = trpc.item.getItems.useQuery();
-    const items = itemsQuery.data;
+    let items = itemsQuery.data;
 
-    const filterItems = items?.filter((item) => {
+    items = items?.filter((item) => {
         if (activeStatus === null) return true;
         if (activeStatus === "Inbox" && item.status === 0) return true;
         if (activeStatus === "Underway" && item.status === 1) return true;
@@ -47,29 +44,25 @@ function SaveList({ activeStatus }: { activeStatus: string | null }) {
         return false;
     });
 
+    items = items?.sort(
+        (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
+    );
+
     return (
         <div className="flex flex-col mt-3 gap-3">
-            {filterItems
-                ? filterItems.map((item) => (
-                      <Card key={item.id}>
-                          <CardHeader>
-                              <CardTitle>{item.title}</CardTitle>
-                              <CardDescription>{item.url}</CardDescription>
-                              <CardContent>
-                                  {item.description}
-                                  <div>Collection: {item.collection.name}</div>
-                                  <div className="flex gap-2">
-                                      Tags:
-                                      {item.tags.map((tag) => (
-                                          <div key={tag.id}>{tag.name}</div>
-                                      ))}
-                                  </div>
-                                  <DeleteContent item={item} />
-                              </CardContent>
-                          </CardHeader>
-                      </Card>
-                  ))
-                : null}
+            {items && items.length > 0 ? (
+                items.map((item) => <ItemCard data={item} key={item.id} />)
+            ) : (
+                <div className="w-full px-6 my-8 flex flex-col items-center gap-4">
+                    <Image
+                        src={EmptyInbox}
+                        width="128"
+                        height="128"
+                        alt="Empty Inbox"
+                    />
+                    <div>{`No saves in ${activeStatus}`}</div>
+                </div>
+            )}
         </div>
     );
 }

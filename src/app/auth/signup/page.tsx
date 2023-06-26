@@ -8,7 +8,7 @@ import { trpc } from "@/src/app/utils/trpc";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LuUser } from "react-icons/lu";
-import { Button, Input, PageTitle } from "../../../../ui/components";
+import { Button, Input } from "../../../../ui/components";
 import { Eye, EyeOff } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 

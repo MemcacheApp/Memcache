@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 import { LuEdit } from "react-icons/lu";
+import { Button } from "./Button";
 
 const Tag = React.forwardRef<
     HTMLButtonElement,
@@ -8,19 +9,18 @@ const Tag = React.forwardRef<
 >((props, ref) => {
     const { className, children, ...other } = props;
     return (
-        <button
+        <Button
             ref={ref}
-            className={classNames(
-                "relative group inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background h-10 py-2 px-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground",
-                className
-            )}
+            className={classNames("relative group px-4 hover:px-2", className)}
+            size="xs"
+            variant="secondary"
             {...other}
         >
             {children}
-            <span className="absolute right-3 p-1 opacity-0 bg-secondary group-hover:opacity-100 group-focus-visible:opacity-100">
+            <span className="hidden group-hover:flex group-focus-visible:flex justify-end w-4 bg-secondary group-hover:bg-secondary rounded-sm ">
                 <LuEdit />
             </span>
-        </button>
+        </Button>
     );
 });
 Tag.displayName = "Tag";
