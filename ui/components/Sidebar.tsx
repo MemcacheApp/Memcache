@@ -2,8 +2,13 @@
 
 import { LuMenu } from "react-icons/lu";
 import { Button, Navigation } from ".";
+import { useEffect } from "react";
 
 export function Sidebar() {
+    useEffect(() => {
+        document.body.classList.add("bg-muted");
+    }, []);
+
     return (
         <div className="fixed flex flex-col w-64 h-full border-r bg-background">
             <Button variant="ghost" className="m-3 w-10 !rounded-full p-0">
