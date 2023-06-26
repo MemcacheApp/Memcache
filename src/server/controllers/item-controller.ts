@@ -7,12 +7,14 @@ import ogs from "open-graph-scraper";
 export default class ItemController {
     static async createItem(
         userId: string,
+        type: string,
         title: string,
         url: string,
         description: string,
         thumbnail: string | null,
         collectionName: string,
-        tagNames: string[]
+        tagNames: string[],
+        siteName: string
     ) {
         const collection = await CollectionController.getOrCreateCollection(
             userId,
@@ -21,6 +23,7 @@ export default class ItemController {
         const tags = await TagController.getOrCreateTags(userId, tagNames);
         const item = await prisma.item.create({
             data: {
+                type,
                 id: uuidv4(),
                 status: 0,
                 collectionId: collection.id,
@@ -33,6 +36,7 @@ export default class ItemController {
                 thumbnail,
                 createdAt: new Date(),
                 userId,
+                siteName,
             },
         });
 
@@ -49,15 +53,14 @@ export default class ItemController {
 
         return await this.createItem(
             userId,
-            result.ogTitle ||
-                result.dcTitle ||
-                result.twitterTitle ||
-                "Untitled",
+            result.ogType || "website",
+            result.ogTitle || result.twitterTitle || "Untitled",
             result.ogUrl || url,
             result.ogDescription || result.dcDescription || "",
             result.ogImage?.[0].url || result.twitterImage?.[0].url || null,
             collectionName,
-            tagNames
+            tagNames,
+            result.ogSiteName || new URL(url).hostname
         );
     }
 
