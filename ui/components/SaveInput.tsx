@@ -89,7 +89,7 @@ export function SaveInput() {
     return (
         <div className="flex flex-col relative">
             <button
-                className="text-left text-base box-border bg-background p-4 rounded-md border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="text-left text-base box-border bg-background p-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 onClick={showPopover}
                 tabIndex={isShowPopover ? -1 : undefined}
             >
