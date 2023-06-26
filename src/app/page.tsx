@@ -10,9 +10,9 @@ export default function page() {
         return <div>Loading...</div>;
     } else if (data) {
         // if logged in, redirect to saves
-        redirect("/saves");
+        redirect("/app/saves");
     } else {
         // If not logged in, redirect to discover
-        redirect("/discover");
+        redirect("/app/discover");
     }
 }

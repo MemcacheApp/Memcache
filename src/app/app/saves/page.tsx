@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
 import {
     Card,
@@ -7,44 +7,43 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-	DeleteContent,
+    DeleteContent,
     LogInRequired,
     PageTitle,
     SaveInput,
-	StatusToggle,
-} from "../components";
-
+    StatusToggle,
+} from "../../../../ui/components";
 import { trpc } from "@/src/app/utils/trpc";
 
 export default function SavesPage() {
-    const [activeStatus, setActiveStatus] = React.useState(null);
+    const [activeStatus, setActiveStatus] = React.useState<string | null>(null);
 
     return (
         <div className="flex flex-col">
             <LogInRequired>
                 <PageTitle>Saves</PageTitle>
                 <SaveInput />
-                <StatusToggle activeStatus={activeStatus} setActiveStatus={setActiveStatus} />
+                <StatusToggle
+                    activeStatus={activeStatus}
+                    setActiveStatus={setActiveStatus}
+                />
                 <SaveList activeStatus={activeStatus} />
             </LogInRequired>
         </div>
     );
 }
 
-
 // Example save list
 function SaveList({ activeStatus }: { activeStatus: string | null }) {
     const itemsQuery = trpc.item.getItems.useQuery();
     const items = itemsQuery.data;
 
-	
-
-    const filterItems = items?.filter(item => {
+    const filterItems = items?.filter((item) => {
         if (activeStatus === null) return true;
-        if (activeStatus === 'Inbox' && item.status === 0) return true;
-        if (activeStatus === 'Underway' && item.status === 1) return true;
-        if (activeStatus === 'Completed' && item.status === 2) return true;
-        if (activeStatus === 'Archive' && item.status === 3) return true;
+        if (activeStatus === "Inbox" && item.status === 0) return true;
+        if (activeStatus === "Underway" && item.status === 1) return true;
+        if (activeStatus === "Completed" && item.status === 2) return true;
+        if (activeStatus === "Archive" && item.status === 3) return true;
         return false;
     });
 
