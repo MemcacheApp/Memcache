@@ -6,12 +6,10 @@ import {
     CardDescription,
     CardContent,
     CardFooter,
-} from "./Card";
-import { CollectionSelector } from "./CollectionSelector";
-import { TagSelector } from "./TagSelector";
-import { useState } from "react";
+} from "../../../ui/components/Card";
+import { CollectionSelector } from "../../../ui/components/CollectionSelector";
+import { TagSelector } from "../../../ui/components/TagSelector";
 import { trpc } from "../utils/trpc";
-import { removeTag, setTag } from "../utils";
 import { Item, Collection, Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 

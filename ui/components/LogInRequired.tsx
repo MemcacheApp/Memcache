@@ -1,6 +1,6 @@
 "use client";
 
-import { trpc } from "../../../src/app/utils/trpc";
+import { trpc } from "@/src/app/utils/trpc";
 
 interface LogInRequiredProps {
     children?: React.ReactNode;

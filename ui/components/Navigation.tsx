@@ -43,20 +43,23 @@ export function Navigation() {
     return (
         <nav className="mx-3 flex flex-col">
             <ul className="flex flex-col gap-1 list-none">
-                <NavigationItem href="/saves" icon={<LuAlbum size={20} />}>
+                <NavigationItem href="/app/saves" icon={<LuAlbum size={20} />}>
                     Saves
                 </NavigationItem>
-                <NavigationItem href="/discover" icon={<LuGlobe2 size={20} />}>
+                <NavigationItem
+                    href="/app/discover"
+                    icon={<LuGlobe2 size={20} />}
+                >
                     Discover
                 </NavigationItem>
                 <NavigationItem
-                    href="/flashcards"
+                    href="/app/flashcards"
                     icon={<LuLayoutDashboard size={20} />}
                 >
                     Flashcards
                 </NavigationItem>
                 <NavigationItem
-                    href="/summaries"
+                    href="/app/summaries"
                     icon={<LuNewspaper size={20} />}
                 >
                     Summaries
@@ -84,7 +87,7 @@ function Collections() {
                     ? collections.map((collection) => (
                           <NavigationItem
                               key={collection}
-                              href={`/collection/${collection}`}
+                              href={`/app/collection/${collection}`}
                           >
                               {collection}
                           </NavigationItem>

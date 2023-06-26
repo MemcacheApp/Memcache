@@ -1,15 +1,15 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { trpc } from "../../../src/app/utils/trpc";
+import { trpc } from "@/src/app/utils/trpc";
 import classNames from "classnames";
 import { LuPackage2, LuTag } from "react-icons/lu";
 
-import { CollectionSelector } from "../../../ui/components/CollectionSelector";
-import { TagSelector } from "../../../ui/components/TagSelector";
-import { includeCaseInsensitive } from "../utils";
-import { Input } from "../../../ui/components/Input";
-import { Button } from "../../../ui/components/Button";
+import { CollectionSelector } from "./CollectionSelector";
+import { TagSelector } from "./TagSelector";
+import { includeCaseInsensitive } from "../../src/app/utils";
+import { Input } from "./Input";
+import { Button } from "./Button";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function SaveInput() {

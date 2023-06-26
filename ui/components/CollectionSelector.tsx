@@ -11,9 +11,9 @@ import {
     PopoverContent,
     PopoverTrigger,
     buttonVariants,
-} from "../../../ui/components";
+} from ".";
 import { LuCheck, LuChevronsUpDown, LuPlus } from "react-icons/lu";
-import { includeCaseInsensitive } from "../utils";
+import { includeCaseInsensitive } from "../../src/app/utils";
 import classNames from "classnames";
 import { type VariantProps } from "class-variance-authority";
 

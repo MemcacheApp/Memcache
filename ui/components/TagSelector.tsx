@@ -1,58 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Button,
     Command,
+    CommandEmpty,
     CommandGroup,
     CommandInput,
     CommandItem,
     Popover,
     PopoverContent,
     PopoverTrigger,
-    buttonVariants,
-} from "../../../ui/components";
-import { LuCheck, LuChevronsUpDown, LuPlus } from "react-icons/lu";
-import { includeCaseInsensitive } from "../utils";
+    Tag,
+} from ".";
+import { LuCheck, LuPlus, LuTrash } from "react-icons/lu";
+import { includeCaseInsensitive } from "../../src/app/utils";
 import classNames from "classnames";
-import { type VariantProps } from "class-variance-authority";
 
-interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
-    collections: string[] | undefined;
+interface TagSelectorProps {
+    tags: string[] | undefined;
+    index: number;
     value: string;
-    setValue: (s: string) => void;
+    setValue: (name: string, index: number) => void;
+    remove: (index: number) => void;
 }
 
-export function CollectionSelector({
-    collections,
+export function TagSelector({
+    tags,
+    index,
     value,
     setValue,
-    size,
-}: CollectionSelectorProps) {
+    remove,
+}: TagSelectorProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
-
-    useEffect(() => {
-        if (collections && !value) {
-            setValue(collections[0]);
-        }
-    }, [collections]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    // variant="ghost"
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    size={size}
-                >
-                    {value || "Loading..."}
-                    <div className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end">
-                        <LuChevronsUpDown />
-                    </div>
-                </Button>
+                {index === -1 ? (
+                    <Button
+                        variant="outline"
+                        size="xs"
+                        role="combobox"
+                        aria-expanded={open}
+                    >
+                        <LuPlus />
+                    </Button>
+                ) : (
+                    <Tag role="combobox" aria-expanded={open}>
+                        {value}
+                    </Tag>
+                )}
             </PopoverTrigger>
             <PopoverContent className="w-[200px] !p-0">
                 <Command>
@@ -61,17 +60,32 @@ export function CollectionSelector({
                         value={searchValue}
                         onValueChange={setSearchValue}
                     />
+                    <CommandEmpty>No tag found.</CommandEmpty>
                     <CommandGroup>
-                        {collections ? (
+                        {tags ? (
                             <>
+                                {index !== -1 ? (
+                                    <CommandItem
+                                        className="!text-red-800 font-medium"
+                                        onSelect={() => {
+                                            remove(index);
+                                            setOpen(false);
+                                        }}
+                                    >
+                                        <span className="mr-2 h-4 w-4">
+                                            <LuTrash />
+                                        </span>
+                                        {`Remove "${value}"`}
+                                    </CommandItem>
+                                ) : null}
                                 {!searchValue ||
                                 includeCaseInsensitive(
-                                    collections,
+                                    tags,
                                     searchValue
                                 ) ? null : (
                                     <CommandItem
                                         onSelect={() => {
-                                            setValue(searchValue);
+                                            setValue(searchValue, index);
                                             setOpen(false);
                                         }}
                                     >
@@ -81,25 +95,25 @@ export function CollectionSelector({
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
                                 )}
-                                {collections.map((collection) => (
+                                {tags.map((tag) => (
                                     <CommandItem
-                                        key={collection}
+                                        key={tag}
                                         onSelect={() => {
-                                            setValue(collection);
+                                            setValue(tag, index);
                                             setOpen(false);
                                         }}
                                     >
                                         <span
                                             className={classNames(
                                                 "mr-2 h-4 w-4",
-                                                collection === value
+                                                tag === value
                                                     ? "opacity-100"
                                                     : "opacity-0"
                                             )}
                                         >
                                             <LuCheck />
                                         </span>
-                                        {collection}
+                                        {tag}
                                     </CommandItem>
                                 ))}
                             </>

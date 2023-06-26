@@ -12,7 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
     Tag,
-} from ".";
+} from "../../../ui/components";
 import { LuCheck, LuPlus, LuTrash } from "react-icons/lu";
 import { includeCaseInsensitive } from "../utils";
 import classNames from "classnames";
