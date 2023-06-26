@@ -1,4 +1,12 @@
-import { LuPackage2, LuTag } from "react-icons/lu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuIconItem,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "./DropdownMenu";
 import {
     Card,
     CardHeader,
@@ -13,6 +21,8 @@ import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
 import { DeleteContent } from "./DeleteContent";
 import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "./Button";
+import { Package2, Tag as LuTag, ExternalLink, Trash2 } from "lucide-react";
 
 export default function ItemCard({
     data,
@@ -62,6 +72,24 @@ export default function ItemCard({
         },
     });
 
+    const deleteItemMutation = trpc.item.deleteItem.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [["item", "getItems"], { type: "query" }],
+                exact: true,
+            });
+            console.log("deleted item?");
+        },
+    });
+
+    const handleDeleteItem = async () => {
+        try {
+            await deleteItemMutation.mutateAsync({ id: data.id });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <Card key={data.id}>
             <CardHeader>
@@ -78,11 +106,39 @@ export default function ItemCard({
                     </div>
                 </CardContent>
                 <DeleteContent item={data} />
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <Button>More Operations</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuIconItem Icon={ExternalLink}>
+                            Open Link
+                        </DropdownMenuIconItem>
+                        <DropdownMenuItem>Billing</DropdownMenuItem>
+                        <DropdownMenuItem>Team</DropdownMenuItem>
+                        <DropdownMenuItem>Subscription</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Profile</DropdownMenuItem>
+                        <DropdownMenuItem>Billing</DropdownMenuItem>
+                        <DropdownMenuItem>Team</DropdownMenuItem>
+                        <DropdownMenuItem>Subscription</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuIconItem
+                            Icon={Trash2}
+                            className="text-red-600"
+                            onClick={handleDeleteItem}
+                        >
+                            Delete
+                        </DropdownMenuIconItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </CardHeader>
             <CardFooter>
                 <div className="flex gap-2 flex-wrap items-center w-full pt-2 border-t-2 border-solid">
                     <div className="mx-2">
-                        <LuPackage2 />
+                        <Package2 />
                     </div>
                     <CollectionSelector
                         collections={collectionsQuery.data}
