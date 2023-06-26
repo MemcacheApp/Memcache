@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { LuUser } from "react-icons/lu";
 import { Button, Input, PageTitle } from "../../../../ui/components";
 import { Eye, EyeOff } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const userSchema = z.object({
     firstName: z.string().min(1, { message: "First name is required" }),
@@ -24,20 +25,6 @@ const userSchema = z.object({
 
 type SignUpFormData = z.infer<typeof userSchema>;
 
-/*
-
-TODO: .
-
-Encrypt password
-Add go to login link
-Add "Make password visible option"
-Change error messages
-Add loading animation (button animation)
-Change button style
-Add next auth
-
- */
-
 export default function page() {
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
@@ -46,12 +33,20 @@ export default function page() {
         }
     }, [isLoggedInQuery.data]);
 
+    const queryClient = useQueryClient();
+    const createUserMutation = trpc.user.createUser.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["user", "isLoggedIn"],
+            });
+        },
+    });
+
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<SignUpFormData>({ resolver: zodResolver(userSchema) });
-    const createUserMutation = trpc.user.createUser.useMutation();
 
     const [passwordShown, setPasswordShown] = useState<boolean>(false);
 
@@ -66,7 +61,6 @@ export default function page() {
             >
                 <div className="flex items-center self-start mb-4">
                     <LuUser className="mr-3" size={36} strokeWidth={1.75} />
-                    {/* <PageTitle>Sign Up</PageTitle> */}
                     <h1 className="text-3xl">Sign Up</h1>
                 </div>
                 <div className="flex">

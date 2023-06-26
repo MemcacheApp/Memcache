@@ -8,10 +8,10 @@ import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { LuUser } from "react-icons/lu";
 import Link from "next/link";
-import { PageTitle } from "../../../../ui/components/typography";
 import { Input } from "../../../../ui/components/Input";
 import { Button } from "../../../../ui/components/Button";
 import { Eye, EyeOff } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -30,12 +30,20 @@ export default function page() {
         }
     }, [isLoggedInQuery.data]);
 
+    const queryClient = useQueryClient();
+    const loginMutation = trpc.user.login.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["user", "isLoggedIn"],
+            });
+        },
+    });
+
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
-    const loginMutation = trpc.user.login.useMutation();
     const [passwordShown, setPasswordShown] = useState<boolean>(false);
 
     return (
