@@ -35,4 +35,23 @@ export const itemRouter = router({
         .mutation(async ({ ctx, input }) => {
             ItemController.deleteItem(ctx.userId, input.id);
         }),
+    setCollection: protectedProcedure
+        .input(z.object({ itemId: z.string(), collectionName: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            ItemController.setCollection(
+                ctx.userId,
+                input.itemId,
+                input.collectionName
+            );
+        }),
+    addTag: protectedProcedure
+        .input(z.object({ itemId: z.string(), tagName: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            ItemController.addTag(ctx.userId, input.itemId, input.tagName);
+        }),
+    removeTag: protectedProcedure
+        .input(z.object({ itemId: z.string(), tagId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            ItemController.removeTag(ctx.userId, input.itemId, input.tagId);
+        }),
 });

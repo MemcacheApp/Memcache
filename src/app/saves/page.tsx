@@ -1,8 +1,8 @@
 "use client";
 
-import { LogInRequired, PageTitle, SaveInput } from "../../../../ui/components";
-import { trpc } from "@/src/app/utils/trpc";
-import ItemCard from "../../../../ui/components/ItemCard";
+import { LogInRequired, PageTitle, SaveInput } from "../../../ui/components";
+import { trpc } from "../../app/utils/trpc";
+import ItemCard from "../../../ui/components/ItemCard";
 
 export default function SavesPage() {
     return (
