@@ -2,7 +2,7 @@
 
 import { LogInRequired, PageTitle, SaveInput } from "../../../../ui/components";
 import { trpc } from "@/src/app/utils/trpc";
-import ItemCard from "../../components/ItemCard";
+import ItemCard from "../../../../ui/components/ItemCard";
 
 export default function SavesPage() {
     return (

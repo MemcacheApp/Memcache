@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { trpc } from "@/src/app/utils/trpc";
+import { trpc } from "../../src/app/utils/trpc";
 import classNames from "classnames";
 import { LuPackage2, LuTag } from "react-icons/lu";
 

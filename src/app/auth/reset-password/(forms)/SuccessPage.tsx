@@ -1,7 +1,6 @@
 import { Button } from "@/ui/components";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 
 export default function SuccessPage() {
     return (
