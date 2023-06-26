@@ -7,6 +7,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
+	DeleteContent,
     LogInRequired,
     PageTitle,
     SaveInput,
@@ -36,6 +37,8 @@ function SaveList({ activeStatus }: { activeStatus: string | null }) {
     const itemsQuery = trpc.item.getItems.useQuery();
     const items = itemsQuery.data;
 
+	
+
     const filterItems = items?.filter(item => {
         if (activeStatus === null) return true;
         if (activeStatus === 'Inbox' && item.status === 0) return true;
@@ -62,6 +65,7 @@ function SaveList({ activeStatus }: { activeStatus: string | null }) {
                                           <div key={tag.id}>{tag.name}</div>
                                       ))}
                                   </div>
+                                  <DeleteContent item={item} />
                               </CardContent>
                           </CardHeader>
                       </Card>
