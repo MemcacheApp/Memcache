@@ -4,7 +4,13 @@ import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { trpc } from "@/src/app/utils/trpc";
-import { Album, Globe2, LayoutDashboard, Newspaper } from "lucide-react";
+import {
+    Album,
+    Globe2,
+    LayoutDashboard,
+    Newspaper,
+    Package2,
+} from "lucide-react";
 
 interface NavigationItemProps {
     children?: React.ReactNode;
@@ -69,8 +75,13 @@ function Collections() {
     const collections = collectionsQuery.data;
 
     return (
-        <li className="mt-5">
-            <p className="ml-2 mb-2 font-medium">Collections</p>
+        <li className="mt-2 ml-2">
+            <div className="flex flex-row items-center gap-2 py-2">
+                <Package2 size={12} />
+                <p className="text-slate-400 text-[12px] tracking-widest">
+                    COLLECTIONS
+                </p>
+            </div>
             <ul>
                 {collections
                     ? collections.map((collection) => (

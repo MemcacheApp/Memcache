@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 export default class CollectionController {
     static async createCollection(userId: string, name: string) {
         if (await this.getCollectionByName(userId, name)) {
-            throw Error("Collection already exists");
+            throw Error(`Collection ${name} already exists for user ${userId}`);
         }
 
         const collection = await prisma.collection.create({

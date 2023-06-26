@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
+import { Collection, Item, Tag } from "@prisma/client";
 
 export default class ItemController {
     static async createFromURL(
@@ -85,5 +86,86 @@ export default class ItemController {
                 },
             });
         }
+    }
+
+    static async setCollection(
+        userId: string,
+        itemId: string,
+        collectionName: string
+    ) {
+        const collection = await CollectionController.getOrCreateCollection(
+            userId,
+            collectionName
+        );
+
+        let item: (Item & { collection: Collection; tags: Tag[] }) | null =
+            await this.getItem(itemId);
+
+        if (item && item.userId === userId) {
+            item = await prisma.item.update({
+                where: {
+                    id: itemId,
+                },
+                data: {
+                    // collection: {
+                    //     connect: { id: collection.id },
+                    // },
+                    collectionId: collection.id,
+                },
+                include: {
+                    tags: true,
+                    collection: true,
+                },
+            });
+        }
+        return item;
+    }
+
+    static async addTag(userId: string, itemId: string, tagName: string) {
+        const tag = await TagController.getOrCreateTag(userId, tagName);
+
+        let item: (Item & { collection: Collection; tags: Tag[] }) | null =
+            await this.getItem(itemId);
+
+        if (item && item.userId === userId) {
+            item = await prisma.item.update({
+                where: {
+                    id: itemId,
+                },
+                data: {
+                    tags: {
+                        connect: [{ id: tag.id }],
+                    },
+                },
+                include: {
+                    tags: true,
+                    collection: true,
+                },
+            });
+        }
+        return item;
+    }
+
+    static async removeTag(userId: string, itemId: string, tagId: string) {
+        let item: (Item & { collection: Collection; tags: Tag[] }) | null =
+            await this.getItem(itemId);
+
+        if (item && item.userId === userId) {
+            item = await prisma.item.update({
+                where: {
+                    id: itemId,
+                },
+                data: {
+                    tags: {
+                        disconnect: [{ id: tagId }],
+                    },
+                },
+                include: {
+                    tags: true,
+                    collection: true,
+                },
+            });
+        }
+        return item;
     }
 }

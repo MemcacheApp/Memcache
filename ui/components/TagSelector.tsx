@@ -41,6 +41,7 @@ export function TagSelector({
                 {index === -1 ? (
                     <Button
                         variant="outline"
+                        size="xs"
                         role="combobox"
                         aria-expanded={open}
                     >

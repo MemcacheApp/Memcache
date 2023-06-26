@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { trpc } from "@/src/app/utils/trpc";
+import { trpc } from "../../src/app/utils/trpc";
 import classNames from "classnames";
 
 import { CollectionSelector } from "./CollectionSelector";
@@ -111,45 +111,45 @@ export function SaveInput() {
                         onChange={(e) => setUrl(e.target.value)}
                         ref={inputRef}
                     />
-                    <div className="flex p-2 place-content-between gap-3 flex-wrap">
-                        <div className="flex gap-3 flex-wrap">
-                            <div className="flex items-center">
-                                <div className="mx-3">
-                                    <Package2 />
-                                </div>
-                                <CollectionSelector
-                                    collections={collectionsQuery.data}
-                                    value={collection}
-                                    setValue={setCollection}
-                                />
+                    <div>
+                        <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
+                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
+                                <Package2 size={18} />
+                                {"Collection:"}
                             </div>
-                            <div className="flex items-center">
-                                <div className="mx-3">
-                                    <Tag />
-                                </div>
-                                <div className="flex gap-2 flex-wrap">
-                                    {tags.map((tag, index) => (
-                                        <TagSelector
-                                            key={tag}
-                                            index={index}
-                                            tags={tagsQuery.data}
-                                            value={tag}
-                                            setValue={setTag}
-                                            remove={removeTag}
-                                        />
-                                    ))}
-                                    <TagSelector
-                                        tags={tagsQuery.data}
-                                        value=""
-                                        index={-1}
-                                        setValue={setTag}
-                                        remove={removeTag}
-                                    />
-                                </div>
-                            </div>
+                            <CollectionSelector
+                                collections={collectionsQuery.data}
+                                value={collection}
+                                setValue={setCollection}
+                            />
                         </div>
-                        <div>
-                            <Button type="submit">Save</Button>
+                        <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
+                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
+                                <Tag size={18} />
+                                {"Tags:"}
+                            </div>
+                            {tags.map((tag, index) => (
+                                <TagSelector
+                                    key={tag}
+                                    index={index}
+                                    tags={tagsQuery.data}
+                                    value={tag}
+                                    setValue={setTag}
+                                    remove={removeTag}
+                                />
+                            ))}
+                            <TagSelector
+                                tags={tagsQuery.data}
+                                value=""
+                                index={-1}
+                                setValue={setTag}
+                                remove={removeTag}
+                            />
+                        </div>
+                        <div className="flex gap-2 flex-wrap justify-end items-center w-full py-3 px-4 border-t-2 border-solid">
+                            <Button className="w-full text-bold" type="submit">
+                                Save
+                            </Button>
                         </div>
                     </div>
                 </form>
