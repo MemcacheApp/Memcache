@@ -23,7 +23,9 @@ function SaveList() {
 
     return (
         <div className="flex flex-col mt-3 gap-3">
-            {items
+            {items?.sort(
+                (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
+            )
                 ? items.map((item) => <ItemCard data={item} key={item.id} />)
                 : null}
         </div>
