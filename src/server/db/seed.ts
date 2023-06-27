@@ -76,16 +76,21 @@ const ITEMS = [
 ];
 
 async function main() {
-    const token = await UserController.createUser(
-        ADMIN_FIRST_NAME,
-        ADMIN_LAST_NAME,
-        ADMIN_EMAIL,
-        ADMIN_PASSWORD
-    );
-
-    console.log(
-        `Created admin user ${ADMIN_EMAIL} with password ${ADMIN_PASSWORD}`
-    );
+    try {
+        const token = await UserController.createUser(
+            ADMIN_FIRST_NAME,
+            ADMIN_LAST_NAME,
+            ADMIN_EMAIL,
+            ADMIN_PASSWORD
+        );
+        console.log(
+            `Created admin user ${ADMIN_EMAIL} with password ${ADMIN_PASSWORD}`
+        );
+    } catch (e) {
+        if (e instanceof Error) {
+            console.log(`${e.message}... email: ${ADMIN_EMAIL}`);
+        }
+    }
 
     const admin_user = await UserController.userInfoByEmail(ADMIN_EMAIL);
 

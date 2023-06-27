@@ -23,6 +23,12 @@ The prisma migrate command will automatically run the seed in `prisma/seed.ts` t
 }
 ```
 
+To seed manually:
+
+```bash
+npx prisma db seed
+```
+
 To reset the database to initial state using the seed data.
 
 ```bash
