@@ -140,6 +140,21 @@ export default class UserController {
         };
     }
 
+    static async userInfoByEmail(email: string) {
+        const user = await prisma.user.findUniqueOrThrow({
+            where: {
+                email,
+            },
+        });
+
+        return {
+            id: user.id,
+            firstName: user.firstName,
+            lastname: user.lastName,
+            email: user.email,
+        };
+    }
+
     static async isValidEmail(email: string) {
         const user = await prisma.user.findUnique({
             where: {
