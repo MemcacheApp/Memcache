@@ -98,6 +98,29 @@ export default class ItemController {
         }
     }
 
+    static async updateItemStatus(
+        userId: string,
+        itemId: string,
+        status: number
+    ) {
+        const item = await prisma.item.findUnique({
+            where: {
+                id: itemId,
+            },
+        });
+
+        if (item && item.userId === userId) {
+            return await prisma.item.update({
+                where: {
+                    id: itemId,
+                },
+                data: {
+                    status: status,
+                },
+            });
+        }
+    }
+
     static async setCollection(
         userId: string,
         itemId: string,

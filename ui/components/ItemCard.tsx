@@ -1,10 +1,8 @@
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuIconItem,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuPortal,
     DropdownMenuSeparator,
     DropdownMenuSubContent,
@@ -25,7 +23,6 @@ import { CollectionSelector } from "./CollectionSelector";
 import { TagSelector } from "./TagSelector";
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
-import { DeleteContent } from "./DeleteContent";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "./Button";
 import {
@@ -35,14 +32,11 @@ import {
     Trash2,
     MoreHorizontal,
     PanelRightOpen,
-    FileText,
     Inbox,
-    CircleDotDashed,
     CheckCircle2,
     CircleDot,
     Archive,
 } from "lucide-react";
-import classNames from "classnames";
 
 export default function ItemCard({
     data,
@@ -105,6 +99,27 @@ export default function ItemCard({
     const handleDeleteItem = async () => {
         try {
             await deleteItemMutation.mutateAsync({ id: data.id });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [["item", "getItems"], { type: "query" }],
+                exact: true,
+            });
+            console.log("updated item status");
+        },
+    });
+
+    const handleUpdateItemStatus = async (status: number) => {
+        try {
+            await updateItemStatusMutation.mutateAsync({
+                itemId: data.id,
+                status,
+            });
         } catch (error) {
             console.error(error);
         }
@@ -189,16 +204,32 @@ export default function ItemCard({
                                 </DropdownMenuIconItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Button variant={"icon"} size={"none"}>
+                        <Button
+                            variant={"icon"}
+                            size={"none"}
+                            onClick={() => handleUpdateItemStatus(0)}
+                        >
                             <Inbox size={18} />
                         </Button>
-                        <Button variant={"icon"} size={"none"}>
+                        <Button
+                            variant={"icon"}
+                            size={"none"}
+                            onClick={() => handleUpdateItemStatus(1)}
+                        >
                             <CircleDot size={18} />
                         </Button>
-                        <Button variant={"icon"} size={"none"}>
+                        <Button
+                            variant={"icon"}
+                            size={"none"}
+                            onClick={() => handleUpdateItemStatus(2)}
+                        >
                             <CheckCircle2 size={18} />
                         </Button>
-                        <Button variant={"icon"} size={"none"}>
+                        <Button
+                            variant={"icon"}
+                            size={"none"}
+                            onClick={() => handleUpdateItemStatus(3)}
+                        >
                             <Archive size={18} />
                         </Button>
                     </div>
