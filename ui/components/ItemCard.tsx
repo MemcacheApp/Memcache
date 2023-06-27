@@ -103,7 +103,7 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
                 ) : null}
             </div>
             <CardFooter className="flex justify-between">
-                <div className="flex gap-5 text-slate-600">
+                <div className="flex gap-5 text-slate-600 text-sm">
                     <span className="inline-flex items-center gap-2">
                         <Globe size={16} />
                         {data.siteName}
