@@ -38,6 +38,7 @@ import {
     Archive,
     Globe,
 } from "lucide-react";
+import Link from "next/link";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -156,18 +157,28 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
                     </span>
                     <span className="inline-flex items-center gap-2">
                         <Package2 size={16} />
-                        {data.collection.name}
+                        <Link
+                            className="hover:underline"
+                            href={`/app/collection/${data.collection.id}`}
+                        >
+                            {data.collection.name}
+                        </Link>
                     </span>
                     <div>
                         {data.tags.map((tag) => (
-                            <Button
-                                className="px-4"
-                                variant="secondary"
-                                size="xs"
+                            <Link
                                 key={tag.id}
+                                href={`/app/tag/${tag.id}`}
+                                tabIndex={-1}
                             >
-                                {tag.name}
-                            </Button>
+                                <Button
+                                    className="px-4"
+                                    variant="secondary"
+                                    size="xs"
+                                >
+                                    {tag.name}
+                                </Button>
+                            </Link>
                         ))}
                     </div>
                 </div>
