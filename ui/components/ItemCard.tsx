@@ -12,24 +12,22 @@ import {
     DropdownMenuGroup,
     DropdownMenuSub,
     DropdownMenuSubTrigger,
-} from "./DropdownMenu";
-import {
     Card,
     CardHeader,
     CardTitle,
     CardDescription,
     CardContent,
     CardFooter,
-} from "./Card";
-import { CollectionSelector } from "./CollectionSelector";
-import { TagSelector } from "./TagSelector";
+    CollectionSelector,
+    TagSelector,
+    Button,
+    Tag as TagButton,
+} from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { Button } from "./Button";
 import {
     Package2,
-    Tag as LuTag,
     ExternalLink,
     Trash2,
     MoreHorizontal,
@@ -38,6 +36,7 @@ import {
     CheckCircle2,
     CircleDot,
     Archive,
+    Globe,
 } from "lucide-react";
 
 interface ItemCardProps {
@@ -143,16 +142,26 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
                 </div>
                 {data.thumbnail ? (
                     <img
-                        className="max-h-28 lg:max-h-44 m-6 rounded-lg"
+                        className="max-h-28 lg:max-h-40 m-6 rounded-lg"
                         src={data.thumbnail}
                     />
                 ) : null}
             </div>
             <CardFooter className="flex justify-between">
-                <div>
-                    <span>{data.type}</span>
-                    <span>{data.author}</span>
-                    <span>{data.releaseTime?.toString()}</span>
+                <div className="flex gap-5">
+                    <span className="inline-flex items-center gap-1">
+                        <Globe size={16} />
+                        {data.siteName}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                        <Package2 size={16} />
+                        {data.collection.name}
+                    </span>
+                    <div>
+                        {data.tags.map((tag) => (
+                            <TagButton key={tag.id}>{tag.name}</TagButton>
+                        ))}
+                    </div>
                 </div>
                 <div className="flex gap-3">
                     <DropdownMenu>
@@ -218,16 +227,32 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
                             </DropdownMenuIconItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button variant={"icon"} size={"none"}>
+                    <Button
+                        variant={"icon"}
+                        size={"none"}
+                        onClick={() => handleUpdateItemStatus(0)}
+                    >
                         <Inbox size={18} />
                     </Button>
-                    <Button variant={"icon"} size={"none"}>
+                    <Button
+                        variant={"icon"}
+                        size={"none"}
+                        onClick={() => handleUpdateItemStatus(1)}
+                    >
                         <CircleDot size={18} />
                     </Button>
-                    <Button variant={"icon"} size={"none"}>
+                    <Button
+                        variant={"icon"}
+                        size={"none"}
+                        onClick={() => handleUpdateItemStatus(2)}
+                    >
                         <CheckCircle2 size={18} />
                     </Button>
-                    <Button variant={"icon"} size={"none"}>
+                    <Button
+                        variant={"icon"}
+                        size={"none"}
+                        onClick={() => handleUpdateItemStatus(3)}
+                    >
                         <Archive size={18} />
                     </Button>
                 </div>
