@@ -46,6 +46,7 @@ model Item {
   duration     Int?
   releaseTime  DateTime?
   author       String?
+  favicon      String?
 }
 
 model Collection {

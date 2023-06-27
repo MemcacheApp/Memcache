@@ -11,6 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
     "@prisma/client": "^4.15.0",
+    "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
     "@radix-ui/react-label": "^2.0.2",
@@ -38,7 +39,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.44.3",
-    "react-icons": "^4.9.0",
     "react-otp-input": "^3.0.2",
     "resend": "^0.15.3",
     "superjson": "^1.12.3",

@@ -8,7 +8,11 @@ export default function page() {
     const { data } = trpc.user.isLoggedIn.useQuery();
 
     if (data === undefined) {
-        return <Loader />;
+        return (
+            <div className="w-full h-screen flex justify-center items-center">
+                <Loader />
+            </div>
+        );
     } else if (data) {
         // if logged in, redirect to saves
         redirect("/app/saves");
