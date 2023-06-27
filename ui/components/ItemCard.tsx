@@ -34,6 +34,8 @@ import {
     Globe,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { AspectRatio } from "./AspectRatio";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -96,15 +98,18 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
             }}
         >
             <div className="flex">
-                <div className="flex flex-col flex-grow p-6">
+                <div className="flex flex-col grow p-6">
                     <CardTitle>{data.title}</CardTitle>
                     <p className="mt-3">{data.description}</p>
                 </div>
                 {data.thumbnail ? (
-                    <img
-                        className="max-h-28 lg:max-h-40 m-6 rounded-lg"
-                        src={data.thumbnail}
-                    />
+                    <div className="w-[320px] max-w-[32%] aspect-[16/9] m-8 shrink-0">
+                        <img
+                            src={data.thumbnail}
+                            alt="Image"
+                            className="rounded-lg object-cover object-center relative w-full h-full"
+                        />
+                    </div>
                 ) : null}
             </div>
             <CardFooter className="flex justify-between">
