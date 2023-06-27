@@ -1,14 +1,20 @@
 import React from "react";
 import classNames from "classnames";
+import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
 
 const StatusToggle = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement> & {
-        activeStatus: string | null;
-        setActiveStatus: (status: string | null) => void;
+        activeStatus: StatusEnum;
+        setActiveStatus: (status: StatusEnum) => void;
     }
 >(({ className, activeStatus, setActiveStatus, ...props }, ref) => {
-    const statuses = ["Inbox", "Underway", "Completed", "Archive"];
+    const statuses = [
+        StatusEnum.Inbox,
+        StatusEnum.Underway,
+        StatusEnum.Complete,
+        StatusEnum.Archive,
+    ];
 
     return (
         <div
@@ -27,7 +33,7 @@ const StatusToggle = React.forwardRef<
                     )}
                     onClick={() => setActiveStatus(status)}
                 >
-                    {status}
+                    {StatusNames[status]}
                 </button>
             ))}
         </div>

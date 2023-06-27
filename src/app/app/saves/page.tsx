@@ -2,23 +2,23 @@
 import React, { useState } from "react";
 
 import {
-    Card,
     LogInRequired,
     PageTitle,
     SaveInput,
     StatusToggle,
     ItemCard,
     ItemPanel,
-    Button,
 } from "@/ui/components";
 import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
 import classNames from "classnames";
-import { PanelRight } from "lucide-react";
+import { StatusEnum, StatusNames } from "../../utils/Statuses";
 
 export default function SavesPage() {
-    const [activeStatus, setActiveStatus] = React.useState<string | null>(null);
+    const [activeStatus, setActiveStatus] = React.useState<StatusEnum>(
+        StatusEnum.Inbox
+    );
     const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
     const dismissPanel = () => {
@@ -52,7 +52,7 @@ export default function SavesPage() {
 }
 
 interface SaveListProps {
-    activeStatus: string | null;
+    activeStatus: StatusEnum;
     setSelectedItem: (id: string) => void;
 }
 
@@ -62,12 +62,7 @@ function SaveList({ activeStatus, setSelectedItem }: SaveListProps) {
     let items = itemsQuery.data;
 
     items = items?.filter((item) => {
-        if (activeStatus === null) return true;
-        if (activeStatus === "Inbox" && item.status === 0) return true;
-        if (activeStatus === "Underway" && item.status === 1) return true;
-        if (activeStatus === "Completed" && item.status === 2) return true;
-        if (activeStatus === "Archive" && item.status === 3) return true;
-        return false;
+        return activeStatus === null || activeStatus === item.status;
     });
 
     items = items?.sort(
@@ -96,7 +91,7 @@ function SaveList({ activeStatus, setSelectedItem }: SaveListProps) {
                         height="128"
                         alt="Empty Inbox"
                     />
-                    <div>{`No saves in ${activeStatus}`}</div>
+                    <div>{`No saves in ${StatusNames[activeStatus]}`}</div>
                 </div>
             )}
         </div>
