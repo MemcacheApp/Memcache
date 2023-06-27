@@ -12,6 +12,5 @@ export * from "./LogInRequired";
 export * from "./Popover";
 export * from "./SaveInput";
 export * from "./StatusToggle";
-export * from "./Tag";
 export * from "./TagSelector";
 export * from "./typography";
