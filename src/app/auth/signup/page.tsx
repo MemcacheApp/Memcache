@@ -38,6 +38,7 @@ export default function page() {
             queryClient.invalidateQueries({
                 queryKey: ["user", "isLoggedIn"],
             });
+            redirect("/");
         },
     });
 
