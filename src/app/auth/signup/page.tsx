@@ -141,7 +141,7 @@ export default function page() {
                 <Button type="submit">Create account</Button>
                 <p className="text-sm">
                     Already have an account?{" "}
-                    <Link className="underline" href={"/login"}>
+                    <Link className="underline" href={"/auth/login"}>
                         Log in
                     </Link>
                 </p>
