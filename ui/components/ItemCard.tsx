@@ -129,7 +129,8 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
 
     return (
         <Card
-            className="flex flex-col cursor-pointer hover:ring-2 hover:ring-ring hover:ring-offset-2"
+            className="flex flex-col cursor-pointer hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            tabIndex={0}
             key={data.id}
             onClick={() => {
                 onSelect(data.id);
