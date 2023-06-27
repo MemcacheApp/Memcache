@@ -11,7 +11,6 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    Tag,
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import classNames from "classnames";

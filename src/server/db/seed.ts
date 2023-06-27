@@ -18,6 +18,7 @@ const ITEMS = [
         thumbnail:
             "https://assets-global.website-files.com/621e749a546b7592125f38ed/6221e6c759f19819bd5bec04_CodeGen.jpg",
         type: "article",
+        siteName: "deepmind.com",
     },
     {
         title: "Writing WebSocket client applications - Web APIs | MDN",
@@ -27,6 +28,7 @@ const ITEMS = [
         thumbnail:
             "https://developer.mozilla.org/mdn-social-share.cd6c4a5a.png",
         type: "article",
+        siteName: "developer.mozilla.org",
     },
     {
         title: "Just-In-Time: The Next Generation of Tailwind CSS - Tailwind CSS",
@@ -36,6 +38,7 @@ const ITEMS = [
         thumbnail:
             "https://tailwindcss.com/_next/static/media/card.79a37188.jpg",
         type: "article",
+        siteName: "tailwindcss.com",
     },
     {
         title: "Meta bets big on AI with custom chips -- and a supercomputer",
@@ -45,6 +48,7 @@ const ITEMS = [
         thumbnail:
             "https://techcrunch.com/wp-content/uploads/2021/11/facebook-meta-twist.jpg?resize=1200,675",
         type: "article",
+        siteName: "TechCrunch",
     },
     {
         title: "Twitter's Recommendation Algorithm",
@@ -54,6 +58,7 @@ const ITEMS = [
         thumbnail:
             "https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/main-template-assets/Eng_EXPLORE_Pink.png.twimg.768.png",
         type: "article",
+        siteName: "blog.twitter.com",
     },
     {
         title: "Just-In-Time: The Next Generation of Tailwind CSS - Tailwind CSS",
@@ -63,6 +68,7 @@ const ITEMS = [
         thumbnail:
             "https://tailwindcss.com/_next/static/media/card.79a37188.jpg",
         type: "article",
+        siteName: "tailwindcss.com",
     },
     {
         title: "Ten Years of TypeScript",
@@ -72,7 +78,7 @@ const ITEMS = [
         thumbnail:
             "https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2018/08/typescriptfeature.png",
         type: "article",
-        site_name: "TypeScript",
+        siteName: "TypeScript",
     },
 ];
 
@@ -112,7 +118,7 @@ async function main() {
             thumbnail: item.thumbnail,
             createdAt: new Date(),
             userId: admin_user.id,
-            siteName: "Default Site",
+            siteName: item.siteName,
         })),
     });
 
