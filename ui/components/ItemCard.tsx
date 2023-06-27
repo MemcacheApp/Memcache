@@ -160,7 +160,14 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
                     </span>
                     <div>
                         {data.tags.map((tag) => (
-                            <TagButton key={tag.id}>{tag.name}</TagButton>
+                            <Button
+                                className="px-4"
+                                variant="secondary"
+                                size="xs"
+                                key={tag.id}
+                            >
+                                {tag.name}
+                            </Button>
                         ))}
                     </div>
                 </div>

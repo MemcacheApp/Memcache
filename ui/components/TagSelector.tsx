@@ -15,7 +15,7 @@ import {
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import classNames from "classnames";
-import { Check, Plus, Trash } from "lucide-react";
+import { Check, Edit, Plus, Trash } from "lucide-react";
 
 interface TagSelectorProps {
     tags: string[] | undefined;
@@ -45,12 +45,21 @@ export function TagSelector({
                         role="combobox"
                         aria-expanded={open}
                     >
-                        <Plus />
+                        <Plus size={16} />
                     </Button>
                 ) : (
-                    <Tag role="combobox" aria-expanded={open}>
+                    <Button
+                        className="px-4 group relative"
+                        variant="secondary"
+                        size="xs"
+                        role="combobox"
+                        aria-expanded={open}
+                    >
                         {value}
-                    </Tag>
+                        <span className="absolute -right-3 -bottom-2 bg-background p-1 border text-foreground opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 rounded-full z-10">
+                            <Edit size={13} />
+                        </span>
+                    </Button>
                 )}
             </PopoverTrigger>
             <PopoverContent className="w-[200px] !p-0">
