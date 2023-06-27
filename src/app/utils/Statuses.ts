@@ -7,7 +7,7 @@ export enum StatusEnum {
 
 export const StatusNames = {
     [StatusEnum.Inbox]: "Inbox",
-    [StatusEnum.Underway]: "In Progress",
+    [StatusEnum.Underway]: "Underway",
     [StatusEnum.Complete]: "Complete",
     [StatusEnum.Archive]: "Archive",
 };

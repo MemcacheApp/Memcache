@@ -2,21 +2,18 @@
 import React, { useState } from "react";
 
 import {
-    Card,
     LogInRequired,
     PageTitle,
     SaveInput,
     StatusToggle,
     ItemCard,
     ItemPanel,
-    Button,
 } from "@/ui/components";
 import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
 import classNames from "classnames";
-import { PanelRight } from "lucide-react";
-import { StatusEnum } from "../../utils/Statuses";
+import { StatusEnum, StatusNames } from "../../utils/Statuses";
 
 export default function SavesPage() {
     const [activeStatus, setActiveStatus] = React.useState<StatusEnum>(
@@ -94,7 +91,7 @@ function SaveList({ activeStatus, setSelectedItem }: SaveListProps) {
                         height="128"
                         alt="Empty Inbox"
                     />
-                    <div>{`No saves in ${activeStatus}`}</div>
+                    <div>{`No saves in ${StatusNames[activeStatus]}`}</div>
                 </div>
             )}
         </div>
