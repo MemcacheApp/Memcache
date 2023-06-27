@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import UserController from "../../controllers/user-controller";
@@ -126,6 +126,14 @@ export const userRouter = router({
                 });
             }
         }),
+    getUserInfo: protectedProcedure.query(async ({ ctx }) => {
+        if (ctx.userId) {
+            const user = await UserController.userInfo(ctx.userId);
+            return user;
+        } else {
+            return null;
+        }
+    }),
 });
 
 // Resend API keys

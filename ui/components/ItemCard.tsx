@@ -71,11 +71,15 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
         },
     });
 
-    const handleUpdateItemStatus = async (status: number) => {
+    const handleUpdateItemStatus = async (newStatus: number) => {
+        if (newStatus === data.status) {
+            // Same status, no need to change
+            return;
+        }
         try {
             await updateItemStatusMutation.mutateAsync({
                 itemId: data.id,
-                status,
+                status: newStatus,
             });
         } catch (error) {
             console.error(error);

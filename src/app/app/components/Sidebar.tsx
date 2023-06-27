@@ -2,13 +2,19 @@
 
 import { Menu, User } from "lucide-react";
 import { Navigation } from "./Navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/ui/components";
 import { trpc } from "../../utils/trpc";
 import Link from "next/link";
+import { userInfo } from "os";
 
 export function Sidebar() {
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
+
+    const userInfoQuery = trpc.user.getUserInfo.useQuery();
+    const username = isLoggedInQuery.data
+        ? `${userInfoQuery.data?.firstName} ${userInfoQuery.data?.lastName}`
+        : null;
 
     useEffect(() => {
         document.body.classList.add("bg-muted");
@@ -23,10 +29,10 @@ export function Sidebar() {
                 <span className="sr-only">Toggle sidebar</span>
             </Button>
             <Navigation />
-            <div className="absolute flex bg-background/50 bottom-0 left-0 right-0 p-5 gap-3">
+            <div className="absolute flex items-center bg-background/50 bottom-0 left-0 right-0 p-5 gap-3">
                 <User />
-                {isLoggedInQuery.data ? (
-                    <div>Username</div>
+                {username ? (
+                    <div>{username}</div>
                 ) : (
                     <Link href="auth/login">Log in</Link>
                 )}
