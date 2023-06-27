@@ -1,7 +1,7 @@
 # capstone-project-3900w16bendermen
 capstone-project-3900w16bendermen created by GitHub Classroom
 
-## Prisma
+## Prisma & Database
 
 To set up prisma:
 
@@ -35,3 +35,18 @@ To reset the database to initial state using the seed data.
 $ npx prisma migrate reset
 ```
 
+The seed contains a user as such:
+
+```json
+{
+    "id": "483242390", // randomly generated uuidv4
+    "firstName": "Ender",
+    "lastName": "Man",
+    "email": "admin@endermen.com",
+    "password": "123456"
+}
+```
+
+You can login in using this seeded user's email and password. You will see some pre-made items in the inbox.
+
+![](assets/admin-seeded-inbox.png)
