@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusEnum } from "@/src/app/utils/Statuses";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,15 +14,9 @@ import {
     DropdownMenuSub,
     DropdownMenuSubTrigger,
     Card,
-    CardHeader,
     CardTitle,
-    CardDescription,
-    CardContent,
     CardFooter,
-    CollectionSelector,
-    TagSelector,
     Button,
-    Tag as TagButton,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
@@ -249,28 +244,34 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(0)}
+                        onClick={() => handleUpdateItemStatus(StatusEnum.Inbox)}
                     >
                         <Inbox size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(1)}
+                        onClick={() =>
+                            handleUpdateItemStatus(StatusEnum.Underway)
+                        }
                     >
                         <CircleDot size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(2)}
+                        onClick={() =>
+                            handleUpdateItemStatus(StatusEnum.Complete)
+                        }
                     >
                         <CheckCircle2 size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(3)}
+                        onClick={() =>
+                            handleUpdateItemStatus(StatusEnum.Archive)
+                        }
                     >
                         <Archive size={18} />
                     </Button>
