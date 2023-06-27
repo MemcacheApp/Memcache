@@ -110,6 +110,28 @@ export default function ItemCard({
         }
     };
 
+	const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [["item", "getItems"], { type: "query" }],
+				exact: true,
+			});
+			console.log("updated item status");
+		},
+	});
+
+	const handleUpdateItemStatus = async (status: number) => {
+		try {
+			await updateItemStatusMutation.mutateAsync({
+				userId: data.userId,
+				itemId: data.id,
+				status,
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
     return (
         <Card key={data.id}>
             <CardHeader>
@@ -189,18 +211,34 @@ export default function ItemCard({
                                 </DropdownMenuIconItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Button variant={"icon"} size={"none"}>
-                            <Inbox size={18} />
-                        </Button>
-                        <Button variant={"icon"} size={"none"}>
-                            <CircleDot size={18} />
-                        </Button>
-                        <Button variant={"icon"} size={"none"}>
-                            <CheckCircle2 size={18} />
-                        </Button>
-                        <Button variant={"icon"} size={"none"}>
-                            <Archive size={18} />
-                        </Button>
+						<Button
+							variant={"icon"}
+							size={"none"}
+							onClick={() => handleUpdateItemStatus(0)}
+						>
+							<Inbox size={18} />
+						</Button>
+						<Button
+							variant={"icon"}
+							size={"none"}
+							onClick={() => handleUpdateItemStatus(1)}
+						>
+							<CircleDot size={18} />
+						</Button>
+						<Button
+							variant={"icon"}
+							size={"none"}
+							onClick={() => handleUpdateItemStatus(2)}
+						>
+							<CheckCircle2 size={18} />
+						</Button>
+						<Button
+							variant={"icon"}
+							size={"none"}
+							onClick={() => handleUpdateItemStatus(3)}
+						>
+							<Archive size={18} />
+						</Button>
                     </div>
                 </CardContent>
             </CardHeader>

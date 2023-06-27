@@ -35,6 +35,11 @@ export const itemRouter = router({
         .mutation(async ({ ctx, input }) => {
             ItemController.deleteItem(ctx.userId, input.id);
         }),
+	updateItemStatus: protectedProcedure
+		.input(z.object({ itemId: z.string(), status: z.number() }))
+		.mutation(async ({ ctx, input }) => {
+			return ItemController.updateItemStatus(ctx.userId, input.itemId, input.status);
+		}),
     setCollection: protectedProcedure
         .input(z.object({ itemId: z.string(), collectionName: z.string() }))
         .mutation(async ({ ctx, input }) => {
