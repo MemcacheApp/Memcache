@@ -1,8 +1,9 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { Button, Navigation } from ".";
+import { Navigation } from "./Navigation";
 import { useEffect } from "react";
+import { Button } from "@/ui/components";
 
 export function Sidebar() {
     useEffect(() => {
