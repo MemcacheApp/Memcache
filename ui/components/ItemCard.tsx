@@ -117,7 +117,6 @@ export default function ItemCard({
     const handleUpdateItemStatus = async (status: number) => {
         try {
             await updateItemStatusMutation.mutateAsync({
-                userId: data.userId,
                 itemId: data.id,
                 status,
             });
