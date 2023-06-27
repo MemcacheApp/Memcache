@@ -4,6 +4,8 @@ export * from "./CollectionSelector";
 export * from "./Command";
 export * from "./Dialog";
 export * from "./Input";
+export * from "./ItemCard";
+export * from "./ItemPanel";
 export * from "./Label";
 export * from "./LogInRequired";
 export * from "./Navigation";

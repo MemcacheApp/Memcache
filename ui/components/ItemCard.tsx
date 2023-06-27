@@ -1,3 +1,5 @@
+"use client";
+
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -43,11 +45,12 @@ import {
 } from "lucide-react";
 import classNames from "classnames";
 
-export default function ItemCard({
-    data,
-}: {
+interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
-}) {
+    onSelect: (id: string) => void;
+}
+
+export function ItemCard({ data, onSelect }: ItemCardProps) {
     const queryClient = useQueryClient();
 
     const collectionsQuery = trpc.collection.getCollections.useQuery();
@@ -110,7 +113,13 @@ export default function ItemCard({
     };
 
     return (
-        <Card className="flex flex-col" key={data.id}>
+        <Card
+            className="flex flex-col cursor-pointer hover:ring-2 hover:ring-ring hover:ring-offset-2"
+            key={data.id}
+            onClick={() => {
+                onSelect(data.id);
+            }}
+        >
             <div className="flex">
                 <div className="flex flex-col flex-grow p-6">
                     <CardTitle>{data.title}</CardTitle>
