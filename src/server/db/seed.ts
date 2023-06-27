@@ -1,6 +1,7 @@
-import ItemController from "../controllers/item-controller";
+import CollectionController from "../controllers/collection-controller";
 import UserController from "../controllers/user-controller";
 import { PrismaClient } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 const prisma = new PrismaClient();
 
 const ADMIN_FIRST_NAME = "Ender";
@@ -93,19 +94,27 @@ async function main() {
     }
 
     const admin_user = await UserController.userInfoByEmail(ADMIN_EMAIL);
-
-    ITEMS.forEach(
-        async (item) =>
-            await ItemController.createItem(
-                admin_user.id,
-                item.title,
-                item.url,
-                item.description,
-                item.thumbnail,
-                "Default",
-                []
-            )
+    const defaultCollection = await CollectionController.getCollectionByName(
+        admin_user.id,
+        "Default"
     );
+
+    await prisma.item.createMany({
+        data: ITEMS.map((item) => ({
+            id: uuidv4(),
+            type: item.type,
+            status: 0,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            collectionId: defaultCollection!.id,
+            title: item.title,
+            url: item.url,
+            description: item.description,
+            thumbnail: item.thumbnail,
+            createdAt: new Date(),
+            userId: admin_user.id,
+            siteName: "Default Site",
+        })),
+    });
 
     console.log(`Created ${ITEMS.length} items for user ${admin_user.email}`);
 }
