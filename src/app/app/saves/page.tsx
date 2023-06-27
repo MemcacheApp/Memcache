@@ -54,7 +54,7 @@ export default function SavesPage() {
                 <div className={classNames({ "mr-80": isShowPanel })}>
                     <PageTitle>Saves</PageTitle>
                     <SaveInput />
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                         <StatusToggle
                             activeStatus={activeStatus}
                             setActiveStatus={setActiveStatus}
