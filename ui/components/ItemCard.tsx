@@ -217,34 +217,40 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(StatusEnum.Inbox)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Inbox);
+                        }}
                     >
                         <Inbox size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() =>
-                            handleUpdateItemStatus(StatusEnum.Underway)
-                        }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Underway);
+                        }}
                     >
                         <CircleDot size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() =>
-                            handleUpdateItemStatus(StatusEnum.Complete)
-                        }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Complete);
+                        }}
                     >
                         <CheckCircle2 size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() =>
-                            handleUpdateItemStatus(StatusEnum.Archive)
-                        }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Archive);
+                        }}
                     >
                         <Archive size={18} />
                     </Button>
