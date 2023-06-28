@@ -12,15 +12,22 @@ import { Button } from "./Button";
 import { useQueryClient } from "@tanstack/react-query";
 import { Package2, Tag } from "lucide-react";
 
-export function SaveInput() {
+interface SaveInputProps {
+    alwaysShowOptions?: boolean;
+    url?: string;
+}
+
+export function SaveInput(props: SaveInputProps) {
     const queryClient = useQueryClient();
-    const [isShowPopover, setIsShowPopover] = useState(false);
+    const [isShowPopover, setIsShowPopover] = useState(
+        props.alwaysShowOptions || false
+    );
     const inputRef = useRef<HTMLInputElement>(null);
 
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
 
-    const [url, setUrl] = useState("");
+    const [url, setUrl] = useState(props.url || "");
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
 
@@ -40,7 +47,9 @@ export function SaveInput() {
     };
 
     const dismissPopOver = () => {
-        setIsShowPopover(false);
+        if (!props.alwaysShowOptions) {
+            setIsShowPopover(false);
+        }
     };
 
     const _onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
