@@ -117,8 +117,8 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     </div>
                 ) : null}
             </div>
-            <CardFooter className="flex justify-between">
-                <div className="flex gap-5 text-slate-600 text-sm">
+            <CardFooter className="flex flex-wrap gap-5 justify-between">
+                <div className="flex flex-wrap gap-5 text-slate-600 text-sm">
                     <span className="inline-flex items-center gap-2">
                         <Globe size={16} />
                         {data.siteName}
@@ -132,7 +132,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             {data.collection.name}
                         </Link>
                     </span>
-                    <div>
+                    <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag) => (
                             <Link
                                 key={tag.id}
