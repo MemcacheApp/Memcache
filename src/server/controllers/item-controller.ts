@@ -22,8 +22,8 @@ export default class ItemController {
 
         return await prisma.item.create({
             data: {
-                type: result.ogType || "website",
                 id: uuidv4(),
+                type: result.ogType || "website",
                 status: 0,
                 collectionId: collection.id,
                 tags: {
