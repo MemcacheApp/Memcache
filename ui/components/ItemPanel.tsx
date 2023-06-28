@@ -13,78 +13,6 @@ interface ItemPanelProps {
 }
 
 export function ItemPanel({ selectedItems, dismiss }: ItemPanelProps) {
-    // return (
-    //     <Card className="fixed right-5 w-80 p-4">
-    //         <div className="flex">
-    //             <Button
-    //                 variant="ghost"
-    //                 className="m-3 w-10 !rounded-full p-0"
-    //                 onClick={dismiss}
-    //             >
-    //                 <div className="h-4 w-4">
-    //                     <PanelRightClose size={16} />
-    //                 </div>
-    //                 <span className="sr-only">Toggle sidebar</span>
-    //             </Button>
-    //         </div>
-    //         {data ? (
-    //             <div>
-    //                 <div>{data.title}</div>
-    //                 <CollectionSelector
-    //                     collections={collectionsQuery.data}
-    //                     value={data.collection.name}
-    //                     setValue={(newCollection) => {
-    //                         setCollectionOnItem.mutate({
-    //                             itemId: data.id,
-    //                             collectionName: newCollection,
-    //                         });
-    //                     }}
-    //                     size={"xs"}
-    //                 />
-    //                 <div>
-    //                     {data.tags.map((tag, index) => (
-    //                         <TagSelector
-    //                             key={tag.id}
-    //                             index={index}
-    //                             tags={tagsQuery.data}
-    //                             value={tag.name}
-    //                             setValue={(newTag) =>
-    //                                 addTagToItemMutation.mutate({
-    //                                     itemId: data.id,
-    //                                     tagName: newTag,
-    //                                 })
-    //                             }
-    //                             remove={(index) => {
-    //                                 removeTagFromItemMutation.mutate({
-    //                                     itemId: data.id,
-    //                                     tagId: data.tags[index].id,
-    //                                 });
-    //                             }}
-    //                         />
-    //                     ))}
-    //                     <TagSelector
-    //                         tags={tagsQuery.data}
-    //                         value=""
-    //                         index={-1}
-    //                         setValue={(newTag) => {
-    //                             addTagToItemMutation.mutate({
-    //                                 itemId: data.id,
-    //                                 tagName: newTag,
-    //                             });
-    //                         }}
-    //                         remove={(index) => {
-    //                             removeTagFromItemMutation.mutate({
-    //                                 itemId: data.id,
-    //                                 tagId: data.tags[index].id,
-    //                             });
-    //                         }}
-    //                     />
-    //                 </div>
-    //             </div>
-    //         ) : null}
-    //     </Card>
-    // );
-
     const ids = Array.from(selectedItems);
 
     return (
@@ -114,10 +42,6 @@ function SingleItem({ id }: { id: string }) {
     const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
     const data = itemQuery.data;
 
-    if (!data) {
-        dismiss();
-        return null;
-    }
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
 
