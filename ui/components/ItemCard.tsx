@@ -152,7 +152,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 </div>
                 <div className="flex gap-3">
                     <DropdownMenu>
-                        <DropdownMenuTrigger>
+                        <DropdownMenuTrigger asChild>
                             <Button variant={"icon"} size={"none"}>
                                 <MoreHorizontal size={18} />
                             </Button>
