@@ -6,11 +6,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { LuUser } from "react-icons/lu";
 import Link from "next/link";
 import { Input } from "../../../../ui/components/Input";
 import { Button } from "../../../../ui/components/Button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, User } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
@@ -36,6 +35,7 @@ export default function page() {
             queryClient.invalidateQueries({
                 queryKey: ["user", "isLoggedIn"],
             });
+            redirect("/");
         },
     });
 
@@ -56,8 +56,7 @@ export default function page() {
                 })}
             >
                 <div className="flex items-center self-start mb-4">
-                    <LuUser className="mr-3" size={36} strokeWidth={1.75} />
-                    {/* <PageTitle>Login</PageTitle> */}
+                    <User className="mr-3" size={36} strokeWidth={1.75} />
                     <h1 className="text-3xl">Login</h1>
                 </div>
                 <div>

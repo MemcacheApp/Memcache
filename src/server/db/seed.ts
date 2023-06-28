@@ -1,6 +1,7 @@
-import ItemController from "../controllers/item-controller";
+import CollectionController from "../controllers/collection-controller";
 import UserController from "../controllers/user-controller";
 import { PrismaClient } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 const prisma = new PrismaClient();
 
 const ADMIN_FIRST_NAME = "Ender";
@@ -17,6 +18,7 @@ const ITEMS = [
         thumbnail:
             "https://assets-global.website-files.com/621e749a546b7592125f38ed/6221e6c759f19819bd5bec04_CodeGen.jpg",
         type: "article",
+        siteName: "deepmind.com",
     },
     {
         title: "Writing WebSocket client applications - Web APIs | MDN",
@@ -26,6 +28,7 @@ const ITEMS = [
         thumbnail:
             "https://developer.mozilla.org/mdn-social-share.cd6c4a5a.png",
         type: "article",
+        siteName: "developer.mozilla.org",
     },
     {
         title: "Just-In-Time: The Next Generation of Tailwind CSS - Tailwind CSS",
@@ -35,6 +38,7 @@ const ITEMS = [
         thumbnail:
             "https://tailwindcss.com/_next/static/media/card.79a37188.jpg",
         type: "article",
+        siteName: "tailwindcss.com",
     },
     {
         title: "Meta bets big on AI with custom chips -- and a supercomputer",
@@ -44,6 +48,7 @@ const ITEMS = [
         thumbnail:
             "https://techcrunch.com/wp-content/uploads/2021/11/facebook-meta-twist.jpg?resize=1200,675",
         type: "article",
+        siteName: "TechCrunch",
     },
     {
         title: "Twitter's Recommendation Algorithm",
@@ -53,6 +58,7 @@ const ITEMS = [
         thumbnail:
             "https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/main-template-assets/Eng_EXPLORE_Pink.png.twimg.768.png",
         type: "article",
+        siteName: "blog.twitter.com",
     },
     {
         title: "Just-In-Time: The Next Generation of Tailwind CSS - Tailwind CSS",
@@ -62,6 +68,7 @@ const ITEMS = [
         thumbnail:
             "https://tailwindcss.com/_next/static/media/card.79a37188.jpg",
         type: "article",
+        siteName: "tailwindcss.com",
     },
     {
         title: "Ten Years of TypeScript",
@@ -71,7 +78,7 @@ const ITEMS = [
         thumbnail:
             "https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2018/08/typescriptfeature.png",
         type: "article",
-        site_name: "TypeScript",
+        siteName: "TypeScript",
     },
 ];
 
@@ -93,19 +100,27 @@ async function main() {
     }
 
     const admin_user = await UserController.userInfoByEmail(ADMIN_EMAIL);
-
-    ITEMS.forEach(
-        async (item) =>
-            await ItemController.createItem(
-                admin_user.id,
-                item.title,
-                item.url,
-                item.description,
-                item.thumbnail,
-                "Default",
-                []
-            )
+    const defaultCollection = await CollectionController.getCollectionByName(
+        admin_user.id,
+        "Default"
     );
+
+    await prisma.item.createMany({
+        data: ITEMS.map((item) => ({
+            id: uuidv4(),
+            type: item.type,
+            status: 0,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            collectionId: defaultCollection!.id,
+            title: item.title,
+            url: item.url,
+            description: item.description,
+            thumbnail: item.thumbnail,
+            createdAt: new Date(),
+            userId: admin_user.id,
+            siteName: item.siteName,
+        })),
+    });
 
     console.log(`Created ${ITEMS.length} items for user ${admin_user.email}`);
 }

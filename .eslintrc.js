@@ -21,4 +21,5 @@ module.exports = {
         "prettier/prettier": ["warn"],
         "react/prop-types": "off",
     },
+    ignorePatterns: ["browser-extension/*"],
 };

@@ -11,11 +11,10 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    Tag,
 } from ".";
-import { LuCheck, LuPlus, LuTrash } from "react-icons/lu";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import classNames from "classnames";
+import { Check, Edit, Plus, Trash } from "lucide-react";
 
 interface TagSelectorProps {
     tags: string[] | undefined;
@@ -45,12 +44,21 @@ export function TagSelector({
                         role="combobox"
                         aria-expanded={open}
                     >
-                        <LuPlus />
+                        <Plus size={16} />
                     </Button>
                 ) : (
-                    <Tag role="combobox" aria-expanded={open}>
+                    <Button
+                        className="px-4 group relative"
+                        variant="secondary"
+                        size="xs"
+                        role="combobox"
+                        aria-expanded={open}
+                    >
                         {value}
-                    </Tag>
+                        <span className="absolute -right-3 -bottom-2 bg-background p-1 border text-foreground opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 rounded-full z-10">
+                            <Edit size={13} />
+                        </span>
+                    </Button>
                 )}
             </PopoverTrigger>
             <PopoverContent className="w-[200px] !p-0">
@@ -72,9 +80,7 @@ export function TagSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span className="mr-2 h-4 w-4">
-                                            <LuTrash />
-                                        </span>
+                                        <Trash className="mr-2 h-4 w-4" />
                                         {`Remove "${value}"`}
                                     </CommandItem>
                                 ) : null}
@@ -89,9 +95,7 @@ export function TagSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span className="mr-2 h-4 w-4">
-                                            <LuPlus />
-                                        </span>
+                                        <Plus className="mr-2 h-4 w-4" />
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
                                 )}
@@ -103,16 +107,14 @@ export function TagSelector({
                                             setOpen(false);
                                         }}
                                     >
-                                        <span
+                                        <Check
                                             className={classNames(
                                                 "mr-2 h-4 w-4",
                                                 tag === value
                                                     ? "opacity-100"
                                                     : "opacity-0"
                                             )}
-                                        >
-                                            <LuCheck />
-                                        </span>
+                                        />
                                         {tag}
                                     </CommandItem>
                                 ))}

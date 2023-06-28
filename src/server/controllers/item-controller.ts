@@ -2,58 +2,48 @@ import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
 import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
+import ogs from "open-graph-scraper";
 import { Collection, Item, Tag } from "@prisma/client";
 
 export default class ItemController {
-    static async createItem(
-        userId: string,
-        title: string,
-        url: string,
-        description: string,
-        thumbnail: string | null,
-        collectionName: string,
-        tagNames: string[]
-    ) {
-        const collection = await CollectionController.getOrCreateCollection(
-            userId,
-            collectionName
-        );
-        const tags = await TagController.getOrCreateTags(userId, tagNames);
-        const item = await prisma.item.create({
-            data: {
-                id: uuidv4(),
-                status: 0,
-                collectionId: collection.id,
-                tags: {
-                    connect: tags.map((tag) => ({ id: tag.id })),
-                },
-                title,
-                url,
-                description,
-                thumbnail,
-                createdAt: new Date(),
-                userId,
-            },
-        });
-
-        return item;
-    }
-
     static async createFromURL(
         userId: string,
         url: string,
         collectionName: string,
         tagNames: string[]
     ) {
-        return await this.createItem(
+        const { result } = await ogs({ url });
+
+        const collection = await CollectionController.getOrCreateCollection(
             userId,
-            "Title",
-            url,
-            "Description",
-            null,
-            collectionName,
-            tagNames
+            collectionName
         );
+        const tags = await TagController.getOrCreateTags(userId, tagNames);
+
+        return await prisma.item.create({
+            data: {
+                id: uuidv4(),
+                type: result.ogType || "website",
+                status: 0,
+                collectionId: collection.id,
+                tags: {
+                    connect: tags.map((tag) => ({ id: tag.id })),
+                },
+                title: result.ogTitle || result.twitterTitle || "Untitled",
+                url: result.ogUrl || url,
+                description: result.ogDescription || result.dcDescription || "",
+                thumbnail:
+                    result.ogImage?.[0].url || result.twitterImage?.[0].url,
+                createdAt: new Date(),
+                userId,
+                siteName: result.ogSiteName || new URL(url).hostname,
+                duration: result.musicDuration
+                    ? parseInt(result.musicDuration)
+                    : undefined,
+                releaseTime: result.releaseDate,
+                author: result.author,
+            },
+        });
     }
 
     static async getItem(itemId: string) {

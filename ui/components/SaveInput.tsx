@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 import classNames from "classnames";
-import { LuPackage2, LuTag } from "react-icons/lu";
 
 import { CollectionSelector } from "./CollectionSelector";
 import { TagSelector } from "./TagSelector";
@@ -11,16 +10,24 @@ import { includeCaseInsensitive } from "../../src/app/utils";
 import { Input } from "./Input";
 import { Button } from "./Button";
 import { useQueryClient } from "@tanstack/react-query";
+import { Package2, Tag } from "lucide-react";
 
-export function SaveInput() {
+interface SaveInputProps {
+    alwaysShowOptions?: boolean;
+    url?: string;
+}
+
+export function SaveInput(props: SaveInputProps) {
     const queryClient = useQueryClient();
-    const [isShowPopover, setIsShowPopover] = useState(false);
+    const [isShowPopover, setIsShowPopover] = useState(
+        props.alwaysShowOptions || false
+    );
     const inputRef = useRef<HTMLInputElement>(null);
 
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
 
-    const [url, setUrl] = useState("");
+    const [url, setUrl] = useState(props.url || "");
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
 
@@ -40,7 +47,9 @@ export function SaveInput() {
     };
 
     const dismissPopOver = () => {
-        setIsShowPopover(false);
+        if (!props.alwaysShowOptions) {
+            setIsShowPopover(false);
+        }
     };
 
     const _onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -89,7 +98,7 @@ export function SaveInput() {
     return (
         <div className="flex flex-col relative">
             <button
-                className="text-left text-base box-border bg-background p-4 rounded-md border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="text-left text-base box-border bg-background p-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 onClick={showPopover}
                 tabIndex={isShowPopover ? -1 : undefined}
             >
@@ -114,7 +123,7 @@ export function SaveInput() {
                     <div>
                         <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
                             <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
-                                <LuPackage2 size={18} />
+                                <Package2 size={18} />
                                 {"Collection:"}
                             </div>
                             <CollectionSelector
@@ -125,7 +134,7 @@ export function SaveInput() {
                         </div>
                         <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
                             <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
-                                <LuTag size={18} />
+                                <Tag size={18} />
                                 {"Tags:"}
                             </div>
                             {tags.map((tag, index) => (

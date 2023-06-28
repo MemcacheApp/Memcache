@@ -1,13 +1,10 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import { trpc } from "@/src/app/utils/trpc";
-import { Loader } from "./Loader";
+import { Loader } from "@/ui/components/Loader";
 
-interface LogInRequiredProps {
-    children?: React.ReactNode;
-}
-
-export function LogInRequired(props: LogInRequiredProps) {
+export default function page() {
     const { data } = trpc.user.isLoggedIn.useQuery();
 
     if (data === undefined) {
@@ -17,8 +14,10 @@ export function LogInRequired(props: LogInRequiredProps) {
             </div>
         );
     } else if (data) {
-        return <>{props.children}</>;
+        // if logged in, redirect to saves
+        redirect("/app/saves");
     } else {
-        return <div>Log in required</div>;
+        // If not logged in, redirect to discover
+        redirect("/app/discover");
     }
 }

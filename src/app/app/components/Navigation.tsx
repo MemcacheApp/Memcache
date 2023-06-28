@@ -3,14 +3,14 @@
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-    LuAlbum,
-    LuGlobe2,
-    LuLayoutDashboard,
-    LuNewspaper,
-    LuPackage2,
-} from "react-icons/lu";
 import { trpc } from "@/src/app/utils/trpc";
+import {
+    Album,
+    Globe2,
+    LayoutDashboard,
+    Newspaper,
+    Package2,
+} from "lucide-react";
 
 interface NavigationItemProps {
     children?: React.ReactNode;
@@ -43,24 +43,24 @@ export function Navigation() {
     return (
         <nav className="mx-3 flex flex-col">
             <ul className="flex flex-col gap-1 list-none">
-                <NavigationItem href="/app/saves" icon={<LuAlbum size={20} />}>
+                <NavigationItem href="/app/saves" icon={<Album size={20} />}>
                     Saves
                 </NavigationItem>
                 <NavigationItem
                     href="/app/discover"
-                    icon={<LuGlobe2 size={20} />}
+                    icon={<Globe2 size={20} />}
                 >
                     Discover
                 </NavigationItem>
                 <NavigationItem
                     href="/app/flashcards"
-                    icon={<LuLayoutDashboard size={20} />}
+                    icon={<LayoutDashboard size={20} />}
                 >
                     Flashcards
                 </NavigationItem>
                 <NavigationItem
                     href="/app/summaries"
-                    icon={<LuNewspaper size={20} />}
+                    icon={<Newspaper size={20} />}
                 >
                     Summaries
                 </NavigationItem>
@@ -77,7 +77,7 @@ function Collections() {
     return (
         <li className="mt-2 ml-2">
             <div className="flex flex-row items-center gap-2 py-2">
-                <LuPackage2 size={12} />
+                <Package2 size={12} className="text-slate-400" />
                 <p className="text-slate-400 text-[12px] tracking-widest">
                     COLLECTIONS
                 </p>

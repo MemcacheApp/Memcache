@@ -1,0 +1,14 @@
+{
+    "name": "Memcache Saver",
+    "description": "Memcache Saver",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": ["cookies", "contextMenus", "tabs"],
+    "host_permissions": ["*://localhost:*/*"],
+    "background": {
+        "service_worker": "background.js"
+    }
+}

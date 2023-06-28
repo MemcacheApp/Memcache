@@ -7,9 +7,8 @@ import { z } from "zod";
 import { trpc } from "@/src/app/utils/trpc";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LuUser } from "react-icons/lu";
 import { Button, Input } from "../../../../ui/components";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, User } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const userSchema = z.object({
@@ -39,6 +38,7 @@ export default function page() {
             queryClient.invalidateQueries({
                 queryKey: ["user", "isLoggedIn"],
             });
+            redirect("/");
         },
     });
 
@@ -60,7 +60,7 @@ export default function page() {
                 })}
             >
                 <div className="flex items-center self-start mb-4">
-                    <LuUser className="mr-3" size={36} strokeWidth={1.75} />
+                    <User className="mr-3" size={36} strokeWidth={1.75} />
                     <h1 className="text-3xl">Sign Up</h1>
                 </div>
                 <div className="flex">
@@ -142,7 +142,7 @@ export default function page() {
                 <Button type="submit">Create account</Button>
                 <p className="text-sm">
                     Already have an account?{" "}
-                    <Link className="underline" href={"/login"}>
+                    <Link className="underline" href={"/auth/login"}>
                         Log in
                     </Link>
                 </p>

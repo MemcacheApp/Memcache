@@ -1,47 +1,106 @@
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
 
 import {
     LogInRequired,
     PageTitle,
     SaveInput,
     StatusToggle,
-} from "../../../../ui/components";
+    ItemCard,
+    ItemPanel,
+    Button,
+} from "@/ui/components";
 import { trpc } from "@/src/app/utils/trpc";
-import ItemCard from "../../../../ui/components/ItemCard";
 import Image from "next/image";
-import EmptyInbox from "../../../../public/EmptyInbox.svg";
+import EmptyInbox from "@/public/EmptyInbox.svg";
+import classNames from "classnames";
+import { StatusEnum, StatusNames } from "../../utils/Statuses";
+import { Square, SquareStack } from "lucide-react";
 
 export default function SavesPage() {
-    const [activeStatus, setActiveStatus] = React.useState<string | null>(null);
+    const [activeStatus, setActiveStatus] = React.useState<StatusEnum>(
+        StatusEnum.Inbox
+    );
+    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+    const [isMultiselect, setIsMultiselect] = useState(false);
+
+    const selectItem = (id: string) => {
+        if (isMultiselect) {
+            setSelectedItems((prev) => {
+                const next = new Set(prev);
+                if (next.has(id)) {
+                    next.delete(id);
+                } else {
+                    next.add(id);
+                }
+                return next;
+            });
+        } else {
+            setSelectedItems(new Set([id]));
+        }
+    };
+
+    const clearSelectedItems = () => {
+        setSelectedItems(new Set());
+        setIsMultiselect(false);
+    };
+
+    const isShowPanel = isMultiselect || selectedItems.size > 0;
 
     return (
         <div className="flex flex-col">
             <LogInRequired>
-                <PageTitle>Saves</PageTitle>
-                <SaveInput />
-                <StatusToggle
-                    activeStatus={activeStatus}
-                    setActiveStatus={setActiveStatus}
-                />
-                <SaveList activeStatus={activeStatus} />
+                <div className={classNames({ "mr-80": isShowPanel })}>
+                    <PageTitle>Saves</PageTitle>
+                    <SaveInput />
+                    <div className="flex justify-between items-center">
+                        <StatusToggle
+                            activeStatus={activeStatus}
+                            setActiveStatus={setActiveStatus}
+                        />
+                        <Button
+                            variant="ghost"
+                            className="hover:bg-background m-3 w-10 !rounded-full p-0"
+                            onClick={() => setIsMultiselect((prev) => !prev)}
+                        >
+                            <div className="flex items-center justify-center h-4 w-4">
+                                {isMultiselect ? <SquareStack /> : <Square />}
+                            </div>
+                            <span className="sr-only">Toggle sidebar</span>
+                        </Button>
+                    </div>
+
+                    <SaveList
+                        activeStatus={activeStatus}
+                        selectedItems={selectedItems}
+                        selectItem={selectItem}
+                    />
+                </div>
+                {isShowPanel ? (
+                    <ItemPanel
+                        selectedItems={selectedItems}
+                        dismiss={clearSelectedItems}
+                    />
+                ) : null}
             </LogInRequired>
         </div>
     );
 }
 
-// Example save list
-function SaveList({ activeStatus }: { activeStatus: string | null }) {
+interface SaveListProps {
+    activeStatus: StatusEnum;
+    selectedItems: Set<string>;
+    selectItem: (id: string) => void;
+}
+
+function SaveList({ activeStatus, selectedItems, selectItem }: SaveListProps) {
     const itemsQuery = trpc.item.getItems.useQuery();
+
     let items = itemsQuery.data;
 
     items = items?.filter((item) => {
-        if (activeStatus === null) return true;
-        if (activeStatus === "Inbox" && item.status === 0) return true;
-        if (activeStatus === "Underway" && item.status === 1) return true;
-        if (activeStatus === "Completed" && item.status === 2) return true;
-        if (activeStatus === "Archive" && item.status === 3) return true;
-        return false;
+        return activeStatus === null || activeStatus === item.status;
     });
 
     items = items?.sort(
@@ -51,7 +110,14 @@ function SaveList({ activeStatus }: { activeStatus: string | null }) {
     return (
         <div className="flex flex-col mt-3 gap-3">
             {items && items.length > 0 ? (
-                items.map((item) => <ItemCard data={item} key={item.id} />)
+                items.map((item) => (
+                    <ItemCard
+                        data={item}
+                        key={item.id}
+                        selected={selectedItems.has(item.id)}
+                        onSelect={selectItem}
+                    />
+                ))
             ) : (
                 <div className="w-full px-6 my-8 flex flex-col items-center gap-4">
                     <Image
@@ -60,7 +126,7 @@ function SaveList({ activeStatus }: { activeStatus: string | null }) {
                         height="128"
                         alt="Empty Inbox"
                     />
-                    <div>{`No saves in ${activeStatus}`}</div>
+                    <div>{`No saves in ${StatusNames[activeStatus]}`}</div>
                 </div>
             )}
         </div>

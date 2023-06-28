@@ -6,7 +6,7 @@ import { Command as CommandPrimitive } from "cmdk";
 import classNames from "classnames";
 
 import { Dialog, DialogContent } from "./Dialog";
-import { LuSearch } from "react-icons/lu";
+import { Search } from "lucide-react";
 
 const Command = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive>,
@@ -44,9 +44,7 @@ const CommandInput = React.forwardRef<
 >(({ className, ...props }, ref) => (
     // eslint-disable-next-line react/no-unknown-property
     <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-        <div className="mr-2 h-4 w-4 shrink-0 opacity-50">
-            <LuSearch />
-        </div>
+        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
         <CommandPrimitive.Input
             ref={ref}
             className={classNames(
