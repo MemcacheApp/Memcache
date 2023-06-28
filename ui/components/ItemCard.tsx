@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusEnum } from "@/src/app/utils/Statuses";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -34,6 +35,8 @@ import {
     Globe,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { AspectRatio } from "./AspectRatio";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -72,11 +75,15 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         },
     });
 
-    const handleUpdateItemStatus = async (status: number) => {
+    const handleUpdateItemStatus = async (newStatus: number) => {
+        if (newStatus === data.status) {
+            // Same status, no need to change
+            return;
+        }
         try {
             await updateItemStatusMutation.mutateAsync({
                 itemId: data.id,
-                status,
+                status: newStatus,
             });
         } catch (error) {
             console.error(error);
@@ -96,15 +103,18 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
             }}
         >
             <div className="flex">
-                <div className="flex flex-col flex-grow p-6">
+                <div className="flex flex-col grow p-6">
                     <CardTitle>{data.title}</CardTitle>
                     <p className="mt-3">{data.description}</p>
                 </div>
                 {data.thumbnail ? (
-                    <img
-                        className="max-h-28 lg:max-h-40 m-6 rounded-lg"
-                        src={data.thumbnail}
-                    />
+                    <div className="w-[320px] max-w-[32%] aspect-[16/9] m-8 shrink-0">
+                        <img
+                            src={data.thumbnail}
+                            alt="Image"
+                            className="rounded-lg object-cover object-center relative w-full h-full"
+                        />
+                    </div>
                 ) : null}
             </div>
             <CardFooter className="flex justify-between">
@@ -207,28 +217,34 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(0)}
+                        onClick={() => handleUpdateItemStatus(StatusEnum.Inbox)}
                     >
                         <Inbox size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(1)}
+                        onClick={() =>
+                            handleUpdateItemStatus(StatusEnum.Underway)
+                        }
                     >
                         <CircleDot size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(2)}
+                        onClick={() =>
+                            handleUpdateItemStatus(StatusEnum.Complete)
+                        }
                     >
                         <CheckCircle2 size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(3)}
+                        onClick={() =>
+                            handleUpdateItemStatus(StatusEnum.Archive)
+                        }
                     >
                         <Archive size={18} />
                     </Button>

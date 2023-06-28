@@ -17,6 +17,10 @@ export default class CollectionController {
         return collection;
     }
 
+    /**
+     * No need to include userId in query because collection id is sufficient
+     * to identify the collection across all users.
+     */
     static async getCollection(id: string) {
         const collection = await prisma.collection.findUnique({
             where: {

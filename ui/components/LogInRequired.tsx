@@ -11,7 +11,11 @@ export function LogInRequired(props: LogInRequiredProps) {
     const { data } = trpc.user.isLoggedIn.useQuery();
 
     if (data === undefined) {
-        return <Loader />;
+        return (
+            <div className="w-full h-screen flex justify-center items-center">
+                <Loader />
+            </div>
+        );
     } else if (data) {
         return <>{props.children}</>;
     } else {
