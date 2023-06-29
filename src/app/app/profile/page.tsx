@@ -107,7 +107,7 @@ export default function ProfilePage() {
             <div className="w-full max-w-6xl px-3 py-2 border-solid border-y-2 border-slate-200">
                 <ProfileInfo
                     title={"Email"}
-                    info={data?.email || "N/A"}
+                    info={data?.email || "..."}
                     submitEdit={async (newEmail: string) => {
                         const result = z
                             .string()
@@ -134,14 +134,14 @@ export default function ProfilePage() {
 
                 <ProfileInfo
                     title={"First name"}
-                    info={data?.firstName || "N/A"}
+                    info={data?.firstName || "..."}
                     submitEdit={async () => {
                         console.log("First name");
                     }}
                 />
                 <ProfileInfo
                     title={"Last name"}
-                    info={data?.lastName || "N/A"}
+                    info={data?.lastName || "..."}
                     submitEdit={async () => {
                         console.log("Last name");
                     }}
