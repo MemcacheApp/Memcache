@@ -10,7 +10,6 @@ import Link from "next/link";
 import { Input } from "../../../../ui/components/Input";
 import { Button } from "../../../../ui/components/Button";
 import { Eye, EyeOff, User } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -25,17 +24,14 @@ export default function page() {
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
-            redirect("/");
+            redirect("/app/saves");
         }
     }, [isLoggedInQuery.data]);
 
-    const queryClient = useQueryClient();
     const loginMutation = trpc.user.login.useMutation({
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["user", "isLoggedIn"],
-            });
-            redirect("/");
+            isLoggedInQuery.refetch();
+            redirect("/app/saves");
         },
     });
 
