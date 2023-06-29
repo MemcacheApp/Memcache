@@ -100,6 +100,24 @@ export default function ProfilePage() {
                 },
             ]),
     });
+    const updateFirstNameMutation = trpc.user.updateFirstName.useMutation({
+        onSuccess: () =>
+            queryClient.invalidateQueries([
+                ["user", "getUserInfo"],
+                {
+                    type: "query",
+                },
+            ]),
+    });
+    const updateLastNameMutation = trpc.user.updateLastName.useMutation({
+        onSuccess: () =>
+            queryClient.invalidateQueries([
+                ["user", "getUserInfo"],
+                {
+                    type: "query",
+                },
+            ]),
+    });
     const { data } = trpc.user.getUserInfo.useQuery();
     return (
         <div className="flex flex-col">
@@ -135,15 +153,32 @@ export default function ProfilePage() {
                 <ProfileInfo
                     title={"First name"}
                     info={data?.firstName || "..."}
-                    submitEdit={async () => {
-                        console.log("First name");
+                    submitEdit={async (newFirstName: string) => {
+                        const result = z
+                            .string()
+                            .min(1)
+                            .safeParse(newFirstName);
+                        if (!result.success) {
+                            throw new Error(result.error.issues[0].message);
+                        } else {
+                            await updateFirstNameMutation.mutateAsync({
+                                newFirstName,
+                            });
+                        }
                     }}
                 />
                 <ProfileInfo
                     title={"Last name"}
                     info={data?.lastName || "..."}
-                    submitEdit={async () => {
-                        console.log("Last name");
+                    submitEdit={async (newLastName: string) => {
+                        const result = z.string().min(1).safeParse(newLastName);
+                        if (!result.success) {
+                            throw new Error(result.error.issues[0].message);
+                        } else {
+                            await updateLastNameMutation.mutateAsync({
+                                newLastName,
+                            });
+                        }
                     }}
                 />
             </div>
