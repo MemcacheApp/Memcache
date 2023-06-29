@@ -29,8 +29,8 @@ export default function page() {
     }, [isLoggedInQuery.data]);
 
     const loginMutation = trpc.user.login.useMutation({
-        onSuccess: () => {
-            isLoggedInQuery.refetch();
+        onSuccess: async () => {
+            await isLoggedInQuery.refetch();
             redirect("/app/saves");
         },
     });
