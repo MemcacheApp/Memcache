@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Input } from "../../../../ui/components/Input";
 import { Button } from "../../../../ui/components/Button";
@@ -22,12 +22,10 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function page() {
-    const { push } = useRouter();
-
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
-            push("/");
+            redirect("/");
         }
     }, [isLoggedInQuery.data]);
 
@@ -37,7 +35,7 @@ export default function page() {
             queryClient.invalidateQueries({
                 queryKey: ["user", "isLoggedIn"],
             });
-            push("/");
+            redirect("/");
         },
     });
 
