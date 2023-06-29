@@ -14,9 +14,9 @@ import {
 import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
-import classNames from "classnames";
 import { StatusEnum, StatusNames } from "../../utils/Statuses";
 import { Square, SquareStack } from "lucide-react";
+import { cn } from "@/ui/utils";
 
 export default function SavesPage() {
     const [activeStatus, setActiveStatus] = React.useState<StatusEnum>(
@@ -51,7 +51,7 @@ export default function SavesPage() {
     return (
         <div className="flex flex-col">
             <LogInRequired>
-                <div className={classNames({ "mr-80": isShowPanel })}>
+                <div className={cn({ "mr-80": isShowPanel })}>
                     <PageTitle>Saves</PageTitle>
                     <SaveInput />
                     <div className="flex justify-between items-center">
@@ -61,7 +61,7 @@ export default function SavesPage() {
                         />
                         <Button
                             variant="ghost"
-                            className="hover:bg-background m-3 w-10 !rounded-full p-0"
+                            className="hover:bg-background m-3 w-10 rounded-full p-0"
                             onClick={() => setIsMultiselect((prev) => !prev)}
                         >
                             <div className="flex items-center justify-center h-4 w-4">
