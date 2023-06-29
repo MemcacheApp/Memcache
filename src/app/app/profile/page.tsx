@@ -3,51 +3,67 @@ import { Button, Input } from "@/ui/components";
 import { PageTitle } from "../../../../ui/components/typography";
 import { trpc } from "../../utils/trpc";
 import { Pencil } from "lucide-react";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { ZodError, z } from "zod";
 
 function ProfileInfo({
     title,
     info,
     submitEdit,
-    errorMessage,
 }: {
     title: string;
     info: string;
-    submitEdit: (
-        newInfo: string,
-        setErrorMessage: (errMsg: string) => void
-    ) => void;
+    submitEdit: (newInfo: string) => Promise<void>;
 }) {
+    const [input, setInput] = useState<string>("");
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     return (
-        <>
-            <div className="">
+        <div className="grid items-center grid-cols-4 my-2">
+            <div className="col-span-1">
                 <strong>{title}</strong>
             </div>
-            <div className="col-span-2 ">
-                <form
-                    action=""
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        console.log("form submit");
-                    }}
-                >
-                    {isEditing ? (
+            <div className="col-span-2">
+                {isEditing ? (
+                    <>
                         <Input
                             placeholder={`Please enter your new ${title.toLowerCase()}`}
+                            value={input}
+                            onChange={(e: ChangeEvent) =>
+                                setInput((e.target as HTMLInputElement).value)
+                            }
                         />
-                    ) : (
-                        <span className="px-3 py-2 text-sm">{info}</span>
-                    )}
-                </form>
+                        <div>
+                            {error && (
+                                <span className="px-3 text-sm text-red-600/60">
+                                    {error}
+                                </span>
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    <span className="px-3 py-2 text-sm">{info}</span>
+                )}
             </div>
-            <div className="justify-self-end">
+            <div className="col-span-1 justify-self-end">
                 {isEditing ? (
                     <div>
-                        <Button variant={"outline"} className="bg-white">
+                        <Button
+                            variant={"outline"}
+                            className="bg-white"
+                            onClick={async (e) => {
+                                e.preventDefault();
+                                try {
+                                    await submitEdit(input);
+                                    setInput("");
+                                    setIsEditing(false);
+                                } catch (err) {
+                                    if (err instanceof Error)
+                                        setError(err.message);
+                                }
+                            }}
+                        >
                             Save
                         </Button>
                         <Button
@@ -68,48 +84,45 @@ function ProfileInfo({
                     </Button>
                 )}
             </div>
-        </>
+        </div>
     );
 }
-
-const emailSchema = z.string().min(1).email();
 
 export default function ProfilePage() {
     const updateEmailMutation = trpc.user.updateEmail.useMutation();
     return (
         <div className="flex flex-col">
             <PageTitle>Profile</PageTitle>
-            <div className="grid items-center w-full max-w-6xl grid-cols-4 gap-2 px-3 py-2 border-solid border-y-2 border-slate-200">
+            <div className="w-full max-w-6xl px-3 py-2 border-solid border-y-2 border-slate-200">
                 <ProfileInfo
                     title={"Email"}
                     info={"johnsmith@gmail.com"}
-                    submitEdit={(
-                        newEmail: string,
-                        setErrorMessage: (errMsg: string) => void
-                    ) => {
-                        try {
-                            emailSchema.parse(newEmail);
-                            updateEmailMutation.mutate({ newEmail });
-                        } catch (e) {
-                            if (e instanceof ZodError) {
-                                setErrorMessage(e.message);
-                            } else {
-                                console.log(e);
-                            }
+                    submitEdit={async (newEmail: string) => {
+                        const result = z
+                            .string()
+                            .min(1)
+                            .email()
+                            .safeParse(newEmail);
+                        if (!result.success) {
+                            throw new Error(result.error.issues[0].message);
+                        } else {
+                            // await updateEmailMutation.mutateAsync({ newEmail });
+                            console.log("success");
                         }
                     }}
                 />
+
                 <ProfileInfo
                     title={"First name"}
                     info={"John"}
-                    edit={() => {
+                    submitEdit={async () => {
                         console.log("First name");
                     }}
                 />
                 <ProfileInfo
                     title={"Last name"}
                     info={"Smith"}
-                    edit={() => {
+                    submitEdit={async () => {
                         console.log("Last name");
                     }}
                 />
