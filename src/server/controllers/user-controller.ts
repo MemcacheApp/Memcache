@@ -187,4 +187,11 @@ export default class UserController {
         });
         return user;
     }
+    static async firstNameEmail(id: string, newFirstName: string) {
+        const user = await prisma.user.update({
+            where: { id },
+            data: { firstName: newFirstName },
+        });
+        return user;
+    }
 }

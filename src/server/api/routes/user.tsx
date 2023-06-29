@@ -147,6 +147,27 @@ export const userRouter = router({
                 });
             }
         }),
+    updateFirstName: protectedProcedure
+        .input(
+            z.object({
+                newFirstName: z.string(),
+            })
+        )
+        .mutation(async ({ input, ctx }) => {
+            try {
+                return await UserController.firstNameEmail(
+                    ctx.userId,
+                    input.newFirstName
+                );
+            } catch (e) {
+                const message =
+                    e instanceof Error ? e.message : "Unknown Error";
+                throw new TRPCError({
+                    message,
+                    code: "BAD_REQUEST",
+                });
+            }
+        }),
     getUserInfo: protectedProcedure.query(async ({ ctx }) => {
         if (ctx.userId) {
             const user = await UserController.userInfo(ctx.userId);
