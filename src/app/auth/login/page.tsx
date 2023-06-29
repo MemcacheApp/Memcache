@@ -5,12 +5,11 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "../../../../ui/components/Input";
 import { Button } from "../../../../ui/components/Button";
 import { Eye, EyeOff, User } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -22,20 +21,19 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function page() {
+    const { push } = useRouter();
+
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
-            redirect("/");
+            push("/app/saves");
         }
     }, [isLoggedInQuery.data]);
 
-    const queryClient = useQueryClient();
     const loginMutation = trpc.user.login.useMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["user", "isLoggedIn"],
-            });
-            redirect("/");
+        onSuccess: async () => {
+            await isLoggedInQuery.refetch();
+            push("/app/saves");
         },
     });
 
