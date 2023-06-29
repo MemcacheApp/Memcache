@@ -18,7 +18,7 @@ interface NavigationItemProps {
     icon?: React.ReactNode;
 }
 
-function NavigationItem(props: NavigationItemProps) {
+export function NavigationItem(props: NavigationItemProps) {
     const pathname = usePathname();
 
     return (
@@ -26,7 +26,7 @@ function NavigationItem(props: NavigationItemProps) {
             <Link
                 href={props.href}
                 className={classNames(
-                    "flex items-center h-10 py-2 px-4 rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground",
+                    "flex items-center h-10 py-2 px-4 rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground w-full",
                     { "bg-accent": pathname === props.href }
                 )}
             >
@@ -41,7 +41,7 @@ export function Navigation() {
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
 
     return (
-        <nav className="mx-3 flex flex-col">
+        <nav className="flex flex-col mx-3">
             <ul className="flex flex-col gap-1 list-none">
                 <NavigationItem href="/app/saves" icon={<Album size={20} />}>
                     Saves
