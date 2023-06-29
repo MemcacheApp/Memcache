@@ -9,7 +9,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Button, Input } from "../../../../ui/components";
 import { Eye, EyeOff, User } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 
 const userSchema = z.object({
     firstName: z.string().min(1, { message: "First name is required" }),
@@ -28,17 +27,14 @@ export default function page() {
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
-            redirect("/");
+            redirect("/app/saves/");
         }
     }, [isLoggedInQuery.data]);
 
-    const queryClient = useQueryClient();
     const createUserMutation = trpc.user.createUser.useMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["user", "isLoggedIn"],
-            });
-            redirect("/");
+        onSuccess: async () => {
+            await isLoggedInQuery.refetch();
+            redirect("/app/saves");
         },
     });
 
