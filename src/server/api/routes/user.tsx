@@ -155,7 +155,7 @@ export const userRouter = router({
         )
         .mutation(async ({ input, ctx }) => {
             try {
-                return await UserController.firstNameEmail(
+                return await UserController.updateFirstName(
                     ctx.userId,
                     input.newFirstName
                 );
