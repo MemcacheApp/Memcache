@@ -168,6 +168,27 @@ export const userRouter = router({
                 });
             }
         }),
+    updateLastName: protectedProcedure
+        .input(
+            z.object({
+                newLastName: z.string(),
+            })
+        )
+        .mutation(async ({ input, ctx }) => {
+            try {
+                return await UserController.updateLastName(
+                    ctx.userId,
+                    input.newLastName
+                );
+            } catch (e) {
+                const message =
+                    e instanceof Error ? e.message : "Unknown Error";
+                throw new TRPCError({
+                    message,
+                    code: "BAD_REQUEST",
+                });
+            }
+        }),
     getUserInfo: protectedProcedure.query(async ({ ctx }) => {
         if (ctx.userId) {
             const user = await UserController.userInfo(ctx.userId);
