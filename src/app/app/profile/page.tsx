@@ -4,7 +4,8 @@ import { PageTitle } from "../../../../ui/components/typography";
 import { trpc } from "../../utils/trpc";
 import { Pencil } from "lucide-react";
 import { ChangeEvent, useState } from "react";
-import { ZodError, z } from "zod";
+import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 function ProfileInfo({
     title,
@@ -89,14 +90,24 @@ function ProfileInfo({
 }
 
 export default function ProfilePage() {
-    const updateEmailMutation = trpc.user.updateEmail.useMutation();
+    const queryClient = useQueryClient();
+    const updateEmailMutation = trpc.user.updateEmail.useMutation({
+        onSuccess: () =>
+            queryClient.invalidateQueries([
+                ["user", "getUserInfo"],
+                {
+                    type: "query",
+                },
+            ]),
+    });
+    const { data } = trpc.user.getUserInfo.useQuery();
     return (
         <div className="flex flex-col">
             <PageTitle>Profile</PageTitle>
             <div className="w-full max-w-6xl px-3 py-2 border-solid border-y-2 border-slate-200">
                 <ProfileInfo
                     title={"Email"}
-                    info={"johnsmith@gmail.com"}
+                    info={data?.email || "N/A"}
                     submitEdit={async (newEmail: string) => {
                         const result = z
                             .string()
@@ -106,22 +117,31 @@ export default function ProfilePage() {
                         if (!result.success) {
                             throw new Error(result.error.issues[0].message);
                         } else {
-                            // await updateEmailMutation.mutateAsync({ newEmail });
-                            console.log("success");
+                            try {
+                                await updateEmailMutation.mutateAsync({
+                                    newEmail,
+                                });
+                            } catch (_) {
+                                if (
+                                    updateEmailMutation.error?.data?.code ===
+                                    "BAD_REQUEST"
+                                )
+                                    throw new Error("Email is taken");
+                            }
                         }
                     }}
                 />
 
                 <ProfileInfo
                     title={"First name"}
-                    info={"John"}
+                    info={data?.firstName || "N/A"}
                     submitEdit={async () => {
                         console.log("First name");
                     }}
                 />
                 <ProfileInfo
                     title={"Last name"}
-                    info={"Smith"}
+                    info={data?.lastName || "N/A"}
                     submitEdit={async () => {
                         console.log("Last name");
                     }}
