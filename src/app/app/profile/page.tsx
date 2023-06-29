@@ -1,5 +1,5 @@
 "use client";
-import { Button, Input } from "@/ui/components";
+import { Button, Input, LogInRequired } from "@/ui/components";
 import { PageTitle } from "../../../../ui/components/typography";
 import { trpc } from "../../utils/trpc";
 import { Pencil } from "lucide-react";
@@ -122,66 +122,71 @@ export default function ProfilePage() {
     return (
         <div className="flex flex-col">
             <PageTitle>Profile</PageTitle>
-            <div className="w-full max-w-6xl px-3 py-2 border-solid border-y-2 border-slate-200">
-                <ProfileInfo
-                    title={"Email"}
-                    info={data?.email || "..."}
-                    submitEdit={async (newEmail: string) => {
-                        const result = z
-                            .string()
-                            .min(1)
-                            .email()
-                            .safeParse(newEmail);
-                        if (!result.success) {
-                            throw new Error(result.error.issues[0].message);
-                        } else {
-                            try {
-                                await updateEmailMutation.mutateAsync({
-                                    newEmail,
-                                });
-                            } catch (_) {
-                                if (
-                                    updateEmailMutation.error?.data?.code ===
-                                    "BAD_REQUEST"
-                                )
-                                    throw new Error("Email is taken");
+            <LogInRequired>
+                <div className="w-full max-w-6xl px-3 py-2 border-solid border-y-2 border-slate-200">
+                    <ProfileInfo
+                        title={"Email"}
+                        info={data?.email || "..."}
+                        submitEdit={async (newEmail: string) => {
+                            const result = z
+                                .string()
+                                .min(1)
+                                .email()
+                                .safeParse(newEmail);
+                            if (!result.success) {
+                                throw new Error(result.error.issues[0].message);
+                            } else {
+                                try {
+                                    await updateEmailMutation.mutateAsync({
+                                        newEmail,
+                                    });
+                                } catch (_) {
+                                    if (
+                                        updateEmailMutation.error?.data
+                                            ?.code === "BAD_REQUEST"
+                                    )
+                                        throw new Error("Email is taken");
+                                }
                             }
-                        }
-                    }}
-                />
+                        }}
+                    />
 
-                <ProfileInfo
-                    title={"First name"}
-                    info={data?.firstName || "..."}
-                    submitEdit={async (newFirstName: string) => {
-                        const result = z
-                            .string()
-                            .min(1)
-                            .safeParse(newFirstName);
-                        if (!result.success) {
-                            throw new Error(result.error.issues[0].message);
-                        } else {
-                            await updateFirstNameMutation.mutateAsync({
-                                newFirstName,
-                            });
-                        }
-                    }}
-                />
-                <ProfileInfo
-                    title={"Last name"}
-                    info={data?.lastName || "..."}
-                    submitEdit={async (newLastName: string) => {
-                        const result = z.string().min(1).safeParse(newLastName);
-                        if (!result.success) {
-                            throw new Error(result.error.issues[0].message);
-                        } else {
-                            await updateLastNameMutation.mutateAsync({
-                                newLastName,
-                            });
-                        }
-                    }}
-                />
-            </div>
+                    <ProfileInfo
+                        title={"First name"}
+                        info={data?.firstName || "..."}
+                        submitEdit={async (newFirstName: string) => {
+                            const result = z
+                                .string()
+                                .min(1)
+                                .safeParse(newFirstName);
+                            if (!result.success) {
+                                throw new Error(result.error.issues[0].message);
+                            } else {
+                                await updateFirstNameMutation.mutateAsync({
+                                    newFirstName,
+                                });
+                            }
+                        }}
+                    />
+                    <ProfileInfo
+                        title={"Last name"}
+                        info={data?.lastName || "..."}
+                        submitEdit={async (newLastName: string) => {
+                            const result = z
+                                .string()
+                                .min(1)
+                                .safeParse(newLastName);
+                            if (!result.success) {
+                                throw new Error(result.error.issues[0].message);
+                            } else {
+                                await updateLastNameMutation.mutateAsync({
+                                    newLastName,
+                                });
+                            }
+                        }}
+                    />
+                </div>
+            </LogInRequired>
         </div>
     );
 }
