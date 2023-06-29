@@ -1,6 +1,6 @@
 import React from "react";
-import classNames from "classnames";
 import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
+import { cn } from "../utils";
 
 const StatusToggle = React.forwardRef<
     HTMLDivElement,
@@ -19,13 +19,13 @@ const StatusToggle = React.forwardRef<
     return (
         <div
             ref={ref}
-            className={classNames("flex space-x-6 my-5", className)}
+            className={cn("flex space-x-6 my-5", className)}
             {...props}
         >
             {statuses.map((status) => (
                 <button
                     key={status}
-                    className={classNames(
+                    className={cn(
                         "px-3 py-1 rounded-lg font-medium",
                         activeStatus === status
                             ? "border-2 border-gray-300 bg-gray-100"

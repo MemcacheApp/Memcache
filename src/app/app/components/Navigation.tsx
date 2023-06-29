@@ -1,6 +1,5 @@
 "use client";
 
-import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { trpc } from "@/src/app/utils/trpc";
@@ -11,6 +10,7 @@ import {
     Newspaper,
     Package2,
 } from "lucide-react";
+import { cn } from "@/ui/utils";
 
 interface NavigationItemProps {
     children?: React.ReactNode;
@@ -25,7 +25,7 @@ function NavigationItem(props: NavigationItemProps) {
         <li>
             <Link
                 href={props.href}
-                className={classNames(
+                className={cn(
                     "flex items-center h-10 py-2 px-4 rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground",
                     { "bg-accent": pathname === props.href }
                 )}

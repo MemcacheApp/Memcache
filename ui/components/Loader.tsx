@@ -1,5 +1,5 @@
 import styles from "@/ui/styles/loader.module.css";
-import classNames from "classnames";
+import { cn } from "../utils";
 
 interface LoaderProps {
     className?: string;
@@ -11,7 +11,7 @@ interface LoaderProps {
 export function Loader(props: LoaderProps) {
     return (
         <div
-            className={classNames(
+            className={cn(
                 styles.ldsEllipsis,
                 "[&>div]:bg-foreground",
                 props.className

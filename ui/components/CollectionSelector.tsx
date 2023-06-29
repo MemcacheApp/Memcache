@@ -13,9 +13,9 @@ import {
     buttonVariants,
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
-import classNames from "classnames";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { type VariantProps } from "class-variance-authority";
+import { cn } from "../utils";
 
 interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
     collections: string[] | undefined;
@@ -52,7 +52,7 @@ export function CollectionSelector({
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] !p-0">
+            <PopoverContent className="w-[200px] p-0">
                 <Command>
                     <CommandInput
                         placeholder="Search or Add..."
@@ -86,7 +86,7 @@ export function CollectionSelector({
                                         }}
                                     >
                                         <Check
-                                            className={classNames(
+                                            className={cn(
                                                 "mr-2 h-4 w-4",
                                                 collection === value
                                                     ? "opacity-100"
