@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/src/app/utils/trpc";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button, Input } from "../../../../ui/components";
 import { Eye, EyeOff, User } from "lucide-react";
 
@@ -24,17 +24,18 @@ const userSchema = z.object({
 type SignUpFormData = z.infer<typeof userSchema>;
 
 export default function page() {
+    const { push } = useRouter();
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     useEffect(() => {
         if (isLoggedInQuery.data) {
-            redirect("/app/saves/");
+            push("/app/saves/");
         }
     }, [isLoggedInQuery.data]);
 
     const createUserMutation = trpc.user.createUser.useMutation({
         onSuccess: async () => {
             await isLoggedInQuery.refetch();
-            redirect("/app/saves");
+            push("/app/saves");
         },
     });
 
