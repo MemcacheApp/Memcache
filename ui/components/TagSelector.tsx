@@ -13,8 +13,8 @@ import {
     PopoverTrigger,
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
-import classNames from "classnames";
 import { Check, Edit, Plus, Trash } from "lucide-react";
+import { cn } from "../utils";
 
 interface TagSelectorProps {
     tags: string[] | undefined;
@@ -61,7 +61,7 @@ export function TagSelector({
                     </Button>
                 )}
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] !p-0">
+            <PopoverContent className="w-[200px] p-0">
                 <Command>
                     <CommandInput
                         placeholder="Search or Add..."
@@ -108,7 +108,7 @@ export function TagSelector({
                                         }}
                                     >
                                         <Check
-                                            className={classNames(
+                                            className={cn(
                                                 "mr-2 h-4 w-4",
                                                 tag === value
                                                     ? "opacity-100"

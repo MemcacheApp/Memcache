@@ -21,7 +21,6 @@ import {
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
-import classNames from "classnames";
 import {
     Package2,
     ExternalLink,
@@ -37,6 +36,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { AspectRatio } from "./AspectRatio";
+import { cn } from "../utils";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -92,7 +92,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 
     return (
         <Card
-            className={classNames(
+            className={cn(
                 "flex flex-col cursor-pointer hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 selected ? "outline" : "outline-none"
             )}

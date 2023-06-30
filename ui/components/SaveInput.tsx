@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
-import classNames from "classnames";
 
 import { CollectionSelector } from "./CollectionSelector";
 import { TagSelector } from "./TagSelector";
@@ -11,6 +10,7 @@ import { Input } from "./Input";
 import { Button } from "./Button";
 import { useQueryClient } from "@tanstack/react-query";
 import { Package2, Tag } from "lucide-react";
+import { cn } from "../utils";
 
 interface SaveInputProps {
     alwaysShowOptions?: boolean;
@@ -105,7 +105,7 @@ export function SaveInput(props: SaveInputProps) {
                 Save a URL...
             </button>
             <div
-                className={classNames({ hidden: !isShowPopover })}
+                className={cn({ hidden: !isShowPopover })}
                 onKeyDown={_onKeyDown}
             >
                 <form
@@ -114,7 +114,7 @@ export function SaveInput(props: SaveInputProps) {
                     onSubmit={handleSubmit}
                 >
                     <Input
-                        className="!text-base border-0 px-4 py-7"
+                        className="text-base border-0 px-4 py-7"
                         placeholder="https://"
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}

@@ -25,8 +25,8 @@ export function Sidebar() {
 
     return (
         <div className="fixed flex flex-col w-64 h-full border-r bg-background">
-            <Button variant="ghost" className="m-3 w-10 !rounded-full p-0">
-                <div className="w-4 h-4">
+            <Button variant="ghost" className="m-3 w-10 rounded-full p-0">
+                <div className="h-4 w-4">
                     <Menu size={16} />
                 </div>
                 <span className="sr-only">Toggle sidebar</span>
