@@ -18,7 +18,7 @@ interface NavigationItemProps {
     icon?: React.ReactNode;
 }
 
-function NavigationItem(props: NavigationItemProps) {
+export function NavigationItem(props: NavigationItemProps) {
     const pathname = usePathname();
 
     return (
@@ -41,7 +41,7 @@ export function Navigation() {
     const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
 
     return (
-        <nav className="mx-3 flex flex-col">
+        <nav className="flex flex-col mx-3">
             <ul className="flex flex-col gap-1 list-none">
                 <NavigationItem href="/app/saves" icon={<Album size={20} />}>
                     Saves

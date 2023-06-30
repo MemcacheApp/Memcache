@@ -179,4 +179,26 @@ export default class UserController {
 
         return user;
     }
+
+    static async updateEmail(id: string, newEmail: string) {
+        const user = await prisma.user.update({
+            where: { id },
+            data: { email: newEmail },
+        });
+        return user;
+    }
+    static async updateFirstName(id: string, newFirstName: string) {
+        const user = await prisma.user.update({
+            where: { id },
+            data: { firstName: newFirstName },
+        });
+        return user;
+    }
+    static async updateLastName(id: string, newlastName: string) {
+        const user = await prisma.user.update({
+            where: { id },
+            data: { lastName: newlastName },
+        });
+        return user;
+    }
 }
