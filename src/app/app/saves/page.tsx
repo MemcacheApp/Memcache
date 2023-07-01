@@ -56,9 +56,9 @@ export default function SavesPage() {
             <LogInRequired>
                 <div
                     className={cn("transition-[margin-right] max-md:mr-0", {
-                        "max-[2060px]:mr-[calc(20rem-(100vw-16rem)/2+50%)]":
+                        "max-[1800px]:mr-[calc(20rem-(100vw-16rem)/2+50%)]":
                             isSidebarExpand && isShowPanel,
-                        "max-[2060px]:mr-[calc(20rem-100vw/2+50%)]":
+                        "max-[1800px]:mr-[calc(20rem-100vw/2+50%)]":
                             !isSidebarExpand && isShowPanel,
                     })}
                 >
