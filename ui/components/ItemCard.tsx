@@ -108,7 +108,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     <p className="mt-3">{data.description}</p>
                 </div>
                 {data.thumbnail ? (
-                    <div className="w-[320px] max-w-[32%] aspect-[16/9] m-8 shrink-0">
+                    <div className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0">
                         <img
                             src={data.thumbnail}
                             alt="Image"

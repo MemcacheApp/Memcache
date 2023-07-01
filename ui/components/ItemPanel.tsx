@@ -19,7 +19,7 @@ export function ItemPanel({ selectedItems, dismiss }: ItemPanelProps) {
         <Card className="fixed flex flex-col right-5 w-80 p-4">
             <Button
                 variant="ghost"
-                className="m-3 w-10 rounded-full p-0"
+                className="w-10 rounded-full p-0"
                 onClick={dismiss}
             >
                 <div className="h-4 w-4">

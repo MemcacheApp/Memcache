@@ -51,7 +51,12 @@ export default function SavesPage() {
     return (
         <div className="flex flex-col">
             <LogInRequired>
-                <div className={cn({ "mr-80": isShowPanel })}>
+                <div
+                    className={cn({
+                        "max-[2060px]:mr-[calc(20rem-(100vw-16rem)/2+50%+3rem)]":
+                            isShowPanel,
+                    })}
+                >
                     <PageTitle>Saves</PageTitle>
                     <SaveInput />
                     <div className="flex justify-between items-center">
@@ -61,7 +66,7 @@ export default function SavesPage() {
                         />
                         <Button
                             variant="ghost"
-                            className="hover:bg-background m-3 w-10 rounded-full p-0"
+                            className="hover:bg-background w-10 rounded-full p-0"
                             onClick={() => setIsMultiselect((prev) => !prev)}
                         >
                             <div className="flex items-center justify-center h-4 w-4">
