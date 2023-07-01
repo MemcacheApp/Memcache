@@ -26,7 +26,7 @@ export const TrpcProvider = ({ children }: TrpcProviderProps) => {
                     enabled: () => true,
                 }),
                 httpBatchLink({
-                    url: "http://localhost:3000/api/trpc/",
+                    url: "/api/trpc/",
                     fetch: async (input, init?) => {
                         const fetch = getFetch();
                         return fetch(input, {
