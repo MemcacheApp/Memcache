@@ -5,7 +5,10 @@ export function PageTitle(props: React.HTMLProps<HTMLHeadingElement>) {
 
     return (
         <h1
-            className={cn("my-5 text-4xl font-bold tracking-tight", className)}
+            className={cn(
+                "mt-16 mb-5 mx-8 max-md:mx-5 text-4xl font-bold tracking-tight",
+                className
+            )}
             {...other}
         />
     );

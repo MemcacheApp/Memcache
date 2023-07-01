@@ -17,8 +17,11 @@ import EmptyInbox from "@/public/EmptyInbox.svg";
 import { StatusEnum, StatusNames } from "../../utils/Statuses";
 import { Square, SquareStack } from "lucide-react";
 import { cn } from "@/ui/utils";
+import { useSidebarStore } from "../../store/sidebar";
 
 export default function SavesPage() {
+    const isSidebarExpand = useSidebarStore((state) => state.isExpand);
+
     const [activeStatus, setActiveStatus] = React.useState<StatusEnum>(
         StatusEnum.Inbox
     );
@@ -52,30 +55,39 @@ export default function SavesPage() {
         <div className="flex flex-col">
             <LogInRequired>
                 <div
-                    className={cn({
-                        "max-[2060px]:mr-[calc(20rem-(100vw-16rem)/2+50%+3rem)]":
-                            isShowPanel,
+                    className={cn("transition-[margin-right] max-md:mr-0", {
+                        "max-[2060px]:mr-[calc(20rem-(100vw-16rem)/2+50%)]":
+                            isSidebarExpand && isShowPanel,
+                        "max-[2060px]:mr-[calc(20rem-100vw/2+50%)]":
+                            !isSidebarExpand && isShowPanel,
                     })}
                 >
                     <PageTitle>Saves</PageTitle>
-                    <SaveInput />
-                    <div className="flex justify-between items-center">
-                        <StatusToggle
-                            activeStatus={activeStatus}
-                            setActiveStatus={setActiveStatus}
-                        />
-                        <Button
-                            variant="ghost"
-                            className="hover:bg-background w-10 rounded-full p-0"
-                            onClick={() => setIsMultiselect((prev) => !prev)}
-                        >
-                            <div className="flex items-center justify-center h-4 w-4">
-                                {isMultiselect ? <SquareStack /> : <Square />}
-                            </div>
-                            <span className="sr-only">Toggle sidebar</span>
-                        </Button>
+                    <div className="px-8 max-md:px-5">
+                        <SaveInput />
+                        <div className="flex justify-between items-center">
+                            <StatusToggle
+                                activeStatus={activeStatus}
+                                setActiveStatus={setActiveStatus}
+                            />
+                            <Button
+                                variant="ghost"
+                                className="hover:bg-background w-10 rounded-full p-0"
+                                onClick={() =>
+                                    setIsMultiselect((prev) => !prev)
+                                }
+                            >
+                                <div className="flex items-center justify-center h-4 w-4">
+                                    {isMultiselect ? (
+                                        <SquareStack />
+                                    ) : (
+                                        <Square />
+                                    )}
+                                </div>
+                                <span className="sr-only">Toggle sidebar</span>
+                            </Button>
+                        </div>
                     </div>
-
                     <SaveList
                         activeStatus={activeStatus}
                         selectedItems={selectedItems}
@@ -113,7 +125,7 @@ function SaveList({ activeStatus, selectedItems, selectItem }: SaveListProps) {
     );
 
     return (
-        <div className="flex flex-col mt-3 gap-3">
+        <div className="flex flex-col mt-3 gap-3 md:px-8 pb-8">
             {items && items.length > 0 ? (
                 items.map((item) => (
                     <ItemCard

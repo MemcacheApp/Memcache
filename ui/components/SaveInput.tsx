@@ -109,7 +109,7 @@ export function SaveInput(props: SaveInputProps) {
                 onKeyDown={_onKeyDown}
             >
                 <form
-                    className="flex flex-col absolute border rounded-md -left-1 -top-1 -right-1 bg-background drop-shadow-md z-50"
+                    className="flex flex-col absolute border rounded-md -left-1 -top-1 -right-1 bg-background drop-shadow-md z-10"
                     action=""
                     onSubmit={handleSubmit}
                 >

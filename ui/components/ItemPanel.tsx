@@ -16,7 +16,7 @@ export function ItemPanel({ selectedItems, dismiss }: ItemPanelProps) {
     const ids = Array.from(selectedItems);
 
     return (
-        <Card className="fixed flex flex-col right-5 w-80 p-4">
+        <Card className="fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14">
             <Button
                 variant="ghost"
                 className="w-10 rounded-full p-0"

@@ -1,12 +1,25 @@
+"use client";
+
 import React from "react";
 import { Sidebar } from "./components/Sidebar";
+import { useSidebarStore } from "../store/sidebar";
+import classNames from "classnames";
 
 export default function layout({ children }: { children: React.ReactNode }) {
+    const isExpand = useSidebarStore((state) => state.isExpand);
+
     return (
         <div className={"bg-muted h-screen"}>
             <Sidebar />
-            <div className="ml-64 flex flex-col items-center">
-                <main className="w-full max-w-6xl p-8">{children}</main>
+            <div
+                className={classNames(
+                    "flex flex-col items-center transition-[margin-left]",
+                    {
+                        "md:ml-64": isExpand,
+                    }
+                )}
+            >
+                <main className="w-full max-w-6xl">{children}</main>
             </div>
         </div>
     );

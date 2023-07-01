@@ -123,7 +123,7 @@ export default function ProfilePage() {
         <div className="flex flex-col">
             <PageTitle>Profile</PageTitle>
             <LogInRequired>
-                <div className="w-full max-w-6xl px-3 py-2 border-solid border-y-2 border-slate-200">
+                <div className="px-3 py-2 mx-8 border-solid border-y-2 border-slate-200">
                     <ProfileInfo
                         title={"Email"}
                         info={data?.email || "..."}
