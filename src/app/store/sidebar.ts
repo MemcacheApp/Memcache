@@ -10,6 +10,6 @@ export interface SidebarState {
 export const useSidebarStore = create<SidebarState>((set) => ({
     isExpand: true,
     toggle: () => set((state) => ({ isExpand: !state.isExpand })),
-    expand: () => set(() => ({ isExpand: true })),
-    collapse: () => set(() => ({ isExpand: false })),
+    expand: () => set({ isExpand: true }),
+    collapse: () => set({ isExpand: false }),
 }));

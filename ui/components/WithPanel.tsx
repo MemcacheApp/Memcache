@@ -1,13 +1,14 @@
 import { useSidebarStore } from "@/src/app/store/sidebar";
 import { cn } from "../utils";
 import { ReactNode } from "react";
+import { useItemListStore } from "@/src/app/store/item-list";
 
 interface WithPanelProps {
-    isShowPanel: boolean;
     children?: ReactNode;
 }
 
-export function WithPanel({ isShowPanel, children }: WithPanelProps) {
+export function WithPanel({ children }: WithPanelProps) {
+    const isShowPanel = useItemListStore((state) => state.isShowPanel);
     const isSidebarExpand = useSidebarStore((state) => state.isExpand);
 
     return (

@@ -96,7 +96,7 @@ export function SaveInput(props: SaveInputProps) {
     };
 
     return (
-        <div className="flex flex-col relative">
+        <div className="flex flex-col relative mb-5 mx-8 max-md:mx-5">
             <button
                 className="text-left text-base box-border bg-background p-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 onClick={showPopover}

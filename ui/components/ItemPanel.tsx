@@ -8,21 +8,24 @@ import { CollectionSelector, TagSelector } from ".";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { cn } from "../utils";
+import { useItemListStore } from "@/src/app/store/item-list";
 
-interface ItemPanelProps {
-    selectedItems: Set<string>;
-    isShow: boolean;
-    dismiss: () => void;
-}
+export function ItemPanel() {
+    const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
+        (state) => ({
+            selectedItems: state.selectedItems,
+            isShowPanel: state.isShowPanel,
+            dismissPanel: state.dismissPanel,
+        })
+    );
 
-export function ItemPanel({ selectedItems, isShow, dismiss }: ItemPanelProps) {
     const ids = Array.from(selectedItems);
 
     const [isCollapse, setIsCollapse] = useState(true);
     const [isHidden, setIsHidden] = useState(true);
 
     useEffect(() => {
-        if (isShow) {
+        if (isShowPanel) {
             setIsHidden(false);
             setTimeout(() => {
                 setIsCollapse(false);
@@ -33,7 +36,7 @@ export function ItemPanel({ selectedItems, isShow, dismiss }: ItemPanelProps) {
                 setIsHidden(true);
             }, 200);
         }
-    }, [isShow]);
+    }, [isShowPanel]);
 
     return (
         <div>
@@ -60,7 +63,7 @@ export function ItemPanel({ selectedItems, isShow, dismiss }: ItemPanelProps) {
                     <Button
                         variant="ghost"
                         className="w-10 rounded-full p-0"
-                        onClick={dismiss}
+                        onClick={dismissPanel}
                     >
                         <div className="h-4 w-4">
                             <X size={16} />
