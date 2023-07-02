@@ -36,35 +36,46 @@ export function ItemPanel({ selectedItems, isShow, dismiss }: ItemPanelProps) {
     }, [isShow]);
 
     return (
-        <Card
-            className={cn(
-                "fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
-                {
-                    hidden: isHidden,
-                    "md:translate-x-[20rem]": isCollapse,
-                    "max-md:translate-y-[100%]": isCollapse,
-                }
-            )}
-        >
-            <div className="flex">
-                <Button
-                    variant="ghost"
-                    className="w-10 rounded-full p-0"
-                    onClick={dismiss}
-                >
-                    <div className="h-4 w-4">
-                        <X size={16} />
-                    </div>
-                    <span className="sr-only">Toggle sidebar</span>
-                </Button>
-            </div>
+        <div>
+            <div
+                className={cn(
+                    "fixed top-0 bottom-0 left-0 right-0 bg-black/40 md:hidden transition-opacity",
+                    isCollapse ? "opacity-0" : "opacity-100",
+                    {
+                        hidden: isHidden,
+                    }
+                )}
+            ></div>
+            <Card
+                className={cn(
+                    "fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
+                    {
+                        hidden: isHidden,
+                        "md:translate-x-[20rem]": isCollapse,
+                        "max-md:translate-y-[100%]": isCollapse,
+                    }
+                )}
+            >
+                <div className="flex">
+                    <Button
+                        variant="ghost"
+                        className="w-10 rounded-full p-0"
+                        onClick={dismiss}
+                    >
+                        <div className="h-4 w-4">
+                            <X size={16} />
+                        </div>
+                        <span className="sr-only">Toggle sidebar</span>
+                    </Button>
+                </div>
 
-            {ids.length > 1 ? (
-                <div>Select {ids.length} items</div>
-            ) : (
-                <SingleItem id={ids[0]} />
-            )}
-        </Card>
+                {ids.length > 1 ? (
+                    <div>Select {ids.length} items</div>
+                ) : (
+                    <SingleItem id={ids[0]} />
+                )}
+            </Card>
+        </div>
     );
 }
 
