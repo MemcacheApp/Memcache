@@ -11,10 +11,14 @@ import classNames from "classnames";
 import { useSidebarStore } from "../../store/sidebar";
 
 export function Sidebar() {
-    const { isExpand, toggle } = useSidebarStore();
+    const { isExpand, toggle, collapse } = useSidebarStore();
 
     useEffect(() => {
         document.body.classList.add("bg-muted");
+
+        if (window.innerWidth <= 768) {
+            collapse();
+        }
     }, []);
 
     return (
