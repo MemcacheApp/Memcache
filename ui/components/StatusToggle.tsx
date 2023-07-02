@@ -12,7 +12,11 @@ const StatusToggle = React.forwardRef<
     }
 >(({ className, activeStatus, setActiveStatus, ...props }, ref) => {
     return (
-        <div ref={ref} className={cn("flex space-x-3", className)} {...props}>
+        <div
+            ref={ref}
+            className={cn("flex space-x-3 overflow-auto", className)}
+            {...props}
+        >
             <Button
                 variant={
                     activeStatus === StatusEnum.Inbox ? "default" : "outline"

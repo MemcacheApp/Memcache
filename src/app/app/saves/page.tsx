@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import {
     LogInRequired,
@@ -15,16 +15,17 @@ import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
 import { StatusEnum, StatusNames } from "../../utils/Statuses";
-import { Square, SquareStack } from "lucide-react";
+import { SquareStack, X } from "lucide-react";
 import { cn } from "@/ui/utils";
 import { useSidebarStore } from "../../store/sidebar";
 
 export default function SavesPage() {
     const isSidebarExpand = useSidebarStore((state) => state.isExpand);
 
-    const [activeStatus, setActiveStatus] = React.useState<StatusEnum>(
+    const [activeStatus, setActiveStatus] = useState<StatusEnum>(
         StatusEnum.Inbox
     );
+    const [isShowPanel, setIsShowPanel] = useState(false);
     const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
     const [isMultiselect, setIsMultiselect] = useState(false);
 
@@ -41,15 +42,15 @@ export default function SavesPage() {
             });
         } else {
             setSelectedItems(new Set([id]));
+            setIsShowPanel(true);
         }
     };
 
-    const clearSelectedItems = () => {
+    const exitMultiselect = () => {
+        setIsShowPanel(false);
         setSelectedItems(new Set());
         setIsMultiselect(false);
     };
-
-    const isShowPanel = isMultiselect || selectedItems.size > 0;
 
     return (
         <div className="flex flex-col">
@@ -65,27 +66,72 @@ export default function SavesPage() {
                     <PageTitle>Saves</PageTitle>
                     <div className="px-8 max-md:px-5">
                         <SaveInput />
-                        <div className="flex justify-between items-center">
-                            <StatusToggle
-                                activeStatus={activeStatus}
-                                setActiveStatus={setActiveStatus}
-                            />
-                            <Button
-                                variant="ghost"
-                                className="hover:bg-background w-10 rounded-full p-0"
-                                onClick={() =>
-                                    setIsMultiselect((prev) => !prev)
-                                }
-                            >
-                                <div className="flex items-center justify-center h-4 w-4">
-                                    {isMultiselect ? (
-                                        <SquareStack />
-                                    ) : (
-                                        <Square />
-                                    )}
-                                </div>
-                                <span className="sr-only">Toggle sidebar</span>
-                            </Button>
+                        <div className="max-w-full flex justify-between items-center mt-5 gap-5">
+                            {isMultiselect ? (
+                                <>
+                                    <div className="flex items-center gap-5 whitespace-nowrap overflow-auto">
+                                        <div className="flex items-center">
+                                            <SquareStack
+                                                size={18}
+                                                className="mr-2"
+                                            />
+                                            <span className="font-medium">
+                                                Selected {selectedItems.size}
+                                                {selectedItems.size === 1
+                                                    ? " item"
+                                                    : " items"}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Button variant="outline">
+                                                Move to
+                                            </Button>
+                                            <Button variant="outline">
+                                                Mark as
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                onClick={() =>
+                                                    setIsShowPanel(true)
+                                                }
+                                            >
+                                                More
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        className="w-10 rounded-full p-0 shrink-0"
+                                        onClick={exitMultiselect}
+                                    >
+                                        <div className="flex items-center justify-center h-4 w-4">
+                                            <X />
+                                        </div>
+                                        <span className="sr-only">
+                                            Exit Multiselect
+                                        </span>
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <StatusToggle
+                                        activeStatus={activeStatus}
+                                        setActiveStatus={setActiveStatus}
+                                    />
+                                    <Button
+                                        variant="outline"
+                                        className="w-10 rounded-full p-0 shrink-0"
+                                        onClick={() => setIsMultiselect(true)}
+                                    >
+                                        <div className="flex items-center justify-center h-4 w-4">
+                                            <SquareStack />
+                                        </div>
+                                        <span className="sr-only">
+                                            Multiselect
+                                        </span>
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </div>
                     <SaveList
@@ -97,7 +143,7 @@ export default function SavesPage() {
                 <ItemPanel
                     selectedItems={selectedItems}
                     isShow={isShowPanel}
-                    dismiss={clearSelectedItems}
+                    dismiss={() => setIsShowPanel(false)}
                 />
             </LogInRequired>
         </div>
