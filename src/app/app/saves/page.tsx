@@ -10,21 +10,19 @@ import {
     ItemCard,
     ItemPanel,
     Button,
+    WithPanel,
 } from "@/ui/components";
 import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
 import { StatusEnum, StatusNames } from "../../utils/Statuses";
 import { SquareStack, X } from "lucide-react";
-import { cn } from "@/ui/utils";
-import { useSidebarStore } from "../../store/sidebar";
 
 export default function SavesPage() {
-    const isSidebarExpand = useSidebarStore((state) => state.isExpand);
-
     const [activeStatus, setActiveStatus] = useState<StatusEnum>(
         StatusEnum.Inbox
     );
+
     const [isShowPanel, setIsShowPanel] = useState(false);
     const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
     const [isMultiselect, setIsMultiselect] = useState(false);
@@ -55,14 +53,7 @@ export default function SavesPage() {
     return (
         <div className="flex flex-col">
             <LogInRequired>
-                <div
-                    className={cn("transition-[margin-right] max-md:mr-0", {
-                        "max-[1800px]:mr-[calc(20rem-(100vw-16rem)/2+50%)]":
-                            isSidebarExpand && isShowPanel,
-                        "max-[1800px]:mr-[calc(20rem-100vw/2+50%)]":
-                            !isSidebarExpand && isShowPanel,
-                    })}
-                >
+                <WithPanel isShowPanel={isShowPanel}>
                     <PageTitle>Saves</PageTitle>
                     <div className="px-8 max-md:px-5">
                         <SaveInput />
@@ -139,7 +130,7 @@ export default function SavesPage() {
                         selectedItems={selectedItems}
                         selectItem={selectItem}
                     />
-                </div>
+                </WithPanel>
                 <ItemPanel
                     selectedItems={selectedItems}
                     isShow={isShowPanel}

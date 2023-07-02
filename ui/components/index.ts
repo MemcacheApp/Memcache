@@ -13,4 +13,5 @@ export * from "./Popover";
 export * from "./SaveInput";
 export * from "./StatusToggle";
 export * from "./TagSelector";
+export * from "./WithPanel";
 export * from "./typography";
