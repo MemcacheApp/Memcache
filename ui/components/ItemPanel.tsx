@@ -2,31 +2,63 @@
 
 import { trpc } from "@/src/app/utils/trpc";
 import { Card } from "./Card";
-import { PanelRightClose } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "./Button";
 import { CollectionSelector, TagSelector } from ".";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { cn } from "../utils";
 
 interface ItemPanelProps {
     selectedItems: Set<string>;
+    isShow: boolean;
     dismiss: () => void;
 }
 
-export function ItemPanel({ selectedItems, dismiss }: ItemPanelProps) {
+export function ItemPanel({ selectedItems, isShow, dismiss }: ItemPanelProps) {
     const ids = Array.from(selectedItems);
 
+    const [isCollapse, setIsCollapse] = useState(true);
+    const [isHidden, setIsHidden] = useState(true);
+
+    useEffect(() => {
+        if (isShow) {
+            setIsHidden(false);
+            setTimeout(() => {
+                setIsCollapse(false);
+            }, 10);
+        } else {
+            setIsCollapse(true);
+            setTimeout(() => {
+                setIsHidden(true);
+            }, 200);
+        }
+    }, [isShow]);
+
     return (
-        <Card className="fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14">
-            <Button
-                variant="ghost"
-                className="w-10 rounded-full p-0"
-                onClick={dismiss}
-            >
-                <div className="h-4 w-4">
-                    <PanelRightClose size={16} />
-                </div>
-                <span className="sr-only">Toggle sidebar</span>
-            </Button>
+        <Card
+            className={cn(
+                "fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
+                {
+                    hidden: isHidden,
+                    "md:translate-x-[20rem]": isCollapse,
+                    "max-md:translate-y-[100%]": isCollapse,
+                }
+            )}
+        >
+            <div className="flex">
+                <Button
+                    variant="ghost"
+                    className="w-10 rounded-full p-0"
+                    onClick={dismiss}
+                >
+                    <div className="h-4 w-4">
+                        <X size={16} />
+                    </div>
+                    <span className="sr-only">Toggle sidebar</span>
+                </Button>
+            </div>
+
             {ids.length > 1 ? (
                 <div>Select {ids.length} items</div>
             ) : (

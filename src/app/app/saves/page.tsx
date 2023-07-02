@@ -94,12 +94,11 @@ export default function SavesPage() {
                         selectItem={selectItem}
                     />
                 </div>
-                {isShowPanel ? (
-                    <ItemPanel
-                        selectedItems={selectedItems}
-                        dismiss={clearSelectedItems}
-                    />
-                ) : null}
+                <ItemPanel
+                    selectedItems={selectedItems}
+                    isShow={isShowPanel}
+                    dismiss={clearSelectedItems}
+                />
             </LogInRequired>
         </div>
     );

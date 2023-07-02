@@ -20,8 +20,8 @@ export function Sidebar() {
     return (
         <div className="z-50 relative">
             <Button
-                variant="ghost"
-                className="fixed bg-background m-3 w-10 rounded-full p-0 z-10"
+                variant={isExpand ? "ghost" : "default"}
+                className="fixed m-3 w-10 rounded-full p-0 z-10"
                 onClick={toggle}
             >
                 <div className="h-4 w-4">
