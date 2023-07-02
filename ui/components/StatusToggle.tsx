@@ -1,6 +1,8 @@
 import React from "react";
-import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
+import { StatusEnum } from "@/src/app/utils/Statuses";
 import { cn } from "../utils";
+import { Button } from "./Button";
+import { Archive, CheckCircle2, CircleDot, Inbox } from "lucide-react";
 
 const StatusToggle = React.forwardRef<
     HTMLDivElement,
@@ -9,36 +11,47 @@ const StatusToggle = React.forwardRef<
         setActiveStatus: (status: StatusEnum) => void;
     }
 >(({ className, activeStatus, setActiveStatus, ...props }, ref) => {
-    const statuses = [
-        StatusEnum.Inbox,
-        StatusEnum.Underway,
-        StatusEnum.Complete,
-        StatusEnum.Archive,
-    ];
-
     return (
-        <div
-            ref={ref}
-            className={cn("flex space-x-6 my-5", className)}
-            {...props}
-        >
-            {statuses.map((status) => (
-                <button
-                    key={status}
-                    className={cn(
-                        "px-3 py-1 rounded-lg font-medium",
-                        activeStatus === status
-                            ? "border-2 border-gray-300 bg-gray-100"
-                            : "border-0"
-                    )}
-                    onClick={() => setActiveStatus(status)}
-                >
-                    {StatusNames[status]}
-                </button>
-            ))}
+        <div ref={ref} className={cn("flex space-x-3", className)} {...props}>
+            <Button
+                variant={
+                    activeStatus === StatusEnum.Inbox ? "default" : "outline"
+                }
+                onClick={() => setActiveStatus(StatusEnum.Inbox)}
+            >
+                <Inbox className="mr-2" size={18} />
+                Inbox
+            </Button>
+            <Button
+                variant={
+                    activeStatus === StatusEnum.Underway ? "default" : "outline"
+                }
+                onClick={() => setActiveStatus(StatusEnum.Underway)}
+            >
+                <CircleDot className="mr-2" size={18} />
+                Underway
+            </Button>
+            <Button
+                variant={
+                    activeStatus === StatusEnum.Complete ? "default" : "outline"
+                }
+                onClick={() => setActiveStatus(StatusEnum.Complete)}
+            >
+                <CheckCircle2 className="mr-2" size={18} />
+                Complete
+            </Button>
+            <Button
+                variant={
+                    activeStatus === StatusEnum.Archive ? "default" : "outline"
+                }
+                onClick={() => setActiveStatus(StatusEnum.Archive)}
+            >
+                <Archive className="mr-2" size={18} />
+                Archive
+            </Button>
         </div>
     );
 });
-StatusToggle.displayName = "Status Toggle";
+StatusToggle.displayName = "StatusToggle";
 
 export { StatusToggle };
