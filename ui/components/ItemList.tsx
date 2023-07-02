@@ -15,6 +15,7 @@ import {
     X,
 } from "lucide-react";
 import { useItemListStore } from "@/src/app/store/item-list";
+import { cn } from "../utils";
 
 export function ItemList() {
     const { activeStatus, selectedItems, selectItem } = useItemListStore(
@@ -111,7 +112,7 @@ function MultiselectOptions() {
 
     return (
         <>
-            <div className="flex items-center gap-5 py-1 whitespace-nowrap overflow-x-auto grow">
+            <div className="flex items-center h-12 gap-5 whitespace-nowrap overflow-x-auto grow">
                 <div className="flex items-center">
                     <SquareStack size={18} className="mr-2" />
                     <span className="font-medium">
@@ -119,7 +120,11 @@ function MultiselectOptions() {
                         {selectedItems.size === 1 ? " item" : " items"}
                     </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div
+                    className={cn("flex items-center gap-3", {
+                        hidden: selectedItems.size === 0,
+                    })}
+                >
                     <Button variant="outline">Move to</Button>
                     <Button variant="outline">Mark as</Button>
                     <Button variant="outline" onClick={showPanel}>
@@ -148,7 +153,7 @@ function StatusToggle() {
     }));
 
     return (
-        <div className="flex space-x-3 py-1 overflow-x-auto grow">
+        <div className="flex items-center space-x-3 h-12 overflow-x-auto grow">
             <Button
                 variant={
                     activeStatus === StatusEnum.Inbox ? "default" : "outline"
