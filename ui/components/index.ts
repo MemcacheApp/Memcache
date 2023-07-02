@@ -11,6 +11,7 @@ export * from "./Label";
 export * from "./LogInRequired";
 export * from "./Popover";
 export * from "./SaveInput";
+export * from "./SaveList";
 export * from "./StatusToggle";
 export * from "./TagSelector";
 export * from "./WithPanel";

@@ -7,15 +7,12 @@ import {
     PageTitle,
     SaveInput,
     StatusToggle,
-    ItemCard,
     ItemPanel,
     Button,
     WithPanel,
+    SaveList,
 } from "@/ui/components";
-import { trpc } from "@/src/app/utils/trpc";
-import Image from "next/image";
-import EmptyInbox from "@/public/EmptyInbox.svg";
-import { StatusEnum, StatusNames } from "../../utils/Statuses";
+import { StatusEnum } from "../../utils/Statuses";
 import { SquareStack, X } from "lucide-react";
 
 export default function SavesPage() {
@@ -137,51 +134,6 @@ export default function SavesPage() {
                     dismiss={() => setIsShowPanel(false)}
                 />
             </LogInRequired>
-        </div>
-    );
-}
-
-interface SaveListProps {
-    activeStatus: StatusEnum;
-    selectedItems: Set<string>;
-    selectItem: (id: string) => void;
-}
-
-function SaveList({ activeStatus, selectedItems, selectItem }: SaveListProps) {
-    const itemsQuery = trpc.item.getItems.useQuery();
-
-    let items = itemsQuery.data;
-
-    items = items?.filter((item) => {
-        return activeStatus === null || activeStatus === item.status;
-    });
-
-    items = items?.sort(
-        (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
-    );
-
-    return (
-        <div className="flex flex-col mt-3 gap-3 md:px-8 pb-8">
-            {items && items.length > 0 ? (
-                items.map((item) => (
-                    <ItemCard
-                        data={item}
-                        key={item.id}
-                        selected={selectedItems.has(item.id)}
-                        onSelect={selectItem}
-                    />
-                ))
-            ) : (
-                <div className="w-full px-6 my-8 flex flex-col items-center gap-4">
-                    <Image
-                        src={EmptyInbox}
-                        width="128"
-                        height="128"
-                        alt="Empty Inbox"
-                    />
-                    <div>{`No saves in ${StatusNames[activeStatus]}`}</div>
-                </div>
-            )}
         </div>
     );
 }
