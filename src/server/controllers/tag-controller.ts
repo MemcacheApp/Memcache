@@ -1,10 +1,14 @@
 import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
+import { CreateTagError, GetTagError } from "./errors/tag";
 
 export default class TagController {
     static async createTag(userId: string, name: string) {
         if (await this.getTagByName(userId, name)) {
-            throw Error(`Tag ${name} already exists for user ${userId}`);
+            throw new CreateTagError(
+                "TagExist",
+                `Tag ${name} already exists for user ${userId}`
+            );
         }
 
         const tag = await prisma.tag.create({
@@ -23,6 +27,11 @@ export default class TagController {
                 id,
             },
         });
+
+        if (tag === null) {
+            throw new GetTagError("TagNotExist");
+        }
+
         return tag;
     }
 
@@ -33,6 +42,11 @@ export default class TagController {
                 userId,
             },
         });
+
+        if (tag === null) {
+            throw new GetTagError("TagNotExist");
+        }
+
         return tag;
     }
 

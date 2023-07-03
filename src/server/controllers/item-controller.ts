@@ -4,6 +4,7 @@ import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
 import { Collection, Item, Tag } from "@prisma/client";
+import { DeleteItemError, GetItemError } from "./errors/item";
 
 export default class ItemController {
     static async createFromURL(
@@ -56,6 +57,11 @@ export default class ItemController {
                 collection: true,
             },
         });
+
+        if (item === null) {
+            throw new GetItemError("ItemNotExist");
+        }
+
         return item;
     }
 
@@ -79,13 +85,19 @@ export default class ItemController {
             },
         });
 
-        if (item && item.userId === userId) {
-            await prisma.item.delete({
-                where: {
-                    id: itemId,
-                },
-            });
+        if (item === null) {
+            throw new DeleteItemError("ItemNotExist");
         }
+
+        if (item.userId !== userId) {
+            throw new DeleteItemError("NoPermission");
+        }
+
+        await prisma.item.delete({
+            where: {
+                id: itemId,
+            },
+        });
     }
 
     static async updateItemStatus(

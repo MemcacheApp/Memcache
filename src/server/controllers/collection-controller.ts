@@ -1,10 +1,14 @@
 import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
+import { CreateCollectionError } from "./errors/collection";
 
 export default class CollectionController {
     static async createCollection(userId: string, name: string) {
         if (await this.getCollectionByName(userId, name)) {
-            throw Error(`Collection ${name} already exists for user ${userId}`);
+            throw new CreateCollectionError(
+                "CollectionExist",
+                `Collection ${name} already exists for user ${userId}`
+            );
         }
 
         const collection = await prisma.collection.create({
