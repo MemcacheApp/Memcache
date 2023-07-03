@@ -1,6 +1,6 @@
 "use client";
 
-import { StatusEnum } from "@/src/app/utils/Statuses";
+import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,20 +23,17 @@ import { Item, Collection, Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import {
     Package2,
-    ExternalLink,
+    ExternalLink as ExternalLinkIcon,
     Trash2,
     MoreHorizontal,
     PanelRightOpen,
-    Inbox,
-    CheckCircle2,
-    CircleDot,
-    Archive,
     Globe,
+    LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-import { AspectRatio } from "./AspectRatio";
 import { cn } from "../utils";
+import ExternalLink from "./ExternalLink";
+import renderIcon from "@/src/app/utils/renderIcon";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -75,7 +72,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         },
     });
 
-    const handleUpdateItemStatus = async (newStatus: number) => {
+    const handleUpdateItemStatus = async (newStatus: StatusEnum) => {
         if (newStatus === data.status) {
             // Same status, no need to change
             return;
@@ -119,10 +116,17 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
             </div>
             <CardFooter className="flex flex-wrap gap-5 justify-between">
                 <div className="flex flex-wrap gap-5 text-slate-450 text-sm">
-                    <span className="inline-flex items-center gap-2">
-                        <Globe size={16} />
-                        {data.siteName}
-                    </span>
+                    <ExternalLink
+                        href={data.url}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                        }}
+                    >
+                        <span className="inline-flex items-center gap-2">
+                            <Globe size={16} />
+                            {data.siteName}
+                        </span>
+                    </ExternalLink>
                     <span className="inline-flex items-center gap-2">
                         <Package2 size={16} />
                         <Link
@@ -160,7 +164,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 
                         <DropdownMenuContent>
                             <DropdownMenuGroup>
-                                <DropdownMenuIconItem Icon={ExternalLink}>
+                                <DropdownMenuIconItem Icon={ExternalLinkIcon}>
                                     Visit Link
                                 </DropdownMenuIconItem>
                                 <DropdownMenuIconItem Icon={PanelRightOpen}>
@@ -214,46 +218,22 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             </DropdownMenuIconItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Inbox);
-                        }}
-                    >
-                        <Inbox size={18} />
-                    </Button>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Underway);
-                        }}
-                    >
-                        <CircleDot size={18} />
-                    </Button>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Complete);
-                        }}
-                    >
-                        <CheckCircle2 size={18} />
-                    </Button>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Archive);
-                        }}
-                    >
-                        <Archive size={18} />
-                    </Button>
+                    {Object.values(StatusEnum)
+                        .filter((value) => typeof value === "number")
+                        .map((value) => (
+                            <Button
+                                key={value}
+                                variant={"icon"}
+                                size={"none"}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (typeof value !== "number") return;
+                                    handleUpdateItemStatus(value);
+                                }}
+                            >
+                                {renderIcon(StatusIcons[value])}
+                            </Button>
+                        ))}
                 </div>
             </CardFooter>
         </Card>
