@@ -28,4 +28,17 @@ function ensureError<E extends Error>(
     return new Error(msg);
 }
 
-export { ensureError };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createError<K extends keyof any>(msgs: Record<K, string>) {
+    const _err = class extends Error {
+        kind: K;
+        constructor(kind: K, msg?: string, options?: ErrorOptions) {
+            super(msg || msgs[kind], options);
+            Object.setPrototypeOf(this, _err.prototype);
+            this.kind = kind;
+        }
+    };
+    return _err;
+}
+
+export { ensureError, createError };
