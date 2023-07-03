@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
-import classNames from "classnames";
 
 import { CollectionSelector } from "./CollectionSelector";
 import { TagSelector } from "./TagSelector";
@@ -11,16 +10,24 @@ import { Input } from "./Input";
 import { Button } from "./Button";
 import { useQueryClient } from "@tanstack/react-query";
 import { Package2, Tag } from "lucide-react";
+import { cn } from "../utils";
 
-export function SaveInput() {
+interface SaveInputProps {
+    alwaysShowOptions?: boolean;
+    url?: string;
+}
+
+export function SaveInput(props: SaveInputProps) {
     const queryClient = useQueryClient();
-    const [isShowPopover, setIsShowPopover] = useState(false);
+    const [isShowPopover, setIsShowPopover] = useState(
+        props.alwaysShowOptions || false
+    );
     const inputRef = useRef<HTMLInputElement>(null);
 
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
 
-    const [url, setUrl] = useState("");
+    const [url, setUrl] = useState(props.url || "");
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
 
@@ -40,7 +47,9 @@ export function SaveInput() {
     };
 
     const dismissPopOver = () => {
-        setIsShowPopover(false);
+        if (!props.alwaysShowOptions) {
+            setIsShowPopover(false);
+        }
     };
 
     const _onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -87,7 +96,7 @@ export function SaveInput() {
     };
 
     return (
-        <div className="flex flex-col relative">
+        <div className="flex flex-col relative mb-5 mx-8 max-md:mx-5">
             <button
                 className="text-left text-base box-border bg-background p-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 onClick={showPopover}
@@ -96,16 +105,16 @@ export function SaveInput() {
                 Save a URL...
             </button>
             <div
-                className={classNames({ hidden: !isShowPopover })}
+                className={cn({ hidden: !isShowPopover })}
                 onKeyDown={_onKeyDown}
             >
                 <form
-                    className="flex flex-col absolute border rounded-md -left-1 -top-1 -right-1 bg-background drop-shadow-md z-50"
+                    className="flex flex-col absolute border rounded-md -left-1 -top-1 -right-1 bg-background drop-shadow-md z-10"
                     action=""
                     onSubmit={handleSubmit}
                 >
                     <Input
-                        className="!text-base border-0 px-4 py-7"
+                        className="text-base border-0 px-4 py-7"
                         placeholder="https://"
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}

@@ -21,7 +21,6 @@ import {
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
-import classNames from "classnames";
 import {
     Package2,
     ExternalLink,
@@ -37,6 +36,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { AspectRatio } from "./AspectRatio";
+import { cn } from "../utils";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -92,7 +92,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 
     return (
         <Card
-            className={classNames(
+            className={cn(
                 "flex flex-col cursor-pointer hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 selected ? "outline" : "outline-none"
             )}
@@ -108,7 +108,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     <p className="mt-3">{data.description}</p>
                 </div>
                 {data.thumbnail ? (
-                    <div className="w-[320px] max-w-[32%] aspect-[16/9] m-8 shrink-0">
+                    <div className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0">
                         <img
                             src={data.thumbnail}
                             alt="Image"
@@ -132,7 +132,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             {data.collection.name}
                         </Link>
                     </span>
-                    <div>
+                    <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag) => (
                             <Link
                                 key={tag.id}
@@ -152,7 +152,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 </div>
                 <div className="flex gap-3">
                     <DropdownMenu>
-                        <DropdownMenuTrigger>
+                        <DropdownMenuTrigger asChild>
                             <Button variant={"icon"} size={"none"}>
                                 <MoreHorizontal size={18} />
                             </Button>
@@ -217,34 +217,40 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() => handleUpdateItemStatus(StatusEnum.Inbox)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Inbox);
+                        }}
                     >
                         <Inbox size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() =>
-                            handleUpdateItemStatus(StatusEnum.Underway)
-                        }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Underway);
+                        }}
                     >
                         <CircleDot size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() =>
-                            handleUpdateItemStatus(StatusEnum.Complete)
-                        }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Complete);
+                        }}
                     >
                         <CheckCircle2 size={18} />
                     </Button>
                     <Button
                         variant={"icon"}
                         size={"none"}
-                        onClick={() =>
-                            handleUpdateItemStatus(StatusEnum.Archive)
-                        }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateItemStatus(StatusEnum.Archive);
+                        }}
                     >
                         <Archive size={18} />
                     </Button>

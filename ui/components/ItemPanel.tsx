@@ -2,7 +2,7 @@
 
 import { trpc } from "@/src/app/utils/trpc";
 import { Card } from "./Card";
-import { PanelRightClose } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "./Button";
 import { CollectionSelector, TagSelector } from ".";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,42 +10,78 @@ import { useEffect, useState } from "react";
 import { cn } from "../utils";
 import { useItemListStore } from "@/src/app/store/item-list";
 import { Separator } from "./Separator";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHeader,
-    TableRow,
-} from "./Table";
+import { Table, TableBody, TableCell, TableRow } from "./Table";
 import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
 
-interface ItemPanelProps {
-    selectedItems: Set<string>;
-    dismiss: () => void;
-}
+export function ItemPanel() {
+    const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
+        (state) => ({
+            selectedItems: state.selectedItems,
+            isShowPanel: state.isShowPanel,
+            dismissPanel: state.dismissPanel,
+        })
+    );
 
-export function ItemPanel({ selectedItems, dismiss }: ItemPanelProps) {
     const ids = Array.from(selectedItems);
 
+    const [isCollapse, setIsCollapse] = useState(true);
+    const [isHidden, setIsHidden] = useState(true);
+
+    useEffect(() => {
+        if (isShowPanel) {
+            setIsHidden(false);
+            setTimeout(() => {
+                setIsCollapse(false);
+            }, 10);
+        } else {
+            setIsCollapse(true);
+            setTimeout(() => {
+                setIsHidden(true);
+            }, 200);
+        }
+    }, [isShowPanel]);
+
     return (
-        <Card className="fixed flex flex-col right-5 w-80 p-4">
-            <Button
-                variant="ghost"
-                className="m-3 w-10 !rounded-full p-0"
-                onClick={dismiss}
+        <div>
+            <div
+                className={cn(
+                    "fixed top-0 bottom-0 left-0 right-0 bg-black/40 md:hidden transition-opacity",
+                    isCollapse ? "opacity-0" : "opacity-100",
+                    {
+                        hidden: isHidden,
+                    }
+                )}
+            ></div>
+            <Card
+                className={cn(
+                    "fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
+                    {
+                        hidden: isHidden,
+                        "md:translate-x-[20rem]": isCollapse,
+                        "max-md:translate-y-[100%]": isCollapse,
+                    }
+                )}
             >
-                <div className="h-4 w-4">
-                    <PanelRightClose size={16} />
+                <div className="flex">
+                    <Button
+                        variant="ghost"
+                        className="w-10 rounded-full p-0"
+                        onClick={dismissPanel}
+                    >
+                        <div className="h-4 w-4">
+                            <X size={16} />
+                        </div>
+                        <span className="sr-only">Toggle sidebar</span>
+                    </Button>
                 </div>
-                <span className="sr-only">Toggle sidebar</span>
-            </Button>
-            {ids.length > 1 ? (
-                <div>Select {ids.length} items</div>
-            ) : (
-                <SingleItem id={ids[0]} />
-            )}
-        </Card>
+
+                {ids.length > 1 ? (
+                    <div>Select {ids.length} items</div>
+                ) : (
+                    <SingleItem id={ids[0]} />
+                )}
+            </Card>
+        </div>
     );
 }
 
