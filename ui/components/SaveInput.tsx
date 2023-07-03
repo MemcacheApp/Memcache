@@ -113,7 +113,7 @@ export function SaveInput() {
                     />
                     <div>
                         <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
-                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
+                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-450 tracking-wider">
                                 <Package2 size={18} />
                                 {"Collection:"}
                             </div>
@@ -124,7 +124,7 @@ export function SaveInput() {
                             />
                         </div>
                         <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
-                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
+                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-450 tracking-wider">
                                 <Tag size={18} />
                                 {"Tags:"}
                             </div>

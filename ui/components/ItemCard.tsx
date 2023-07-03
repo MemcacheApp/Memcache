@@ -112,8 +112,8 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
                     </div>
                 ) : null}
             </div>
-            <CardFooter className="flex justify-between">
-                <div className="flex gap-5 text-slate-600 text-sm">
+            <CardFooter className="flex flex-wrap gap-5 justify-between">
+                <div className="flex flex-wrap gap-5 text-slate-450 text-sm">
                     <span className="inline-flex items-center gap-2">
                         <Globe size={16} />
                         {data.siteName}

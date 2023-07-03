@@ -75,10 +75,10 @@ function Collections() {
     const collections = collectionsQuery.data;
 
     return (
-        <li className="mt-2 ml-2">
-            <div className="flex flex-row items-center gap-2 py-2">
-                <Package2 size={12} className="text-slate-400" />
-                <p className="text-slate-400 text-[12px] tracking-widest">
+        <li className="mt-2">
+            <div className="ml-2 flex flex-row items-center gap-2 py-2">
+                <Package2 size={12} className="text-slate-450" />
+                <p className="text-slate-450 text-[12px] tracking-widest">
                     COLLECTIONS
                 </p>
             </div>

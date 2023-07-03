@@ -6,6 +6,19 @@ import { PanelRightClose } from "lucide-react";
 import { Button } from "./Button";
 import { CollectionSelector, TagSelector } from ".";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { cn } from "../utils";
+import { useItemListStore } from "@/src/app/store/item-list";
+import { Separator } from "./Separator";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHeader,
+    TableRow,
+} from "./Table";
+import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
 
 interface ItemPanelProps {
     selectedItem: string;
@@ -79,12 +92,40 @@ export function ItemPanel({ selectedItem, dismiss }: ItemPanelProps) {
             </div>
             {data ? (
                 <div>
-                    <div className="text-xl font-bold">{data.title}</div>
-                    <div>{data.description}</div>
-                    <div>{data.type}</div>
-                    <div>{data.status}</div>
-                    <div>{data.collection.name}</div>
-                    <div>{data.url}</div>
+                    <div className="text-xl font-bold">
+                        <ExternalLink href={data.url}>
+                            {data.title}
+                        </ExternalLink>
+                    </div>
+                    <div className="mt-1 text-slate-450 ">{data.siteName}</div>
+                    <div className="mt-3">{data.description}</div>
+                    <Separator className="my-4" />
+                    <div>Status</div>
+                    <div>{StatusNames[data.status as StatusEnum]}</div>
+                    <Separator className="my-4" />
+                    <div className="text-slate-450 text-sm tracking-wide uppercase">
+                        Metadata
+                    </div>
+                    <Table className="mt-2">
+                        <TableBody>
+                            <TableRow divider={false} interactive={false}>
+                                <TableCell className="text-slate-450">
+                                    Type
+                                </TableCell>
+                                <TableCell className="capitalize">
+                                    {data.type}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow divider={false} interactive={false}>
+                                <TableCell className="text-slate-450">
+                                    URL
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                    {data.url}
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
                     <div>{data.thumbnail}</div>
                     <div>{`${data.createdAt.toLocaleDateString(undefined, {
                         weekday: "long",
@@ -103,7 +144,6 @@ export function ItemPanel({ selectedItem, dismiss }: ItemPanelProps) {
                             }
                         )}`}</div>
                     ) : null}
-                    <div>{data.siteName}</div>
                     {data.duration ? <div>{data.duration}</div> : null}
                     {data.author ? <div>{data.author}</div> : null}
                     <CollectionSelector
@@ -159,5 +199,19 @@ export function ItemPanel({ selectedItem, dismiss }: ItemPanelProps) {
                 </div>
             ) : null}
         </Card>
+    );
+}
+
+function ExternalLink({
+    href,
+    children,
+}: {
+    href: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <a href={href} target="_blank" rel="noreferrer">
+            {children}
+        </a>
     );
 }
