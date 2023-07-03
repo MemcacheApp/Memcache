@@ -21,20 +21,40 @@ import {
 import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
 
 interface ItemPanelProps {
-    selectedItem: string;
+    selectedItems: Set<string>;
     dismiss: () => void;
 }
 
-export function ItemPanel({ selectedItem, dismiss }: ItemPanelProps) {
+export function ItemPanel({ selectedItems, dismiss }: ItemPanelProps) {
+    const ids = Array.from(selectedItems);
+
+    return (
+        <Card className="fixed flex flex-col right-5 w-80 p-4">
+            <Button
+                variant="ghost"
+                className="m-3 w-10 !rounded-full p-0"
+                onClick={dismiss}
+            >
+                <div className="h-4 w-4">
+                    <PanelRightClose size={16} />
+                </div>
+                <span className="sr-only">Toggle sidebar</span>
+            </Button>
+            {ids.length > 1 ? (
+                <div>Select {ids.length} items</div>
+            ) : (
+                <SingleItem id={ids[0]} />
+            )}
+        </Card>
+    );
+}
+
+function SingleItem({ id }: { id: string }) {
     const queryClient = useQueryClient();
 
-    const itemQuery = trpc.item.getItem.useQuery({ itemId: selectedItem });
+    const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
     const data = itemQuery.data;
 
-    if (!data) {
-        dismiss();
-        return null;
-    }
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
 
@@ -77,19 +97,7 @@ export function ItemPanel({ selectedItem, dismiss }: ItemPanelProps) {
     });
 
     return (
-        <Card className="fixed right-5 w-80 p-4">
-            <div className="flex">
-                <Button
-                    variant="ghost"
-                    className="m-3 w-10 !rounded-full p-0"
-                    onClick={dismiss}
-                >
-                    <div className="h-4 w-4">
-                        <PanelRightClose size={16} />
-                    </div>
-                    <span className="sr-only">Toggle sidebar</span>
-                </Button>
-            </div>
+        <div>
             {data ? (
                 <div>
                     <div className="text-xl font-bold">
@@ -198,7 +206,7 @@ export function ItemPanel({ selectedItem, dismiss }: ItemPanelProps) {
                     </div>
                 </div>
             ) : null}
-        </Card>
+        </div>
     );
 }
 

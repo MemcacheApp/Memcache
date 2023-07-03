@@ -21,6 +21,7 @@ import {
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
+import classNames from "classnames";
 import {
     Package2,
     ExternalLink,
@@ -39,10 +40,11 @@ import { AspectRatio } from "./AspectRatio";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
+    selected: boolean;
     onSelect: (id: string) => void;
 }
 
-export function ItemCard({ data, onSelect }: ItemCardProps) {
+export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const queryClient = useQueryClient();
 
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
@@ -90,7 +92,10 @@ export function ItemCard({ data, onSelect }: ItemCardProps) {
 
     return (
         <Card
-            className="flex flex-col cursor-pointer hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className={classNames(
+                "flex flex-col cursor-pointer hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                selected ? "outline" : "outline-none"
+            )}
             tabIndex={0}
             key={data.id}
             onClick={() => {
