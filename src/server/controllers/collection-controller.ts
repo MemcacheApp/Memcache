@@ -1,27 +1,34 @@
 import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { CreateCollectionError, GetCollectionError } from "./errors/collection";
+import { Prisma } from "@prisma/client";
 
 export default class CollectionController {
     /**
      * @throws {CreateCollectionError}
      */
     static async createCollection(userId: string, name: string) {
-        if (await this.getCollectionByName(userId, name)) {
-            throw new CreateCollectionError(
-                "CollectionExist",
-                `Collection ${name} already exists for user ${userId}`
-            );
-        }
-
-        const collection = await prisma.collection.create({
-            data: {
-                id: uuidv4(),
-                name,
-                userId,
-            },
-        });
-        return collection;
+        return await prisma.collection
+            .create({
+                data: {
+                    id: uuidv4(),
+                    name,
+                    userId,
+                },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2002"
+                ) {
+                    throw new CreateCollectionError(
+                        "CollectionExist",
+                        `Collection ${name} already exists for user ${userId}`
+                    );
+                } else {
+                    throw err;
+                }
+            });
     }
 
     /**
