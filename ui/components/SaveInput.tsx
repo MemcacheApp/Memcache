@@ -24,8 +24,8 @@ export function SaveInput(props: SaveInputProps) {
     );
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const collectionsQuery = trpc.collection.getCollections.useQuery();
-    const tagsQuery = trpc.tag.getTags.useQuery();
+    const collectionsQuery = trpc.collection.getUserCollections.useQuery();
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
 
     const [url, setUrl] = useState(props.url || "");
     const [collection, setCollection] = useState("");

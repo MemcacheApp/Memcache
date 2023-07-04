@@ -9,8 +9,8 @@ export const itemRouter = router({
             const item = await ItemController.getItem(input.itemId);
             return item;
         }),
-    getItems: protectedProcedure.query(async ({ ctx }) => {
-        const items = await ItemController.getItems(ctx.userId);
+    getUserItems: protectedProcedure.query(async ({ ctx }) => {
+        const items = await ItemController.getUserItems(ctx.userId);
         return items;
     }),
     createFromURL: protectedProcedure
@@ -35,19 +35,19 @@ export const itemRouter = router({
         .mutation(async ({ ctx, input }) => {
             ItemController.deleteItem(ctx.userId, input.id);
         }),
-    updateItemStatus: protectedProcedure
+    setItemStatus: protectedProcedure
         .input(z.object({ itemId: z.string(), status: z.number() }))
         .mutation(async ({ ctx, input }) => {
-            return ItemController.updateItemStatus(
+            return ItemController.setItemStatus(
                 ctx.userId,
                 input.itemId,
                 input.status
             );
         }),
-    setCollection: protectedProcedure
+    setItemCollection: protectedProcedure
         .input(z.object({ itemId: z.string(), collectionName: z.string() }))
         .mutation(async ({ ctx, input }) => {
-            ItemController.setCollection(
+            ItemController.setItemCollection(
                 ctx.userId,
                 input.itemId,
                 input.collectionName

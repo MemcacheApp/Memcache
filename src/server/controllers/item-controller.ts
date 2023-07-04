@@ -65,7 +65,7 @@ export default class ItemController {
         return item;
     }
 
-    static async getItems(userId: string) {
+    static async getUserItems(userId: string) {
         const items = await prisma.item.findMany({
             where: {
                 userId,
@@ -100,11 +100,7 @@ export default class ItemController {
         });
     }
 
-    static async updateItemStatus(
-        userId: string,
-        itemId: string,
-        status: number
-    ) {
+    static async setItemStatus(userId: string, itemId: string, status: number) {
         const item = await prisma.item.findUnique({
             where: {
                 id: itemId,
@@ -123,7 +119,7 @@ export default class ItemController {
         }
     }
 
-    static async setCollection(
+    static async setItemCollection(
         userId: string,
         itemId: string,
         collectionName: string

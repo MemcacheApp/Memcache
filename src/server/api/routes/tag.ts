@@ -3,8 +3,8 @@ import { protectedProcedure, router } from "../trpc";
 import { z } from "zod";
 
 export const tagRouter = router({
-    getTags: protectedProcedure.query(async ({ ctx }) => {
-        const tags = await TagController.getTagNames(ctx.userId);
+    getUserTags: protectedProcedure.query(async ({ ctx }) => {
+        const tags = await TagController.getUserTags(ctx.userId);
         return tags;
     }),
 

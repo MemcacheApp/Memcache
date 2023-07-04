@@ -71,7 +71,7 @@ export function Navigation() {
 }
 
 function Collections() {
-    const collectionsQuery = trpc.collection.getCollections.useQuery();
+    const collectionsQuery = trpc.collection.getUserCollections.useQuery();
     const collections = collectionsQuery.data;
 
     return (
@@ -86,10 +86,10 @@ function Collections() {
                 {collections
                     ? collections.map((collection) => (
                           <NavigationItem
-                              key={collection}
-                              href={`/app/collection/${collection}`}
+                              key={collection.id}
+                              href={`/app/collection/${collection.id}`}
                           >
-                              {collection}
+                              {collection.name}
                           </NavigationItem>
                       ))
                     : null}

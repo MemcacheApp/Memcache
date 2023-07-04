@@ -50,18 +50,13 @@ export default class TagController {
         return tag;
     }
 
-    static async getTags(userId: string) {
+    static async getUserTags(userId: string) {
         const tags = await prisma.tag.findMany({
             where: {
                 userId,
             },
         });
         return tags;
-    }
-
-    static async getTagNames(userId: string) {
-        const tags = await this.getTags(userId);
-        return tags.map((tag) => tag.name);
     }
 
     static async getOrCreateTag(userId: string, name: string) {

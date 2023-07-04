@@ -21,10 +21,6 @@ export default class CollectionController {
         return collection;
     }
 
-    /**
-     * No need to include userId in query because collection id is sufficient
-     * to identify the collection across all users.
-     */
     static async getCollection(id: string) {
         const collection = await prisma.collection.findUnique({
             where: {
@@ -44,18 +40,13 @@ export default class CollectionController {
         return collection;
     }
 
-    static async getCollections(userId: string) {
+    static async getUserCollections(userId: string) {
         const collections = await prisma.collection.findMany({
             where: {
                 userId,
             },
         });
         return collections;
-    }
-
-    static async getCollectionNames(userId: string) {
-        const collections = await this.getCollections(userId);
-        return collections.map((collection) => collection.name);
     }
 
     static async getOrCreateCollection(userId: string, name: string) {

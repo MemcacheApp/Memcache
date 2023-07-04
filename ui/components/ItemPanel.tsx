@@ -88,10 +88,10 @@ function SingleItem({ id }: { id: string }) {
     const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
     const data = itemQuery.data;
 
-    const collectionsQuery = trpc.collection.getCollections.useQuery();
-    const tagsQuery = trpc.tag.getTags.useQuery();
+    const collectionsQuery = trpc.collection.getUserCollections.useQuery();
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
 
-    const setCollectionOnItem = trpc.item.setCollection.useMutation({
+    const setCollectionOnItem = trpc.item.setItemCollection.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [["item", "getItems"], { type: "query" }],

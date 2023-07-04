@@ -63,7 +63,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         }
     };
 
-    const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
+    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [["item", "getItems"], { type: "query" }],

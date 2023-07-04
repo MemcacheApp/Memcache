@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import {
     Button,
     Command,
@@ -16,9 +16,10 @@ import { includeCaseInsensitive } from "../../src/app/utils";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { type VariantProps } from "class-variance-authority";
 import { cn } from "../utils";
+import { Collection } from "@prisma/client";
 
 interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
-    collections: string[] | undefined;
+    collections: Collection[] | undefined;
     value: string;
     setValue: (s: string) => void;
 }
@@ -32,10 +33,12 @@ export function CollectionSelector({
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    useEffect(() => {
-        if (collections && !value) {
-            setValue(collections[0]);
+    const collectionNames = useMemo(() => {
+        const names = collections?.map((collection) => collection.name);
+        if (names && !value) {
+            setValue(names[0]);
         }
+        return names;
     }, [collections]);
 
     return (
@@ -60,11 +63,11 @@ export function CollectionSelector({
                         onValueChange={setSearchValue}
                     />
                     <CommandGroup>
-                        {collections ? (
+                        {collectionNames ? (
                             <>
                                 {!searchValue ||
                                 includeCaseInsensitive(
-                                    collections,
+                                    collectionNames,
                                     searchValue
                                 ) ? null : (
                                     <CommandItem
@@ -77,7 +80,7 @@ export function CollectionSelector({
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
                                 )}
-                                {collections.map((collection) => (
+                                {collectionNames.map((collection) => (
                                     <CommandItem
                                         key={collection}
                                         onSelect={() => {
