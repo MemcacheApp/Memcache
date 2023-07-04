@@ -36,7 +36,7 @@ function createError<K extends keyof any>(
     const _err = class extends Error {
         kind: K;
         constructor(kind: K, msg?: string, options?: ErrorOptions) {
-            super(`[${kind.toString()}] ${msg || msgs[kind]}`, options);
+            super(`${msg || msgs[kind]}`, options);
             Object.setPrototypeOf(this, _err.prototype);
             this.kind = kind;
         }
