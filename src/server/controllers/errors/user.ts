@@ -15,3 +15,7 @@ export const AuthError = createError("ValidateError", {
     SessionExpired: "Session has expired",
     NoPermission: "The user does not have permission to perform the operation",
 });
+
+export const GetUserError = createError("GetUserError", {
+    UserNotExist: "The user does not exist",
+});

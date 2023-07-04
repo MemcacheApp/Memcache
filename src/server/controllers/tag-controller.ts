@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import { CreateTagError, GetTagError } from "./errors/tag";
 
 export default class TagController {
+    /**
+     * @throws {CreateTagError}
+     */
     static async createTag(userId: string, name: string) {
         if (await this.getTagByName(userId, name)) {
             throw new CreateTagError(
@@ -18,9 +21,13 @@ export default class TagController {
                 userId,
             },
         });
+
         return tag;
     }
 
+    /**
+     * @throws {GetTagError}
+     */
     static async getTag(id: string) {
         const tag = await prisma.tag.findUnique({
             where: {
@@ -35,6 +42,9 @@ export default class TagController {
         return tag;
     }
 
+    /**
+     * @throws {GetTagError}
+     */
     static async getTagByName(userId: string, name: string) {
         const tag = await prisma.tag.findFirst({
             where: {

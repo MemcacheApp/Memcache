@@ -1,8 +1,11 @@
 import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { CreateCollectionError } from "./errors/collection";
+import { CreateCollectionError, GetCollectionError } from "./errors/collection";
 
 export default class CollectionController {
+    /**
+     * @throws {CreateCollectionError}
+     */
     static async createCollection(userId: string, name: string) {
         if (await this.getCollectionByName(userId, name)) {
             throw new CreateCollectionError(
@@ -21,15 +24,26 @@ export default class CollectionController {
         return collection;
     }
 
+    /**
+     * @throws {GetCollectionError}
+     */
     static async getCollection(id: string) {
         const collection = await prisma.collection.findUnique({
             where: {
                 id,
             },
         });
+
+        if (collection === null) {
+            throw new GetCollectionError("CollectionNotExist");
+        }
+
         return collection;
     }
 
+    /**
+     * @throws {GetCollectionError}
+     */
     static async getCollectionByName(userId: string, name: string) {
         const collection = await prisma.collection.findFirst({
             where: {
@@ -37,6 +51,11 @@ export default class CollectionController {
                 userId,
             },
         });
+
+        if (collection === null) {
+            throw new GetCollectionError("CollectionNotExist");
+        }
+
         return collection;
     }
 
