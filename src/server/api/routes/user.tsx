@@ -4,7 +4,11 @@ import { TRPCError } from "@trpc/server";
 import UserController from "../../controllers/user-controller";
 import { Resend } from "resend";
 import ResetPasswordEmail from "@/react-email-templates/emails/reset-password-email";
-import { prisma } from "../../db/prisma";
+import {
+    CreateUserError,
+    GetUserError,
+    LoginError,
+} from "../../controllers/errors/user";
 
 const resend = new Resend("re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c");
 
@@ -32,12 +36,17 @@ export const userRouter = router({
                     `jwt=${token};HttpOnly;Secure;`
                 );
             } catch (e) {
-                const message =
-                    e instanceof Error ? e.message : "Unknown Error";
-                throw new TRPCError({
-                    message,
-                    code: "BAD_REQUEST",
-                });
+                if (e instanceof CreateUserError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
             }
         }),
     login: publicProcedure
@@ -58,18 +67,22 @@ export const userRouter = router({
                     `jwt=${token};HttpOnly;Secure;`
                 );
             } catch (e) {
-                const message =
-                    e instanceof Error ? e.message : "Unknown Error";
-                throw new TRPCError({
-                    message,
-                    code: "BAD_REQUEST",
-                });
+                if (e instanceof LoginError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
             }
         }),
     isLoggedIn: publicProcedure.query(async ({ ctx }) => {
         try {
-            const cookieString = ctx.req.headers.get("cookie");
-            await UserController.validate(cookieString);
+            await UserController.validate(ctx.req.headers.get("cookie"));
             return true;
         } catch (err) {
             return false;
@@ -82,7 +95,21 @@ export const userRouter = router({
             })
         )
         .query(async ({ input }) => {
-            return await UserController.isValidEmail(input.email);
+            try {
+                return await UserController.isValidEmail(input.email);
+            } catch (e) {
+                if (e instanceof GetUserError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
         }),
     sendVerificationEmail: publicProcedure
         .input(
@@ -190,11 +217,20 @@ export const userRouter = router({
             }
         }),
     getUserInfo: protectedProcedure.query(async ({ ctx }) => {
-        if (ctx.userId) {
-            const user = await UserController.userInfo(ctx.userId);
-            return user;
-        } else {
-            return null;
+        try {
+            return await UserController.userInfo(ctx.userId);
+        } catch (e) {
+            if (e instanceof GetUserError) {
+                throw new TRPCError({
+                    message: e.message,
+                    code: "BAD_REQUEST",
+                });
+            } else {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
         }
     }),
 });
