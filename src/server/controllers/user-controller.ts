@@ -14,7 +14,6 @@ import {
     VerifyCodeError,
 } from "./errors/user";
 import { Resend } from "resend";
-import ResetPasswordEmail from "@/react-email-templates/emails/reset-password-email";
 import { createElement } from "react";
 
 const SECRET_KEY = "superSecretTestKey"; // TODO: move to .env
@@ -54,7 +53,7 @@ export default class UserController {
                 }
             });
 
-        CollectionController.createCollection(user.id, "Default");
+        await CollectionController.createCollection(user.id, "Default");
 
         const session = await prisma.session.create({
             data: {
@@ -241,6 +240,11 @@ export default class UserController {
             },
         });
 
+        const ResetPasswordEmail = (
+            await import(
+                "../../../react-email-templates/emails/reset-password-email"
+            )
+        ).default;
         resend.sendEmail({
             from: "onboarding@resend.dev",
             to: email,
