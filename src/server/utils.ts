@@ -29,15 +29,24 @@ function ensureError<E extends Error>(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function createError<K extends keyof any>(msgs: Record<K, string>) {
+function createError<K extends keyof any>(
+    name: string,
+    msgs: Record<K, string>
+) {
     const _err = class extends Error {
         kind: K;
         constructor(kind: K, msg?: string, options?: ErrorOptions) {
-            super(msg || msgs[kind], options);
+            super(`[${kind.toString()}] ${msg || msgs[kind]}`, options);
             Object.setPrototypeOf(this, _err.prototype);
             this.kind = kind;
         }
     };
+
+    Object.defineProperty(_err, "name", {
+        value: name,
+        writable: false,
+    });
+
     return _err;
 }
 
