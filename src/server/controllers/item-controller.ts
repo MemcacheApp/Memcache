@@ -4,7 +4,11 @@ import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
 import { Collection, Item, Tag } from "@prisma/client";
-import { DeleteItemError, GetItemError } from "./errors/item";
+import {
+    CreateFromURLError,
+    DeleteItemError,
+    GetItemError,
+} from "./errors/item";
 
 export default class ItemController {
     static async createFromURL(
@@ -13,7 +17,17 @@ export default class ItemController {
         collectionName: string,
         tagNames: string[]
     ) {
-        const { result } = await ogs({ url });
+        let result;
+        try {
+            result = (await ogs({ url })).result;
+        } catch (e) {
+            throw new CreateFromURLError("FetchError", undefined, { cause: e });
+        }
+
+        const requestUrl = result.requestUrl;
+        if (!requestUrl) {
+            throw new CreateFromURLError("InvalidURL");
+        }
 
         const collection = await CollectionController.getOrCreateCollection(
             userId,
@@ -21,7 +35,7 @@ export default class ItemController {
         );
         const tags = await TagController.getOrCreateTags(userId, tagNames);
 
-        return await prisma.item.create({
+        const item = await prisma.item.create({
             data: {
                 id: uuidv4(),
                 type: result.ogType || "website",
@@ -31,13 +45,13 @@ export default class ItemController {
                     connect: tags.map((tag) => ({ id: tag.id })),
                 },
                 title: result.ogTitle || result.twitterTitle || "Untitled",
-                url: result.ogUrl || url,
+                url: result.ogUrl || requestUrl,
                 description: result.ogDescription || result.dcDescription || "",
                 thumbnail:
                     result.ogImage?.[0].url || result.twitterImage?.[0].url,
                 createdAt: new Date(),
                 userId,
-                siteName: result.ogSiteName || new URL(url).hostname,
+                siteName: result.ogSiteName || new URL(requestUrl).hostname,
                 duration: result.musicDuration
                     ? parseInt(result.musicDuration)
                     : undefined,
@@ -45,6 +59,8 @@ export default class ItemController {
                 author: result.author,
             },
         });
+
+        return item;
     }
 
     static async getItem(itemId: string) {
