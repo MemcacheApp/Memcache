@@ -55,6 +55,8 @@ model Collection {
   items  Item[]
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  @@unique([userId, name])
 }
 
 model Tag {
@@ -63,4 +65,6 @@ model Tag {
   items  Item[]
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  @@unique([userId, name])
 }
