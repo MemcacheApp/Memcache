@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 import CollectionController from "./collection-controller";
-import { CreateUserError, LoginError, ValidateError } from "./errors/user";
+import { CreateUserError, LoginError, AuthError } from "./errors/user";
 
 const SECRET_KEY = "superSecretTestKey"; // TODO: move to .env
 
@@ -91,17 +91,17 @@ export default class UserController {
 
     static async validate(cookieString: string | null) {
         if (!cookieString) {
-            throw new ValidateError("NoJWT");
+            throw new AuthError("NoJWT");
         }
 
         const cookieEntries = cookie.parse(cookieString);
-        if (!cookieEntries.jwt) throw new ValidateError("NoJWT");
+        if (!cookieEntries.jwt) throw new AuthError("NoJWT");
 
         let session;
         try {
             session = jwt.verify(cookieEntries.jwt, SECRET_KEY) as Session;
         } catch (err) {
-            throw new ValidateError("InvalidJWT");
+            throw new AuthError("InvalidJWT");
         }
 
         await prisma.session
@@ -114,7 +114,7 @@ export default class UserController {
             .catch((err) => {
                 if (err instanceof Prisma.PrismaClientKnownRequestError) {
                     if (err.code === "P2025") {
-                        throw new ValidateError("SessionExpired");
+                        throw new AuthError("SessionExpired");
                     }
                 } else {
                     throw err;

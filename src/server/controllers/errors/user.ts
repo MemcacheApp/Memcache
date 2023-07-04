@@ -9,8 +9,9 @@ export const LoginError = createError("LoginError", {
     WrongPassword: "Incorrect password",
 });
 
-export const ValidateError = createError("ValidateError", {
+export const AuthError = createError("ValidateError", {
     NoJWT: "No JWT provided in user header",
     InvalidJWT: "JWT is invalid",
     SessionExpired: "Session has expired",
+    NoPermission: "The user does not have permission to perform the operation",
 });

@@ -8,8 +8,3 @@ export const CreateFromURLError = createError("CreateFromURLError", {
 export const GetItemError = createError("GetItemError", {
     ItemNotExist: "The item does not exist",
 });
-
-export const DeleteItemError = createError("DeleteItemError", {
-    NoPermission: "The user does not have permission to perform the operation",
-    ItemNotExist: "The item does not exist",
-});

@@ -3,14 +3,13 @@ import { v4 as uuidv4 } from "uuid";
 import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
-import { Collection, Item, Tag } from "@prisma/client";
-import {
-    CreateFromURLError,
-    DeleteItemError,
-    GetItemError,
-} from "./errors/item";
+import { CreateFromURLError, GetItemError } from "./errors/item";
+import { AuthError } from "./errors/user";
 
 export default class ItemController {
+    /**
+     * @throws {CreateFromURLError}
+     */
     static async createFromURL(
         userId: string,
         url: string,
@@ -63,6 +62,9 @@ export default class ItemController {
         return item;
     }
 
+    /**
+     * @throws {GetItemError}
+     */
     static async getItem(itemId: string) {
         const item = await prisma.item.findUnique({
             where: {
@@ -94,19 +96,15 @@ export default class ItemController {
         return items;
     }
 
+    /**
+     * @throws {GetItemError}
+     * @throws {AuthError}
+     */
     static async deleteItem(userId: string, itemId: string) {
-        const item = await prisma.item.findUnique({
-            where: {
-                id: itemId,
-            },
-        });
-
-        if (item === null) {
-            throw new DeleteItemError("ItemNotExist");
-        }
+        const item = await this.getItem(itemId);
 
         if (item.userId !== userId) {
-            throw new DeleteItemError("NoPermission");
+            throw new AuthError("NoPermission");
         }
 
         await prisma.item.delete({
@@ -116,25 +114,31 @@ export default class ItemController {
         });
     }
 
+    /**
+     * @throws {GetItemError}
+     * @throws {AuthError}
+     */
     static async setItemStatus(userId: string, itemId: string, status: number) {
-        const item = await prisma.item.findUnique({
+        const item = await this.getItem(itemId);
+
+        if (item.userId !== userId) {
+            throw new AuthError("NoPermission");
+        }
+
+        await prisma.item.update({
             where: {
                 id: itemId,
             },
+            data: {
+                status: status,
+            },
         });
-
-        if (item && item.userId === userId) {
-            return await prisma.item.update({
-                where: {
-                    id: itemId,
-                },
-                data: {
-                    status: status,
-                },
-            });
-        }
     }
 
+    /**
+     * @throws {GetItemError}
+     * @throws {AuthError}
+     */
     static async setItemCollection(
         userId: string,
         itemId: string,
@@ -145,74 +149,82 @@ export default class ItemController {
             collectionName
         );
 
-        let item: (Item & { collection: Collection; tags: Tag[] }) | null =
-            await this.getItem(itemId);
+        const item = await this.getItem(itemId);
 
-        if (item && item.userId === userId) {
-            item = await prisma.item.update({
-                where: {
-                    id: itemId,
-                },
-                data: {
-                    // collection: {
-                    //     connect: { id: collection.id },
-                    // },
-                    collectionId: collection.id,
-                },
-                include: {
-                    tags: true,
-                    collection: true,
-                },
-            });
+        if (item.userId !== userId) {
+            throw new AuthError("NoPermission");
         }
-        return item;
+
+        await prisma.item.update({
+            where: {
+                id: itemId,
+            },
+            data: {
+                // collection: {
+                //     connect: { id: collection.id },
+                // },
+                collectionId: collection.id,
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+        });
     }
 
+    /**
+     * @throws {GetItemError}
+     * @throws {AuthError}
+     */
     static async addTag(userId: string, itemId: string, tagName: string) {
         const tag = await TagController.getOrCreateTag(userId, tagName);
 
-        let item: (Item & { collection: Collection; tags: Tag[] }) | null =
-            await this.getItem(itemId);
+        const item = await this.getItem(itemId);
 
-        if (item && item.userId === userId) {
-            item = await prisma.item.update({
-                where: {
-                    id: itemId,
-                },
-                data: {
-                    tags: {
-                        connect: [{ id: tag.id }],
-                    },
-                },
-                include: {
-                    tags: true,
-                    collection: true,
-                },
-            });
+        if (item.userId !== userId) {
+            throw new AuthError("NoPermission");
         }
-        return item;
+
+        await prisma.item.update({
+            where: {
+                id: itemId,
+            },
+            data: {
+                tags: {
+                    connect: [{ id: tag.id }],
+                },
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+        });
     }
 
+    /**
+     * @throws {GetItemError}
+     * @throws {AuthError}
+     */
     static async removeTag(userId: string, itemId: string, tagId: string) {
-        let item: (Item & { collection: Collection; tags: Tag[] }) | null =
-            await this.getItem(itemId);
+        const item = await this.getItem(itemId);
 
-        if (item && item.userId === userId) {
-            item = await prisma.item.update({
-                where: {
-                    id: itemId,
-                },
-                data: {
-                    tags: {
-                        disconnect: [{ id: tagId }],
-                    },
-                },
-                include: {
-                    tags: true,
-                    collection: true,
-                },
-            });
+        if (item.userId !== userId) {
+            throw new AuthError("NoPermission");
         }
-        return item;
+
+        await prisma.item.update({
+            where: {
+                id: itemId,
+            },
+            data: {
+                tags: {
+                    disconnect: [{ id: tagId }],
+                },
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+        });
     }
 }
