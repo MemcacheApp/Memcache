@@ -8,9 +8,10 @@ To set up prisma:
 ```bash
 $ npx prisma generate
 $ npx prisma migrate dev -- 3900DB # last argument "3900DB" is name of your local postgresql database
+$ npx prisma db seed  # optional command to seed the database
 ```
 
-The prisma migrate command will automatically run the seed in `prisma/seed.ts` to initialise the database with some initial data. Feel free to modify the seed data. The command is specified in `package.json`:
+The `npx prisma db seed` command will manually run the seed in `/src/server/db/seed.ts` to initialise the database with some initial data. Feel free to modify the seed data inside `seed.ts`. The command and path is specified in `package.json`:
 
 ```json
 // package.json
@@ -23,19 +24,13 @@ The prisma migrate command will automatically run the seed in `prisma/seed.ts` t
 }
 ```
 
-To seed manually:
-
-```bash
-npx prisma db seed
-```
-
-To reset the database to initial state using the seed data.
+Alternative way to seed database; to reset the database to initial state using the seed data:
 
 ```bash
 $ npx prisma migrate reset
 ```
 
-The seed contains a user as such:
+The seed contains this entry in the User table:
 
 ```json
 {
@@ -43,7 +38,7 @@ The seed contains a user as such:
     "firstName": "Ender",
     "lastName": "Man",
     "email": "admin@endermen.com",
-    "password": "123456"
+    "password": "123456" // will be hashed before storing in db
 }
 ```
 
