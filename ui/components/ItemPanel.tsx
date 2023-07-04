@@ -2,7 +2,7 @@
 
 import { trpc } from "@/src/app/utils/trpc";
 import { Card } from "./Card";
-import { X } from "lucide-react";
+import { LucideIcon, Package2, Tag, X } from "lucide-react";
 import { Button } from "./Button";
 import { CollectionSelector, TagSelector } from ".";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import ExternalLink from "./ExternalLink";
 import renderIcon from "@/src/app/utils/renderIcon";
 import MultiToggle from "./MultiToggle";
+import Link from "next/link";
 
 export function ItemPanel() {
     const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
@@ -57,7 +58,7 @@ export function ItemPanel() {
             ></div>
             <Card
                 className={cn(
-                    "fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
+                    "fixed flex flex-col right-5 w-[360px] h-[calc(100vh-1.5rem)] overflow-scroll p-4 top-3 bottom-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
                     {
                         hidden: isHidden,
                         "md:translate-x-[20rem]": isCollapse,
@@ -189,11 +190,14 @@ function SingleItem({ id }: { id: string }) {
 
                     <Separator className="my-4" />
 
-                    <Subtitle>Status</Subtitle>
+                    <Subtitle Icon={StatusIcons[data.status]}>Status</Subtitle>
                     <div className="flex justify-between items-center">
-                        <div className="text-lg">
+                        <Link
+                            href={`/app/saves`}
+                            className="text-slate-600 font-medium underline"
+                        >
                             {StatusNames[data.status as StatusEnum]}
-                        </div>
+                        </Link>
                         <MultiToggle
                             currentStatus={data.status}
                             setStatus={(newStatus) =>
@@ -201,21 +205,30 @@ function SingleItem({ id }: { id: string }) {
                             }
                         />
                     </div>
-                    <Subtitle>Collection</Subtitle>
-                    <CollectionSelector
-                        collections={collectionsQuery.data}
-                        value={data.collection.name}
-                        setValue={(newCollection) => {
-                            setCollectionOnItem.mutate({
-                                itemId: data.id,
-                                collectionName: newCollection,
-                            });
-                        }}
-                        size={"xs"}
-                    />
-                    <Subtitle>Tags</Subtitle>
 
-                    <div>
+                    <Subtitle Icon={Package2}>Collection</Subtitle>
+                    <div className="flex justify-between items-center">
+                        <Link
+                            href={`/app/collection/${data.collection.id}`}
+                            className="text-slate-600 font-medium underline"
+                        >
+                            {data.collection.name}
+                        </Link>
+                        <CollectionSelector
+                            collections={collectionsQuery.data}
+                            value={data.collection.name}
+                            setValue={(newCollection) => {
+                                setCollectionOnItem.mutate({
+                                    itemId: data.id,
+                                    collectionName: newCollection,
+                                });
+                            }}
+                            size={"default"}
+                        />
+                    </div>
+                    <Subtitle Icon={Tag}>Tags</Subtitle>
+
+                    <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag, index) => (
                             <TagSelector
                                 key={tag.id}
@@ -319,9 +332,16 @@ function SingleItem({ id }: { id: string }) {
     );
 }
 
-function Subtitle({ children }: { children: React.ReactNode }) {
+function Subtitle({
+    Icon,
+    children,
+}: {
+    Icon?: LucideIcon;
+    children: React.ReactNode;
+}) {
     return (
-        <div className="mt-4 mb-2 text-slate-450 text-sm tracking-wide uppercase">
+        <div className="mt-4 mb-1 text-slate-450 text-sm tracking-wide uppercase flex items-center">
+            {Icon ? <Icon size={16} className="inline mr-2" /> : null}
             {children}
         </div>
     );
