@@ -10,9 +10,15 @@ import {
     LoginError,
     AuthError,
     GetUserError,
+    SendResetEmailError,
+    UpdatePasswordError,
 } from "./errors/user";
+import { Resend } from "resend";
+import ResetPasswordEmail from "@/react-email-templates/emails/reset-password-email";
+import { createElement } from "react";
 
 const SECRET_KEY = "superSecretTestKey"; // TODO: move to .env
+const resend = new Resend("re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c");
 
 export default class UserController {
     /**
@@ -81,7 +87,7 @@ export default class UserController {
         }
 
         if (!bcrypt.compareSync(password, user.password)) {
-            throw new LoginError("WrongPassword");
+            throw new LoginError("PasswordIncorrect");
         }
 
         const session: Session = await prisma.session.create({
@@ -154,6 +160,7 @@ export default class UserController {
             throw new GetUserError("UserNotExist");
         }
 
+        // Do not return the user object directly, as it contains the hashed password
         return {
             id: user.id,
             firstName: user.firstName,
@@ -166,7 +173,7 @@ export default class UserController {
      * @throws {GetUserError}
      */
     static async userInfoByEmail(email: string) {
-        const user = await prisma.user.findUniqueOrThrow({
+        const user = await prisma.user.findUnique({
             where: {
                 email,
             },
@@ -186,58 +193,153 @@ export default class UserController {
 
     /**
      * @throws {GetUserError}
+     * @throws {SendResetEmailError}
      */
-    static async isValidEmail(email: string) {
-        const user = await prisma.user.findUnique({
+    static async sendResetEmail(email: string) {
+        const user = await this.userInfoByEmail(email);
+
+        const lastResetCode = await prisma.resetCode.findUnique({
             where: {
-                email,
+                userId: user.id,
             },
         });
 
-        if (user === null) {
-            throw new GetUserError("UserNotExist");
+        const now = new Date();
+        if (
+            lastResetCode &&
+            now.getTime() - lastResetCode.createAt.getTime() < 60000 // less than 1 min
+        ) {
+            throw new SendResetEmailError("TooManyRequests");
         }
 
-        if (user) {
-            return true;
-        } else {
-            return false;
-        }
+        const code = Math.floor(Math.random() * 1000000)
+            .toString()
+            .padStart(6, "0");
+        const salt = bcrypt.genSaltSync(10);
+        const hashCode = bcrypt.hashSync(code, salt);
+
+        await prisma.resetCode.upsert({
+            where: {
+                userId: user.id,
+            },
+            update: {
+                code: hashCode,
+                createAt: now,
+            },
+            create: {
+                userId: user.id,
+                code: hashCode,
+                createAt: now,
+            },
+        });
+
+        resend.sendEmail({
+            from: "onboarding@resend.dev",
+            to: email,
+            subject: "Memcache Password Reset Code",
+            react: createElement(ResetPasswordEmail, {
+                code,
+            }),
+        });
     }
 
-    static async updatePassword(email: string, newPassword: string) {
+    /**
+     * @throws {GetUserError}
+     * @throws {UpdatePasswordError}
+     */
+    static async updatePassword(
+        email: string,
+        code: string,
+        newPassword: string
+    ) {
+        const user = await this.userInfoByEmail(email);
+        const resetCode = await prisma.resetCode.findUnique({
+            where: {
+                userId: user.id,
+            },
+        });
+
+        if (!resetCode) {
+            throw new UpdatePasswordError("CodeIncorrect");
+        }
+
+        if (!bcrypt.compareSync(code, resetCode?.code)) {
+            throw new UpdatePasswordError("CodeIncorrect");
+        }
+
         const salt = bcrypt.genSaltSync(10);
         const hashPassword = bcrypt.hashSync(newPassword, salt);
 
-        const user = await prisma.user.update({
-            where: { email },
+        await prisma.resetCode.delete({
+            where: { userId: user.id },
+        });
+
+        await prisma.user.update({
+            where: { id: user.id },
             data: { password: hashPassword },
         });
-
-        return user;
     }
 
+    /**
+     * @throws {GetUserError}
+     */
     static async updateEmail(id: string, newEmail: string) {
-        const user = await prisma.user.update({
-            where: { id },
-            data: { email: newEmail },
-        });
-        return user;
+        await prisma.user
+            .update({
+                where: { id },
+                data: { email: newEmail },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
     }
 
+    /**
+     * @throws {GetUserError}
+     */
     static async updateFirstName(id: string, newFirstName: string) {
-        const user = await prisma.user.update({
-            where: { id },
-            data: { firstName: newFirstName },
-        });
-        return user;
+        await prisma.user
+            .update({
+                where: { id },
+                data: { firstName: newFirstName },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
     }
 
+    /**
+     * @throws {GetUserError}
+     */
     static async updateLastName(id: string, newlastName: string) {
-        const user = await prisma.user.update({
-            where: { id },
-            data: { lastName: newlastName },
-        });
-        return user;
+        await prisma.user
+            .update({
+                where: { id },
+                data: { lastName: newlastName },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
     }
 }
