@@ -69,23 +69,19 @@ export default class CollectionController {
     }
 
     static async getOrCreateCollection(userId: string, name: string) {
-        let collection = await prisma.collection.findFirst({
+        return await prisma.collection.upsert({
             where: {
+                userId_name: {
+                    userId,
+                    name,
+                },
+            },
+            update: {},
+            create: {
+                id: uuidv4(),
                 name,
                 userId,
             },
         });
-
-        if (!collection) {
-            collection = await prisma.collection.create({
-                data: {
-                    id: uuidv4(),
-                    name,
-                    userId,
-                },
-            });
-        }
-
-        return collection;
     }
 }

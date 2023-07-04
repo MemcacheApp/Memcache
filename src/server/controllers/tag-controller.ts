@@ -70,24 +70,20 @@ export default class TagController {
     }
 
     static async getOrCreateTag(userId: string, name: string) {
-        let tag = await prisma.tag.findFirst({
+        return await prisma.tag.upsert({
             where: {
+                userId_name: {
+                    name,
+                    userId,
+                },
+            },
+            update: {},
+            create: {
+                id: uuidv4(),
                 name,
                 userId,
             },
         });
-
-        if (!tag) {
-            tag = await prisma.tag.create({
-                data: {
-                    id: uuidv4(),
-                    name,
-                    userId,
-                },
-            });
-        }
-
-        return tag;
     }
 
     static async getOrCreateTags(userId: string, names: string[]) {
