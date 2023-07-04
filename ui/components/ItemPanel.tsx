@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableRow } from "./Table";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import ExternalLink from "./ExternalLink";
 import renderIcon from "@/src/app/utils/renderIcon";
+import MultiToggle from "./MultiToggle";
 
 export function ItemPanel() {
     const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
@@ -185,28 +186,21 @@ function SingleItem({ id }: { id: string }) {
                         </div>
                     ) : null}
                     <div className="mt-3">{data.description}</div>
-                    <Separator className="my-4" />
-                    <Subtitle>Status</Subtitle>
-                    <div className="text-lg">
-                        {StatusNames[data.status as StatusEnum]}
-                    </div>
 
-                    {Object.values(StatusEnum)
-                        .filter((value) => typeof value === "number")
-                        .map((value) => (
-                            <Button
-                                key={value}
-                                variant={"icon"}
-                                size={"none"}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (typeof value !== "number") return;
-                                    handleUpdateItemStatus(value);
-                                }}
-                            >
-                                {renderIcon(StatusIcons[value])}
-                            </Button>
-                        ))}
+                    <Separator className="my-4" />
+
+                    <Subtitle>Status</Subtitle>
+                    <div className="flex justify-between items-center">
+                        <div className="text-lg">
+                            {StatusNames[data.status as StatusEnum]}
+                        </div>
+                        <MultiToggle
+                            currentStatus={data.status}
+                            setStatus={(newStatus) =>
+                                handleUpdateItemStatus(newStatus)
+                            }
+                        />
+                    </div>
                     <Subtitle>Collection</Subtitle>
                     <CollectionSelector
                         collections={collectionsQuery.data}

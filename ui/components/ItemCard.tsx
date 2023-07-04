@@ -122,20 +122,20 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             e.stopPropagation();
                         }}
                     >
-                        <span className="inline-flex items-center gap-2">
+                        <div className="h-full flex items-center gap-2">
                             <Globe size={16} />
                             {data.siteName}
-                        </span>
+                        </div>
                     </ExternalLink>
-                    <span className="inline-flex items-center gap-2">
-                        <Package2 size={16} />
-                        <Link
-                            className="hover:underline"
-                            href={`/app/collection/${data.collection.id}`}
-                        >
+                    <Link
+                        className="hover:underline"
+                        href={`/app/collection/${data.collection.id}`}
+                    >
+                        <div className="h-full flex items-center gap-2">
+                            <Package2 size={16} />
                             {data.collection.name}
-                        </Link>
-                    </span>
+                        </div>
+                    </Link>
                     <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag) => (
                             <Link

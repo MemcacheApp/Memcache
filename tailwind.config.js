@@ -72,6 +72,9 @@ export const theme = {
             "accordion-down": "accordion-down 0.2s ease-out",
             "accordion-up": "accordion-up 0.2s ease-out",
         },
+        transitionProperty: {
+            left: "left",
+        },
     },
 };
 export const plugins = [require("tailwindcss-animate")];
