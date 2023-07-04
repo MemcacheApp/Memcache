@@ -68,3 +68,9 @@ model Tag {
 
   @@unique([userId, name])
 }
+
+model ResetCode {
+  userId   String   @id
+  code     String
+  createAt DateTime
+}
