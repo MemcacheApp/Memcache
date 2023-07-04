@@ -58,7 +58,7 @@ export default class UserController {
         });
 
         const token = jwt.sign(session, SECRET_KEY, {
-            expiresIn: 31556926, // 1 year in seconds
+            expiresIn: "90d",
         });
 
         return {
@@ -92,7 +92,7 @@ export default class UserController {
         });
 
         const token = jwt.sign(session, SECRET_KEY, {
-            expiresIn: 31556926, // 1 year in seconds TODO: fix this?
+            expiresIn: "90d",
         });
 
         return {
