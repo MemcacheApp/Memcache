@@ -88,7 +88,7 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                         <div>{username}</div>
                     </Link>
                 ) : (
-                    <Link href="auth/login">Log in</Link>
+                    <Link href="/auth/login">Log in</Link>
                 )}
             </div>
         </div>
