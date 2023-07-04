@@ -6,8 +6,8 @@ import {
     CreateUserError,
     GetUserError,
     LoginError,
-    SendResetEmailError,
-    UpdatePasswordError,
+    SendEmailError,
+    VerifyCodeError,
 } from "../../controllers/errors/user";
 
 export const userRouter = router({
@@ -101,7 +101,7 @@ export const userRouter = router({
                         message: e.message,
                         code: "BAD_REQUEST",
                     });
-                } else if (e instanceof SendResetEmailError) {
+                } else if (e instanceof SendEmailError) {
                     throw new TRPCError({
                         message: e.message,
                         code: "TOO_MANY_REQUESTS",
@@ -112,6 +112,21 @@ export const userRouter = router({
                         code: "INTERNAL_SERVER_ERROR",
                     });
                 }
+            }
+        }),
+    verifyResetCode: publicProcedure
+        .input(
+            z.object({
+                email: z.string(),
+                code: z.string(),
+            })
+        )
+        .query(async ({ input }) => {
+            try {
+                await UserController.verifyResetCode(input.email, input.code);
+                return true;
+            } catch (e) {
+                return false;
             }
         }),
     updatePassword: publicProcedure
@@ -135,7 +150,7 @@ export const userRouter = router({
                         message: e.message,
                         code: "BAD_REQUEST",
                     });
-                } else if (e instanceof UpdatePasswordError) {
+                } else if (e instanceof VerifyCodeError) {
                     throw new TRPCError({
                         message: e.message,
                         code: "BAD_REQUEST",
@@ -244,10 +259,3 @@ export const userRouter = router({
         }
     }),
 });
-
-// Resend API keys
-// re_U6PbCMXV_NRrF4vTFmSsRjqG6phfcrtwA
-// re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c
-
-// memcache3900@gmail.com
-// bendermen3900

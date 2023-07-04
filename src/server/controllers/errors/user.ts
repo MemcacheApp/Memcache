@@ -20,10 +20,11 @@ export const GetUserError = createError("GetUserError", {
     UserNotExist: "The user does not exist",
 });
 
-export const SendResetEmailError = createError("SendResetEmailError", {
+export const SendEmailError = createError("SendEmailError", {
     TooManyRequests: "Only one email can be sent within one minute",
 });
 
-export const UpdatePasswordError = createError("UpdatePasswordError", {
+export const VerifyCodeError = createError("VerifyCodeError", {
     CodeIncorrect: "The code is incorrect",
+    CodeExpired: "The code is expired",
 });

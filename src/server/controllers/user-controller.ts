@@ -10,8 +10,8 @@ import {
     LoginError,
     AuthError,
     GetUserError,
-    SendResetEmailError,
-    UpdatePasswordError,
+    SendEmailError,
+    VerifyCodeError,
 } from "./errors/user";
 import { Resend } from "resend";
 import ResetPasswordEmail from "@/react-email-templates/emails/reset-password-email";
@@ -193,9 +193,16 @@ export default class UserController {
 
     /**
      * @throws {GetUserError}
-     * @throws {SendResetEmailError}
+     * @throws {SendEmailError}
      */
     static async sendResetEmail(email: string) {
+        // Resend API keys
+        // re_U6PbCMXV_NRrF4vTFmSsRjqG6phfcrtwA
+        // re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c
+
+        // memcache3900@gmail.com
+        // bendermen3900
+
         const user = await this.userInfoByEmail(email);
 
         const lastResetCode = await prisma.resetCode.findUnique({
@@ -209,12 +216,13 @@ export default class UserController {
             lastResetCode &&
             now.getTime() - lastResetCode.createAt.getTime() < 60000 // less than 1 min
         ) {
-            throw new SendResetEmailError("TooManyRequests");
+            throw new SendEmailError("TooManyRequests");
         }
 
         const code = Math.floor(Math.random() * 1000000)
             .toString()
             .padStart(6, "0");
+        console.log(code);
         const salt = bcrypt.genSaltSync(10);
         const hashCode = bcrypt.hashSync(code, salt);
 
@@ -245,13 +253,9 @@ export default class UserController {
 
     /**
      * @throws {GetUserError}
-     * @throws {UpdatePasswordError}
+     * @throws {VerifyCodeError}
      */
-    static async updatePassword(
-        email: string,
-        code: string,
-        newPassword: string
-    ) {
+    static async verifyResetCode(email: string, code: string) {
         const user = await this.userInfoByEmail(email);
         const resetCode = await prisma.resetCode.findUnique({
             where: {
@@ -260,12 +264,31 @@ export default class UserController {
         });
 
         if (!resetCode) {
-            throw new UpdatePasswordError("CodeIncorrect");
+            throw new VerifyCodeError("CodeIncorrect");
+        }
+
+        if (Date.now() - resetCode.createAt.getTime() > 7200000) {
+            // 2 hours
+            throw new VerifyCodeError("CodeExpired");
         }
 
         if (!bcrypt.compareSync(code, resetCode?.code)) {
-            throw new UpdatePasswordError("CodeIncorrect");
+            throw new VerifyCodeError("CodeIncorrect");
         }
+    }
+
+    /**
+     * @throws {GetUserError}
+     * @throws {VerifyCodeError}
+     */
+    static async updatePassword(
+        email: string,
+        code: string,
+        newPassword: string
+    ) {
+        await this.verifyResetCode(email, code);
+
+        const user = await this.userInfoByEmail(email);
 
         const salt = bcrypt.genSaltSync(10);
         const hashPassword = bcrypt.hashSync(newPassword, salt);
