@@ -34,7 +34,7 @@ export function SaveInput(props: SaveInputProps) {
     const createItemMutation = trpc.item.createFromURL.useMutation({
         onSuccess: () =>
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             }),
     });
