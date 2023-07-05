@@ -88,17 +88,20 @@ function SingleItem({ id }: { id: string }) {
     const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
     const data = itemQuery.data;
 
-    const collectionsQuery = trpc.collection.getCollections.useQuery();
-    const tagsQuery = trpc.tag.getTags.useQuery();
+    const collectionsQuery = trpc.collection.getUserCollections.useQuery();
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
 
-    const setCollectionOnItem = trpc.item.setCollection.useMutation({
+    const setCollectionOnItem = trpc.item.setItemCollection.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             });
             queryClient.invalidateQueries({
-                queryKey: [["collection", "getCollections"], { type: "query" }],
+                queryKey: [
+                    ["collection", "getUserCollections"],
+                    { type: "query" },
+                ],
                 exact: true,
             });
             console.log("set collection on item?");
@@ -108,11 +111,11 @@ function SingleItem({ id }: { id: string }) {
     const addTagToItemMutation = trpc.item.addTag.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             });
             queryClient.invalidateQueries({
-                queryKey: [["tag", "getTags"], { type: "query" }],
+                queryKey: [["tag", "getUserTags"], { type: "query" }],
                 exact: true,
             });
             console.log("added tag to item?");
@@ -122,7 +125,7 @@ function SingleItem({ id }: { id: string }) {
     const removeTagFromItemMutation = trpc.item.removeTag.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             });
             console.log("removed tag from item?");

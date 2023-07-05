@@ -48,7 +48,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             });
             console.log("deleted item?");
@@ -63,10 +63,10 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         }
     };
 
-    const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
+    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             });
             console.log("updated item status");
