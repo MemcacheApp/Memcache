@@ -15,6 +15,7 @@ import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import ExternalLink from "./ExternalLink";
 import MultiToggle from "./MultiToggle";
 import Link from "next/link";
+import { DEBUG } from "@/src/app/utils/constants";
 
 export function ItemPanel() {
     const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
@@ -98,45 +99,34 @@ export function SingleItem({ id }: { id: string }) {
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
 
-    console.log(
-        `rendering single item ${data?.title}, status is ${data?.status}}`
-    );
+    DEBUG &&
+        console.log(
+            `Rendering single item ${data?.title}, status is ${data?.status}}`
+        );
 
     const setCollectionOnItem = trpc.item.setCollection.useMutation({
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
-                exact: true,
-            });
-            queryClient.invalidateQueries({
-                queryKey: [["collection", "getCollections"], { type: "query" }],
-                exact: true,
-            });
-            console.log("set collection on item?");
+            utils.item.getItems.invalidate();
+            utils.item.getItem.invalidate({ itemId: id });
+            utils.collection.getCollections.invalidate();
+            DEBUG && console.log("successfully set collection on item");
         },
     });
 
     const addTagToItemMutation = trpc.item.addTag.useMutation({
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
-                exact: true,
-            });
-            queryClient.invalidateQueries({
-                queryKey: [["tag", "getTags"], { type: "query" }],
-                exact: true,
-            });
-            console.log("added tag to item?");
+            utils.item.getItem.invalidate({ itemId: id });
+            utils.item.getItems.invalidate();
+            utils.tag.getTags.invalidate();
+            DEBUG && console.log("successfully added tag to item");
         },
     });
 
     const removeTagFromItemMutation = trpc.item.removeTag.useMutation({
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
-                exact: true,
-            });
-            console.log("removed tag from item?");
+            utils.item.getItem.invalidate({ itemId: id });
+            utils.item.getItems.invalidate();
+            DEBUG && console.log("successfully removed tag from item");
         },
     });
 
@@ -144,8 +134,7 @@ export function SingleItem({ id }: { id: string }) {
         onSuccess: async () => {
             utils.item.getItem.invalidate({ itemId: id });
             utils.item.getItems.invalidate();
-
-            console.log("updated item status?");
+            DEBUG && console.log("successfully updated item status");
         },
     });
 
@@ -158,7 +147,7 @@ export function SingleItem({ id }: { id: string }) {
                 itemId: data.id,
                 status: newStatus,
             });
-            console.log(`Updated item status to ${newItem?.status}`);
+            DEBUG && console.log(`Updated item status to ${newItem?.status}`);
         } catch (error) {
             console.error(error);
         }

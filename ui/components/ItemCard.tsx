@@ -28,7 +28,6 @@ import {
     MoreHorizontal,
     PanelRightOpen,
     Globe,
-    LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "../utils";
@@ -227,8 +226,9 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                                 size={"none"}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    if (typeof value !== "number") return;
-                                    handleUpdateItemStatus(value);
+                                    if (typeof value === "number") {
+                                        handleUpdateItemStatus(value);
+                                    }
                                 }}
                             >
                                 {renderIcon(StatusIcons[value])}
