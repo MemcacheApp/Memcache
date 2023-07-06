@@ -13,7 +13,6 @@ import { Separator } from "./Separator";
 import { Table, TableBody, TableCell, TableRow } from "./Table";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import ExternalLink from "./ExternalLink";
-import renderIcon from "@/src/app/utils/renderIcon";
 import MultiToggle from "./MultiToggle";
 import Link from "next/link";
 
@@ -90,6 +89,7 @@ export function ItemPanel() {
 }
 
 export function SingleItem({ id }: { id: string }) {
+    const utils = trpc.useContext();
     const queryClient = useQueryClient();
 
     const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
@@ -98,12 +98,8 @@ export function SingleItem({ id }: { id: string }) {
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
 
-    const itemStatusQuery = trpc.item.getItemStatus.useQuery({
-        itemId: id,
-    });
-
     console.log(
-        `rendering single item ${data?.title}, status is ${itemStatusQuery.data}}`
+        `rendering single item ${data?.title}, status is ${data?.status}}`
     );
 
     const setCollectionOnItem = trpc.item.setCollection.useMutation({
@@ -145,20 +141,11 @@ export function SingleItem({ id }: { id: string }) {
     });
 
     const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
-                exact: true,
-            });
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getItem"], { type: "query" }],
-                exact: true,
-            });
-            // queryClient.invalidateQueries({
-            //     queryKey: [["item", "getItemStatus"], { type: "query" }],
-            //     exact: true,
-            // });
-            // console.log("updated item status?");
+        onSuccess: async () => {
+            utils.item.getItem.invalidate({ itemId: id });
+            utils.item.getItems.invalidate();
+
+            console.log("updated item status?");
         },
     });
 
@@ -216,7 +203,6 @@ export function SingleItem({ id }: { id: string }) {
                         </Link>
                         <MultiToggle
                             currentStatus={data.status}
-                            // currentStatus={itemStatusQuery.data as StatusEnum}
                             setStatus={(newStatus) =>
                                 handleUpdateItemStatus(newStatus)
                             }
