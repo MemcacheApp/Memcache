@@ -4,10 +4,12 @@ import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
 import renderIcon from "@/src/app/utils/renderIcon";
 
 // Tried using these constants to calculate dimensions for styling, but tailwind
-// didn't like it.
-const RADIUS = 1; // rem
-const GAP = 0.2; // rem]
-const PADDING = 0.4; // rem
+// didn't like it. Keep here for reference.
+// const RADIUS = 1; // rem
+// const GAP = 0.2; // rem
+// const PADDING = 0.4; // rem
+// const containerWidth =
+//     Object.values(StatusEnum).length * (2 * RADIUS + GAP) - GAP;
 
 export default function MultiToggle({
     currentStatus,
@@ -26,9 +28,6 @@ export default function MultiToggle({
         setSelectedPosition(currentStatus);
         setSpotlightPosition(currentStatus);
     }, [currentStatus]);
-
-    const containerWidth =
-        Object.values(StatusEnum).length * (2 * RADIUS + GAP) - GAP;
 
     return (
         <div

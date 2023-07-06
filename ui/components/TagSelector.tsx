@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
     Button,
     Command,
@@ -15,9 +15,10 @@ import {
 import { includeCaseInsensitive } from "../../src/app/utils";
 import { Check, Edit, Plus, Trash } from "lucide-react";
 import { cn } from "../utils";
+import { Tag } from "@prisma/client";
 
 interface TagSelectorProps {
-    tags: string[] | undefined;
+    tags: Tag[] | undefined;
     index: number;
     value: string;
     setValue: (name: string, index: number) => void;
@@ -33,6 +34,8 @@ export function TagSelector({
 }: TagSelectorProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
+
+    const tagNames = useMemo(() => tags?.map((tag) => tag.name), [tags]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -70,7 +73,7 @@ export function TagSelector({
                     />
                     <CommandEmpty>No tag found.</CommandEmpty>
                     <CommandGroup>
-                        {tags ? (
+                        {tagNames ? (
                             <>
                                 {index !== -1 ? (
                                     <CommandItem
@@ -86,7 +89,7 @@ export function TagSelector({
                                 ) : null}
                                 {!searchValue ||
                                 includeCaseInsensitive(
-                                    tags,
+                                    tagNames,
                                     searchValue
                                 ) ? null : (
                                     <CommandItem
@@ -99,7 +102,7 @@ export function TagSelector({
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
                                 )}
-                                {tags.map((tag) => (
+                                {tagNames.map((tag) => (
                                     <CommandItem
                                         key={tag}
                                         onSelect={() => {

@@ -5,7 +5,6 @@ import { Card } from "./Card";
 import { LucideIcon, Package2, Tag, X } from "lucide-react";
 import { Button } from "./Button";
 import { CollectionSelector, TagSelector } from ".";
-import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { cn } from "../utils";
 import { useItemListStore } from "@/src/app/store/item-list";
@@ -96,19 +95,19 @@ export function SingleItem({ id }: { id: string }) {
     const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
     const data = itemQuery.data;
 
-    const collectionsQuery = trpc.collection.getCollections.useQuery();
-    const tagsQuery = trpc.tag.getTags.useQuery();
+    const collectionsQuery = trpc.collection.getUserCollections.useQuery();
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
 
     DEBUG &&
         console.log(
             `Rendering single item ${data?.title}, status is ${data?.status}}`
         );
 
-    const setCollectionOnItem = trpc.item.setCollection.useMutation({
+    const setCollectionOnItem = trpc.item.setItemCollection.useMutation({
         onSuccess: () => {
-            utils.item.getItems.invalidate();
+            utils.item.getUserItems.invalidate();
             utils.item.getItem.invalidate({ itemId: id });
-            utils.collection.getCollections.invalidate();
+            utils.collection.getUserCollections.invalidate();
             DEBUG && console.log("successfully set collection on item");
         },
     });
@@ -116,8 +115,8 @@ export function SingleItem({ id }: { id: string }) {
     const addTagToItemMutation = trpc.item.addTag.useMutation({
         onSuccess: () => {
             utils.item.getItem.invalidate({ itemId: id });
-            utils.item.getItems.invalidate();
-            utils.tag.getTags.invalidate();
+            utils.item.getUserItems.invalidate();
+            utils.tag.getUserTags.invalidate();
             DEBUG && console.log("successfully added tag to item");
         },
     });
@@ -125,7 +124,7 @@ export function SingleItem({ id }: { id: string }) {
     const removeTagFromItemMutation = trpc.item.removeTag.useMutation({
         onSuccess: () => {
             utils.item.getItem.invalidate({ itemId: id });
-            utils.item.getItems.invalidate();
+            utils.item.getUserItems.invalidate();
             DEBUG && console.log("successfully removed tag from item");
         },
     });
@@ -133,7 +132,7 @@ export function SingleItem({ id }: { id: string }) {
     const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
         onSuccess: async () => {
             utils.item.getItem.invalidate({ itemId: id });
-            utils.item.getItems.invalidate();
+            utils.item.getUserItems.invalidate();
             DEBUG && console.log("successfully updated item status");
         },
     });
@@ -143,11 +142,11 @@ export function SingleItem({ id }: { id: string }) {
             return;
         }
         try {
-            const newItem = await updateItemStatusMutation.mutateAsync({
+            await updateItemStatusMutation.mutateAsync({
                 itemId: data.id,
                 status: newStatus,
             });
-            DEBUG && console.log(`Updated item status to ${newItem?.status}`);
+            DEBUG && console.log(`Updated item status to ${newStatus}`);
         } catch (error) {
             console.error(error);
         }

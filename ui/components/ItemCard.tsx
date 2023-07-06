@@ -46,7 +46,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             });
             console.log("deleted item?");
@@ -64,7 +64,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [["item", "getItems"], { type: "query" }],
+                queryKey: [["item", "getUserItems"], { type: "query" }],
                 exact: true,
             });
             console.log("updated item status");
@@ -163,7 +163,12 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 
                         <DropdownMenuContent>
                             <DropdownMenuGroup>
-                                <DropdownMenuIconItem Icon={ExternalLinkIcon}>
+                                <DropdownMenuIconItem
+                                    Icon={ExternalLinkIcon}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                    }}
+                                >
                                     Visit Link
                                 </DropdownMenuIconItem>
                                 <DropdownMenuIconItem Icon={PanelRightOpen}>
@@ -175,15 +180,27 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 
                             <DropdownMenuGroup>
                                 <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>
+                                    <DropdownMenuSubTrigger
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                        }}
+                                    >
                                         Summaries
                                     </DropdownMenuSubTrigger>
                                     <DropdownMenuPortal>
                                         <DropdownMenuSubContent>
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                            >
                                                 View Summaries
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                            >
                                                 Generate Summary
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
@@ -192,15 +209,27 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             </DropdownMenuGroup>
                             <DropdownMenuGroup>
                                 <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>
+                                    <DropdownMenuSubTrigger
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                        }}
+                                    >
                                         Flashcards
                                     </DropdownMenuSubTrigger>
                                     <DropdownMenuPortal>
                                         <DropdownMenuSubContent>
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                            >
                                                 View Flashcards
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                            >
                                                 Generate Flashcards
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
@@ -211,7 +240,10 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             <DropdownMenuIconItem
                                 Icon={Trash2}
                                 className="text-red-600"
-                                onClick={handleDeleteItem}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteItem();
+                                }}
                             >
                                 Delete
                             </DropdownMenuIconItem>

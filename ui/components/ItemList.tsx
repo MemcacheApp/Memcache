@@ -26,7 +26,7 @@ export function ItemList() {
         })
     );
 
-    const itemsQuery = trpc.item.getItems.useQuery();
+    const itemsQuery = trpc.item.getUserItems.useQuery();
 
     const items = useMemo(() => {
         if (itemsQuery.data) {
