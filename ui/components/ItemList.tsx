@@ -4,7 +4,14 @@ import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
 import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
-import { Button, ItemCard } from ".";
+import {
+    Button,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    ItemCard,
+} from ".";
 import { useMemo } from "react";
 import {
     Archive,
@@ -126,8 +133,26 @@ function MultiselectOptions() {
                         hidden: selectedItems.size === 0,
                     })}
                 >
-                    <Button variant="outline">Move to</Button>
-                    <Button variant="outline">Mark as</Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">Move to</Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem>
+                                Insert collection names
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">Mark as</Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem>
+                                Insert status names
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <Button variant="outline" onClick={showPanel}>
                         More
                     </Button>
