@@ -19,6 +19,7 @@ import {
     CircleDot,
     Inbox,
     SquareStack,
+    Trash2,
     X,
 } from "lucide-react";
 import { useItemListStore } from "@/src/app/store/item-list";
@@ -121,6 +122,26 @@ function MultiselectOptions() {
 
     const queryClient = useQueryClient();
 
+    const deleteItemMutation = trpc.item.deleteItem.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [["item", "getUserItems"], { type: "query" }],
+                exact: true,
+            });
+            console.log("deleted item?");
+        },
+    });
+
+    const handleDeleteItem = async () => {
+        selectedItems.forEach(async (id) => {
+            try {
+                await deleteItemMutation.mutateAsync({ id });
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    };
+
     const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
@@ -198,11 +219,19 @@ function MultiselectOptions() {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button variant="outline" onClick={showPanel}>
-                        More
+                    <Button
+                        variant="outline"
+                        className="text-red-600"
+                        onClick={handleDeleteItem}
+                    >
+                        <Trash2 className="mr-2" size={18} />
+                        Delete
                     </Button>
                 </div>
             </div>
+            <Button variant="outline" onClick={showPanel}>
+                More
+            </Button>
             <Button
                 variant="outline"
                 className="w-10 rounded-full p-0 shrink-0"
