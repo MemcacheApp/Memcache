@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useItemListStore } from "@/src/app/store/item-list";
 import { cn } from "../utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function ItemList() {
     const { activeStatus, selectedItems, selectItem } = useItemListStore(
@@ -118,6 +119,31 @@ function MultiselectOptions() {
         })
     );
 
+    const queryClient = useQueryClient();
+
+    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [["item", "getUserItems"], { type: "query" }],
+                exact: true,
+            });
+            console.log("updated item status");
+        },
+    });
+
+    const handleUpdateItemStatus = async (status: number) => {
+        selectedItems.forEach(async (itemId) => {
+            try {
+                await updateItemStatusMutation.mutateAsync({
+                    itemId,
+                    status,
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    };
+
     return (
         <>
             <div className="flex items-center h-12 gap-5 whitespace-nowrap overflow-x-auto grow">
@@ -138,19 +164,35 @@ function MultiselectOptions() {
                             <Button variant="outline">Set status</Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    handleUpdateItemStatus(StatusEnum.Inbox)
+                                }
+                            >
                                 <Inbox className="mr-2" size={18} />
                                 Inbox
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    handleUpdateItemStatus(StatusEnum.Underway)
+                                }
+                            >
                                 <CircleDot className="mr-2" size={18} />
                                 Underway
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    handleUpdateItemStatus(StatusEnum.Complete)
+                                }
+                            >
                                 <CheckCircle2 className="mr-2" size={18} />
                                 Complete
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    handleUpdateItemStatus(StatusEnum.Archive)
+                                }
+                            >
                                 <Archive className="mr-2" size={18} />
                                 Archive
                             </DropdownMenuItem>
