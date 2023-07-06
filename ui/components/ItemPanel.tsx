@@ -89,7 +89,7 @@ export function ItemPanel() {
     );
 }
 
-function SingleItem({ id }: { id: string }) {
+export function SingleItem({ id }: { id: string }) {
     const queryClient = useQueryClient();
 
     const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
@@ -97,6 +97,14 @@ function SingleItem({ id }: { id: string }) {
 
     const collectionsQuery = trpc.collection.getCollections.useQuery();
     const tagsQuery = trpc.tag.getTags.useQuery();
+
+    const itemStatusQuery = trpc.item.getItemStatus.useQuery({
+        itemId: id,
+    });
+
+    console.log(
+        `rendering single item ${data?.title}, status is ${itemStatusQuery.data}}`
+    );
 
     const setCollectionOnItem = trpc.item.setCollection.useMutation({
         onSuccess: () => {
@@ -142,20 +150,28 @@ function SingleItem({ id }: { id: string }) {
                 queryKey: [["item", "getItems"], { type: "query" }],
                 exact: true,
             });
-            console.log("updated item status");
+            queryClient.invalidateQueries({
+                queryKey: [["item", "getItem"], { type: "query" }],
+                exact: true,
+            });
+            // queryClient.invalidateQueries({
+            //     queryKey: [["item", "getItemStatus"], { type: "query" }],
+            //     exact: true,
+            // });
+            // console.log("updated item status?");
         },
     });
 
     const handleUpdateItemStatus = async (newStatus: StatusEnum) => {
-        if (!data || newStatus === data.status) {
-            // Same status, no need to change
+        if (!data) {
             return;
         }
         try {
-            await updateItemStatusMutation.mutateAsync({
+            const newItem = await updateItemStatusMutation.mutateAsync({
                 itemId: data.id,
                 status: newStatus,
             });
+            console.log(`Updated item status to ${newItem?.status}`);
         } catch (error) {
             console.error(error);
         }
@@ -200,6 +216,7 @@ function SingleItem({ id }: { id: string }) {
                         </Link>
                         <MultiToggle
                             currentStatus={data.status}
+                            // currentStatus={itemStatusQuery.data as StatusEnum}
                             setStatus={(newStatus) =>
                                 handleUpdateItemStatus(newStatus)
                             }

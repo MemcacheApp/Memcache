@@ -3,6 +3,8 @@ import { cn } from "../utils";
 import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
 import renderIcon from "@/src/app/utils/renderIcon";
 
+// Tried using these constants to calculate dimensions for styling, but tailwind
+// didn't like it.
 const RADIUS = 1; // rem
 const GAP = 0.2; // rem]
 const PADDING = 0.4; // rem
@@ -14,7 +16,7 @@ export default function MultiToggle({
     currentStatus: StatusEnum;
     setStatus: (status: StatusEnum) => void;
 }) {
-    console.log(`render multitoggle with status ${currentStatus}`);
+    console.log(`rendering multitoggle with status ${currentStatus}`);
     const [selectedPosition, setSelectedPosition] =
         React.useState<StatusEnum>(currentStatus);
     const [spotlightPosition, setSpotlightPosition] =
@@ -27,7 +29,6 @@ export default function MultiToggle({
 
     const containerWidth =
         Object.values(StatusEnum).length * (2 * RADIUS + GAP) - GAP;
-    console.log(`containerWidth: ${containerWidth}`);
 
     return (
         <div
@@ -68,10 +69,8 @@ export default function MultiToggle({
                             setSpotlightPosition(selectedPosition);
                         }}
                         onClick={(e) => {
-                            e.stopPropagation();
+                            // e.stopPropagation();
                             if (typeof value !== "number") return;
-                            setSelectedPosition(value);
-                            setSpotlightPosition(value);
                             setStatus(value);
                         }}
                     >
