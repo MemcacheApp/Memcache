@@ -132,7 +132,7 @@ function MultiselectOptions() {
         },
     });
 
-    const handleDeleteItem = async () => {
+    const handleDeleteItems = async () => {
         selectedItems.forEach(async (id) => {
             try {
                 await deleteItemMutation.mutateAsync({ id });
@@ -140,6 +140,7 @@ function MultiselectOptions() {
                 console.error(error);
             }
         });
+        selectedItems.clear();
     };
 
     const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
@@ -152,7 +153,7 @@ function MultiselectOptions() {
         },
     });
 
-    const handleUpdateItemStatus = async (status: number) => {
+    const handleUpdateItemsStatus = async (status: number) => {
         selectedItems.forEach(async (itemId) => {
             try {
                 await updateItemStatusMutation.mutateAsync({
@@ -163,6 +164,7 @@ function MultiselectOptions() {
                 console.error(error);
             }
         });
+        selectedItems.clear();
     };
 
     return (
@@ -187,7 +189,7 @@ function MultiselectOptions() {
                         <DropdownMenuContent>
                             <DropdownMenuItem
                                 onClick={() =>
-                                    handleUpdateItemStatus(StatusEnum.Inbox)
+                                    handleUpdateItemsStatus(StatusEnum.Inbox)
                                 }
                             >
                                 <Inbox className="mr-2" size={18} />
@@ -195,7 +197,7 @@ function MultiselectOptions() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() =>
-                                    handleUpdateItemStatus(StatusEnum.Underway)
+                                    handleUpdateItemsStatus(StatusEnum.Underway)
                                 }
                             >
                                 <CircleDot className="mr-2" size={18} />
@@ -203,7 +205,7 @@ function MultiselectOptions() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() =>
-                                    handleUpdateItemStatus(StatusEnum.Complete)
+                                    handleUpdateItemsStatus(StatusEnum.Complete)
                                 }
                             >
                                 <CheckCircle2 className="mr-2" size={18} />
@@ -211,7 +213,7 @@ function MultiselectOptions() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() =>
-                                    handleUpdateItemStatus(StatusEnum.Archive)
+                                    handleUpdateItemsStatus(StatusEnum.Archive)
                                 }
                             >
                                 <Archive className="mr-2" size={18} />
@@ -222,7 +224,7 @@ function MultiselectOptions() {
                     <Button
                         variant="outline"
                         className="text-red-600"
-                        onClick={handleDeleteItem}
+                        onClick={handleDeleteItems}
                     >
                         <Trash2 className="mr-2" size={18} />
                         Delete
