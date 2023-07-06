@@ -69,6 +69,7 @@ export function ItemList() {
         </div>
     );
 }
+
 function Options() {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
