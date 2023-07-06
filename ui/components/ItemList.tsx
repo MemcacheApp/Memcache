@@ -135,21 +135,24 @@ function MultiselectOptions() {
                 >
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">Move to</Button>
+                            <Button variant="outline">Set status</Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuItem>
-                                Insert collection names
+                                <Inbox className="mr-2" size={18} />
+                                Inbox
                             </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">Mark as</Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
                             <DropdownMenuItem>
-                                Insert status names
+                                <CircleDot className="mr-2" size={18} />
+                                Underway
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <CheckCircle2 className="mr-2" size={18} />
+                                Complete
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Archive className="mr-2" size={18} />
+                                Archive
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
