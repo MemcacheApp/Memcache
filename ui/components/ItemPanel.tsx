@@ -16,6 +16,7 @@ import ExternalLink from "./ExternalLink";
 import MultiToggle from "./MultiToggle";
 import Link from "next/link";
 import { DEBUG } from "@/src/app/utils/constants";
+import SimpleTag from "./SimpleTag";
 
 export function ItemPanel() {
     const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
@@ -91,7 +92,6 @@ export function ItemPanel() {
 
 export function SingleItem({ id }: { id: string }) {
     const utils = trpc.useContext();
-    const queryClient = useQueryClient();
 
     const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
     const data = itemQuery.data;
@@ -222,18 +222,10 @@ export function SingleItem({ id }: { id: string }) {
 
                     <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag, index) => (
-                            <TagSelector
+                            <SimpleTag
                                 key={tag.id}
-                                index={index}
-                                tags={tagsQuery.data}
                                 value={tag.name}
-                                setValue={(newTag) =>
-                                    addTagToItemMutation.mutate({
-                                        itemId: data.id,
-                                        tagName: newTag,
-                                    })
-                                }
-                                remove={(index) => {
+                                remove={() => {
                                     removeTagFromItemMutation.mutate({
                                         itemId: data.id,
                                         tagId: data.tags[index].id,

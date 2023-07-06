@@ -12,7 +12,7 @@ export const tagRouter = router({
         .input(z.string().transform((name) => name.trim()))
         .mutation(async ({ ctx, input }) => {
             let tag = await TagController.getTagByName(ctx.userId, input);
-            if (tag) {
+            if (!tag) {
                 tag = await TagController.createTag(ctx.userId, input);
             }
             return tag;
