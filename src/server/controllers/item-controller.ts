@@ -114,11 +114,24 @@ export default class ItemController {
         });
     }
 
+    static async getItemStatus(itemId: string) {
+        const item = await prisma.item.findUnique({
+            where: {
+                id: itemId,
+            },
+        });
+        return item?.status;
+    }
+
     /**
      * @throws {GetItemError}
      * @throws {AuthError}
      */
-    static async setItemStatus(userId: string, itemId: string, status: number) {
+    static async updateItemStatus(
+        userId: string,
+        itemId: string,
+        status: number
+    ) {
         const item = await this.getItem(itemId);
 
         if (item.userId !== userId) {
