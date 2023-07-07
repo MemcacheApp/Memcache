@@ -1,6 +1,6 @@
 "use client";
 
-import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
+import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
@@ -25,6 +25,7 @@ import {
 import { useItemListStore } from "@/src/app/store/item-list";
 import { cn } from "../utils";
 import { useQueryClient } from "@tanstack/react-query";
+import renderIcon from "@/src/app/utils/renderIcon";
 
 export function ItemList() {
     const { activeStatus, selectedItems, selectItem } = useItemListStore(
@@ -167,6 +168,11 @@ function MultiselectOptions() {
         selectedItems.clear();
     };
 
+    const statusNames = Object.values(StatusEnum).filter(
+        (value): value is string => typeof value === "string"
+    );
+    const statusNums = Array.from(statusNames.keys());
+
     return (
         <>
             <div className="flex items-center h-12 gap-5 whitespace-nowrap overflow-x-auto grow">
@@ -187,38 +193,19 @@ function MultiselectOptions() {
                             <Button variant="outline">Set status</Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem
-                                onClick={() =>
-                                    handleUpdateItemsStatus(StatusEnum.Inbox)
-                                }
-                            >
-                                <Inbox className="mr-2" size={18} />
-                                Inbox
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() =>
-                                    handleUpdateItemsStatus(StatusEnum.Underway)
-                                }
-                            >
-                                <CircleDot className="mr-2" size={18} />
-                                Underway
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() =>
-                                    handleUpdateItemsStatus(StatusEnum.Complete)
-                                }
-                            >
-                                <CheckCircle2 className="mr-2" size={18} />
-                                Complete
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() =>
-                                    handleUpdateItemsStatus(StatusEnum.Archive)
-                                }
-                            >
-                                <Archive className="mr-2" size={18} />
-                                Archive
-                            </DropdownMenuItem>
+                            {statusNums.map((value) => (
+                                <DropdownMenuItem
+                                    key={value}
+                                    onClick={() => {
+                                        handleUpdateItemsStatus(value);
+                                    }}
+                                >
+                                    <div className="mr-2">
+                                        {renderIcon(StatusIcons[value])}
+                                    </div>
+                                    {statusNames[value]}
+                                </DropdownMenuItem>
+                            ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button

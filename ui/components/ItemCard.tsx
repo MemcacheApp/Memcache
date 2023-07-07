@@ -86,6 +86,10 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         }
     };
 
+    const statusNums = Object.values(StatusEnum).filter(
+        (value): value is number => typeof value === "number"
+    );
+
     return (
         <Card
             className={cn(
@@ -249,23 +253,19 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             </DropdownMenuIconItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    {Object.values(StatusEnum)
-                        .filter((value) => typeof value === "number")
-                        .map((value) => (
-                            <Button
-                                key={value}
-                                variant={"icon"}
-                                size={"none"}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (typeof value === "number") {
-                                        handleUpdateItemStatus(value);
-                                    }
-                                }}
-                            >
-                                {renderIcon(StatusIcons[value])}
-                            </Button>
-                        ))}
+                    {statusNums.map((value) => (
+                        <Button
+                            key={value}
+                            variant={"icon"}
+                            size={"none"}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleUpdateItemStatus(value);
+                            }}
+                        >
+                            {renderIcon(StatusIcons[value])}
+                        </Button>
+                    ))}
                 </div>
             </CardFooter>
         </Card>
