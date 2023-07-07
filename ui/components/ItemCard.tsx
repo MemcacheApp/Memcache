@@ -167,14 +167,20 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 
                         <DropdownMenuContent>
                             <DropdownMenuGroup>
-                                <DropdownMenuIconItem
-                                    Icon={ExternalLinkIcon}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                    }}
+                                <Link
+                                    href={data.url}
+                                    target="_blank"
+                                    className="hover:no-underline"
                                 >
-                                    Visit Link
-                                </DropdownMenuIconItem>
+                                    <DropdownMenuIconItem
+                                        Icon={ExternalLinkIcon}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                        }}
+                                    >
+                                        Visit Link
+                                    </DropdownMenuIconItem>
+                                </Link>
                                 <DropdownMenuIconItem Icon={PanelRightOpen}>
                                     Open Item
                                 </DropdownMenuIconItem>
