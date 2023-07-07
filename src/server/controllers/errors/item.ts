@@ -1,4 +1,4 @@
-import { createError } from "../../utils";
+import { createError } from "../../utils/error";
 
 export const CreateFromURLError = createError("CreateFromURLError", {
     FetchError: "Failed to fetch metadata",
