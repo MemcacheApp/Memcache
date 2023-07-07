@@ -84,7 +84,7 @@ const ITEMS = [
 
 async function main() {
     try {
-        const token = await UserController.createUser(
+        await UserController.createUser(
             ADMIN_FIRST_NAME,
             ADMIN_LAST_NAME,
             ADMIN_EMAIL,
