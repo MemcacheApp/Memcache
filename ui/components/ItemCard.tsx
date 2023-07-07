@@ -1,6 +1,6 @@
 "use client";
 
-import { StatusEnum } from "@/src/app/utils/Statuses";
+import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,18 +23,16 @@ import { Item, Collection, Tag } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import {
     Package2,
-    ExternalLink,
+    ExternalLink as ExternalLinkIcon,
     Trash2,
     MoreHorizontal,
     PanelRightOpen,
-    Inbox,
-    CheckCircle2,
-    CircleDot,
-    Archive,
     Globe,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "../utils";
+import ExternalLink from "./ExternalLink";
+import renderIcon from "@/src/app/utils/renderIcon";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -63,7 +61,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         }
     };
 
-    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
+    const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [["item", "getUserItems"], { type: "query" }],
@@ -73,7 +71,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         },
     });
 
-    const handleUpdateItemStatus = async (newStatus: number) => {
+    const handleUpdateItemStatus = async (newStatus: StatusEnum) => {
         if (newStatus === data.status) {
             // Same status, no need to change
             return;
@@ -116,20 +114,27 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 ) : null}
             </div>
             <CardFooter className="flex flex-wrap gap-5 justify-between">
-                <div className="flex flex-wrap gap-5 text-slate-600 text-sm">
-                    <span className="inline-flex items-center gap-2">
-                        <Globe size={16} />
-                        {data.siteName}
-                    </span>
-                    <span className="inline-flex items-center gap-2">
-                        <Package2 size={16} />
-                        <Link
-                            className="hover:underline"
-                            href={`/app/collection/${data.collection.id}`}
-                        >
+                <div className="flex flex-wrap gap-5 text-slate-450 text-sm">
+                    <ExternalLink
+                        href={data.url}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                        }}
+                    >
+                        <div className="h-full flex items-center gap-2">
+                            <Globe size={16} />
+                            {data.siteName}
+                        </div>
+                    </ExternalLink>
+                    <Link
+                        className="hover:underline"
+                        href={`/app/collection/${data.collection.id}`}
+                    >
+                        <div className="h-full flex items-center gap-2">
+                            <Package2 size={16} />
                             {data.collection.name}
-                        </Link>
-                    </span>
+                        </div>
+                    </Link>
                     <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag) => (
                             <Link
@@ -159,7 +164,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                         <DropdownMenuContent>
                             <DropdownMenuGroup>
                                 <DropdownMenuIconItem
-                                    Icon={ExternalLink}
+                                    Icon={ExternalLinkIcon}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                     }}
@@ -244,46 +249,23 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             </DropdownMenuIconItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Inbox);
-                        }}
-                    >
-                        <Inbox size={18} />
-                    </Button>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Underway);
-                        }}
-                    >
-                        <CircleDot size={18} />
-                    </Button>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Complete);
-                        }}
-                    >
-                        <CheckCircle2 size={18} />
-                    </Button>
-                    <Button
-                        variant={"icon"}
-                        size={"none"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpdateItemStatus(StatusEnum.Archive);
-                        }}
-                    >
-                        <Archive size={18} />
-                    </Button>
+                    {Object.values(StatusEnum)
+                        .filter((value) => typeof value === "number")
+                        .map((value) => (
+                            <Button
+                                key={value}
+                                variant={"icon"}
+                                size={"none"}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (typeof value === "number") {
+                                        handleUpdateItemStatus(value);
+                                    }
+                                }}
+                            >
+                                {renderIcon(StatusIcons[value])}
+                            </Button>
+                        ))}
                 </div>
             </CardFooter>
         </Card>

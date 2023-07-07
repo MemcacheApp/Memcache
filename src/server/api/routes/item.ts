@@ -96,7 +96,7 @@ export const itemRouter = router({
         .input(z.object({ itemId: z.string(), status: z.number() }))
         .mutation(async ({ ctx, input }) => {
             try {
-                await ItemController.setItemStatus(
+                await ItemController.updateItemStatus(
                     ctx.userId,
                     input.itemId,
                     input.status
@@ -203,5 +203,19 @@ export const itemRouter = router({
                     });
                 }
             }
+        }),
+    getItemStatus: protectedProcedure
+        .input(z.object({ itemId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            return await ItemController.getItemStatus(input.itemId);
+        }),
+    updateItemStatus: protectedProcedure
+        .input(z.object({ itemId: z.string(), status: z.number() }))
+        .mutation(async ({ ctx, input }) => {
+            return ItemController.updateItemStatus(
+                ctx.userId,
+                input.itemId,
+                input.status
+            );
         }),
 });

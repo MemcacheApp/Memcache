@@ -46,6 +46,9 @@ export const theme = {
                 DEFAULT: "hsl(var(--card))",
                 foreground: "hsl(var(--card-foreground))",
             },
+            slate: {
+                450: "#7A899F", // midpoint between 400 and 500
+            },
         },
         borderRadius: {
             lg: `var(--radius)`,
@@ -68,6 +71,9 @@ export const theme = {
         animation: {
             "accordion-down": "accordion-down 0.2s ease-out",
             "accordion-up": "accordion-up 0.2s ease-out",
+        },
+        transitionProperty: {
+            left: "left",
         },
     },
 };
