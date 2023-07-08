@@ -206,7 +206,7 @@ export const itemRouter = router({
         }),
     getItemStatus: protectedProcedure
         .input(z.object({ itemId: z.string() }))
-        .query(async ({ ctx, input }) => {
+        .query(async ({ input }) => {
             return await ItemController.getItemStatus(input.itemId);
         }),
     updateItemStatus: protectedProcedure
