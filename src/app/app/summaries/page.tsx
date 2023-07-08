@@ -1,3 +1,5 @@
+"use client";
+
 import { PageTitle } from "../../../../ui/components";
 
 export default function SummariesPage() {
