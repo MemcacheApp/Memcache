@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import { useItemListStore } from "@/src/app/store/item-list";
 import { cn } from "../utils";
-import { useQueryClient } from "@tanstack/react-query";
 import renderIcon from "@/src/app/utils/renderIcon";
 
 export function ItemList() {
@@ -121,16 +120,10 @@ function MultiselectOptions() {
         })
     );
 
-    const queryClient = useQueryClient();
+    const ctx = trpc.useContext();
 
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            });
-            console.log("deleted item?");
-        },
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
     const handleDeleteItems = async () => {
@@ -145,13 +138,7 @@ function MultiselectOptions() {
     };
 
     const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            });
-            console.log("updated item status");
-        },
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
     const handleUpdateItemsStatus = async (status: number) => {

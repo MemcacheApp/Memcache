@@ -5,7 +5,6 @@ import { trpc } from "../../utils/trpc";
 import { Pencil } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import { z } from "zod";
-import { useQueryClient } from "@tanstack/react-query";
 
 function ProfileInfo({
     title,
@@ -90,35 +89,19 @@ function ProfileInfo({
 }
 
 export default function ProfilePage() {
-    const queryClient = useQueryClient();
+    const ctx = trpc.useContext();
+
     const updateEmailMutation = trpc.user.updateEmail.useMutation({
-        onSuccess: () =>
-            queryClient.invalidateQueries([
-                ["user", "getUserInfo"],
-                {
-                    type: "query",
-                },
-            ]),
+        onSuccess: () => ctx.user.getUserInfo.invalidate(),
     });
     const updateFirstNameMutation = trpc.user.updateFirstName.useMutation({
-        onSuccess: () =>
-            queryClient.invalidateQueries([
-                ["user", "getUserInfo"],
-                {
-                    type: "query",
-                },
-            ]),
+        onSuccess: () => ctx.user.getUserInfo.invalidate(),
     });
     const updateLastNameMutation = trpc.user.updateLastName.useMutation({
-        onSuccess: () =>
-            queryClient.invalidateQueries([
-                ["user", "getUserInfo"],
-                {
-                    type: "query",
-                },
-            ]),
+        onSuccess: () => ctx.user.getUserInfo.invalidate(),
     });
     const { data } = trpc.user.getUserInfo.useQuery();
+
     return (
         <div className="flex flex-col">
             <PageTitle>Profile</PageTitle>

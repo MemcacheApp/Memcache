@@ -8,7 +8,6 @@ import { TagSelector } from "./TagSelector";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import { Input } from "./Input";
 import { Button } from "./Button";
-import { useQueryClient } from "@tanstack/react-query";
 import { Package2, Tag } from "lucide-react";
 import { cn } from "../utils";
 
@@ -18,7 +17,7 @@ interface SaveInputProps {
 }
 
 export function SaveInput(props: SaveInputProps) {
-    const queryClient = useQueryClient();
+    const ctx = trpc.useContext();
     const [isShowPopover, setIsShowPopover] = useState(
         props.alwaysShowOptions || false
     );
@@ -32,11 +31,7 @@ export function SaveInput(props: SaveInputProps) {
     const [tags, setTags] = useState<string[]>([]);
 
     const createItemMutation = trpc.item.createFromURL.useMutation({
-        onSuccess: () =>
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            }),
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
     const showPopover = () => {
