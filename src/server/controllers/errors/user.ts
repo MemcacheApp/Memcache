@@ -1,4 +1,4 @@
-import { createError } from "../../utils";
+import { createError } from "../../utils/error";
 
 export const CreateUserError = createError("CreateUserError", {
     EmailUsed: "The email is already registered",
