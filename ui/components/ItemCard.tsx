@@ -41,6 +41,18 @@ interface ItemCardProps {
 
 export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const ctx = trpc.useContext();
+	const summariserQuery = trpc.summarys.summariserGenerate.useQuery();
+	const summariserData = summariserQuery.data;
+
+	const handleGenerateSummary = async (data: data) => {
+		console.log(summariserData);
+
+		try {
+			summariserQuery.refetch();
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
@@ -193,13 +205,14 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                                             >
                                                 View Summaries
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                onClick={(e) => {
+											<DropdownMenuItem 
+												onClick={(e) => {
+													handleGenerateSummary(data);
                                                     e.stopPropagation();
-                                                }}
-                                            >
-                                                Generate Summary
-                                            </DropdownMenuItem>
+												}}
+											>
+												Generate Summary
+											</DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                     </DropdownMenuPortal>
                                 </DropdownMenuSub>

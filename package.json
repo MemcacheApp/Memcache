@@ -43,6 +43,7 @@
     "react-hook-form": "^7.44.3",
     "react-otp-input": "^3.0.2",
     "resend": "^0.15.3",
+    "scrape-it": "^6.0.1",
     "superjson": "^1.12.3",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6",
