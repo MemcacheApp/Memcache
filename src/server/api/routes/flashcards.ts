@@ -22,7 +22,7 @@ export const flashcardsRouter = router({
                     {
                         role: "system",
                         content:
-                            "You are a helpful assistant whose job is to help the user study their areas of interest and learn the most important knowledge in those areas. Give the user an interesting and educational fact about their area of interest.",
+                            "You are a helpful assistant whose job is to help the user study their areas of interest and learn the most important knowledge in those areas. Give the user an interesting and educational fact about their area of interest. Keep each response no longer than 75 words.",
                     },
                     {
                         role: "user",
