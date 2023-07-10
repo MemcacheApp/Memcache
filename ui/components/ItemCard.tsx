@@ -41,14 +41,17 @@ interface ItemCardProps {
 
 export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const ctx = trpc.useContext();
-	const summariserQuery = trpc.summarys.summariserGenerate.useQuery();
-	const summariserData = summariserQuery.data;
+    const summariserMutation = trpc.summarys.summariserGenerate.useMutation();
 
-	const handleGenerateSummary = async (data: data) => {
-		console.log(summariserData);
-
+	const handleGenerateSummary = async () => {
 		try {
-			summariserQuery.refetch();
+			const result = await summariserMutation.mutateAsync({
+				url: data.url,
+				title: data.title,
+				description: data.description,
+				siteName: data.siteName
+			});
+			console.log(result); 
 		} catch (error) {
 			console.error(error);
 		}
@@ -205,7 +208,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                                             >
                                                 View Summaries
                                             </DropdownMenuItem>
-											<DropdownMenuItem 
+                                            <DropdownMenuItem 
 												onClick={(e) => {
 													handleGenerateSummary(data);
                                                     e.stopPropagation();
