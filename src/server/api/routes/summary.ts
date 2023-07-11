@@ -15,11 +15,12 @@ export const summaryRouter = router({
                 title: z.string(),
                 description: z.string(),
                 siteName: z.string(),
+                id: z.string(),
             })
         )
         .mutation(async ({ input }) => {
             try {
-                const { url, title, description, siteName } = input;
+                const { url, title, description, siteName, id } = input;
                 const content = await SummaryController.scrapeContent({
                     url,
                 });
@@ -41,7 +42,10 @@ export const summaryRouter = router({
                     temperature: 0.2, // lower temperature for more deterministic output
                 });
 
-                return chatCompletion.data.choices[0].message?.content;
+                const summaryContent = chatCompletion.data.choices[0].message?.content;
+                const summary = await SummaryController.createSummary(id, summaryContent);
+
+                return summaryContent;
             } catch (error: any) {
                 if (error instanceof Error) {
                     throw new Error(error.message);

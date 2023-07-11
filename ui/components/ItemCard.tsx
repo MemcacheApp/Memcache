@@ -44,12 +44,14 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const summariserMutation = trpc.summarys.summariserGenerate.useMutation();
 
 	const handleGenerateSummary = async () => {
+		console.log(data);
 		try {
 			const result = await summariserMutation.mutateAsync({
 				url: data.url,
 				title: data.title,
 				description: data.description,
-				siteName: data.siteName
+				siteName: data.siteName,
+				id: data.id
 			});
 			console.log(result); 
 		} catch (error) {
