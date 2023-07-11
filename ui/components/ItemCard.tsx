@@ -20,7 +20,6 @@ import {
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 import {
     Package2,
     ExternalLink as ExternalLinkIcon,
@@ -41,16 +40,10 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
-    const queryClient = useQueryClient();
+    const ctx = trpc.useContext();
 
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            });
-            console.log("deleted item?");
-        },
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
     const handleDeleteItem = async () => {
@@ -62,13 +55,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     };
 
     const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            });
-            console.log("updated item status");
-        },
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
     const handleUpdateItemStatus = async (newStatus: StatusEnum) => {

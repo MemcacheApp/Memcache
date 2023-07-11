@@ -82,17 +82,17 @@ export function ItemPanel() {
                 {ids.length > 1 ? (
                     <div>Select {ids.length} items</div>
                 ) : (
-                    <SingleItem id={ids[0]} />
+                    <SingleItem itemId={ids[0]} />
                 )}
             </Card>
         </div>
     );
 }
 
-export function SingleItem({ id }: { id: string }) {
-    const utils = trpc.useContext();
+export function SingleItem({ itemId }: { itemId: string }) {
+    const ctx = trpc.useContext();
 
-    const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
+    const itemQuery = trpc.item.getItem.useQuery({ itemId });
     const data = itemQuery.data;
 
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
@@ -105,35 +105,31 @@ export function SingleItem({ id }: { id: string }) {
 
     const setCollectionOnItem = trpc.item.setItemCollection.useMutation({
         onSuccess: () => {
-            utils.item.getUserItems.invalidate();
-            utils.item.getItem.invalidate({ itemId: id });
-            utils.collection.getUserCollections.invalidate();
-            DEBUG && console.log("successfully set collection on item");
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
+            ctx.collection.getUserCollections.invalidate();
         },
     });
 
     const addTagToItemMutation = trpc.item.addTag.useMutation({
         onSuccess: () => {
-            utils.item.getItem.invalidate({ itemId: id });
-            utils.item.getUserItems.invalidate();
-            utils.tag.getUserTags.invalidate();
-            DEBUG && console.log("successfully added tag to item");
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
+            ctx.tag.getUserTags.invalidate();
         },
     });
 
     const removeTagFromItemMutation = trpc.item.removeTag.useMutation({
         onSuccess: () => {
-            utils.item.getItem.invalidate({ itemId: id });
-            utils.item.getUserItems.invalidate();
-            DEBUG && console.log("successfully removed tag from item");
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
         },
     });
 
     const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
         onSuccess: async () => {
-            utils.item.getItem.invalidate({ itemId: id });
-            utils.item.getUserItems.invalidate();
-            DEBUG && console.log("successfully updated item status");
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
         },
     });
 
