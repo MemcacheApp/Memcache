@@ -8,7 +8,6 @@ import { TagSelector } from "./TagSelector";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import { Input } from "./Input";
 import { Button } from "./Button";
-import { useQueryClient } from "@tanstack/react-query";
 import { Package2, Tag } from "lucide-react";
 import { cn } from "../utils";
 
@@ -18,7 +17,7 @@ interface SaveInputProps {
 }
 
 export function SaveInput(props: SaveInputProps) {
-    const queryClient = useQueryClient();
+    const ctx = trpc.useContext();
     const [isShowPopover, setIsShowPopover] = useState(
         props.alwaysShowOptions || false
     );
@@ -32,11 +31,7 @@ export function SaveInput(props: SaveInputProps) {
     const [tags, setTags] = useState<string[]>([]);
 
     const createItemMutation = trpc.item.createFromURL.useMutation({
-        onSuccess: () =>
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            }),
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
     const showPopover = () => {
@@ -122,7 +117,7 @@ export function SaveInput(props: SaveInputProps) {
                     />
                     <div>
                         <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
-                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
+                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-450 tracking-wider">
                                 <Package2 size={18} />
                                 {"Collection:"}
                             </div>
@@ -133,7 +128,7 @@ export function SaveInput(props: SaveInputProps) {
                             />
                         </div>
                         <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
-                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-500 tracking-wider">
+                            <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-450 tracking-wider">
                                 <Tag size={18} />
                                 {"Tags:"}
                             </div>

@@ -36,7 +36,7 @@ export const ResetPasswordEmail = ({ code }: ResetPasswordEmailProps) => (
                         password.
                     </Text>
                     <code style={codeStyle}>{code}</code>
-                    <Text className="text-slate-400">
+                    <Text className="text-slate-450">
                         If you didn&apos;t try to login, you can safely ignore
                         this email.
                     </Text>

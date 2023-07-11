@@ -1,4 +1,4 @@
-import { createError } from "../../utils";
+import { createError } from "../../utils/error";
 
 export const CreateCollectionError = createError("CreateCollectionError", {
     CollectionExist: "The collection already exists",

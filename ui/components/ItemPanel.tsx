@@ -2,13 +2,20 @@
 
 import { trpc } from "@/src/app/utils/trpc";
 import { Card } from "./Card";
-import { X } from "lucide-react";
+import { LucideIcon, Package2, Tag, X } from "lucide-react";
 import { Button } from "./Button";
 import { CollectionSelector, TagSelector } from ".";
-import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { cn } from "../utils";
 import { useItemListStore } from "@/src/app/store/item-list";
+import { Separator } from "./Separator";
+import { Table, TableBody, TableCell, TableRow } from "./Table";
+import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
+import ExternalLink from "./ExternalLink";
+import MultiToggle from "./MultiToggle";
+import Link from "next/link";
+import { DEBUG } from "@/src/app/utils/constants";
+import SimpleTag from "./SimpleTag";
 
 export function ItemPanel() {
     const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
@@ -51,7 +58,7 @@ export function ItemPanel() {
             ></div>
             <Card
                 className={cn(
-                    "fixed flex flex-col right-5 w-80 p-4 top-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
+                    "fixed flex flex-col right-5 w-[360px] h-[calc(100vh-1.5rem)] overflow-scroll p-4 top-3 bottom-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
                     {
                         hidden: isHidden,
                         "md:translate-x-[20rem]": isCollapse,
@@ -75,119 +82,145 @@ export function ItemPanel() {
                 {ids.length > 1 ? (
                     <div>Select {ids.length} items</div>
                 ) : (
-                    <SingleItem id={ids[0]} />
+                    <SingleItem itemId={ids[0]} />
                 )}
             </Card>
         </div>
     );
 }
 
-function SingleItem({ id }: { id: string }) {
-    const queryClient = useQueryClient();
+export function SingleItem({ itemId }: { itemId: string }) {
+    const ctx = trpc.useContext();
 
-    const itemQuery = trpc.item.getItem.useQuery({ itemId: id });
+    const itemQuery = trpc.item.getItem.useQuery({ itemId });
     const data = itemQuery.data;
 
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
     const tagsQuery = trpc.tag.getUserTags.useQuery();
 
+    DEBUG &&
+        console.log(
+            `Rendering single item ${data?.title}, status is ${data?.status}}`
+        );
+
     const setCollectionOnItem = trpc.item.setItemCollection.useMutation({
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            });
-            queryClient.invalidateQueries({
-                queryKey: [
-                    ["collection", "getUserCollections"],
-                    { type: "query" },
-                ],
-                exact: true,
-            });
-            console.log("set collection on item?");
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
+            ctx.collection.getUserCollections.invalidate();
         },
     });
 
     const addTagToItemMutation = trpc.item.addTag.useMutation({
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            });
-            queryClient.invalidateQueries({
-                queryKey: [["tag", "getUserTags"], { type: "query" }],
-                exact: true,
-            });
-            console.log("added tag to item?");
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
+            ctx.tag.getUserTags.invalidate();
         },
     });
 
     const removeTagFromItemMutation = trpc.item.removeTag.useMutation({
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [["item", "getUserItems"], { type: "query" }],
-                exact: true,
-            });
-            console.log("removed tag from item?");
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
         },
     });
+
+    const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
+        onSuccess: async () => {
+            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getUserItems.invalidate();
+        },
+    });
+
+    const handleUpdateItemStatus = async (newStatus: StatusEnum) => {
+        if (!data) {
+            return;
+        }
+        try {
+            await updateItemStatusMutation.mutateAsync({
+                itemId: data.id,
+                status: newStatus,
+            });
+            DEBUG && console.log(`Updated item status to ${newStatus}`);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <div>
             {data ? (
                 <div>
-                    <div className="text-xl font-bold">{data.title}</div>
-                    <div>{data.description}</div>
-                    <div>{data.type}</div>
-                    <div>{data.status}</div>
-                    <div>{data.collection.name}</div>
-                    <div>{data.url}</div>
-                    <div>{data.thumbnail}</div>
-                    <div>{`${data.createdAt.toLocaleDateString(undefined, {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                    })}`}</div>
-                    {data.releaseTime ? (
-                        <div>{`${data.releaseTime.toLocaleDateString(
-                            undefined,
-                            {
-                                weekday: "long",
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                            }
-                        )}`}</div>
+                    <div className="text-xl font-bold">
+                        <ExternalLink href={data.url}>
+                            {data.title}
+                        </ExternalLink>
+                    </div>
+                    <div className="mt-1 mb-3 text-slate-450 ">
+                        <ExternalLink href={data.url}>
+                            {data.siteName}
+                        </ExternalLink>
+                    </div>
+                    {data.thumbnail ? (
+                        <div className="w-full max-w-[240px] mx-auto aspect-[16/9] my-4 shrink-0">
+                            <ExternalLink href={data.url}>
+                                <img
+                                    src={data.thumbnail}
+                                    alt="Image"
+                                    className="rounded-lg object-cover object-center relative w-full h-full"
+                                />
+                            </ExternalLink>
+                        </div>
                     ) : null}
-                    <div>{data.siteName}</div>
-                    {data.duration ? <div>{data.duration}</div> : null}
-                    {data.author ? <div>{data.author}</div> : null}
-                    <CollectionSelector
-                        collections={collectionsQuery.data}
-                        value={data.collection.name}
-                        setValue={(newCollection) => {
-                            setCollectionOnItem.mutate({
-                                itemId: data.id,
-                                collectionName: newCollection,
-                            });
-                        }}
-                        size={"xs"}
-                    />
-                    <div>
+                    <div className="mt-3">{data.description}</div>
+
+                    <Separator className="my-4" />
+
+                    <Subtitle Icon={StatusIcons[data.status]}>Status</Subtitle>
+                    <div className="flex justify-between items-center">
+                        <Link
+                            href={`/app/saves`}
+                            className="text-slate-600 font-medium underline"
+                        >
+                            {StatusNames[data.status as StatusEnum]}
+                        </Link>
+                        <MultiToggle
+                            currentStatus={data.status}
+                            setStatus={(newStatus) =>
+                                handleUpdateItemStatus(newStatus)
+                            }
+                        />
+                    </div>
+
+                    <Subtitle Icon={Package2}>Collection</Subtitle>
+                    <div className="flex justify-between items-center">
+                        <Link
+                            href={`/app/collection/${data.collection.id}`}
+                            className="text-slate-600 font-medium underline"
+                        >
+                            {data.collection.name}
+                        </Link>
+                        <CollectionSelector
+                            collections={collectionsQuery.data}
+                            value={data.collection.name}
+                            setValue={(newCollection) => {
+                                setCollectionOnItem.mutate({
+                                    itemId: data.id,
+                                    collectionName: newCollection,
+                                });
+                            }}
+                            size={"default"}
+                        />
+                    </div>
+                    <Subtitle Icon={Tag}>Tags</Subtitle>
+
+                    <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag, index) => (
-                            <TagSelector
+                            <SimpleTag
                                 key={tag.id}
-                                index={index}
-                                tags={tagsQuery.data}
                                 value={tag.name}
-                                setValue={(newTag) =>
-                                    addTagToItemMutation.mutate({
-                                        itemId: data.id,
-                                        tagName: newTag,
-                                    })
-                                }
-                                remove={(index) => {
+                                remove={() => {
                                     removeTagFromItemMutation.mutate({
                                         itemId: data.id,
                                         tagId: data.tags[index].id,
@@ -213,8 +246,82 @@ function SingleItem({ id }: { id: string }) {
                             }}
                         />
                     </div>
+                    <Separator className="my-4" />
+                    <Subtitle>Metadata</Subtitle>
+                    <Table className="mt-2 pb-2">
+                        <TableBody>
+                            <TableRow divider={false} interactive={false}>
+                                <TableCell className="text-slate-450 min-w-56px">
+                                    Type
+                                </TableCell>
+                                <TableCell className="capitalize">
+                                    {data.type}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow divider={false} interactive={false}>
+                                <TableCell className="text-slate-450">
+                                    URL
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                    {data.url}
+                                </TableCell>
+                            </TableRow>
+                            {data.releaseTime ? (
+                                <TableRow divider={false} interactive={false}>
+                                    <TableCell className="text-slate-450">
+                                        Published
+                                    </TableCell>
+                                    <TableCell className="whitespace-nowrap">
+                                        <div>{`${data.releaseTime.toLocaleDateString(
+                                            undefined,
+                                            {
+                                                weekday: "long",
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
+                                            }
+                                        )}`}</div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : null}
+                            <TableRow divider={false} interactive={false}>
+                                <TableCell className="text-slate-450">
+                                    Date added
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                    <div>{`${data.createdAt.toLocaleDateString(
+                                        undefined,
+                                        {
+                                            weekday: "long",
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                        }
+                                    )}`}</div>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+
+                    {data.duration ? <div>{data.duration}</div> : null}
+                    {data.author ? <div>{data.author}</div> : null}
                 </div>
             ) : null}
+        </div>
+    );
+}
+
+function Subtitle({
+    Icon,
+    children,
+}: {
+    Icon?: LucideIcon;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="mt-4 mb-1 text-slate-450 text-sm tracking-wide uppercase flex items-center">
+            {Icon ? <Icon size={16} className="inline mr-2" /> : null}
+            {children}
         </div>
     );
 }

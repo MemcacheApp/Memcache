@@ -1,4 +1,4 @@
-import { createError } from "../../utils";
+import { createError } from "../../utils/error";
 
 export const CreateTagError = createError("CreateTagError", {
     TagExist: "The tag already exists",

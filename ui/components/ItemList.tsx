@@ -1,10 +1,17 @@
 "use client";
 
-import { StatusEnum, StatusNames } from "@/src/app/utils/Statuses";
+import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import { trpc } from "@/src/app/utils/trpc";
 import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
-import { Button, ItemCard } from ".";
+import {
+    Button,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    ItemCard,
+} from ".";
 import { useMemo } from "react";
 import {
     Archive,
@@ -12,10 +19,12 @@ import {
     CircleDot,
     Inbox,
     SquareStack,
+    Trash2,
     X,
 } from "lucide-react";
 import { useItemListStore } from "@/src/app/store/item-list";
 import { cn } from "../utils";
+import renderIcon from "@/src/app/utils/renderIcon";
 
 export function ItemList() {
     const { activeStatus, selectedItems, selectItem } = useItemListStore(
@@ -69,6 +78,7 @@ export function ItemList() {
         </div>
     );
 }
+
 function Options() {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
@@ -110,6 +120,46 @@ function MultiselectOptions() {
         })
     );
 
+    const ctx = trpc.useContext();
+
+    const deleteItemMutation = trpc.item.deleteItem.useMutation({
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
+    });
+
+    const handleDeleteItems = async () => {
+        selectedItems.forEach(async (id) => {
+            try {
+                await deleteItemMutation.mutateAsync({ id });
+            } catch (error) {
+                console.error(error);
+            }
+        });
+        selectedItems.clear();
+    };
+
+    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
+    });
+
+    const handleUpdateItemsStatus = async (status: number) => {
+        selectedItems.forEach(async (itemId) => {
+            try {
+                await updateItemStatusMutation.mutateAsync({
+                    itemId,
+                    status,
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        });
+        selectedItems.clear();
+    };
+
+    const statusNames = Object.values(StatusEnum).filter(
+        (value): value is string => typeof value === "string"
+    );
+    const statusNums = Array.from(statusNames.keys());
+
     return (
         <>
             <div className="flex items-center h-12 gap-5 whitespace-nowrap overflow-x-auto grow">
@@ -125,13 +175,39 @@ function MultiselectOptions() {
                         hidden: selectedItems.size === 0,
                     })}
                 >
-                    <Button variant="outline">Move to</Button>
-                    <Button variant="outline">Mark as</Button>
-                    <Button variant="outline" onClick={showPanel}>
-                        More
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">Set status</Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {statusNums.map((value) => (
+                                <DropdownMenuItem
+                                    key={value}
+                                    onClick={() => {
+                                        handleUpdateItemsStatus(value);
+                                    }}
+                                >
+                                    <div className="mr-2">
+                                        {renderIcon(StatusIcons[value])}
+                                    </div>
+                                    {statusNames[value]}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
+                        variant="outline"
+                        className="text-red-600"
+                        onClick={handleDeleteItems}
+                    >
+                        <Trash2 className="mr-2" size={18} />
+                        Delete
                     </Button>
                 </div>
             </div>
+            <Button variant="outline" onClick={showPanel}>
+                More
+            </Button>
             <Button
                 variant="outline"
                 className="w-10 rounded-full p-0 shrink-0"
