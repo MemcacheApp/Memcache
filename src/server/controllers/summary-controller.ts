@@ -1,9 +1,6 @@
 import { prisma } from "../db/prisma";
 import * as scrapeIt from "scrape-it";
 import { v4 as uuidv4 } from "uuid";
-import ItemController from "./item-controller";
-import { CreateFromURLError, GetItemError } from "./errors/item";
-import { AuthError } from "./errors/user";
 
 type ScrapeItDataType = {
     headers: { content: string }[];
@@ -67,29 +64,15 @@ export default class SummaryController {
     }
 
     static async createSummary(itemId: string, summaryContent: string) {
-        const item = await ItemController.getItem(itemId);
-
         const summary = await prisma.summary.create({
             data: {
                 id: uuidv4(),
-                type: item.type,
-                status: item.status,
-                collectionId: item.collectionId,
-                tags: {
-                    connect: item.tags.map((tag) => ({ id: tag.id })),
-                },
-                title: item.title,
-                url: item.url,
                 content: summaryContent,
-                thumbnail: item.thumbnail,
                 createdAt: new Date(),
-                userId: item.userId,
-                siteName: item.siteName,
-                duration: item.duration,
-                releaseTime: item.releaseTime,
-                author: item.author,
-                favicon: item.favicon,
-                itemId: item.id,  
+                itemId,
+                wordCount: summaryContent.split(" ").length,
+                experience: 0,
+                finetuning: 0,
             },
         });
         return summary;
