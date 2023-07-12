@@ -30,7 +30,7 @@ export function SaveInput(props: SaveInputProps) {
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
 
-    const createItemMutation = trpc.item.createFromURL.useMutation({
+    const createItemMutation = trpc.item.createItem.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
@@ -82,8 +82,8 @@ export function SaveInput(props: SaveInputProps) {
         if (url === "") return;
         createItemMutation.mutate({
             url,
-            collectionName: collection,
-            tagNames: tags,
+            collection,
+            tags,
         });
         setUrl("");
         setTags([]);

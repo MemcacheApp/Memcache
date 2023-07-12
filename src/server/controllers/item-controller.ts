@@ -3,59 +3,68 @@ import { v4 as uuidv4 } from "uuid";
 import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
-import { CreateFromURLError, GetItemError } from "./errors/item";
+import { FetchURLError, GetItemError } from "./errors/item";
 import { AuthError } from "./errors/user";
+import { CreateItemDataType } from "./datatypes/item";
 
 export default class ItemController {
     /**
-     * @throws {CreateFromURLError}
+     * @throws {FetchURLError}
      */
-    static async createFromURL(
-        userId: string,
-        url: string,
-        collectionName: string,
-        tagNames: string[]
-    ) {
+    static async fetchMetadata(url: string) {
         let result;
         try {
-            result = (await ogs({ url })).result;
+            result = (await ogs({ url: url })).result;
         } catch (e) {
-            throw new CreateFromURLError("FetchError", undefined, { cause: e });
+            throw new FetchURLError("FetchError", undefined, { cause: e });
         }
 
         const requestUrl = result.requestUrl;
         if (!requestUrl) {
-            throw new CreateFromURLError("InvalidURL");
+            throw new FetchURLError("InvalidURL");
         }
 
+        return {
+            type: result.ogType,
+            title: result.ogTitle || result.twitterTitle,
+            url: result.ogUrl || requestUrl,
+            description: result.ogDescription || result.twitterDescription,
+            thumbnail: result.ogImage?.[0].url || result.twitterImage?.[0].url,
+            siteName: result.ogSiteName || new URL(requestUrl).hostname,
+            duration: result.musicDuration
+                ? parseInt(result.musicDuration)
+                : undefined,
+            releaseTime: result.releaseDate,
+            author: result.author,
+        };
+    }
+
+    static async createItem(userId: string, data: CreateItemDataType) {
         const collection = await CollectionController.getOrCreateCollection(
             userId,
-            collectionName
+            data.collection
         );
-        const tags = await TagController.getOrCreateTags(userId, tagNames);
+        const tags = await TagController.getOrCreateTags(userId, data.tags);
 
         const item = await prisma.item.create({
             data: {
                 id: uuidv4(),
-                type: result.ogType || "website",
+                type: data.type || "website",
                 status: 0,
                 collectionId: collection.id,
                 tags: {
                     connect: tags.map((tag) => ({ id: tag.id })),
                 },
-                title: result.ogTitle || result.twitterTitle || "Untitled",
-                url: result.ogUrl || requestUrl,
-                description: result.ogDescription || result.dcDescription || "",
-                thumbnail:
-                    result.ogImage?.[0].url || result.twitterImage?.[0].url,
+                title: data.title || "Untitled",
+                url: data.url,
+                description: data.description || "",
+                thumbnail: data.thumbnail,
                 createdAt: new Date(),
                 userId,
-                siteName: result.ogSiteName || new URL(requestUrl).hostname,
-                duration: result.musicDuration
-                    ? parseInt(result.musicDuration)
-                    : undefined,
-                releaseTime: result.releaseDate,
-                author: result.author,
+                siteName: data.siteName || new URL(data.url).hostname,
+                duration: data.duration,
+                releaseTime: data.releaseTime,
+                author: data.author,
             },
         });
 
