@@ -19,7 +19,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
                     }
                 )}
             >
-                <main className="w-full max-w-6xl">{children}</main>
+                <main className="w-full max-w-[1200px]">{children}</main>
             </div>
         </div>
     );
