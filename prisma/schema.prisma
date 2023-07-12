@@ -47,6 +47,18 @@ model Item {
   releaseTime  DateTime?
   author       String?
   favicon      String?
+  summaries    Summary[]
+}
+
+model Summary {
+  id         String   @id
+  content    String
+  createdAt  DateTime
+  item       Item     @relation(fields: [itemId], references: [id])
+  itemId     String
+  wordCount  Int
+  experience Int
+  finetuning Int
 }
 
 model Collection {
