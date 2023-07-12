@@ -20,7 +20,6 @@ model User {
   items       Item[]
   collections Collection[]
   tags        Tag[]
-  summaries   Summary[] 
 }
 
 model Session {
@@ -52,33 +51,20 @@ model Item {
 }
 
 model Summary {
-  id           String     @id
-  type         String
-  status       Int
-  collection   Collection @relation(fields: [collectionId], references: [id])
-  collectionId String
-  tags         Tag[]
-  title        String
-  url          String
-  content      String
-  thumbnail    String?
-  createdAt    DateTime
-  user         User       @relation(fields: [userId], references: [id])
-  userId       String
-  siteName     String
-  duration     Int?
-  releaseTime  DateTime?
-  author       String?
-  favicon      String?
-  item         Item       @relation(fields: [itemId], references: [id])
-  itemId       String
+  id         String   @id
+  content    String
+  createdAt  DateTime
+  item       Item     @relation(fields: [itemId], references: [id])
+  itemId     String
+  wordCount  Int
+  experience Int
+  finetuning Int
 }
 
 model Collection {
   id     String @id
   name   String
   items  Item[]
-  summaries Summary[]  
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
@@ -89,7 +75,6 @@ model Tag {
   id     String @id
   name   String
   items  Item[]
-  summaries Summary[]  
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
