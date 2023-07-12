@@ -67,7 +67,7 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
     return (
         <div
             className={classNames(
-                "fixed flex flex-col w-64 h-full pt-16 border-r bg-background transition-transform max-md:drop-shadow-lg",
+                "fixed flex flex-col w-[256px] h-full pt-16 border-r bg-background transition-transform max-md:drop-shadow-lg",
                 {
                     hidden: isHidden,
                     "-translate-x-64": isCollapse,

@@ -58,7 +58,7 @@ export function ItemPanel() {
             ></div>
             <Card
                 className={cn(
-                    "fixed flex flex-col right-5 w-[360px] h-[calc(100vh-1.5rem)] overflow-scroll p-4 top-3 bottom-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
+                    "fixed flex flex-col right-5 w-[360px] overflow-auto p-4 top-3 bottom-3 max-md:w-auto max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-14 transition-transform",
                     {
                         hidden: isHidden,
                         "md:translate-x-[20rem]": isCollapse,
