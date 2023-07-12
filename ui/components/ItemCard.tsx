@@ -41,7 +41,7 @@ interface ItemCardProps {
 
 export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const ctx = trpc.useContext();
-    const summariserMutation = trpc.summarys.summariserGenerate.useMutation();
+    const summariserMutation = trpc.summary.summariserGenerate.useMutation();
 
     const handleGenerateSummary = async () => {
         console.log(data);
