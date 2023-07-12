@@ -12,7 +12,7 @@ export const appRouter = router({
     collection: collectionRouter,
     tag: tagRouter,
     flashcards: flashcardsRouter,
-	summarys: summaryRouter,
+    summarys: summaryRouter,
 });
 
 export type AppRouter = typeof appRouter;

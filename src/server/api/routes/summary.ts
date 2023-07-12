@@ -1,11 +1,7 @@
 import { protectedProcedure, router } from "../trpc";
 import SummaryController from "../../controllers/summary-controller";
 import openai from "../../utils/openai";
-import { v4 as uuidv4 } from "uuid";
-import * as scrapeIt from "scrape-it";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import { AuthError } from "../../controllers/errors/user";
 
 export const summaryRouter = router({
     summariserGenerate: protectedProcedure
@@ -42,11 +38,15 @@ export const summaryRouter = router({
                     temperature: 0.2, // lower temperature for more deterministic output
                 });
 
-                const summaryContent = chatCompletion.data.choices[0].message?.content;
-                const summary = await SummaryController.createSummary(id, summaryContent);
+                const summaryContent =
+                    chatCompletion.data.choices[0].message?.content || "";
+                const summary = await SummaryController.createSummary(
+                    id,
+                    summaryContent
+                );
 
                 return summaryContent;
-            } catch (error: any) {
+            } catch (error) {
                 if (error instanceof Error) {
                     throw new Error(error.message);
                 } else {

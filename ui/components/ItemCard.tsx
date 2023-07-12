@@ -43,21 +43,21 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     const ctx = trpc.useContext();
     const summariserMutation = trpc.summarys.summariserGenerate.useMutation();
 
-	const handleGenerateSummary = async () => {
-		console.log(data);
-		try {
-			const result = await summariserMutation.mutateAsync({
-				url: data.url,
-				title: data.title,
-				description: data.description,
-				siteName: data.siteName,
-				id: data.id
-			});
-			console.log(result); 
-		} catch (error) {
-			console.error(error);
-		}
-	};
+    const handleGenerateSummary = async () => {
+        console.log(data);
+        try {
+            const result = await summariserMutation.mutateAsync({
+                url: data.url,
+                title: data.title,
+                description: data.description,
+                siteName: data.siteName,
+                id: data.id,
+            });
+            console.log(result);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
@@ -210,14 +210,14 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                                             >
                                                 View Summaries
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem 
-												onClick={(e) => {
-													handleGenerateSummary(data);
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    handleGenerateSummary();
                                                     e.stopPropagation();
-												}}
-											>
-												Generate Summary
-											</DropdownMenuItem>
+                                                }}
+                                            >
+                                                Generate Summary
+                                            </DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                     </DropdownMenuPortal>
                                 </DropdownMenuSub>
