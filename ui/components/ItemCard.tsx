@@ -50,8 +50,10 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 url: data.url,
                 title: data.title,
                 description: data.description,
-                siteName: data.siteName,
                 id: data.id,
+				wordCount: 300,
+				experience: 1,
+				finetuning: 1,
             });
             console.log(result);
         } catch (error) {

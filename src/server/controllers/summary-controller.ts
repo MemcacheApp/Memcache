@@ -63,7 +63,12 @@ export default class SummaryController {
         return content;
     }
 
-    static async createSummary(itemId: string, summaryContent: string) {
+    static async createSummary(
+		itemId: string, 
+		summaryContent: string, 
+		experience: number,
+		finetuning: number
+	) {
         const summary = await prisma.summary.create({
             data: {
                 id: uuidv4(),
@@ -71,8 +76,8 @@ export default class SummaryController {
                 createdAt: new Date(),
                 itemId,
                 wordCount: summaryContent.split(" ").length,
-                experience: 0,
-                finetuning: 0,
+                experience: experience,
+                finetuning: finetuning,
             },
         });
         return summary;

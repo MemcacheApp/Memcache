@@ -10,13 +10,15 @@ export const summaryRouter = router({
                 url: z.string(),
                 title: z.string(),
                 description: z.string(),
-                siteName: z.string(),
                 id: z.string(),
+                wordCount: z.number(),
+                experience: z.number(),
+                finetuning: z.number(),
             })
         )
         .mutation(async ({ input }) => {
             try {
-                const { url, title, description, siteName, id } = input;
+                const { url, title, description, id, wordCount, experience, finetuning } = input;
                 const content = await SummaryController.scrapeContent({
                     url,
                 });
@@ -42,7 +44,9 @@ export const summaryRouter = router({
                     chatCompletion.data.choices[0].message?.content || "";
                 const summary = await SummaryController.createSummary(
                     id,
-                    summaryContent
+                    summaryContent, 
+					experience,
+					finetuning
                 );
 
                 return summaryContent;
