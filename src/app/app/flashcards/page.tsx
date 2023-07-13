@@ -23,8 +23,18 @@ export default function FlashcardsPage() {
                 </Button>
             </div>
             {flashcardsData?.map((flashcard) => (
-                <div className="px-4 my-4" key={flashcard.id}>
-                    {flashcard.content}
+                <div
+                    className="px-4 my-4 flex flex-col gap-3"
+                    key={flashcard.id}
+                >
+                    <div className="flex">
+                        <div className="mr-2 italic">Question:</div>
+                        <div>{flashcard.question}</div>
+                    </div>
+                    <div className="flex align-center mt-2 ">
+                        <div className="mr-2 italic">Answer:</div>
+                        <div className="text-semibold">{flashcard.answer}</div>
+                    </div>
                 </div>
             ))}
         </div>

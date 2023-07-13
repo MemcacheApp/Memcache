@@ -14,9 +14,11 @@ export function WithPanel({ children }: WithPanelProps) {
     return (
         <div
             className={cn("transition-[margin-right] max-md:mr-0", {
-                "mr-[calc(360px-(100vw-16rem)/2+50%)]":
+                // (#main)1200px + (panel)360px * 2 + (sidebar) 256px = 2176px
+                "max-[2176px]:mr-[calc(360px-(100vw-16rem)/2+50%)]":
                     isSidebarExpand && isShowPanel,
-                "max-[1800px]:mr-[calc(360px-100vw/2+50%)]":
+                // (#main)1200px + (panel)360px * 2 = 1920px
+                "max-[1920px]:mr-[calc(360px-100vw/2+50%)]":
                     !isSidebarExpand && isShowPanel,
             })}
         >
