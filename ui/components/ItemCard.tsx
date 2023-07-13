@@ -134,7 +134,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                             {data.siteName}
                         </div>
                     </ExternalLink>
-                    <Link href={`/app/collection/${data.collection.id}`}>
+                    <Link href={`/app/collections/${data.collection.id}`}>
                         <div className="h-full flex items-center gap-2">
                             <Package2 size={16} />
                             {data.collection.name}

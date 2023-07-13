@@ -87,7 +87,7 @@ function Collections() {
                     ? collections.map((collection) => (
                           <NavigationItem
                               key={collection.id}
-                              href={`/app/collection/${collection.id}`}
+                              href={`/app/collections/${collection.id}`}
                           >
                               {collection.name}
                           </NavigationItem>
