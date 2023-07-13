@@ -259,24 +259,20 @@ interface SummariesDialogProps {
 }
 
 function SummariesDialog({ data, open, onOpenChange }: SummariesDialogProps) {
-    const [numberOfWords, setNumberOfWords] = useState(250);
+    const [numOfWords, setNumOfWords] = useState(250);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
 
-    const generateSummaryMutation = trpc.summary.summariserGenerate.useMutation(
-        {
-            onSuccess(data) {
-                console.log(data);
-            },
-        }
-    );
+    const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
+        onSuccess(data) {
+            console.log(data);
+        },
+    });
 
     const handleSubmit = () => {
         generateSummaryMutation.mutate({
-            id: data.id,
-            url: data.url,
-            description: data.description,
-            wordCount: numberOfWords,
+            itemId: data.id,
+            numOfWords,
             experience,
             finetuning,
         });
@@ -295,9 +291,9 @@ function SummariesDialog({ data, open, onOpenChange }: SummariesDialogProps) {
                             className="w-32"
                             id="numofwords"
                             type="number"
-                            value={numberOfWords}
+                            value={numOfWords}
                             onChange={(e) =>
-                                setNumberOfWords(parseInt(e.target.value))
+                                setNumOfWords(parseInt(e.target.value))
                             }
                         />
                     </div>
