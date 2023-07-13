@@ -8,7 +8,6 @@ export default function SummariesPage() {
     const itemId = "a5a618b3-b864-46b4-8ba6-f517d6cc06b5";
     const itemQuery = trpc.item.getItemSummaries.useQuery({ itemId });
     const data = itemQuery.data;
-	console.log(data);
 
     return (
         <div className="flex flex-col">
