@@ -153,7 +153,7 @@ export default class SummaryController {
                 gptrequest += `Furthermore, I want your summary to strike the perfect balance between 
                                detailed technical explanations with hard facts that are backed by 
                                quantitative descriptions and statistics while also using illustrious 
-                               metaphors, smiles, and engaging hypothetical scenarios. Use a system 
+                               metaphors, similes, and engaging hypothetical scenarios. Use a system 
                                where each technical explanation is then followed up with an engaging 
                                qualitative description, such as a metaphor.`;
                 break;
