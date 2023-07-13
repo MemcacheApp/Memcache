@@ -35,9 +35,13 @@ export default class ItemController {
                 : undefined,
             releaseTime: result.releaseDate,
             author: result.author,
+            favicon: result.favicon,
         };
     }
 
+    /**
+     * @throws {FetchURLError}
+     */
     static async createItem(
         userId: string,
         url: string,
@@ -71,6 +75,7 @@ export default class ItemController {
                 duration: metadata.duration,
                 releaseTime: metadata.releaseTime,
                 author: metadata.author,
+                favicon: metadata.favicon,
             },
         });
 
