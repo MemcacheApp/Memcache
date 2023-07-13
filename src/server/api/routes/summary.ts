@@ -4,6 +4,25 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 export const summaryRouter = router({
+    getSummary: protectedProcedure
+        .input(z.object({ itemId: z.string() }))
+        .query(async ({ input }) => {
+            try {
+                return SummaryController.getSummary(input.itemId);
+            } catch (e) {
+                if (e instanceof GetItemError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
     generateSummary: protectedProcedure
         .input(
             z.object({

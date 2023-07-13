@@ -31,6 +31,20 @@ function validateScrapedData(data: any): data is ScrapeItDataType {
 }
 
 export default class SummaryController {
+    static async getSummary(itemId: string) {
+        const summary = await prisma.summary.findUnique({
+            where: {
+                id: itemId,
+            },
+        });
+
+        if (summary === null) {
+            throw new GetItemError("SummaryNotExist");
+        }
+
+        return summary;
+    }
+
     static async scrapeContent({ url }: { url: string }) {
         const { data } = await scrapeIt.default(url, {
             headers: {
