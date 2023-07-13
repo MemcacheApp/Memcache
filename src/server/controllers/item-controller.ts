@@ -73,6 +73,7 @@ export default class ItemController {
             include: {
                 tags: true,
                 collection: true,
+				summaries: true,
             },
         });
 
