@@ -48,7 +48,6 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         try {
             const result = await summariserMutation.mutateAsync({
                 url: data.url,
-                title: data.title,
                 description: data.description,
                 id: data.id,
 				wordCount: 300,

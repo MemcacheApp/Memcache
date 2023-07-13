@@ -69,7 +69,7 @@ export default class SummaryController {
 		experience: number,
 		finetuning: number
 	) {
-        const summary = await prisma.summary.create({
+        await prisma.summary.create({
             data: {
                 id: uuidv4(),
                 content: summaryContent,
@@ -80,6 +80,5 @@ export default class SummaryController {
                 finetuning: finetuning,
             },
         });
-        return summary;
     }
 }

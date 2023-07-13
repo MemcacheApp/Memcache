@@ -8,7 +8,6 @@ export const summaryRouter = router({
         .input(
             z.object({
                 url: z.string(),
-                title: z.string(),
                 description: z.string(),
                 id: z.string(),
                 wordCount: z.number(),
@@ -18,13 +17,13 @@ export const summaryRouter = router({
         )
         .mutation(async ({ input }) => {
             try {
-                const { url, title, description, id, wordCount, experience, finetuning } = input;
+                const { url, description, id, wordCount, experience, finetuning } = input;
                 const content = await SummaryController.scrapeContent({
                     url,
                 });
 
                 // Initialise GPT's Role
-                var gptrequest = `You are a professor at Harvard with a PhD in Education. 
+                let gptrequest = `You are a professor at Harvard with a PhD in Education. 
 									You have a genius ability to summarise and explain difficult 
 									and convoluted texts for all levels of background knowledge 
 									from beginner to expert, in an incredibly easy to understand way. 
@@ -117,16 +116,12 @@ export const summaryRouter = router({
 							   """
 							   Thank you.`;
 
-				console.log(gptrequest);
+				// TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't
                 const chatCompletion = await openai.createChatCompletion({
                     model: "gpt-3.5-turbo",
                     messages: [
                         {
                             role: "system",
-                            content: gptrequest,
-                        },
-                        {
-                            role: "user",
                             content: gptrequest,
                         },
                     ],
@@ -136,7 +131,7 @@ export const summaryRouter = router({
 
                 const summaryContent =
                     chatCompletion.data.choices[0].message?.content || "";
-                const summary = await SummaryController.createSummary(
+                await SummaryController.createSummary(
                     id,
                     summaryContent, 
 					experience,
