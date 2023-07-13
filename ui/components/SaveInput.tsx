@@ -3,13 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
-import { CollectionSelector } from "./CollectionSelector";
-import { TagSelector } from "./TagSelector";
 import { includeCaseInsensitive } from "../../src/app/utils";
-import { Input } from "./Input";
-import { Button } from "./Button";
-import { Package2, Tag } from "lucide-react";
+import { Package2, Plus, Tag } from "lucide-react";
 import { cn } from "../utils";
+import {
+    Card,
+    CardHeader,
+    CollectionSelector,
+    TagSelector,
+    Input,
+    Button,
+    CardTitle,
+    Skeleton,
+} from ".";
 
 export function SaveInput() {
     const [isShowPopover, setIsShowPopover] = useState(false);
@@ -26,7 +32,7 @@ export function SaveInput() {
         <div className="flex flex-col relative mb-5 mx-8 max-md:mx-5">
             <button
                 className={cn(
-                    "text-left text-base box-border bg-background py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                    "flex items-center text-left text-base box-border bg-background hover:bg-accent transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     {
                         "opacity-0": isShowPopover,
                     }
@@ -34,6 +40,7 @@ export function SaveInput() {
                 onClick={showPopover}
                 tabIndex={isShowPopover ? -1 : undefined}
             >
+                <Plus size={18} className="mr-2" />
                 Save a URL...
             </button>
             <SaveInputPopover
@@ -125,8 +132,8 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
         if (url === "") return;
         createItemMutation.mutate({
             url,
-            collection,
-            tags,
+            collectionName: collection,
+            tagNames: tags,
         });
         setUrl("");
         setTags([]);
@@ -148,7 +155,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                 action=""
                 onSubmit={handleSubmit}
             >
-                <div className="relative h-12 bg-background shadow-lg rounded-t-md rounded-br-md border">
+                <div className="relative h-12 bg-background shadow-lg rounded-t-lg rounded-br-md border">
                     <Input
                         className="absolute top-0 bottom-0 h-full bg-transparent text-base border-none px-4 z-10"
                         placeholder="https://"
@@ -157,45 +164,48 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                         ref={inputRef}
                     />
                 </div>
-                <div className="relative bg-background max-w-3xl rounded-b-md border-b border-x shadow-lg">
-                    <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4">
-                        <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-450 tracking-wider">
-                            <Package2 size={18} />
-                            {"Collection:"}
+                <div className="relative bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg">
+                    <Card>
+                        <div className="flex">
+                            <CardHeader className="grow">
+                                <CardTitle>Untitled</CardTitle>
+                                <p className="mt-3">description</p>
+                            </CardHeader>
+                            <Skeleton className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0 rounded-lg" />
                         </div>
-                        <CollectionSelector
-                            collections={collectionsQuery.data}
-                            value={collection}
-                            setValue={setCollection}
-                        />
-                    </div>
-                    <div className="flex gap-2 flex-wrap items-center w-full py-3 px-4 border-t-2 border-solid">
-                        <div className="flex gap-3 items-center mx-3 text-sm capitalize text-slate-450 tracking-wider">
-                            <Tag size={18} />
-                            {"Tags:"}
+                    </Card>
+                    <div className="flex flex-col gap-3 my-4 mx-2">
+                        <div className="flex gap-4 flex-wrap items-center">
+                            <Package2 className="text-slate-500" size={20} />
+                            <CollectionSelector
+                                collections={collectionsQuery.data}
+                                value={collection}
+                                setValue={setCollection}
+                            />
                         </div>
-                        {tags.map((tag, index) => (
+                        <div className="flex gap-4 flex-wrap items-center">
+                            <Tag className="text-slate-500" size={20} />
+                            {tags.map((tag, index) => (
+                                <TagSelector
+                                    key={tag}
+                                    index={index}
+                                    tags={tagsQuery.data}
+                                    value={tag}
+                                    setValue={setTag}
+                                    remove={removeTag}
+                                />
+                            ))}
                             <TagSelector
-                                key={tag}
-                                index={index}
                                 tags={tagsQuery.data}
-                                value={tag}
+                                value=""
+                                index={-1}
                                 setValue={setTag}
                                 remove={removeTag}
                             />
-                        ))}
-                        <TagSelector
-                            tags={tagsQuery.data}
-                            value=""
-                            index={-1}
-                            setValue={setTag}
-                            remove={removeTag}
-                        />
+                        </div>
                     </div>
-                    <div className="flex gap-2 flex-wrap justify-end items-center w-full py-3 px-4 border-t-2 border-solid">
-                        <Button className="w-full" type="submit">
-                            Save
-                        </Button>
+                    <div className="flex items-center justify-end">
+                        <Button type="submit">Save</Button>
                     </div>
                 </div>
             </form>

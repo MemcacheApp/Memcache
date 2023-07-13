@@ -42,8 +42,9 @@ export function TagSelector({
             <PopoverTrigger asChild>
                 {index === -1 ? (
                     <Button
+                        className="px-3"
                         variant="outline"
-                        size="xs"
+                        size="default"
                         role="combobox"
                         aria-expanded={open}
                     >
@@ -53,7 +54,7 @@ export function TagSelector({
                     <Button
                         className="px-4 group relative"
                         variant="secondary"
-                        size="xs"
+                        size="default"
                         role="combobox"
                         aria-expanded={open}
                     >
@@ -64,10 +65,10 @@ export function TagSelector({
                     </Button>
                 )}
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-[250px] p-0">
                 <Command>
                     <CommandInput
-                        placeholder="Search or Add..."
+                        placeholder="Search or add tag..."
                         value={searchValue}
                         onValueChange={setSearchValue}
                     />

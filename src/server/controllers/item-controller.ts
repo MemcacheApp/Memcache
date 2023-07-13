@@ -5,7 +5,6 @@ import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
 import { FetchURLError, GetItemError } from "./errors/item";
 import { AuthError } from "./errors/user";
-import { CreateItemDataType } from "./datatypes/item";
 
 export default class ItemController {
     /**
@@ -27,7 +26,7 @@ export default class ItemController {
         return {
             type: result.ogType,
             title: result.ogTitle || result.twitterTitle,
-            url: result.ogUrl || requestUrl,
+            url: requestUrl,
             description: result.ogDescription || result.twitterDescription,
             thumbnail: result.ogImage?.[0].url || result.twitterImage?.[0].url,
             siteName: result.ogSiteName || new URL(requestUrl).hostname,
@@ -39,32 +38,39 @@ export default class ItemController {
         };
     }
 
-    static async createItem(userId: string, data: CreateItemDataType) {
+    static async createItem(
+        userId: string,
+        url: string,
+        collectionName: string,
+        tagNames: string[]
+    ) {
         const collection = await CollectionController.getOrCreateCollection(
             userId,
-            data.collection
+            collectionName
         );
-        const tags = await TagController.getOrCreateTags(userId, data.tags);
+        const tags = await TagController.getOrCreateTags(userId, tagNames);
+
+        const metadata = await this.fetchMetadata(url);
 
         const item = await prisma.item.create({
             data: {
                 id: uuidv4(),
-                type: data.type || "website",
+                type: metadata.type || "website",
                 status: 0,
                 collectionId: collection.id,
                 tags: {
                     connect: tags.map((tag) => ({ id: tag.id })),
                 },
-                title: data.title || "Untitled",
-                url: data.url,
-                description: data.description || "",
-                thumbnail: data.thumbnail,
+                title: metadata.title || "Untitled",
+                url: metadata.url,
+                description: metadata.description || "",
+                thumbnail: metadata.thumbnail,
                 createdAt: new Date(),
                 userId,
-                siteName: data.siteName || new URL(data.url).hostname,
-                duration: data.duration,
-                releaseTime: data.releaseTime,
-                author: data.author,
+                siteName: metadata.siteName || new URL(metadata.url).hostname,
+                duration: metadata.duration,
+                releaseTime: metadata.releaseTime,
+                author: metadata.author,
             },
         });
 

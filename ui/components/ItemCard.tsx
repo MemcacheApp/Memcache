@@ -22,6 +22,7 @@ import {
     TabsList,
     TabsTrigger,
     DialogFooter,
+    CardHeader,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
@@ -89,10 +90,10 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 }}
             >
                 <div className="flex">
-                    <div className="flex flex-col grow p-6">
+                    <CardHeader className="grow">
                         <CardTitle>{data.title}</CardTitle>
                         <p className="mt-3">{data.description}</p>
-                    </div>
+                    </CardHeader>
                     {data.thumbnail ? (
                         <div className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0">
                             <img

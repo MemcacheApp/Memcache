@@ -4,7 +4,6 @@ import ItemController from "../../controllers/item-controller";
 import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { TRPCError } from "@trpc/server";
 import { AuthError } from "../../controllers/errors/user";
-import { CreateItemData } from "../../controllers/datatypes/item";
 
 export const itemRouter = router({
     getItem: protectedProcedure
@@ -30,10 +29,21 @@ export const itemRouter = router({
         }
     }),
     createItem: protectedProcedure
-        .input(CreateItemData)
+        .input(
+            z.object({
+                url: z.string(),
+                collectionName: z.string(),
+                tagNames: z.string().array(),
+            })
+        )
         .mutation(async ({ ctx, input }) => {
             try {
-                return await ItemController.createItem(ctx.userId, input);
+                return await ItemController.createItem(
+                    ctx.userId,
+                    input.url,
+                    input.collectionName,
+                    input.tagNames
+                );
             } catch (e) {
                 if (e instanceof FetchURLError) {
                     throw new TRPCError({
