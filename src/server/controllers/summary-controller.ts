@@ -45,6 +45,27 @@ export default class SummaryController {
         return summary;
     }
 
+	static async getSummaryMeta(summaryId: string) {
+		const summary = await prisma.summary.findUnique({
+			where: {
+				id: summaryId,
+			},
+			select: {
+				id: true,
+				createdAt: true,
+				wordCount: true,
+				experience: true,
+				finetuning: true,
+			},
+		});
+
+		if (summary === null) {
+			throw new GetItemError("SummaryMetaNotExist");
+		}
+
+		return summary;
+	}
+
     static async scrapeContent({ url }: { url: string }) {
         const { data } = await scrapeIt.default(url, {
             headers: {
