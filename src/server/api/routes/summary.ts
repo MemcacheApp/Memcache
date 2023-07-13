@@ -17,7 +17,14 @@ export const summaryRouter = router({
         )
         .mutation(async ({ input }) => {
             try {
-                const { url, description, id, wordCount, experience, finetuning } = input;
+                const {
+                    url,
+                    description,
+                    id,
+                    wordCount,
+                    experience,
+                    finetuning,
+                } = input;
                 const content = await SummaryController.scrapeContent({
                     url,
                 });
@@ -34,14 +41,14 @@ export const summaryRouter = router({
 									Hence, your task is to summarise a convoluted text for me.`;
 
                 // Introduce the Theme
-				if (description.length >= 35) {
-					gptrequest += `The main theme and description of the text, which you need to remember 
+                if (description.length >= 35) {
+                    gptrequest += `The main theme and description of the text, which you need to remember 
 								   when summarising is the following:
 								   """
 								   ${description}
 								   """
 								   With the above theme and description in mind, here's the main text, and `;
-				} 	
+                }
 
                 gptrequest += `I want you to ONLY focus on the most common theme in the text. You MUST 
 							   IGNORE sections of the content that are unrelated to the most common theme 
@@ -52,7 +59,7 @@ export const summaryRouter = router({
 							   Now, I want you to summarise the text, remembering the fact that you need 
 							   to focus on the main theme only.`;
 
-                // Modify Prompt Depending on Experience 
+                // Modify Prompt Depending on Experience
                 switch (experience) {
                     case 0:
                         gptrequest += `I want you to summarise the content so that a complete novice 
@@ -103,7 +110,7 @@ export const summaryRouter = router({
 								       qualitative description, such as a metaphor.`;
                         break;
                 }
-				
+
                 // Strictly Define Output Structure
                 gptrequest += `Finally, your summary MUST be AT LEAST ${wordCount} words and MUST conform to
 							   the following structure:
@@ -116,7 +123,7 @@ export const summaryRouter = router({
 							   """
 							   Thank you.`;
 
-				// TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't
+                // TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't
                 const chatCompletion = await openai.createChatCompletion({
                     model: "gpt-3.5-turbo",
                     messages: [
@@ -133,9 +140,9 @@ export const summaryRouter = router({
                     chatCompletion.data.choices[0].message?.content || "";
                 await SummaryController.createSummary(
                     id,
-                    summaryContent, 
-					experience,
-					finetuning
+                    summaryContent,
+                    experience,
+                    finetuning
                 );
 
                 return summaryContent;

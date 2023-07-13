@@ -64,11 +64,11 @@ export default class SummaryController {
     }
 
     static async createSummary(
-		itemId: string, 
-		summaryContent: string, 
-		experience: number,
-		finetuning: number
-	) {
+        itemId: string,
+        summaryContent: string,
+        experience: number,
+        finetuning: number
+    ) {
         await prisma.summary.create({
             data: {
                 id: uuidv4(),
