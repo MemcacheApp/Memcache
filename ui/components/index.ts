@@ -10,6 +10,7 @@ export * from "./ItemList";
 export * from "./ItemPanel";
 export * from "./Label";
 export * from "./LogInRequired";
+export * from "./Loader";
 export * from "./Popover";
 export * from "./SaveInput";
 export * from "./Select";

@@ -13,6 +13,7 @@ import {
     Input,
     Button,
     SimpleItemCard,
+    Loader,
 } from ".";
 import { ItemMetadata } from "@/src/datatypes/item";
 import { hostname } from "@/src/utils";
@@ -128,6 +129,14 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
         }
     }, [fetchMetadataQuery.isFetched]);
 
+    useEffect(() => {
+        if (createItemMutation.isSuccess) {
+            setUrl("");
+            setTags([]);
+            onDismiss();
+        }
+    }, [createItemMutation.isSuccess]);
+
     const _onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === "Escape") {
             onDismiss();
@@ -166,9 +175,6 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
             collectionName: collection,
             tagNames: tags,
         });
-        setUrl("");
-        setTags([]);
-        onDismiss();
     };
 
     return (
@@ -214,6 +220,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                         variant="icon"
                                         size="none"
                                         onClick={refresh}
+                                        disabled={createItemMutation.isLoading}
                                     >
                                         <RefreshCw size={18} />
                                     </Button>
@@ -230,6 +237,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                     collections={collectionsQuery.data}
                                     value={collection}
                                     setValue={setCollection}
+                                    disabled={createItemMutation.isLoading}
                                 />
                             </div>
                             <div className="flex gap-4 flex-wrap items-center">
@@ -242,6 +250,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                         value={tag}
                                         setValue={setTag}
                                         remove={removeTag}
+                                        disabled={createItemMutation.isLoading}
                                     />
                                 ))}
                                 <TagSelector
@@ -250,11 +259,23 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                     index={-1}
                                     setValue={setTag}
                                     remove={removeTag}
+                                    disabled={createItemMutation.isLoading}
                                 />
                             </div>
                         </div>
-                        <div className="flex items-center justify-end">
-                            <Button type="submit">Save</Button>
+                        <div className="flex items-center gap-3 justify-end">
+                            <Loader
+                                varient="ring"
+                                className={cn("w-6 h-6", {
+                                    hidden: !createItemMutation.isLoading,
+                                })}
+                            />
+                            <Button
+                                type="submit"
+                                disabled={createItemMutation.isLoading}
+                            >
+                                Save
+                            </Button>
                         </div>
                     </div>
                 </form>

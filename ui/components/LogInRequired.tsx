@@ -13,7 +13,7 @@ export function LogInRequired(props: LogInRequiredProps) {
     if (data === undefined) {
         return (
             <div className="w-full h-screen flex justify-center items-center">
-                <Loader />
+                <Loader varient="ellipsis" />
             </div>
         );
     } else if (data) {
