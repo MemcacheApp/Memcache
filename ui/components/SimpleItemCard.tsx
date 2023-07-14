@@ -1,13 +1,17 @@
-import { Globe } from "lucide-react";
-import { Card, CardFooter, CardHeader, CardTitle, Skeleton } from ".";
+import { Globe, Package2 } from "lucide-react";
+import { Button, Card, CardFooter, CardHeader, CardTitle, Skeleton } from ".";
 import ExternalLink from "./ExternalLink";
 import { cn } from "../utils";
+import { Collection, Tag } from "@prisma/client";
+import Link from "next/link";
 
 interface SimpleItemCardProps {
     title?: string;
     url?: string;
     className?: string;
     description?: string;
+    collection?: Collection;
+    tags?: Tag[];
     thumbnail?: string | null;
     onClick?: React.MouseEventHandler<HTMLDivElement>;
     loading?: boolean;
@@ -77,6 +81,35 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                         {props.siteName}
                                     </div>
                                 </ExternalLink>
+                            ) : null}
+                            {props.collection ? (
+                                <Link
+                                    href={`/app/collection/${props.collection.id}`}
+                                >
+                                    <div className="h-full flex items-center gap-2">
+                                        <Package2 size={16} />
+                                        {props.collection.name}
+                                    </div>
+                                </Link>
+                            ) : null}
+                            {props.tags ? (
+                                <div className="flex flex-wrap gap-3">
+                                    {props.tags.map((tag) => (
+                                        <Link
+                                            key={tag.id}
+                                            href={`/app/tag/${tag.id}`}
+                                            tabIndex={-1}
+                                        >
+                                            <Button
+                                                className="px-4"
+                                                variant="secondary"
+                                                size="xs"
+                                            >
+                                                {tag.name}
+                                            </Button>
+                                        </Link>
+                                    ))}
+                                </div>
                             ) : null}
                             {props.footerLeft}
                         </div>

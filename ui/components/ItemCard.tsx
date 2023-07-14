@@ -85,36 +85,11 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 }}
                 url={data.url}
                 title={data.title}
+                collection={data.collection}
+                tags={data.tags}
                 description={data.description}
                 thumbnail={data.thumbnail}
                 siteName={data.siteName}
-                footerLeft={
-                    <>
-                        <Link href={`/app/collection/${data.collection.id}`}>
-                            <div className="h-full flex items-center gap-2">
-                                <Package2 size={16} />
-                                {data.collection.name}
-                            </div>
-                        </Link>
-                        <div className="flex flex-wrap gap-3">
-                            {data.tags.map((tag) => (
-                                <Link
-                                    key={tag.id}
-                                    href={`/app/tag/${tag.id}`}
-                                    tabIndex={-1}
-                                >
-                                    <Button
-                                        className="px-4"
-                                        variant="secondary"
-                                        size="xs"
-                                    >
-                                        {tag.name}
-                                    </Button>
-                                </Link>
-                            ))}
-                        </div>
-                    </>
-                }
                 footerRight={
                     <>
                         <ItemDropdownMenu
