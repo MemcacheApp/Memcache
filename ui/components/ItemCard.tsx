@@ -24,7 +24,6 @@ import {
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
 import {
-    Package2,
     ExternalLink as ExternalLinkIcon,
     Trash2,
     MoreHorizontal,
@@ -90,6 +89,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 description={data.description}
                 thumbnail={data.thumbnail}
                 siteName={data.siteName}
+                favicon={data.favicon}
                 footerRight={
                     <>
                         <ItemDropdownMenu

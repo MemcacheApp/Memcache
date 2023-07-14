@@ -16,7 +16,7 @@ interface SimpleItemCardProps {
     onClick?: React.MouseEventHandler<HTMLDivElement>;
     loading?: boolean;
     siteName?: string;
-    favicon?: string;
+    favicon?: string | null;
     footerLeft?: React.ReactNode;
     footerRight?: React.ReactNode;
 }
@@ -77,7 +77,16 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                     }}
                                 >
                                     <div className="h-full flex items-center gap-2">
-                                        <Globe size={16} />
+                                        {props.favicon ? (
+                                            <img
+                                                width={16}
+                                                height={16}
+                                                src={props.favicon}
+                                            />
+                                        ) : (
+                                            <Globe size={16} />
+                                        )}
+
                                         {props.siteName}
                                     </div>
                                 </ExternalLink>

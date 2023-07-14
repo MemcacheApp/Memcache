@@ -289,6 +289,7 @@ function SaveOptions({
                 description={metadata?.description}
                 thumbnail={metadata?.thumbnail}
                 siteName={metadata?.siteName}
+                favicon={metadata?.favicon}
                 footerRight={
                     fetchMetadataQuery.isLoading ? undefined : (
                         <Button

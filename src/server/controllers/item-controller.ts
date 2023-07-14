@@ -37,7 +37,9 @@ export default class ItemController {
                 : undefined,
             releaseTime: result.releaseDate,
             author: result.author,
-            favicon: result.favicon,
+            favicon: result.favicon
+                ? new URL(result.favicon, requestUrl).href
+                : undefined,
         };
     }
 
