@@ -7,6 +7,8 @@ import { includeCaseInsensitive } from "../../src/app/utils";
 import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
 import { cn } from "../utils";
 import { FocusScope } from "@radix-ui/react-focus-scope";
+import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
+import { RemoveScroll } from "react-remove-scroll";
 import {
     CollectionSelector,
     TagSelector,
@@ -17,6 +19,7 @@ import {
 } from ".";
 import { ItemMetadata } from "@/src/datatypes/item";
 import { hostname } from "@/src/utils";
+import { Slot } from "@radix-ui/react-slot";
 
 export function SaveInput() {
     const [isShowPopover, setIsShowPopover] = useState(false);
@@ -95,12 +98,6 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
         }
     }, [isShow]);
 
-    const _onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === "Escape") {
-            onDismiss();
-        }
-    };
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (url === "") return;
@@ -117,71 +114,74 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
     };
 
     return (
-        <div
-            className={cn("z-50", {
-                hidden: isHidden,
-            })}
-            onKeyDown={_onKeyDown}
-        >
-            <FocusScope trapped={isShow} loop>
-                <form
-                    className={cn(
-                        "@container flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
-                        isCollapse
-                            ? "opacity-0 scale-95"
-                            : "opacity-100 scale-100"
-                    )}
-                    action=""
-                    onSubmit={handleSubmit}
-                >
+        <RemoveScroll enabled={isShow} as={Slot} allowPinchZoom>
+            <FocusScope asChild trapped={isShow} loop>
+                <DismissableLayer asChild onDismiss={onDismiss}>
                     <div
-                        className={cn(
-                            "relative h-12 bg-background shadow-lg rounded-t-lg border pointer-events-auto",
-                            url
-                                ? "@xl:rounded-br-md"
-                                : "rounded-br-md rounded-bl-md"
-                        )}
+                        className={cn("z-50", {
+                            hidden: isHidden,
+                        })}
                     >
-                        <Input
-                            className="absolute top-0 bottom-0 h-full bg-transparent text-base border-none pl-4 pr-10 z-10"
-                            placeholder="https://"
-                            value={url}
-                            onChange={(e) => setUrl(e.target.value)}
-                            ref={inputRef}
-                        />
-                        <Button
+                        <div
                             className={cn(
-                                "absolute right-2 top-1/2 -translate-y-1/2 z-10 text-slate-500 rounded-full p-1",
-                                { hidden: !url }
+                                "fixed top-0 bottom-0 left-0 right-0 transition-[background-color,backdrop-filter]",
+                                {
+                                    "bg-white/80 backdrop-blur-sm": !isCollapse,
+                                }
                             )}
-                            onClick={clearInput}
-                            type="button"
-                            variant="ghost"
-                            size="none"
+                            onClick={onDismiss}
+                        ></div>
+                        <form
+                            className={cn(
+                                "@container flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
+                                isCollapse
+                                    ? "opacity-0 scale-95"
+                                    : "opacity-100 scale-100"
+                            )}
+                            action=""
+                            onSubmit={handleSubmit}
                         >
-                            <X size={20} />
-                        </Button>
+                            <div
+                                className={cn(
+                                    "relative h-12 bg-background shadow-lg rounded-t-lg border pointer-events-auto",
+                                    url
+                                        ? "@xl:rounded-br-md"
+                                        : "rounded-br-md rounded-bl-md"
+                                )}
+                            >
+                                <Input
+                                    className="absolute top-0 bottom-0 h-full bg-transparent text-base border-none pl-4 pr-10 z-10"
+                                    placeholder="https://"
+                                    value={url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                    ref={inputRef}
+                                />
+                                <Button
+                                    className={cn(
+                                        "absolute right-2 top-1/2 -translate-y-1/2 z-10 text-slate-500 rounded-full p-1",
+                                        { hidden: !url }
+                                    )}
+                                    onClick={clearInput}
+                                    type="button"
+                                    variant="ghost"
+                                    size="none"
+                                >
+                                    <X size={20} />
+                                </Button>
+                            </div>
+                            <SaveOptions
+                                url={url}
+                                isCreating={createItemMutation.isLoading}
+                                collection={collection}
+                                setCollection={setCollection}
+                                tags={tags}
+                                setTags={setTags}
+                            />
+                        </form>
                     </div>
-                    <SaveOptions
-                        url={url}
-                        isCreating={createItemMutation.isLoading}
-                        collection={collection}
-                        setCollection={setCollection}
-                        tags={tags}
-                        setTags={setTags}
-                    />
-                </form>
-                <div
-                    className={cn(
-                        "fixed top-0 bottom-0 left-0 right-0 transition-[background-color,backdrop-filter]",
-                        {
-                            "bg-white/80 backdrop-blur-sm": !isCollapse,
-                        }
-                    )}
-                    onClick={onDismiss}
-                ></div>
+                </DismissableLayer>
             </FocusScope>
-        </div>
+        </RemoveScroll>
     );
 }
 
