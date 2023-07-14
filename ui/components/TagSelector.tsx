@@ -45,7 +45,7 @@ export function TagSelector({
                 {index === -1 ? (
                     <Button
                         className="px-3"
-                        variant="outline"
+                        variant="secondary"
                         size="default"
                         role="combobox"
                         aria-expanded={open}
@@ -56,7 +56,7 @@ export function TagSelector({
                 ) : (
                     <Button
                         className="px-4 group relative"
-                        variant="secondary"
+                        variant="outline"
                         size="default"
                         role="combobox"
                         aria-expanded={open}

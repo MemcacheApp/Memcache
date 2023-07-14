@@ -306,7 +306,7 @@ function SaveOptions({
                 }
             />
             <div className="flex flex-col gap-3 my-4 mx-2">
-                <div className="flex gap-4 flex-wrap items-center">
+                <div className="flex gap-3 flex-wrap items-center">
                     <Package2 className="text-slate-500" size={20} />
                     <CollectionSelector
                         collections={collectionsQuery.data}
@@ -315,7 +315,7 @@ function SaveOptions({
                         disabled={isCreating}
                     />
                 </div>
-                <div className="flex gap-4 flex-wrap items-center">
+                <div className="flex gap-3 flex-wrap items-center">
                     <Tag className="text-slate-500" size={20} />
                     {tags.map((tag, index) => (
                         <TagSelector
