@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
 import { includeCaseInsensitive } from "../../src/app/utils";
-import { Package2, Plus, Tag } from "lucide-react";
+import { Package2, Plus, RefreshCw, Tag } from "lucide-react";
 import { cn } from "../utils";
 import { FocusScope } from "@radix-ui/react-focus-scope";
 import {
@@ -14,6 +14,8 @@ import {
     Button,
     SimpleItemCard,
 } from ".";
+import { ItemMetadata } from "@/src/datatypes/item";
+import { hostname } from "@/src/utils";
 
 export function SaveInput() {
     const [isShowPopover, setIsShowPopover] = useState(false);
@@ -56,23 +58,40 @@ interface SaveInputPopoverProps {
 function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
     const ctx = trpc.useContext();
 
-    const collectionsQuery = trpc.collection.getUserCollections.useQuery();
-    const tagsQuery = trpc.tag.getUserTags.useQuery();
-
     const [url, setUrl] = useState("");
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [metadata, setMetadata] = useState<ItemMetadata | null>(null);
 
     const [isHidden, setIsHidden] = useState(true);
     const [isCollapse, setIsCollapse] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     const inputRef = useRef<HTMLInputElement>(null);
+    const fetchMetadataTimer = useRef<number | NodeJS.Timeout | null>(null);
+
+    const collectionsQuery = trpc.collection.getUserCollections.useQuery();
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
+    const fetchMetadataQuery = trpc.item.fetchMetadata.useQuery(
+        {
+            url,
+        },
+        { refetchOnWindowFocus: false, enabled: false }
+    );
+    const createItemMutation = trpc.item.createItem.useMutation({
+        onSuccess: () => ctx.item.getUserItems.invalidate(),
+    });
+
+    const refresh = useCallback(() => {
+        fetchMetadataQuery.refetch();
+    }, []);
 
     useEffect(() => {
         if (isShow) {
             setIsHidden(false);
             setTimeout(() => {
                 setIsCollapse(false);
+                inputRef.current?.focus();
             }, 10);
         } else {
             setIsCollapse(true);
@@ -83,16 +102,31 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
     }, [isShow]);
 
     useEffect(() => {
-        if (isShow) {
-            setTimeout(() => {
-                inputRef.current?.focus();
-            }, 10);
+        if (url) {
+            if (fetchMetadataTimer.current) {
+                clearTimeout(fetchMetadataTimer.current);
+                fetchMetadataTimer.current = null;
+            }
+            fetchMetadataTimer.current = setTimeout(refresh, 2000);
         }
-    }, [isShow]);
+    }, [url]);
 
-    const createItemMutation = trpc.item.createItem.useMutation({
-        onSuccess: () => ctx.item.getUserItems.invalidate(),
-    });
+    useEffect(() => {
+        if (fetchMetadataQuery.isFetched) {
+            setIsLoading(false);
+            if (fetchMetadataQuery.data) {
+                setMetadata(fetchMetadataQuery.data);
+            } else {
+                setMetadata({
+                    title: url,
+                    url: url,
+                    siteName: hostname(url),
+                });
+            }
+        } else {
+            setIsLoading(true);
+        }
+    }, [fetchMetadataQuery.isFetched]);
 
     const _onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === "Escape") {
@@ -166,10 +200,25 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                     </div>
                     <div className="relative bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg">
                         <SimpleItemCard
+                            loading={isLoading}
                             url={url}
-                            title="Untitled"
-                            description="description"
-                            loading
+                            title={metadata?.title}
+                            description={metadata?.description}
+                            thumbnail={metadata?.thumbnail}
+                            siteName={metadata?.siteName}
+                            footerRight={
+                                isLoading ? undefined : (
+                                    <Button
+                                        className="shrink-0"
+                                        type="button"
+                                        variant="icon"
+                                        size="none"
+                                        onClick={refresh}
+                                    >
+                                        <RefreshCw size={18} />
+                                    </Button>
+                                )
+                            }
                         />
                         <div className="flex flex-col gap-3 my-4 mx-2">
                             <div className="flex gap-4 flex-wrap items-center">

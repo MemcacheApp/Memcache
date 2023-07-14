@@ -5,12 +5,14 @@ import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
 import { FetchURLError, GetItemError } from "./errors/item";
 import { AuthError } from "./errors/user";
+import { ItemMetadata } from "@/src/datatypes/item";
+import { hostname } from "@/src/utils";
 
 export default class ItemController {
     /**
      * @throws {FetchURLError}
      */
-    static async fetchMetadata(url: string) {
+    static async fetchMetadata(url: string): Promise<ItemMetadata> {
         let result;
         try {
             result = (await ogs({ url: url })).result;
@@ -29,7 +31,7 @@ export default class ItemController {
             url: requestUrl,
             description: result.ogDescription || result.twitterDescription,
             thumbnail: result.ogImage?.[0].url || result.twitterImage?.[0].url,
-            siteName: result.ogSiteName || new URL(requestUrl).hostname,
+            siteName: result.ogSiteName || hostname(requestUrl),
             duration: result.musicDuration
                 ? parseInt(result.musicDuration)
                 : undefined,
@@ -39,9 +41,6 @@ export default class ItemController {
         };
     }
 
-    /**
-     * @throws {FetchURLError}
-     */
     static async createItem(
         userId: string,
         url: string,
@@ -54,28 +53,33 @@ export default class ItemController {
         );
         const tags = await TagController.getOrCreateTags(userId, tagNames);
 
-        const metadata = await this.fetchMetadata(url);
+        let metadata;
+        try {
+            metadata = await this.fetchMetadata(url);
+        } catch (e) {
+            metadata = null;
+        }
 
         const item = await prisma.item.create({
             data: {
                 id: uuidv4(),
-                type: metadata.type || "website",
+                type: metadata?.type || "website",
                 status: 0,
                 collectionId: collection.id,
                 tags: {
                     connect: tags.map((tag) => ({ id: tag.id })),
                 },
-                title: metadata.title || "Untitled",
-                url: metadata.url,
-                description: metadata.description || "",
-                thumbnail: metadata.thumbnail,
+                title: metadata?.title || url,
+                url: metadata?.url || url,
+                description: metadata?.description || "",
+                thumbnail: metadata?.thumbnail,
                 createdAt: new Date(),
                 userId,
-                siteName: metadata.siteName || new URL(metadata.url).hostname,
-                duration: metadata.duration,
-                releaseTime: metadata.releaseTime,
-                author: metadata.author,
-                favicon: metadata.favicon,
+                siteName: metadata?.siteName || hostname(url),
+                duration: metadata?.duration,
+                releaseTime: metadata?.releaseTime,
+                author: metadata?.author,
+                favicon: metadata?.favicon,
             },
         });
 

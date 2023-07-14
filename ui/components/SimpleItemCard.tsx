@@ -21,7 +21,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
     return (
         <Card
             className={cn(
-                "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden",
                 { "cursor-pointer hover:border-slate-500": props.onClick },
                 props.className
             )}
