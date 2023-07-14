@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import {
+    Badge,
     Button,
     Command,
     CommandEmpty,
@@ -63,9 +64,12 @@ export function TagSelector({
                         disabled={disabled}
                     >
                         {value}
-                        <span className="absolute -right-3 -bottom-2 bg-background p-1 border text-foreground opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 rounded-full z-10">
-                            <Edit size={13} />
-                        </span>
+                        <Badge
+                            variant="outline"
+                            className="absolute -right-3 -bottom-2 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 z-10"
+                        >
+                            <Edit size={12} />
+                        </Badge>
                     </Button>
                 )}
             </PopoverTrigger>
