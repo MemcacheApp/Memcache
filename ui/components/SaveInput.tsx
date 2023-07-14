@@ -284,7 +284,7 @@ function SaveOptions({
         >
             <SimpleItemCard
                 loading={fetchMetadataQuery.isLoading}
-                url={url}
+                url={metadata?.url}
                 title={metadata?.title}
                 description={metadata?.description}
                 thumbnail={metadata?.thumbnail}
