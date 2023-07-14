@@ -121,7 +121,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
             <FocusScope trapped={isShow} loop>
                 <form
                     className={cn(
-                        "@container flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity]",
+                        "@container flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
                         isCollapse
                             ? "opacity-0 scale-95"
                             : "opacity-100 scale-100"
@@ -131,7 +131,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                 >
                     <div
                         className={cn(
-                            "relative h-12 bg-background shadow-lg rounded-t-lg border",
+                            "relative h-12 bg-background shadow-lg rounded-t-lg border pointer-events-auto",
                             url
                                 ? "@xl:rounded-br-md"
                                 : "rounded-br-md rounded-bl-md"
@@ -278,7 +278,7 @@ function SaveOptions({
     return (
         <div
             className={cn(
-                "relative bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity]",
+                "relative bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
                 { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse }
             )}
         >
