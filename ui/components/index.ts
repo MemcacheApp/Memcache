@@ -15,6 +15,7 @@ export * from "./LogInRequired";
 export * from "./Loader";
 export * from "./Popover";
 export * from "./SaveInput";
+export * from "./ScrollArea";
 export * from "./Select";
 export * from "./SimpleItemCard";
 export * from "./Skeleton";
