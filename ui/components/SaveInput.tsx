@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
 import { includeCaseInsensitive } from "../../src/app/utils";
-import { Package2, Plus, RefreshCw, Tag } from "lucide-react";
+import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
 import { cn } from "../utils";
 import { FocusScope } from "@radix-ui/react-focus-scope";
 import {
@@ -144,6 +144,18 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                             onChange={(e) => setUrl(e.target.value)}
                             ref={inputRef}
                         />
+                        <Button
+                            className={cn(
+                                "absolute right-2 top-1/2 -translate-y-1/2 z-10 text-slate-500 rounded-full p-1",
+                                { hidden: !url }
+                            )}
+                            onClick={() => setUrl("")}
+                            type="button"
+                            variant="ghost"
+                            size="none"
+                        >
+                            <X size={20} />
+                        </Button>
                     </div>
                     <SaveOptions
                         url={url}
