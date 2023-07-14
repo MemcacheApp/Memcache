@@ -13,6 +13,7 @@ export * from "./LogInRequired";
 export * from "./Popover";
 export * from "./SaveInput";
 export * from "./Select";
+export * from "./SimpleItemCard";
 export * from "./Skeleton";
 export * from "./Tabs";
 export * from "./TagSelector";

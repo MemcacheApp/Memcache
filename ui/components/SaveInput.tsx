@@ -6,15 +6,13 @@ import { trpc } from "../../src/app/utils/trpc";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import { Package2, Plus, Tag } from "lucide-react";
 import { cn } from "../utils";
+import { FocusScope } from "@radix-ui/react-focus-scope";
 import {
-    Card,
-    CardHeader,
     CollectionSelector,
     TagSelector,
     Input,
     Button,
-    CardTitle,
-    Skeleton,
+    SimpleItemCard,
 } from ".";
 
 export function SaveInput() {
@@ -32,13 +30,12 @@ export function SaveInput() {
         <div className="flex flex-col relative mb-5 mx-8 max-md:mx-5">
             <button
                 className={cn(
-                    "flex items-center text-left text-base box-border bg-background hover:bg-accent transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                    "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     {
                         "opacity-0": isShowPopover,
                     }
                 )}
                 onClick={showPopover}
-                tabIndex={isShowPopover ? -1 : undefined}
             >
                 <Plus size={18} className="mr-2" />
                 Save a URL...
@@ -147,77 +144,81 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
             })}
             onKeyDown={_onKeyDown}
         >
-            <form
-                className={cn(
-                    "flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity]",
-                    isCollapse ? "opacity-0 scale-95" : "opacity-100 scale-100"
-                )}
-                action=""
-                onSubmit={handleSubmit}
-            >
-                <div className="relative h-12 bg-background shadow-lg rounded-t-lg rounded-br-md border">
-                    <Input
-                        className="absolute top-0 bottom-0 h-full bg-transparent text-base border-none px-4 z-10"
-                        placeholder="https://"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        ref={inputRef}
-                    />
-                </div>
-                <div className="relative bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg">
-                    <Card>
-                        <div className="flex">
-                            <CardHeader className="grow">
-                                <CardTitle>Untitled</CardTitle>
-                                <p className="mt-3">description</p>
-                            </CardHeader>
-                            <Skeleton className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0 rounded-lg" />
-                        </div>
-                    </Card>
-                    <div className="flex flex-col gap-3 my-4 mx-2">
-                        <div className="flex gap-4 flex-wrap items-center">
-                            <Package2 className="text-slate-500" size={20} />
-                            <CollectionSelector
-                                collections={collectionsQuery.data}
-                                value={collection}
-                                setValue={setCollection}
-                            />
-                        </div>
-                        <div className="flex gap-4 flex-wrap items-center">
-                            <Tag className="text-slate-500" size={20} />
-                            {tags.map((tag, index) => (
+            <FocusScope trapped={isShow} loop>
+                <form
+                    className={cn(
+                        "flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity]",
+                        isCollapse
+                            ? "opacity-0 scale-95"
+                            : "opacity-100 scale-100"
+                    )}
+                    action=""
+                    onSubmit={handleSubmit}
+                >
+                    <div className="relative h-12 bg-background shadow-lg rounded-t-lg rounded-br-md border">
+                        <Input
+                            className="absolute top-0 bottom-0 h-full bg-transparent text-base border-none px-4 z-10"
+                            placeholder="https://"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                            ref={inputRef}
+                        />
+                    </div>
+                    <div className="relative bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg">
+                        <SimpleItemCard
+                            url={url}
+                            title="Untitled"
+                            description="description"
+                            loading
+                        />
+                        <div className="flex flex-col gap-3 my-4 mx-2">
+                            <div className="flex gap-4 flex-wrap items-center">
+                                <Package2
+                                    className="text-slate-500"
+                                    size={20}
+                                />
+                                <CollectionSelector
+                                    collections={collectionsQuery.data}
+                                    value={collection}
+                                    setValue={setCollection}
+                                />
+                            </div>
+                            <div className="flex gap-4 flex-wrap items-center">
+                                <Tag className="text-slate-500" size={20} />
+                                {tags.map((tag, index) => (
+                                    <TagSelector
+                                        key={tag}
+                                        index={index}
+                                        tags={tagsQuery.data}
+                                        value={tag}
+                                        setValue={setTag}
+                                        remove={removeTag}
+                                    />
+                                ))}
                                 <TagSelector
-                                    key={tag}
-                                    index={index}
                                     tags={tagsQuery.data}
-                                    value={tag}
+                                    value=""
+                                    index={-1}
                                     setValue={setTag}
                                     remove={removeTag}
                                 />
-                            ))}
-                            <TagSelector
-                                tags={tagsQuery.data}
-                                value=""
-                                index={-1}
-                                setValue={setTag}
-                                remove={removeTag}
-                            />
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-end">
+                            <Button type="submit">Save</Button>
                         </div>
                     </div>
-                    <div className="flex items-center justify-end">
-                        <Button type="submit">Save</Button>
-                    </div>
-                </div>
-            </form>
-            <div
-                className={cn(
-                    "fixed top-0 bottom-0 left-0 right-0 transition-[background-color,backdrop-filter]",
-                    {
-                        "bg-white/80 backdrop-blur-sm": !isCollapse,
-                    }
-                )}
-                onClick={onDismiss}
-            ></div>
+                </form>
+                <div
+                    className={cn(
+                        "fixed top-0 bottom-0 left-0 right-0 transition-[background-color,backdrop-filter]",
+                        {
+                            "bg-white/80 backdrop-blur-sm": !isCollapse,
+                        }
+                    )}
+                    onClick={onDismiss}
+                ></div>
+            </FocusScope>
         </div>
     );
 }

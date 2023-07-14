@@ -8,9 +8,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
     DropdownMenuGroup,
-    Card,
-    CardTitle,
-    CardFooter,
     Button,
     Dialog,
     DialogContent,
@@ -22,7 +19,7 @@ import {
     TabsList,
     TabsTrigger,
     DialogFooter,
-    CardHeader,
+    SimpleItemCard,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { Item, Collection, Tag } from "@prisma/client";
@@ -32,13 +29,11 @@ import {
     Trash2,
     MoreHorizontal,
     PanelRightOpen,
-    Globe,
     Newspaper,
     LayoutDashboard,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "../utils";
-import ExternalLink from "./ExternalLink";
 import renderIcon from "@/src/app/utils/renderIcon";
 import { useState } from "react";
 
@@ -78,45 +73,23 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 
     return (
         <>
-            <Card
+            <SimpleItemCard
                 className={cn(
-                    "flex flex-col cursor-pointer hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                    selected ? "outline" : "outline-none"
+                    "transition-[transform,border-color]",
+                    selected
+                        ? "scale-[101%] shadow-md border-slate-500"
+                        : "scale-100"
                 )}
-                tabIndex={0}
-                key={data.id}
                 onClick={() => {
                     onSelect(data.id);
                 }}
-            >
-                <div className="flex">
-                    <CardHeader className="grow">
-                        <CardTitle>{data.title}</CardTitle>
-                        <p className="mt-3">{data.description}</p>
-                    </CardHeader>
-                    {data.thumbnail ? (
-                        <div className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0">
-                            <img
-                                src={data.thumbnail}
-                                alt="Image"
-                                className="rounded-lg object-cover object-center relative w-full h-full"
-                            />
-                        </div>
-                    ) : null}
-                </div>
-                <CardFooter className="flex flex-wrap gap-5 justify-between">
-                    <div className="flex flex-wrap gap-5 text-slate-450 text-sm">
-                        <ExternalLink
-                            href={data.url}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                            }}
-                        >
-                            <div className="h-full flex items-center gap-2">
-                                <Globe size={16} />
-                                {data.siteName}
-                            </div>
-                        </ExternalLink>
+                url={data.url}
+                title={data.title}
+                description={data.description}
+                thumbnail={data.thumbnail}
+                siteName={data.siteName}
+                footerLeft={
+                    <>
                         <Link href={`/app/collection/${data.collection.id}`}>
                             <div className="h-full flex items-center gap-2">
                                 <Package2 size={16} />
@@ -140,8 +113,10 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                                 </Link>
                             ))}
                         </div>
-                    </div>
-                    <div className="flex gap-3">
+                    </>
+                }
+                footerRight={
+                    <>
                         <ItemDropdownMenu
                             data={data}
                             openSummaries={() => setIsOpenSummaries(true)}
@@ -159,9 +134,9 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                                 {renderIcon(StatusIcons[value])}
                             </Button>
                         ))}
-                    </div>
-                </CardFooter>
-            </Card>
+                    </>
+                }
+            />
             <SummariesDialog
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
