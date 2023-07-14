@@ -1,5 +1,5 @@
-import { Globe, Package2 } from "lucide-react";
-import { Button, Card, CardFooter, CardHeader, CardTitle, Skeleton } from ".";
+import { Globe, Package2, TagIcon } from "lucide-react";
+import { Card, CardFooter, CardHeader, CardTitle, Skeleton } from ".";
 import ExternalLink from "./ExternalLink";
 import { cn } from "../utils";
 import { Collection, Tag } from "@prisma/client";
@@ -25,15 +25,15 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
     return (
         <Card
             className={cn(
-                "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden",
+                "@container outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden",
                 { "cursor-pointer hover:border-slate-500": props.onClick },
                 props.className
             )}
             tabIndex={props.onClick ? 0 : undefined}
             onClick={props.onClick}
         >
-            <div className="flex">
-                <CardHeader className="grow">
+            <div className="flex flex-col @lg:flex-row @lg:items-start">
+                <CardHeader className="grow order-2">
                     {props.loading ? (
                         <>
                             <Skeleton className="h-8 rounded-lg" />
@@ -52,70 +52,63 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     )}
                 </CardHeader>
                 {props.loading ? (
-                    <Skeleton className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0 rounded-lg" />
+                    <Skeleton className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 aspect-[16/9] @lg:m-6 shrink-0 @lg:border rounded-lg overflow-hidden" />
                 ) : props.thumbnail ? (
-                    <div className="w-[320px] max-w-[32%] aspect-[16/9] m-6 shrink-0">
+                    <div className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 aspect-[16/9] @lg:m-6 shrink-0 @lg:border rounded-lg overflow-hidden">
                         <img
                             src={props.thumbnail}
                             alt="Image"
-                            className="rounded-lg object-cover object-center relative w-full h-full"
+                            className="object-cover object-center relative w-full h-full"
                         />
                     </div>
                 ) : null}
             </div>
-            <CardFooter className="flex flex-wrap gap-5 justify-between pb-3">
+            <CardFooter className="flex items-start flex-col gap-5 my-3 @lg:flex-row @lg:justify-between @lg:items-end">
                 {props.loading ? (
                     <Skeleton className="h-5 w-24 rounded-lg" />
                 ) : (
                     <>
-                        <div className="flex flex-wrap gap-5 text-slate-450 text-sm">
+                        <div className="flex flex-wrap gap-x-5 text-slate-450 text-sm">
                             {props.siteName ? (
                                 <ExternalLink
+                                    className="flex items-center gap-2 my-2"
                                     href={props.url ? props.url : "#"}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                     }}
                                 >
-                                    <div className="h-full flex items-center gap-2">
-                                        {props.favicon ? (
-                                            <img
-                                                width={16}
-                                                height={16}
-                                                src={props.favicon}
-                                            />
-                                        ) : (
-                                            <Globe size={16} />
-                                        )}
-
-                                        {props.siteName}
-                                    </div>
+                                    {props.favicon ? (
+                                        <img
+                                            width={16}
+                                            height={16}
+                                            src={props.favicon}
+                                        />
+                                    ) : (
+                                        <Globe size={16} />
+                                    )}
+                                    {props.siteName}
                                 </ExternalLink>
                             ) : null}
                             {props.collection ? (
                                 <Link
+                                    className="flex items-center gap-2 my-2"
                                     href={`/app/collection/${props.collection.id}`}
                                 >
-                                    <div className="h-full flex items-center gap-2">
-                                        <Package2 size={16} />
-                                        {props.collection.name}
-                                    </div>
+                                    <Package2 size={16} />
+                                    {props.collection.name}
                                 </Link>
                             ) : null}
-                            {props.tags ? (
-                                <div className="flex flex-wrap gap-3">
+                            {props.tags && props.tags.length > 0 ? (
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <TagIcon size={16} />
                                     {props.tags.map((tag) => (
                                         <Link
+                                            className="flex items-center px-3 py-2 rounded-lg bg-secondary"
                                             key={tag.id}
                                             href={`/app/tag/${tag.id}`}
                                             tabIndex={-1}
                                         >
-                                            <Button
-                                                className="px-4"
-                                                variant="secondary"
-                                                size="xs"
-                                            >
-                                                {tag.name}
-                                            </Button>
+                                            {tag.name}
                                         </Link>
                                     ))}
                                 </div>
