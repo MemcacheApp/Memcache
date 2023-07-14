@@ -45,8 +45,8 @@ export function TagSelector({
             <PopoverTrigger asChild>
                 {index === -1 ? (
                     <Button
-                        className="px-3"
-                        variant="secondary"
+                        className="px-3 bg-slate-50"
+                        variant="outline"
                         size="default"
                         role="combobox"
                         aria-expanded={open}
@@ -56,7 +56,7 @@ export function TagSelector({
                     </Button>
                 ) : (
                     <Button
-                        className="px-4 group relative"
+                        className="px-4 group relative shadow-sm"
                         variant="outline"
                         size="default"
                         role="combobox"

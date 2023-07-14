@@ -283,7 +283,7 @@ function SaveOptions({
     return (
         <div
             className={cn(
-                "relative bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
+                "relative flex flex-col gap-3 bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
                 { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse }
             )}
         >
@@ -310,7 +310,7 @@ function SaveOptions({
                     )
                 }
             />
-            <div className="flex flex-col gap-3 my-4 mx-2">
+            <div className="flex flex-col rounded-lg bg-slate-50 gap-3 py-4 px-5">
                 <div className="flex gap-3 flex-wrap items-center">
                     <Package2 className="text-slate-500" size={20} />
                     <CollectionSelector
