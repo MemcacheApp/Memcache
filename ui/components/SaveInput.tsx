@@ -143,7 +143,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                         )}
                     >
                         <Input
-                            className="absolute top-0 bottom-0 h-full bg-transparent text-base border-none px-4 z-10"
+                            className="absolute top-0 bottom-0 h-full bg-transparent text-base border-none pl-4 pr-10 z-10"
                             placeholder="https://"
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
