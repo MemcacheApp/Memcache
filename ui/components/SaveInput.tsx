@@ -111,6 +111,11 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
         });
     };
 
+    const clearInput = () => {
+        setUrl("");
+        inputRef.current?.focus();
+    };
+
     return (
         <div
             className={cn("z-50", {
@@ -149,7 +154,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                 "absolute right-2 top-1/2 -translate-y-1/2 z-10 text-slate-500 rounded-full p-1",
                                 { hidden: !url }
                             )}
-                            onClick={() => setUrl("")}
+                            onClick={clearInput}
                             type="button"
                             variant="ghost"
                             size="none"
