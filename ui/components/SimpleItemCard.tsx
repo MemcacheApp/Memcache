@@ -6,6 +6,7 @@ import { Collection, Tag } from "@prisma/client";
 import Link from "next/link";
 
 interface SimpleItemCardProps {
+    type?: string;
     title?: string;
     url?: string;
     className?: string;
@@ -51,17 +52,11 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                         </>
                     )}
                 </CardHeader>
-                {props.loading ? (
-                    <Skeleton className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 aspect-[16/9] @lg:m-6 shrink-0 @lg:border rounded-lg overflow-hidden" />
-                ) : props.thumbnail ? (
-                    <div className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 aspect-[16/9] @lg:m-6 shrink-0 @lg:border rounded-lg overflow-hidden">
-                        <img
-                            src={props.thumbnail}
-                            alt="Image"
-                            className="object-cover object-center relative w-full h-full"
-                        />
-                    </div>
-                ) : null}
+                <Thumbnail
+                    type={props.type}
+                    loading={props.loading}
+                    thumbnail={props.thumbnail}
+                />
             </div>
             <CardFooter className="flex items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end">
                 {props.loading ? (
@@ -121,4 +116,37 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
             </CardFooter>
         </Card>
     );
+}
+
+interface ThumbnailProps {
+    type: string | undefined;
+    loading: boolean | undefined;
+    thumbnail: string | undefined | null;
+}
+
+function Thumbnail(props: ThumbnailProps) {
+    if (props.loading) {
+        return (
+            <Skeleton className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 aspect-[16/9] @lg:m-6 shrink-0 @lg:border rounded-lg overflow-hidden" />
+        );
+    } else if (props.thumbnail) {
+        return (
+            <div
+                className={cn(
+                    "order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 @lg:m-6 shrink-0 @lg:border rounded-lg overflow-hidden",
+                    props.type?.startsWith("music")
+                        ? "aspect-square"
+                        : "aspect-[16/9]"
+                )}
+            >
+                <img
+                    src={props.thumbnail}
+                    alt="Image"
+                    className="object-cover object-center relative w-full h-full"
+                />
+            </div>
+        );
+    } else {
+        return null;
+    }
 }
