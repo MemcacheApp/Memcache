@@ -7,5 +7,5 @@ export default function BrowserSavePage() {
     const searchParams = useSearchParams();
     const url = searchParams.get("url") ?? undefined;
 
-    return <SaveInput alwaysShowOptions url={url} />;
+    return <SaveInput />;
 }

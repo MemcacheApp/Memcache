@@ -1,6 +1,6 @@
 import { createError } from "../../utils/error";
 
-export const CreateFromURLError = createError("CreateFromURLError", {
+export const FetchURLError = createError("FetchURLError", {
     FetchError: "Failed to fetch metadata",
     InvalidURL: "Invalid URL",
 });
