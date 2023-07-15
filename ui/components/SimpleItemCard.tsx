@@ -111,7 +111,11 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                             ) : null}
                             {props.footerLeft}
                         </div>
-                        <div className="flex gap-3">{props.footerRight}</div>
+                        {props.footerRight ? (
+                            <div className="flex gap-3">
+                                {props.footerRight}
+                            </div>
+                        ) : null}
                     </>
                 )}
             </CardFooter>
