@@ -63,12 +63,12 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     </div>
                 ) : null}
             </div>
-            <CardFooter className="flex items-start flex-col gap-5 my-3 @lg:flex-row @lg:justify-between @lg:items-end">
+            <CardFooter className="flex items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end">
                 {props.loading ? (
                     <Skeleton className="h-5 w-24 rounded-lg" />
                 ) : (
                     <>
-                        <div className="flex flex-wrap gap-x-5 text-slate-450 text-sm">
+                        <div className="flex flex-wrap gap-x-5 gap-y-1 text-slate-450 text-sm">
                             {props.siteName ? (
                                 <ExternalLink
                                     className="flex items-center gap-2 my-2"
@@ -99,11 +99,11 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                 </Link>
                             ) : null}
                             {props.tags && props.tags.length > 0 ? (
-                                <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex flex-wrap items-center gap-2">
                                     <TagIcon size={16} />
                                     {props.tags.map((tag) => (
                                         <Link
-                                            className="flex items-center px-3 py-2 rounded-lg bg-secondary"
+                                            className="flex items-center px-3 py-1.5 rounded-lg bg-secondary"
                                             key={tag.id}
                                             href={`/app/tag/${tag.id}`}
                                             tabIndex={-1}
