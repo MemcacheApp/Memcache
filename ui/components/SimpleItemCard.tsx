@@ -63,7 +63,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     <Skeleton className="h-5 w-24 rounded-lg" />
                 ) : (
                     <>
-                        <div className="flex flex-wrap gap-x-5 gap-y-1 text-slate-450 text-sm">
+                        <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
                             {props.siteName ? (
                                 <ExternalLink
                                     className="flex items-center gap-2 my-2"
@@ -98,9 +98,10 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                     <TagIcon size={16} />
                                     {props.tags.map((tag) => (
                                         <Link
-                                            className="flex items-center px-3 py-1.5 rounded-lg bg-secondary"
+                                            className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 border shadow-sm"
                                             key={tag.id}
                                             href={`/app/tag/${tag.id}`}
+                                            onClick={(e) => e.stopPropagation()}
                                             tabIndex={-1}
                                         >
                                             {tag.name}
