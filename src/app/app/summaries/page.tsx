@@ -15,8 +15,8 @@ export default function SummariesPage() {
                     <h3 className="text-lg font-medium mb-3">
                         Latest Generated
                     </h3>
-                    <ScrollArea>
-                        <div className="flex gap-3">
+                    <ScrollArea type="scroll">
+                        <div className="flex gap-3 p-1">
                             {latestSummariesQuery.data?.map((summary) => (
                                 <SummaryCard
                                     className="w-80 shrink-0"

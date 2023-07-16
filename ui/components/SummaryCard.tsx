@@ -8,8 +8,14 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from ".";
-import { InfoIcon, TimerIcon, WholeWordIcon } from "lucide-react";
+import {
+    ChevronDownIcon,
+    InfoIcon,
+    TimerIcon,
+    WholeWordIcon,
+} from "lucide-react";
 import { cn } from "../utils";
+import { useRouter } from "next/navigation";
 
 interface SummaryCardProps {
     className?: string;
@@ -17,18 +23,30 @@ interface SummaryCardProps {
 }
 
 export function SummaryCard({ className, summary }: SummaryCardProps) {
+    const { push } = useRouter();
+
     return (
         <Card
-            className={cn("relative z-0 overflow-hidden pt-6 px-6", className)}
+            className={cn(
+                "group relative z-0 overflow-hidden pt-6 px-6 cursor-pointer",
+                className
+            )}
+            onClick={() => push(`/app/summaries/${summary.id}`)}
         >
-            <div className="absolute left-0 right-0 bottom-5 h-32 bg-gradient-to-b from-background/0 to-background pointer-events-none"></div>
-            <div className="absolute left-0 right-0 bottom-0 h-5 bg-background pointer-events-none"></div>
+            <div className="absolute left-0 right-0 bottom-0">
+                <div className="h-32 bg-gradient-to-b from-background/0 to-background pointer-events-none"></div>
+                <div className="h-5 bg-background pointer-events-none"></div>
+                <ChevronDownIcon className="absolute bottom-3 left-1/2 -translate-x-1/2 text-slate-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
+            </div>
             <CardTitle className="text-xl">
                 <Link href={`/app/summaries/${summary.id}`}>
                     {summary.item.title}
                 </Link>
                 <Popover>
-                    <PopoverTrigger className="ml-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <PopoverTrigger
+                        className="ml-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-slate-200"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <InfoIcon size={18} className="text-slate-500" />
                     </PopoverTrigger>
                     <PopoverContent className="bg-background/90 backdrop-blur-md p-0 w-[25rem] max-h-[50vh] overflow-auto rounded-lg">
