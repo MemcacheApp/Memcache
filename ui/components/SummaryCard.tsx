@@ -31,7 +31,7 @@ export function SummaryCard({ className, summary }: SummaryCardProps) {
                     <PopoverTrigger className="ml-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         <InfoIcon size={18} className="text-slate-500" />
                     </PopoverTrigger>
-                    <PopoverContent className="bg-background/90 backdrop-blur-md p-0 w-[25rem] rounded-lg">
+                    <PopoverContent className="bg-background/90 backdrop-blur-md p-0 w-[25rem] max-h-[50vh] overflow-auto rounded-lg">
                         <ItemCard
                             className="bg-transparent border-none"
                             data={summary.item}
