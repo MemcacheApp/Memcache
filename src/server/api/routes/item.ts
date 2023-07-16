@@ -18,6 +18,25 @@ export const itemRouter = router({
                 });
             }
         }),
+    getItemSummaries: protectedProcedure
+        .input(z.object({ itemId: z.string() }))
+        .query(async ({ input }) => {
+            try {
+                return ItemController.getItemSummaries(input.itemId);
+            } catch (e) {
+                if (e instanceof GetItemError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
     getUserItems: protectedProcedure.query(async ({ ctx }) => {
         try {
             return await ItemController.getUserItems(ctx.userId);
