@@ -2,6 +2,7 @@ import { protectedProcedure, router } from "../trpc";
 import SummaryController from "../../controllers/summary-controller";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { GetSummaryError } from "../../controllers/errors/summary";
 
 export const summaryRouter = router({
     getSummary: protectedProcedure
@@ -10,7 +11,7 @@ export const summaryRouter = router({
             try {
                 return SummaryController.getSummary(input.itemId);
             } catch (e) {
-                if (e instanceof GetItemError) {
+                if (e instanceof GetSummaryError) {
                     throw new TRPCError({
                         message: e.message,
                         code: "BAD_REQUEST",
@@ -29,7 +30,7 @@ export const summaryRouter = router({
             try {
                 return SummaryController.getSummaryMeta(input.itemId);
             } catch (e) {
-                if (e instanceof GetItemError) {
+                if (e instanceof GetSummaryError) {
                     throw new TRPCError({
                         message: e.message,
                         code: "BAD_REQUEST",

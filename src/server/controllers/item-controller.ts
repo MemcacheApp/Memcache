@@ -84,24 +84,24 @@ export default class ItemController {
     }
 
     static async getItemSummaries(itemId: string) {
-		const item = await prisma.item.findUnique({
-			where: {
-				id: itemId,
-			},
-			include: {
-				tags: true,
-				collection: true,
-				summaries: {
-					select: {
-						id: true,
-						createdAt: true,
-						wordCount: true,
-						experience: true,
-						finetuning: true,
-					},
-				},
-			},
-		});
+        const item = await prisma.item.findUnique({
+            where: {
+                id: itemId,
+            },
+            include: {
+                tags: true,
+                collection: true,
+                summaries: {
+                    select: {
+                        id: true,
+                        createdAt: true,
+                        wordCount: true,
+                        experience: true,
+                        finetuning: true,
+                    },
+                },
+            },
+        });
 
         if (item === null) {
             throw new GetItemError("ItemNotExist");

@@ -4,6 +4,7 @@ import * as scrapeIt from "scrape-it";
 import { v4 as uuidv4 } from "uuid";
 import ItemController from "./item-controller";
 import openai from "../utils/openai";
+import { GetSummaryError } from "./errors/summary";
 
 type ScrapeItDataType = {
     headers: { content: string }[];
@@ -39,32 +40,32 @@ export default class SummaryController {
         });
 
         if (summary === null) {
-            throw new GetItemError("SummaryNotExist");
+            throw new GetSummaryError("SummaryNotExist");
         }
 
         return summary;
     }
 
-	static async getSummaryMeta(summaryId: string) {
-		const summary = await prisma.summary.findUnique({
-			where: {
-				id: summaryId,
-			},
-			select: {
-				id: true,
-				createdAt: true,
-				wordCount: true,
-				experience: true,
-				finetuning: true,
-			},
-		});
+    static async getSummaryMeta(summaryId: string) {
+        const summary = await prisma.summary.findUnique({
+            where: {
+                id: summaryId,
+            },
+            select: {
+                id: true,
+                createdAt: true,
+                wordCount: true,
+                experience: true,
+                finetuning: true,
+            },
+        });
 
-		if (summary === null) {
-			throw new GetItemError("SummaryMetaNotExist");
-		}
+        if (summary === null) {
+            throw new GetSummaryError("SummaryNotExist");
+        }
 
-		return summary;
-	}
+        return summary;
+    }
 
     static async scrapeContent({ url }: { url: string }) {
         const { data } = await scrapeIt.default(url, {

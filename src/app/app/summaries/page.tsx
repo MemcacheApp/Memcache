@@ -16,8 +16,8 @@ export default function SummariesPage() {
                 {data?.summaries.map((summary) => (
                     <div key={summary.id}>
                         <Link href={`app/summaries/${summary.id}`}>
-							Go to summary {summary.id}
-						</Link>
+                            Go to summary {summary.id}
+                        </Link>
                     </div>
                 ))}
             </div>
