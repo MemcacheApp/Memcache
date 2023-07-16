@@ -35,6 +35,23 @@ export default class SummaryController {
         return summary;
     }
 
+    static async getItemSummaries(itemId: string) {
+        const summaries = await prisma.summary.findMany({
+            where: {
+                itemId,
+            },
+            select: {
+                id: true,
+                createdAt: true,
+                wordCount: true,
+                experience: true,
+                finetuning: true,
+            },
+        });
+
+        return summaries;
+    }
+
     static async scrapeContent({ url }: { url: string }) {
         const { data } = await scrapeIt(url, {
             headers: {

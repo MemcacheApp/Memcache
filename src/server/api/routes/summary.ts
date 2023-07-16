@@ -24,6 +24,18 @@ export const summaryRouter = router({
                 }
             }
         }),
+    getItemSummaries: protectedProcedure
+        .input(z.object({ itemId: z.string() }))
+        .query(async ({ input }) => {
+            try {
+                return SummaryController.getItemSummaries(input.itemId);
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }),
     generateSummary: protectedProcedure
         .input(
             z.object({
