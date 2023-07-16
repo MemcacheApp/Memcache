@@ -98,11 +98,10 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                     <TagIcon size={16} />
                                     {props.tags.map((tag) => (
                                         <Link
-                                            className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 border shadow-sm"
+                                            className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm"
                                             key={tag.id}
                                             href={`/app/tag/${tag.id}`}
                                             onClick={(e) => e.stopPropagation()}
-                                            tabIndex={-1}
                                         >
                                             {tag.name}
                                         </Link>
