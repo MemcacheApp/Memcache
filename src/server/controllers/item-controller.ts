@@ -3,59 +3,85 @@ import { v4 as uuidv4 } from "uuid";
 import CollectionController from "./collection-controller";
 import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
-import { CreateFromURLError, GetItemError } from "./errors/item";
+import { FetchURLError, GetItemError } from "./errors/item";
 import { AuthError } from "./errors/user";
+import { ItemMetadata } from "@/src/datatypes/item";
+import { hostname } from "@/src/utils";
 
 export default class ItemController {
     /**
-     * @throws {CreateFromURLError}
+     * @throws {FetchURLError}
      */
-    static async createFromURL(
+    static async fetchMetadata(url: string): Promise<ItemMetadata> {
+        let result;
+        try {
+            result = (await ogs({ url: url })).result;
+        } catch (e) {
+            throw new FetchURLError("FetchError", undefined, { cause: e });
+        }
+
+        const requestUrl = result.requestUrl;
+        if (!requestUrl) {
+            throw new FetchURLError("InvalidURL");
+        }
+
+        return {
+            type: result.ogType,
+            title: result.ogTitle || result.twitterTitle,
+            url: requestUrl,
+            description: result.ogDescription || result.twitterDescription,
+            thumbnail: result.ogImage?.[0].url || result.twitterImage?.[0].url,
+            siteName: result.ogSiteName || hostname(requestUrl),
+            duration: result.musicDuration
+                ? parseInt(result.musicDuration)
+                : undefined,
+            releaseTime: result.releaseDate,
+            author: result.author,
+            favicon: result.favicon
+                ? new URL(result.favicon, requestUrl).href
+                : undefined,
+        };
+    }
+
+    static async createItem(
         userId: string,
         url: string,
         collectionName: string,
         tagNames: string[]
     ) {
-        let result;
-        try {
-            result = (await ogs({ url })).result;
-        } catch (e) {
-            throw new CreateFromURLError("FetchError", undefined, { cause: e });
-        }
-
-        const requestUrl = result.requestUrl;
-        if (!requestUrl) {
-            throw new CreateFromURLError("InvalidURL");
-        }
-
         const collection = await CollectionController.getOrCreateCollection(
             userId,
             collectionName
         );
         const tags = await TagController.getOrCreateTags(userId, tagNames);
 
+        let metadata;
+        try {
+            metadata = await this.fetchMetadata(url);
+        } catch (e) {
+            metadata = null;
+        }
+
         const item = await prisma.item.create({
             data: {
                 id: uuidv4(),
-                type: result.ogType || "website",
+                type: metadata?.type || "website",
                 status: 0,
                 collectionId: collection.id,
                 tags: {
                     connect: tags.map((tag) => ({ id: tag.id })),
                 },
-                title: result.ogTitle || result.twitterTitle || "Untitled",
-                url: result.ogUrl || requestUrl,
-                description: result.ogDescription || result.dcDescription || "",
-                thumbnail:
-                    result.ogImage?.[0].url || result.twitterImage?.[0].url,
+                title: metadata?.title || url,
+                url: metadata?.url || url,
+                description: metadata?.description || "",
+                thumbnail: metadata?.thumbnail,
                 createdAt: new Date(),
                 userId,
-                siteName: result.ogSiteName || new URL(requestUrl).hostname,
-                duration: result.musicDuration
-                    ? parseInt(result.musicDuration)
-                    : undefined,
-                releaseTime: result.releaseDate,
-                author: result.author,
+                siteName: metadata?.siteName || hostname(url),
+                duration: metadata?.duration,
+                releaseTime: metadata?.releaseTime,
+                author: metadata?.author,
+                favicon: metadata?.favicon,
             },
         });
 

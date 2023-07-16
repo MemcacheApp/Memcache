@@ -22,6 +22,7 @@ interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
     collections: Collection[] | undefined;
     value: string;
     setValue: (s: string) => void;
+    disabled?: boolean;
 }
 
 export function CollectionSelector({
@@ -29,6 +30,7 @@ export function CollectionSelector({
     value,
     setValue,
     size,
+    disabled,
 }: CollectionSelectorProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -45,20 +47,21 @@ export function CollectionSelector({
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
-                    // variant="ghost"
+                    className="shadow-sm"
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
                     size={size}
+                    disabled={disabled}
                 >
                     {value || "Loading..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-[250px] p-0">
                 <Command>
                     <CommandInput
-                        placeholder="Search or Add..."
+                        placeholder="Search or add collection..."
                         value={searchValue}
                         onValueChange={setSearchValue}
                     />

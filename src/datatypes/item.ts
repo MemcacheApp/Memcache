@@ -1,13 +1,12 @@
-export interface CreateItemData {
+export interface ItemMetadata {
     url: string;
-    collectionId: string;
-    tags: string[];
+    siteName: string;
     type?: string;
     title?: string;
     description?: string;
     thumbnail?: string;
-    siteName?: string;
     duration?: number;
-    releaseTime?: Date;
+    releaseTime?: string;
     author?: string;
+    favicon?: string;
 }

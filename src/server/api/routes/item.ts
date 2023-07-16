@@ -1,10 +1,7 @@
 import { protectedProcedure, router } from "../trpc";
 import { z } from "zod";
 import ItemController from "../../controllers/item-controller";
-import {
-    CreateFromURLError,
-    GetItemError,
-} from "../../controllers/errors/item";
+import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { TRPCError } from "@trpc/server";
 import { AuthError } from "../../controllers/errors/user";
 
@@ -15,17 +12,10 @@ export const itemRouter = router({
             try {
                 return ItemController.getItem(input.itemId);
             } catch (e) {
-                if (e instanceof GetItemError) {
-                    throw new TRPCError({
-                        message: e.message,
-                        code: "BAD_REQUEST",
-                    });
-                } else {
-                    console.error(e);
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                    });
-                }
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
             }
         }),
     getItemSummaries: protectedProcedure
@@ -57,7 +47,7 @@ export const itemRouter = router({
             });
         }
     }),
-    createFromURL: protectedProcedure
+    createItem: protectedProcedure
         .input(
             z.object({
                 url: z.string(),
@@ -67,14 +57,37 @@ export const itemRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             try {
-                return await ItemController.createFromURL(
+                return await ItemController.createItem(
                     ctx.userId,
                     input.url,
                     input.collectionName,
                     input.tagNames
                 );
             } catch (e) {
-                if (e instanceof CreateFromURLError) {
+                if (e instanceof FetchURLError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
+    fetchMetadata: protectedProcedure
+        .input(
+            z.object({
+                url: z.string(),
+            })
+        )
+        .query(async ({ input }) => {
+            try {
+                return await ItemController.fetchMetadata(input.url);
+            } catch (e) {
+                if (e instanceof FetchURLError) {
                     throw new TRPCError({
                         message: e.message,
                         code: "BAD_REQUEST",
