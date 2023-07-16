@@ -1,8 +1,8 @@
 "use client";
 
+import { trpc } from "@/src/app/utils/trpc";
 import { Button } from "@/ui/components";
 import { PageTitle } from "../../../../ui/components/typography";
-import { trpc } from "@/src/app/utils/trpc";
 
 export default function FlashcardsPage() {
     const flashcardsQuery = trpc.flashcards.generateFlashcards.useQuery();

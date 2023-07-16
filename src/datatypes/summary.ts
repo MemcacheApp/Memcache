@@ -9,3 +9,10 @@ export enum Finetuning {
     Quantitative,
     Mixed,
 }
+
+// For flashcard generation
+export enum Range {
+    Depth,
+    Breadth,
+    Balanced,
+}
