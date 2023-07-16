@@ -26,6 +26,14 @@ export default class SummaryController {
             where: {
                 id: summaryId,
             },
+            include: {
+                item: {
+                    include: {
+                        collection: true,
+                        tags: true,
+                    },
+                },
+            },
         });
 
         if (summary === null) {
@@ -50,6 +58,32 @@ export default class SummaryController {
         });
 
         return summaries;
+    }
+
+    static async getLatestSummaries(userId: string) {
+        const summaries = await prisma.summary.findMany({
+            where: {
+                item: {
+                    userId,
+                },
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: 6,
+            include: {
+                item: {
+                    include: {
+                        collection: true,
+                        tags: true,
+                    },
+                },
+            },
+        });
+        return summaries.map((summary) => ({
+            ...summary,
+            content: summary.content.substring(0, 300),
+        }));
     }
 
     static async scrapeContent({ url }: { url: string }) {

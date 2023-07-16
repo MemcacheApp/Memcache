@@ -19,6 +19,7 @@ export * from "./ScrollArea";
 export * from "./Select";
 export * from "./SimpleItemCard";
 export * from "./Skeleton";
+export * from "./SummaryCard";
 export * from "./Tabs";
 export * from "./TagSelector";
 export * from "./Tooltip";

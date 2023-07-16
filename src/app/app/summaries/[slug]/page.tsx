@@ -10,13 +10,14 @@ interface SummaryDetailPageProps {
 }
 
 export default function SummaryDetailPage({ params }: SummaryDetailPageProps) {
-    const itemId = params.slug;
-    const itemQuery = trpc.summary.getSummary.useQuery({ itemId });
+    const itemQuery = trpc.summary.getSummary.useQuery({
+        summaryId: params.slug,
+    });
     const data = itemQuery.data;
 
     return (
         <div className="flex flex-col">
-            <PageTitle>Summary of {data?.id} </PageTitle>
+            <PageTitle>Summary of {data?.item.title} </PageTitle>
             <div>
                 <h1>ID: {params.slug}</h1>
                 <p> {data?.content} </p>

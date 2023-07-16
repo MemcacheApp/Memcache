@@ -39,11 +39,19 @@ import { Experience, Finetuning } from "@/src/datatypes/summary";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
-    selected: boolean;
-    onSelect: (id: string) => void;
+    selected?: boolean;
+    onSelect?: (id: string) => void;
+    className?: string;
+    hideOptions?: boolean;
 }
 
-export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
+export function ItemCard({
+    data,
+    selected,
+    onSelect,
+    className,
+    hideOptions,
+}: ItemCardProps) {
     const [isOpenSummaries, setIsOpenSummaries] = useState(false);
 
     const ctx = trpc.useContext();
@@ -78,11 +86,16 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     "transition-[transform,border-color]",
                     selected
                         ? "scale-[101%] shadow-md border-slate-500"
-                        : "scale-100"
+                        : "scale-100",
+                    className
                 )}
-                onClick={() => {
-                    onSelect(data.id);
-                }}
+                onClick={
+                    onSelect
+                        ? () => {
+                              onSelect(data.id);
+                          }
+                        : undefined
+                }
                 url={data.url}
                 type={data.type}
                 title={data.title}
@@ -93,25 +106,27 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 siteName={data.siteName}
                 favicon={data.favicon}
                 footerRight={
-                    <>
-                        <ItemDropdownMenu
-                            data={data}
-                            openSummaries={() => setIsOpenSummaries(true)}
-                        />
-                        {statusNums.map((value) => (
-                            <Button
-                                key={value}
-                                variant={"icon"}
-                                size={"none"}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUpdateItemStatus(value);
-                                }}
-                            >
-                                {renderIcon(StatusIcons[value])}
-                            </Button>
-                        ))}
-                    </>
+                    hideOptions ? undefined : (
+                        <>
+                            <ItemDropdownMenu
+                                data={data}
+                                openSummaries={() => setIsOpenSummaries(true)}
+                            />
+                            {statusNums.map((value) => (
+                                <Button
+                                    key={value}
+                                    variant={"icon"}
+                                    size={"none"}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleUpdateItemStatus(value);
+                                    }}
+                                >
+                                    {renderIcon(StatusIcons[value])}
+                                </Button>
+                            ))}
+                        </>
+                    )
                 }
             />
             <SummariesDialog
