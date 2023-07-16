@@ -6,10 +6,10 @@ import { GetSummaryError } from "../../controllers/errors/summary";
 
 export const summaryRouter = router({
     getSummary: protectedProcedure
-        .input(z.object({ itemId: z.string() }))
+        .input(z.object({ summaryId: z.string() }))
         .query(async ({ input }) => {
             try {
-                return SummaryController.getSummary(input.itemId);
+                return SummaryController.getSummary(input.summaryId);
             } catch (e) {
                 if (e instanceof GetSummaryError) {
                     throw new TRPCError({
