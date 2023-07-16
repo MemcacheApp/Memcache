@@ -20,7 +20,7 @@ export default function SummaryDetailPage({ params }: SummaryDetailPageProps) {
             <PageTitle>Summary of {data?.item.title} </PageTitle>
             <div className="mx-8">
                 <P>ID: {params.slug}</P>
-                <P>{data?.content}</P>
+                <P className="whitespace-pre-line">{data?.content}</P>
             </div>
         </div>
     );
