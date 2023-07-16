@@ -1,4 +1,4 @@
-import { Experience, Range } from "@/src/datatypes/summary";
+import { Experience, Range } from "@/src/datatypes/flashcard";
 import ContentScraper from "@/src/utils/content-scraper";
 import {
     ChatCompletionFunctions,
@@ -57,6 +57,8 @@ export default class FlashcardController {
         const content = await ContentScraper.scrapeContent({
             url: item.url,
         });
+        const truncatedContent = content.slice(0, 5000); // About 1000 words
+        console.log(`Content: ${truncatedContent}`);
 
         const functions: ChatCompletionFunctions[] = [
             {
@@ -98,7 +100,7 @@ export default class FlashcardController {
 
         systemPrompt += `The main content that the user wishes to learn about is the following:
                        """
-                        ${content}	
+                        ${truncatedContent}	
                        """
                        You must remember the topic and content so that you can generate relevant, accurate, useful flashcards for the user.\n\n`;
 
@@ -129,7 +131,7 @@ export default class FlashcardController {
         }
 
         // Strictly Define Output Structure
-        systemPrompt += `Please keep each question no more than 50 words. Please keep each answer no longer than 150 words.`;
+        systemPrompt += `Please keep each question no longer than 25 words. Please keep each answer no longer than 100 words. Please ensure that no two flashcards explore exactly the same concept or idea.\n`;
 
         const messages: (
             | ChatCompletionResponseMessage // role, content, function_call
@@ -197,7 +199,7 @@ export default class FlashcardController {
                         });
 
                         // Send new flashcard to user
-                        return { flashcards: [functionCallResult] };
+                        // return { flashcards: [functionCallResult] };
                     } catch (e) {
                         if (e instanceof z.ZodError) {
                             throw new GenerateFlashcardError(

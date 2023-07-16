@@ -4,8 +4,8 @@ export enum Experience {
     Advanced,
 }
 
-export enum Finetuning {
-    Qualitative,
-    Quantitative,
-    Mixed,
+export enum Range {
+    Depth,
+    Breadth,
+    Balanced,
 }

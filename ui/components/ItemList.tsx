@@ -1,18 +1,10 @@
 "use client";
 
-import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
-import { trpc } from "@/src/app/utils/trpc";
-import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
-import {
-    Button,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    ItemCard,
-} from ".";
-import { useMemo } from "react";
+import { useItemListStore } from "@/src/app/store/item-list";
+import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
+import renderIcon from "@/src/app/utils/renderIcon";
+import { trpc } from "@/src/app/utils/trpc";
 import {
     Archive,
     CheckCircle2,
@@ -22,9 +14,17 @@ import {
     Trash2,
     X,
 } from "lucide-react";
-import { useItemListStore } from "@/src/app/store/item-list";
+import Image from "next/image";
+import { useMemo } from "react";
+import {
+    Button,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    ItemCard,
+} from ".";
 import { cn } from "../utils";
-import renderIcon from "@/src/app/utils/renderIcon";
 
 export function ItemList() {
     const { activeStatus, selectedItems, selectItem } = useItemListStore(

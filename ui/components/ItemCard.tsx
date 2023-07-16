@@ -1,41 +1,42 @@
 "use client";
 
 import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
+import renderIcon from "@/src/app/utils/renderIcon";
+import { Range } from "@/src/datatypes/flashcard";
+import { Experience, Finetuning } from "@/src/datatypes/summary";
+import { Collection, Item, Tag } from "@prisma/client";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuIconItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    DropdownMenuGroup,
+    ExternalLink as ExternalLinkIcon,
+    LayoutDashboard,
+    MoreHorizontal,
+    Newspaper,
+    PanelRightOpen,
+    Trash2,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import {
     Button,
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    Label,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuIconItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
     Input,
+    Label,
+    SimpleItemCard,
     Tabs,
     TabsList,
     TabsTrigger,
-    DialogFooter,
-    SimpleItemCard,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
-import { Item, Collection, Tag } from "@prisma/client";
-import {
-    ExternalLink as ExternalLinkIcon,
-    Trash2,
-    MoreHorizontal,
-    PanelRightOpen,
-    Newspaper,
-    LayoutDashboard,
-} from "lucide-react";
-import Link from "next/link";
 import { cn } from "../utils";
-import renderIcon from "@/src/app/utils/renderIcon";
-import { useState } from "react";
-import { Experience, Finetuning } from "@/src/datatypes/summary";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -71,6 +72,25 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         (value): value is number => typeof value === "number"
     );
 
+    const generateFlashcardsMutation =
+        trpc.flashcards.generateFlashcards.useMutation({
+            onSuccess: () => {
+                console.log("successfully generated flashcards");
+            },
+            onError: (err) => {
+                console.error(err);
+            },
+        });
+
+    const handleGenerateFlashcards = (itemId: string) => {
+        generateFlashcardsMutation.mutate({
+            itemId,
+            numOfFlashcards: 4,
+            experience: Experience.Intermediate,
+            range: Range.Balanced,
+        });
+    };
+
     return (
         <>
             <SimpleItemCard
@@ -96,6 +116,10 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                         <ItemDropdownMenu
                             data={data}
                             openSummaries={() => setIsOpenSummaries(true)}
+                            // TODO: open flashcards options dialog
+                            openFlashcards={() =>
+                                handleGenerateFlashcards(data.id)
+                            }
                         />
                         {statusNums.map((value) => (
                             <Button
@@ -125,9 +149,14 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 interface ItemDropdownMenuProps {
     data: Item & { collection: Collection; tags: Tag[] };
     openSummaries: () => void;
+    openFlashcards: () => void;
 }
 
-function ItemDropdownMenu({ data, openSummaries }: ItemDropdownMenuProps) {
+function ItemDropdownMenu({
+    data,
+    openSummaries,
+    openFlashcards,
+}: ItemDropdownMenuProps) {
     const ctx = trpc.useContext();
 
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
@@ -174,7 +203,13 @@ function ItemDropdownMenu({ data, openSummaries }: ItemDropdownMenuProps) {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                    <DropdownMenuIconItem Icon={LayoutDashboard}>
+                    <DropdownMenuIconItem
+                        Icon={LayoutDashboard}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            openFlashcards();
+                        }}
+                    >
                         Flashcards
                     </DropdownMenuIconItem>
                     <DropdownMenuIconItem
