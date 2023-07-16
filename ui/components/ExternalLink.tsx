@@ -11,7 +11,10 @@ const ExternalLink = ({
 }) => {
     return (
         <a
-            className={cn(className)}
+            className={cn(
+                "rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                className
+            )}
             href={href}
             target="_blank"
             rel="noreferrer"
@@ -22,4 +25,4 @@ const ExternalLink = ({
     );
 };
 
-export default ExternalLink;
+export { ExternalLink };

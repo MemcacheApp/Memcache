@@ -1,9 +1,7 @@
 import { Globe, Package2, TagIcon } from "lucide-react";
-import { Card, CardFooter, CardHeader, CardTitle, Skeleton } from ".";
-import ExternalLink from "./ExternalLink";
+import { Card, CardFooter, CardHeader, CardTitle, ExternalLink, Link, Skeleton } from ".";
 import { cn } from "../utils";
 import { Collection, Tag } from "@prisma/client";
-import Link from "next/link";
 
 interface SimpleItemCardProps {
     type?: string;

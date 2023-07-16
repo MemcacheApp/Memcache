@@ -3,12 +3,12 @@ import {
     Card,
     CardTitle,
     ItemCard,
+    Link,
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from ".";
 import { InfoIcon, TimerIcon, WholeWordIcon } from "lucide-react";
-import Link from "next/link";
 import { cn } from "../utils";
 
 interface SummaryCardProps {
