@@ -35,6 +35,7 @@ import Link from "next/link";
 import { cn } from "../utils";
 import renderIcon from "@/src/app/utils/renderIcon";
 import { useState } from "react";
+import { Experience, Finetuning } from "@/src/datatypes/summary";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -113,6 +114,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 }
             />
             <SummariesDialog
+                data={data}
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
             />
@@ -202,11 +204,31 @@ function ItemDropdownMenu({ data, openSummaries }: ItemDropdownMenuProps) {
 }
 
 interface SummariesDialogProps {
+    data: Item & { collection: Collection; tags: Tag[] };
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-function SummariesDialog({ open, onOpenChange }: SummariesDialogProps) {
+function SummariesDialog({ data, open, onOpenChange }: SummariesDialogProps) {
+    const [numOfWords, setNumOfWords] = useState(250);
+    const [experience, setExperience] = useState(Experience.Intermediate);
+    const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
+
+    const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
+        onSuccess(data) {
+            console.log(data);
+        },
+    });
+
+    const handleSubmit = () => {
+        generateSummaryMutation.mutate({
+            itemId: data.id,
+            numOfWords,
+            experience,
+            finetuning,
+        });
+    };
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
@@ -220,20 +242,35 @@ function SummariesDialog({ open, onOpenChange }: SummariesDialogProps) {
                             className="w-32"
                             id="numofwords"
                             type="number"
-                            defaultValue={250}
+                            value={numOfWords}
+                            onChange={(e) =>
+                                setNumOfWords(parseInt(e.target.value))
+                            }
                         />
                     </div>
                     <div className="flex items-center justify-between">
                         <Label htmlFor="experience">Experience</Label>
-                        <Tabs id="experience" defaultValue="intermediate">
+                        <Tabs
+                            id="experience"
+                            value={experience.toString()}
+                            onValueChange={(value) =>
+                                setExperience(parseInt(value))
+                            }
+                        >
                             <TabsList>
-                                <TabsTrigger value="beginner">
+                                <TabsTrigger
+                                    value={Experience.Beginner.toString()}
+                                >
                                     Beginner
                                 </TabsTrigger>
-                                <TabsTrigger value="intermediate">
+                                <TabsTrigger
+                                    value={Experience.Intermediate.toString()}
+                                >
                                     Intermediate
                                 </TabsTrigger>
-                                <TabsTrigger value="advanced">
+                                <TabsTrigger
+                                    value={Experience.Advanced.toString()}
+                                >
                                     Advanced
                                 </TabsTrigger>
                             </TabsList>
@@ -241,21 +278,35 @@ function SummariesDialog({ open, onOpenChange }: SummariesDialogProps) {
                     </div>
                     <div className="flex items-center justify-between">
                         <Label htmlFor="finetuning">Finetuning</Label>
-                        <Tabs id="finetuning" defaultValue="qualitative">
+                        <Tabs
+                            id="finetuning"
+                            value={finetuning.toString()}
+                            onValueChange={(value) =>
+                                setFinetuning(parseInt(value))
+                            }
+                        >
                             <TabsList>
-                                <TabsTrigger value="qualitative">
+                                <TabsTrigger
+                                    value={Finetuning.Qualitative.toString()}
+                                >
                                     Qualitative
                                 </TabsTrigger>
-                                <TabsTrigger value="quantitative">
+                                <TabsTrigger
+                                    value={Finetuning.Quantitative.toString()}
+                                >
                                     Quantitative
                                 </TabsTrigger>
-                                <TabsTrigger value="mixed">Mixed</TabsTrigger>
+                                <TabsTrigger
+                                    value={Finetuning.Mixed.toString()}
+                                >
+                                    Mixed
+                                </TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button>Generate</Button>
+                    <Button onClick={handleSubmit}>Generate</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
