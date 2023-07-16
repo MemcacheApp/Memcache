@@ -1,35 +1,24 @@
 import { Experience, Finetuning } from "@/src/datatypes/summary";
 import { prisma } from "../db/prisma";
-import * as scrapeIt from "scrape-it";
+import scrapeIt from "scrape-it";
 import { v4 as uuidv4 } from "uuid";
 import ItemController from "./item-controller";
 import openai from "../utils/openai";
 import { GetSummaryError } from "./errors/summary";
+import { z } from "zod";
 
-type ScrapeItDataType = {
-    headers: { content: string }[];
-    paragraphs: { content: string }[];
-};
-
-/**
- *
- * Type guard for validating scraped data from scrapeIt API.
- * @returns
- */
-function validateScrapedData(data: any): data is ScrapeItDataType {
-    if (typeof data !== "object") return false;
-    if (!(data.headers instanceof Array)) return false;
-    for (const header of data.headers) {
-        if (typeof header !== "object") return false;
-        if (typeof header.content !== "string") return false;
-    }
-    if (!(data.paragraphs instanceof Array)) return false;
-    for (const paragraph of data.paragraphs) {
-        if (typeof paragraph !== "object") return false;
-        if (typeof paragraph.content !== "string") return false;
-    }
-    return true;
-}
+const ScrapedData = z.object({
+    headers: z
+        .object({
+            content: z.string(),
+        })
+        .array(),
+    paragraphs: z
+        .object({
+            content: z.string(),
+        })
+        .array(),
+});
 
 export default class SummaryController {
     static async getSummary(itemId: string) {
@@ -68,7 +57,7 @@ export default class SummaryController {
     }
 
     static async scrapeContent({ url }: { url: string }) {
-        const { data } = await scrapeIt.default(url, {
+        const { data } = await scrapeIt(url, {
             headers: {
                 listItem: "h1,h2,h3,h4,h5,h6",
                 data: {
@@ -87,12 +76,12 @@ export default class SummaryController {
             },
         });
 
-        if (!validateScrapedData(data)) {
-            throw new Error("Scraped data is invalid");
-        }
+        const scrapedData = ScrapedData.parse(data);
 
-        const headersContent = data.headers.map((header) => header.content);
-        const paragraphsContent = data.paragraphs.map(
+        const headersContent = scrapedData.headers.map(
+            (header) => header.content
+        );
+        const paragraphsContent = scrapedData.paragraphs.map(
             (paragraph) => paragraph.content
         );
 
