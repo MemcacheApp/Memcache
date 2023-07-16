@@ -28,7 +28,7 @@ export function SummaryCard({ className, summary }: SummaryCardProps) {
     return (
         <Card
             className={cn(
-                "group relative z-0 overflow-hidden pt-6 px-6 cursor-pointer",
+                "group relative z-0 overflow-hidden pt-6 px-6 hover:border-slate-500 transition-colors cursor-pointer",
                 className
             )}
             onClick={() => push(`/app/summaries/${summary.id}`)}
