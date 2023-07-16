@@ -1,6 +1,6 @@
 "use client";
 
-import { PageTitle, SummaryCard } from "@/ui/components";
+import { PageTitle, ScrollArea, ScrollBar, SummaryCard } from "@/ui/components";
 import { trpc } from "../../utils/trpc";
 
 export default function SummariesPage() {
@@ -15,11 +15,18 @@ export default function SummariesPage() {
                     <h3 className="text-lg font-medium mb-3">
                         Latest Generated
                     </h3>
-                    <div className="flex gap-3">
-                        {latestSummariesQuery.data?.map((summary) => (
-                            <SummaryCard key={summary.id} summary={summary} />
-                        ))}
-                    </div>
+                    <ScrollArea>
+                        <div className="flex gap-3">
+                            {latestSummariesQuery.data?.map((summary) => (
+                                <SummaryCard
+                                    className="w-80 shrink-0"
+                                    key={summary.id}
+                                    summary={summary}
+                                />
+                            ))}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
                 </div>
                 <div className="bg-background mx-8 p-6 border rounded-lg">
                     <h2 className="text-xl font-semibold mb-5">
