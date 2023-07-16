@@ -21,10 +21,10 @@ const ScrapedData = z.object({
 });
 
 export default class SummaryController {
-    static async getSummary(itemId: string) {
+    static async getSummary(summaryId: string) {
         const summary = await prisma.summary.findUnique({
             where: {
-                id: itemId,
+                id: summaryId,
             },
         });
 
