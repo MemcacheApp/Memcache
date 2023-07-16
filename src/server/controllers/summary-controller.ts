@@ -35,10 +35,10 @@ export default class SummaryController {
         return summary;
     }
 
-    static async getSummaryMeta(summaryId: string) {
-        const summary = await prisma.summary.findUnique({
+    static async getItemSummaries(itemId: string) {
+        const summaries = await prisma.summary.findMany({
             where: {
-                id: summaryId,
+                itemId,
             },
             select: {
                 id: true,
@@ -49,11 +49,7 @@ export default class SummaryController {
             },
         });
 
-        if (summary === null) {
-            throw new GetSummaryError("SummaryNotExist");
-        }
-
-        return summary;
+        return summaries;
     }
 
     static async scrapeContent({ url }: { url: string }) {

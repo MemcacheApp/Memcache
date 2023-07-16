@@ -24,23 +24,16 @@ export const summaryRouter = router({
                 }
             }
         }),
-    getSummaryMeta: protectedProcedure
+    getItemSummaries: protectedProcedure
         .input(z.object({ itemId: z.string() }))
         .query(async ({ input }) => {
             try {
-                return SummaryController.getSummaryMeta(input.itemId);
+                return SummaryController.getItemSummaries(input.itemId);
             } catch (e) {
-                if (e instanceof GetSummaryError) {
-                    throw new TRPCError({
-                        message: e.message,
-                        code: "BAD_REQUEST",
-                    });
-                } else {
-                    console.error(e);
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                    });
-                }
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
             }
         }),
     generateSummary: protectedProcedure
