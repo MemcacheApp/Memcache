@@ -1,6 +1,6 @@
 "use client";
 
-import { PageTitle } from "@/ui/components";
+import { H1, P, PageTitle } from "@/ui/components";
 import { trpc } from "@/src/app/utils/trpc";
 
 interface SummaryDetailPageProps {
@@ -18,9 +18,9 @@ export default function SummaryDetailPage({ params }: SummaryDetailPageProps) {
     return (
         <div className="flex flex-col">
             <PageTitle>Summary of {data?.item.title} </PageTitle>
-            <div>
-                <h1>ID: {params.slug}</h1>
-                <p> {data?.content} </p>
+            <div className="mx-8">
+                <P>ID: {params.slug}</P>
+                <P>{data?.content}</P>
             </div>
         </div>
     );

@@ -14,6 +14,7 @@ import {
     TooltipTrigger,
 } from ".";
 import { CalendarIcon, InfoIcon, TimerIcon, WholeWordIcon } from "lucide-react";
+import Link from "next/link";
 
 interface SummaryCardProps {
     summary: Summary & { item: Item & { collection: Collection; tags: Tag[] } };
@@ -25,7 +26,9 @@ export function SummaryCard({ summary }: SummaryCardProps) {
             <div className="absolute left-0 right-0 bottom-5 h-32 bg-gradient-to-b from-background/0 to-background pointer-events-none"></div>
             <div className="absolute left-0 right-0 bottom-0 h-5 bg-background pointer-events-none"></div>
             <CardTitle className="text-xl">
-                {summary.item.title}
+                <Link href={`/app/summaries/${summary.id}`}>
+                    {summary.item.title}
+                </Link>
                 <Popover>
                     <PopoverTrigger className="ml-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         <InfoIcon size={18} className="text-slate-500" />
