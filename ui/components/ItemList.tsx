@@ -5,15 +5,7 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import renderIcon from "@/src/app/utils/renderIcon";
 import { trpc } from "@/src/app/utils/trpc";
-import {
-    Archive,
-    CheckCircle2,
-    CircleDot,
-    Inbox,
-    SquareStack,
-    Trash2,
-    X,
-} from "lucide-react";
+import { SquareStack, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
 import {
@@ -32,7 +24,7 @@ export function ItemList() {
             activeStatus: state.activeStatus,
             selectedItems: state.selectedItems,
             selectItem: state.selectItem,
-        })
+        }),
     );
 
     const itemsQuery = trpc.item.getUserItems.useQuery();
@@ -42,10 +34,10 @@ export function ItemList() {
             return itemsQuery.data
                 .filter(
                     (item) =>
-                        activeStatus === null || activeStatus === item.status
+                        activeStatus === null || activeStatus === item.status,
                 )
                 .sort(
-                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
+                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf(), // sort by createdAt
                 );
         } else {
             return [];
@@ -91,7 +83,7 @@ function Options() {
 
 function NormalOptions() {
     const enableMultiselect = useItemListStore(
-        (state) => state.enableMultiselect
+        (state) => state.enableMultiselect,
     );
 
     return (
@@ -117,7 +109,7 @@ function MultiselectOptions() {
             selectedItems: state.selectedItems,
             showPanel: state.showPanel,
             disableMultiselect: state.disableMultiselect,
-        })
+        }),
     );
 
     const ctx = trpc.useContext();
@@ -156,7 +148,7 @@ function MultiselectOptions() {
     };
 
     const statusNames = Object.values(StatusEnum).filter(
-        (value): value is string => typeof value === "string"
+        (value): value is string => typeof value === "string",
     );
     const statusNums = Array.from(statusNames.keys());
 
@@ -230,42 +222,25 @@ function StatusToggle() {
 
     return (
         <div className="flex items-center space-x-3 h-12 overflow-x-auto grow">
-            <Button
-                variant={
-                    activeStatus === StatusEnum.Inbox ? "default" : "outline"
-                }
-                onClick={() => setActiveStatus(StatusEnum.Inbox)}
-            >
-                <Inbox className="mr-2" size={18} />
-                Inbox
-            </Button>
-            <Button
-                variant={
-                    activeStatus === StatusEnum.Underway ? "default" : "outline"
-                }
-                onClick={() => setActiveStatus(StatusEnum.Underway)}
-            >
-                <CircleDot className="mr-2" size={18} />
-                Underway
-            </Button>
-            <Button
-                variant={
-                    activeStatus === StatusEnum.Complete ? "default" : "outline"
-                }
-                onClick={() => setActiveStatus(StatusEnum.Complete)}
-            >
-                <CheckCircle2 className="mr-2" size={18} />
-                Complete
-            </Button>
-            <Button
-                variant={
-                    activeStatus === StatusEnum.Archive ? "default" : "outline"
-                }
-                onClick={() => setActiveStatus(StatusEnum.Archive)}
-            >
-                <Archive className="mr-2" size={18} />
-                Archive
-            </Button>
+            {Object.values(StatusEnum)
+                .filter((value) => typeof value === "number")
+                .map((value) => {
+                    return (
+                        <Button
+                            key={value}
+                            variant={
+                                activeStatus === value ? "default" : "outline"
+                            }
+                            onClick={() => setActiveStatus(value as StatusEnum)}
+                        >
+                            {renderIcon(
+                                StatusIcons[value as StatusEnum],
+                                "mr-2",
+                            )}
+                            {StatusNames[value as StatusEnum]}
+                        </Button>
+                    );
+                })}
         </div>
     );
 }

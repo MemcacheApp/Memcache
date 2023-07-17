@@ -2,8 +2,6 @@
 
 import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
 import renderIcon from "@/src/app/utils/renderIcon";
-import { Range } from "@/src/datatypes/flashcard";
-import { Experience, Finetuning } from "@/src/datatypes/summary";
 import { Collection, Item, Tag } from "@prisma/client";
 import {
     ExternalLink as ExternalLinkIcon,
@@ -17,26 +15,17 @@ import Link from "next/link";
 import { useState } from "react";
 import {
     Button,
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuIconItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-    Input,
-    Label,
     SimpleItemCard,
-    Tabs,
-    TabsList,
-    TabsTrigger,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { cn } from "../utils";
+import { FlashcardsDialog, SummariesDialog } from "./GenerationDialog";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -60,6 +49,7 @@ export function ItemCard({
     format,
 }: ItemCardProps) {
     const [isOpenSummaries, setIsOpenSummaries] = useState(false);
+    const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
 
     const ctx = trpc.useContext();
 
@@ -85,25 +75,6 @@ export function ItemCard({
     const statusNums = Object.values(StatusEnum).filter(
         (value): value is number => typeof value === "number",
     );
-
-    const generateFlashcardsMutation =
-        trpc.flashcards.generateFlashcards.useMutation({
-            onSuccess: () => {
-                console.log("successfully generated flashcards");
-            },
-            onError: (err) => {
-                console.error(err);
-            },
-        });
-
-    const handleGenerateFlashcards = (itemId: string) => {
-        generateFlashcardsMutation.mutate({
-            itemId,
-            numOfFlashcards: 4,
-            experience: Experience.Intermediate,
-            range: Range.Balanced,
-        });
-    };
 
     return (
         <>
@@ -138,10 +109,7 @@ export function ItemCard({
                             <ItemDropdownMenu
                                 data={data}
                                 openSummaries={() => setIsOpenSummaries(true)}
-                                // TODO: open flashcards options dialog
-                                openFlashcards={() =>
-                                    handleGenerateFlashcards(data.id)
-                                }
+                                openFlashcards={() => setIsOpenFlashcards(true)}
                             />
                             {statusNums.map((value) => (
                                 <Button
@@ -164,6 +132,11 @@ export function ItemCard({
                 data={data}
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
+            />
+            <FlashcardsDialog
+                data={data}
+                open={isOpenFlashcards}
+                onOpenChange={setIsOpenFlashcards}
             />
         </>
     );
@@ -258,115 +231,5 @@ function ItemDropdownMenu({
                 </DropdownMenuIconItem>
             </DropdownMenuContent>
         </DropdownMenu>
-    );
-}
-
-interface SummariesDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-}
-
-function SummariesDialog({ data, open, onOpenChange }: SummariesDialogProps) {
-    const [numOfWords, setNumOfWords] = useState(250);
-    const [experience, setExperience] = useState(Experience.Intermediate);
-    const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
-
-    const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
-        onSuccess(data) {
-            console.log(data);
-        },
-    });
-
-    const handleSubmit = () => {
-        generateSummaryMutation.mutate({
-            itemId: data.id,
-            numOfWords,
-            experience,
-            finetuning,
-        });
-    };
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Summaries</DialogTitle>
-                </DialogHeader>
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="numofwords">Number of words</Label>
-                        <Input
-                            className="w-32"
-                            id="numofwords"
-                            type="number"
-                            value={numOfWords}
-                            onChange={(e) =>
-                                setNumOfWords(parseInt(e.target.value))
-                            }
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="experience">Experience</Label>
-                        <Tabs
-                            id="experience"
-                            value={experience.toString()}
-                            onValueChange={(value) =>
-                                setExperience(parseInt(value))
-                            }
-                        >
-                            <TabsList>
-                                <TabsTrigger
-                                    value={Experience.Beginner.toString()}
-                                >
-                                    Beginner
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Experience.Intermediate.toString()}
-                                >
-                                    Intermediate
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Experience.Advanced.toString()}
-                                >
-                                    Advanced
-                                </TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="finetuning">Finetuning</Label>
-                        <Tabs
-                            id="finetuning"
-                            value={finetuning.toString()}
-                            onValueChange={(value) =>
-                                setFinetuning(parseInt(value))
-                            }
-                        >
-                            <TabsList>
-                                <TabsTrigger
-                                    value={Finetuning.Qualitative.toString()}
-                                >
-                                    Qualitative
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Finetuning.Quantitative.toString()}
-                                >
-                                    Quantitative
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Finetuning.Mixed.toString()}
-                                >
-                                    Mixed
-                                </TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     );
 }
