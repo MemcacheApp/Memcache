@@ -36,6 +36,7 @@ export function SummariesDialog({
 
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
         onSuccess(data) {
+            console.log("Successfully generated summary:");
             console.log(data);
         },
     });
@@ -47,13 +48,15 @@ export function SummariesDialog({
             experience,
             finetuning,
         });
+        // TODO: show toast notification: "Generating summary..."
+        onOpenChange(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Summaries</DialogTitle>
+                    <DialogTitle>Generate Flashcards</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
@@ -133,12 +136,18 @@ export function SummariesDialog({
     );
 }
 
+interface FlashcardsDialogProps {
+    data: Item & { collection: Collection; tags: Tag[] };
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+}
+
 export function FlashcardsDialog({
     data,
     open,
     onOpenChange,
-}: SummariesDialogProps) {
-    const [numOfFlashcards, setNumOfFlashcards] = useState(5);
+}: FlashcardsDialogProps) {
+    const [numOfFlashcards, setNumOfFlashcards] = useState(3);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [range, setRange] = useState(Range.Balanced);
 
@@ -161,13 +170,15 @@ export function FlashcardsDialog({
             experience,
             range,
         });
+        // TODO: show toast notification: "Generating flashcards..."
+        onOpenChange(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Summaries</DialogTitle>
+                    <DialogTitle>Generate Flashcards</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">

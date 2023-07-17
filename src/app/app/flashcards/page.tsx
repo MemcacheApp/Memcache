@@ -1,11 +1,9 @@
 "use client";
 
 import { Card, Input, ItemCard, ScrollArea, ScrollBar } from "@/ui/components";
-import { ExternalLink } from "@/ui/components/ExternalLink";
+import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { H4 } from "@/ui/components/typography";
 import { Collection, Item, Tag } from "@prisma/client";
-import { Globe, Package2 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
 import { ReviewRatingEnum } from "../../utils/ReviewRating";
@@ -42,7 +40,7 @@ const flashcardsData = [
         ],
     },
     {
-        id: 1,
+        id: 2,
         question: "What parameter does the WebSocket constructor accept?",
         answer: "The WebSocket constructor accepts a URL and an optional protocol parameter.",
         due: "2023-07-27T20:45:18.758+10:00",
@@ -74,6 +72,10 @@ export default function FlashcardsPage() {
             ?.sort((a, b) => b.createdAt.valueOf() - a.createdAt.valueOf())
             .slice(0, 8) ?? [];
 
+    const [selectedItem, setSelectedItem] = useState<
+        (Item & { collection: Collection; tags: Tag[] }) | null
+    >(null);
+
     return (
         <div className="flex flex-col gap-5">
             <PageTitle>Flashcards</PageTitle>
@@ -94,7 +96,7 @@ export default function FlashcardsPage() {
                 </div>
             ))}
             <Card className="rounded-lg mx-8 p-6">
-                <H3 className="mb-5">Generate Flashards</H3>
+                <H3>Generate Flashards</H3>
                 <div className="mt-3 mb-4">
                     <Input
                         className="text-base border-solid rounded-md"
@@ -103,27 +105,19 @@ export default function FlashcardsPage() {
                         onChange={(e) => setUrl(e.target.value)}
                     />
                 </div>
-                <H4 className="mb-8">Suggested</H4>
+                <H4>Suggested</H4>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
                         {suggestedItems.map((item) => (
-                            // <SuggestedItemCard key={item.id} item={item} />
-                            // <div
-                            //     key={item.id}
-                            //     className="bg-background/90 backdrop-blur-md p-0 w-[25rem] max-h-[50vh] overflow-auto rounded-lg"
-                            // >
-                            <Card
+                            <ItemCard
                                 key={item.id}
-                                className="w-[25rem] h-[460px] max-h-[50vh] overflow-auto rounded-lg"
-                            >
-                                <ItemCard
-                                    className="bg-transparent border-none"
-                                    data={item}
-                                    hideOptions
-                                    format={{ growHeight: true }}
-                                />
-                            </Card>
-                            // </div>
+                                className="w-[25rem] h-[30rem] max-h-[50vh] bg-transparent"
+                                data={item}
+                                selected={selectedItem?.id === item.id}
+                                onSelect={() => setSelectedItem(item)}
+                                hideOptions
+                                format={{ growHeight: true }}
+                            />
                         ))}
                     </div>
                     <ScrollBar orientation="horizontal" />
@@ -138,71 +132,17 @@ export default function FlashcardsPage() {
                 <H3>Items with Flashcards</H3>
                 <H4>Recently Created</H4>
             </Card>
+            {selectedItem && (
+                <FlashcardsDialog
+                    data={selectedItem}
+                    open={selectedItem !== null}
+                    onOpenChange={(value: boolean) => {
+                        if (!value) {
+                            setSelectedItem(null);
+                        }
+                    }}
+                />
+            )}
         </div>
-    );
-}
-
-function SuggestedItemCard({
-    item,
-}: {
-    item: Item & { collection: Collection; tags: Tag[] };
-}) {
-    return (
-        <Card className="w-[380px] h-[460px] shrink-0 rounded-lg px-6 py-6">
-            {item.title}
-            {item.description}
-            {item.siteName}
-            <div className="flex flex-wrap gap-5 text-slate-450 text-sm">
-                {item.siteName ? (
-                    <ExternalLink
-                        href={item.url ? item.url : "#"}
-                        onClick={(e: any) => {
-                            e.stopPropagation();
-                        }}
-                    >
-                        <div className="h-full flex items-center gap-2">
-                            {item.favicon ? (
-                                <img
-                                    width={16}
-                                    height={16}
-                                    src={item.favicon}
-                                />
-                            ) : (
-                                <Globe size={16} />
-                            )}
-
-                            {item.siteName}
-                        </div>
-                    </ExternalLink>
-                ) : null}
-                {item.collection ? (
-                    <Link href={`/app/collection/${item.collection.id}`}>
-                        <div className="h-full flex items-center gap-2">
-                            <Package2 size={16} />
-                            {item.collection.name}
-                        </div>
-                    </Link>
-                ) : null}
-                {/* {item.tags ? (
-                    <div className="flex flex-wrap gap-3">
-                        {item.tags.map((tag) => (
-                            <Link
-                                key={tag.id}
-                                href={`/app/tag/${tag.id}`}
-                                tabIndex={-1}
-                            >
-                                <Button
-                                    className="px-4"
-                                    variant="secondary"
-                                    size="xs"
-                                >
-                                    {tag.name}
-                                </Button>
-                            </Link>
-                        ))}
-                    </div>
-                ) : null} */}
-            </div>
-        </Card>
     );
 }
