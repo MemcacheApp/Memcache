@@ -1,8 +1,8 @@
 "use client";
 
 import {
-    H2,
     H3,
+    H4,
     PageTitle,
     ScrollArea,
     ScrollBar,
@@ -18,8 +18,8 @@ export default function SummariesPage() {
             <PageTitle>Summaries</PageTitle>
             <div className="flex flex-col gap-5">
                 <div className="bg-background mx-8 p-6 border rounded-lg">
-                    <H2 className="mb-5">My Summaries</H2>
-                    <H3 className="mb-3">Latest Generated</H3>
+                    <H3>My Summaries</H3>
+                    <H4>Latest Generated</H4>
                     <ScrollArea type="scroll">
                         <div className="flex gap-3 p-1">
                             {latestSummariesQuery.data?.map((summary) => (
@@ -34,7 +34,7 @@ export default function SummariesPage() {
                     </ScrollArea>
                 </div>
                 <div className="bg-background mx-8 p-6 border rounded-lg">
-                    <H3 className="mb-5">Generate Summary</H3>
+                    <H4>Generate Summary</H4>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { Button, Card, Input } from "@/ui/components";
-import ExternalLink from "@/ui/components/ExternalLink";
+import { Card, Input, ItemCard, ScrollArea, ScrollBar } from "@/ui/components";
+import { ExternalLink } from "@/ui/components/ExternalLink";
 import { H4 } from "@/ui/components/typography";
 import { Collection, Item, Tag } from "@prisma/client";
 import { Globe, Package2 } from "lucide-react";
@@ -75,10 +75,9 @@ export default function FlashcardsPage() {
             .slice(0, 8) ?? [];
 
     return (
-        <div className="flex flex-col mx">
+        <div className="flex flex-col gap-5">
             <PageTitle>Flashcards</PageTitle>
-            <p>{`Prompt: "Recently I've picked up a new hobby: I'm learning to fly light aircraft and I find it very fun and interesting. However I have a lot to learn."`}</p>
-            <p>{`(please don't click this too much lol it cost money)`}</p>
+
             {flashcardsData?.map((flashcard) => (
                 <div
                     className="px-4 my-4 flex flex-col gap-3"
@@ -94,8 +93,8 @@ export default function FlashcardsPage() {
                     </div>
                 </div>
             ))}
-            <Card className="rounded-lg px-6 py-6">
-                <H3>Generate Flashards</H3>
+            <Card className="rounded-lg mx-8 p-6">
+                <H3 className="mb-5">Generate Flashards</H3>
                 <div className="mt-3 mb-4">
                     <Input
                         className="text-base border-solid rounded-md"
@@ -104,19 +103,34 @@ export default function FlashcardsPage() {
                         onChange={(e) => setUrl(e.target.value)}
                     />
                 </div>
-                <H4>Suggested</H4>
-                <div className="mt-3 mb-4 w-full pb-4 flex flex-row flex-nowrap gap-4 overflow-x-scroll">
-                    {suggestedItems.map((item) => (
-                        <SuggestedItemCard key={item.id} item={item} />
-                    ))}
-                </div>
+                <H4 className="mb-8">Suggested</H4>
+                <ScrollArea type="scroll">
+                    <div className="flex gap-3 p-1">
+                        {suggestedItems.map((item) => (
+                            // <SuggestedItemCard key={item.id} item={item} />
+                            // <div
+                            //     key={item.id}
+                            //     className="bg-background/90 backdrop-blur-md p-0 w-[25rem] max-h-[50vh] overflow-auto rounded-lg"
+                            // >
+                            <Card key={item.id} className="w-[25rem] h-[460px] max-h-[50vh] overflow-auto rounded-lg">
+                                <ItemCard
+                                    className="bg-transparent border-none"
+                                    data={item}
+                                    hideOptions
+                                />
+                            </Card>
+                            // </div>
+                        ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
             </Card>
-            <Card className="rounded-lg px-6 py-6">
+            <Card className="rounded-lg mx-8 p-6">
                 <H3>My Flashcards</H3>
                 <H4>Revision Queue</H4>
                 <H4>Recently Viewed</H4>
             </Card>
-            <Card className="rounded-lg px-6 py-6">
+            <Card className="rounded-lg mx-8 p-6">
                 <H3>Items with Flashcards</H3>
                 <H4>Recently Created</H4>
             </Card>
@@ -138,7 +152,7 @@ function SuggestedItemCard({
                 {item.siteName ? (
                     <ExternalLink
                         href={item.url ? item.url : "#"}
-                        onClick={(e) => {
+                        onClick={(e: any) => {
                             e.stopPropagation();
                         }}
                     >
@@ -165,7 +179,7 @@ function SuggestedItemCard({
                         </div>
                     </Link>
                 ) : null}
-                {item.tags ? (
+                {/* {item.tags ? (
                     <div className="flex flex-wrap gap-3">
                         {item.tags.map((tag) => (
                             <Link
@@ -183,7 +197,7 @@ function SuggestedItemCard({
                             </Link>
                         ))}
                     </div>
-                ) : null}
+                ) : null} */}
             </div>
         </Card>
     );
