@@ -34,16 +34,30 @@ function getFlashcard({ question, answer }: GetFlashCardParams): FlashcardType {
     };
 }
 
-/**
- * Type guard to narrow an object to a `GetFlashCardParams` type.
- * Made to check OpenAI's returned function call parameters to the `getCurrentWeather` function.
- */
-// function isGetFlashcardParams(obj: any): obj is GetFlashCardParams {
-//     if (typeof obj !== "object") return false;
-//     if (typeof obj.question !== "string") return false;
-//     if (typeof obj.answer !== "string") return false;
-//     return true;
-// }
+const functionName = "getFlashcard";
+
+const functions: ChatCompletionFunctions[] = [
+    {
+        name: functionName,
+        description: "Creates a flashcard with a question and answer",
+        parameters: {
+            type: "object",
+            properties: {
+                question: {
+                    type: "string",
+                    description:
+                        "The question to ask the user and test their knowledge about the subject matter.",
+                },
+                answer: {
+                    type: "string",
+                    description:
+                        "The answer to the question, to help the user revise the subject matter prompted by the question.",
+                },
+            },
+            required: ["question", "answer"],
+        },
+    },
+];
 
 export default class FlashcardController {
     static async generateFlashcards(
@@ -60,78 +74,12 @@ export default class FlashcardController {
         const truncatedContent = content.slice(0, 5000); // About 1000 words
         console.log(`Content: ${truncatedContent}`);
 
-        const functions: ChatCompletionFunctions[] = [
-            {
-                name: "getFlashcard",
-                description: "Creates a flashcard with a question and answer",
-                parameters: {
-                    type: "object",
-                    properties: {
-                        question: {
-                            type: "string",
-                            description:
-                                "The question to ask the user and test their knowledge about the subject matter.",
-                        },
-                        answer: {
-                            type: "string",
-                            description:
-                                "The answer to the question, to help the user revise the subject matter prompted by the question.",
-                        },
-                    },
-                    required: ["question", "answer"],
-                },
-            },
-        ];
-
-        // Initialise GPT's Role
-        let systemPrompt = `You are a revolutionary AI flashcard-generating AI. You excel in integrating a wide array of information into comprehensive flashcards, ensuring a holistic yet in-depth understanding of any given topic. You also creatively infuse engaging elements, like innovative mnemonics and captivating trivia, to foster interest and enhance memory retention. You generate flashcards that maximise learning outcomes by using advanced data analysis to identify challenging areas and then personalise flashcards to individual experience levels and learning preferences.
-        
-        A flashcard consists of a question and answer. The question is a prompt that tests the user's knowledge about a subject matter. The answer is a description that helps the user revise the subject matter prompted by the question. The question and answer are both written in natural language.
-
-        Given a piece of text on some subject matter, your job is to generate one or more flashcards that tests the user's knowledge on the subject matter.\n\n`;
-
-        // Introduce the Theme
-        if (item.description.length >= 35) {
-            systemPrompt += `Here is a brief description of the topic that the user wishes to learn about:
-                           """
-                           ${item.description}
-                           """\n\n`;
-        }
-
-        systemPrompt += `The main content that the user wishes to learn about is the following:
-                       """
-                        ${truncatedContent}	
-                       """
-                       You must remember the topic and content so that you can generate relevant, accurate, useful flashcards for the user.\n\n`;
-
-        // Modify Prompt Depending on Experience
-        switch (experience) {
-            case Experience.Beginner:
-                systemPrompt += `The user is a complete novice in the subject matter. They want to use flashcards to learn basic but important information related to the subject matter, so you must ensure that the flashcards you generate are easy to understand, use simple language and avoid technical jargon that might confuse a beginner. The knowledge assessed in each question and revealed in each answer should help the user build a solid understanding of the subject without assuming any prior knowledge.\n`;
-                break;
-            case Experience.Intermediate:
-                systemPrompt += `The user is an undergraduate student, who is new yet enthusiastic about this subject. They seek to use flashcards to master important details and cultivate a profound understanding of the topic. Therefore, the flashcards you generate should uphold academic integrity, presenting detailed insights and promoting inquisitive thinking. The aim is to challenge and expand the student's knowledge base in this field.\n`;
-                break;
-            case Experience.Advanced:
-                systemPrompt += `The user is a renowned expert with a doctoral degree and three decades of experience in this subject matter. They aim to refresh advanced concepts and fuel novel research through flashcard revision. Thus, generate flashcards delving into both essential and niche areas of the subject. Focus on areas with potential for groundbreaking discoveries. The goal is to stimulate thought and inspire innovation in this field.\n`;
-                break;
-        }
-
-        // Modify Prompt Depending on Finetuning
-        switch (range) {
-            case Range.Depth:
-                systemPrompt += `Your flashcards must concentrate deeply and intensively on the most relevant areas of the subject matter, helping the user in learning specialized facts, understanding root causes and drawing deep profound insights about the field.\n`;
-                break;
-            case Range.Breadth:
-                systemPrompt += `Your flashcards should investigate the subject matter in relation to tangentially connected fields, sourcing insights and drawing parallels from a variety of disciplines. However, the primary focus should remain on the central topic, thus aiding the user in gaining a comprehensive understanding of the subject and its intersections with other domains.\n`;
-                break;
-            case Range.Balanced:
-                systemPrompt += `Your flashcards must strike a balance between depth and breadth, encapsulating the crucial aspects of the subject matter while not getting lost in extreme specialization. The flashcards should have an awareness of the broader context of the field, offering a glimpse into its relationship with other areas without straying too far from the core topic. This balanced approach will provide the user with a solid foundation in the subject matter, while also equipping them with the ability to see its place in a larger interdisciplinary context.\n`;
-                break;
-        }
-
-        // Strictly Define Output Structure
-        systemPrompt += `Please keep each question no longer than 25 words. Please keep each answer no longer than 100 words. Please ensure that no two flashcards explore exactly the same concept or idea.\n`;
+        const systemPrompt = generateSystemPrompt(
+            item.description,
+            truncatedContent,
+            experience,
+            range,
+        );
 
         const messages: (
             | ChatCompletionResponseMessage // role, content, function_call
@@ -161,7 +109,7 @@ export default class FlashcardController {
                 messages: messages,
                 functions,
                 function_call: {
-                    name: "getFlashcard", // Force the AI to call this function on next chat response
+                    name: functionName, // Force the AI to call this function on next chat response
                 },
             });
 
@@ -176,7 +124,7 @@ export default class FlashcardController {
             if (response_message?.function_call) {
                 const functionCall = response_message.function_call;
 
-                if (functionCall.name === "getFlashcard") {
+                if (functionCall.name === functionName) {
                     // Parse and validate function arguments provided by the AI before passing them to the function
                     const functionArguments = functionCall.arguments
                         ? JSON.parse(functionCall.arguments)
@@ -195,7 +143,7 @@ export default class FlashcardController {
                         messages.push({
                             // This is a ChatCompletionRequestMessage authored by the function `getFlashcard`
                             role: "function",
-                            name: functionCall.name, // "getFlashcard"
+                            name: functionCall.name, // functionName
                             content: JSON.stringify(functionCallResult),
                         });
 
@@ -205,7 +153,7 @@ export default class FlashcardController {
                         if (e instanceof z.ZodError) {
                             throw new GenerateFlashcardError(
                                 "InvalidAIFunctionArgumentsGenerated",
-                                `Bad AI function call: invalid arguments to getFlashcard: ${functionArguments}`,
+                                `Bad AI function call: invalid arguments to ${functionName}: ${functionArguments}`,
                             );
                         } else {
                             throw e;
@@ -220,7 +168,7 @@ export default class FlashcardController {
             } else {
                 throw new GenerateFlashcardError(
                     "IncorrectAIResponse",
-                    `AI did not call function getFlashcard`,
+                    `AI did not call function ${functionName}`,
                 );
             }
 
@@ -232,4 +180,62 @@ export default class FlashcardController {
             // };
         }
     }
+}
+
+function generateSystemPrompt(
+    itemDescription: string,
+    itemContent: string,
+    experience: Experience,
+    range: Range,
+) {
+    // Initialise GPT's Role
+    let systemPrompt = `You are a revolutionary AI flashcard-generating AI. You excel in integrating a wide array of information into comprehensive flashcards, ensuring a holistic yet in-depth understanding of any given topic. You also creatively infuse engaging elements, like innovative mnemonics and captivating trivia, to foster interest and enhance memory retention. You generate flashcards that maximise learning outcomes by using advanced data analysis to identify challenging areas and then personalise flashcards to individual experience levels and learning preferences.
+        
+            A flashcard consists of a question and answer. The question is a prompt that tests the user's knowledge about a subject matter. The answer is a description that helps the user revise the subject matter prompted by the question. The question and answer are both written in natural language.
+    
+            Given a piece of text on some subject matter, your job is to generate one or more flashcards that tests the user's knowledge on the subject matter.\n\n`;
+
+    // Introduce the Theme
+    if (itemDescription.length >= 35) {
+        systemPrompt += `Here is a brief description of the topic that the user wishes to learn about:
+                               """
+                               ${itemDescription}
+                               """\n\n`;
+    }
+
+    systemPrompt += `The main content that the user wishes to learn about is the following:
+                           """
+                            ${itemContent}	
+                           """
+                           You must remember the topic and content so that you can generate relevant, accurate, useful flashcards for the user.\n\n`;
+
+    // Modify Prompt Depending on Experience
+    switch (experience) {
+        case Experience.Beginner:
+            systemPrompt += `The user is a complete novice in the subject matter. They want to use flashcards to learn basic but important information related to the subject matter, so you must ensure that the flashcards you generate are easy to understand, use simple language and avoid technical jargon that might confuse a beginner. The knowledge assessed in each question and revealed in each answer should help the user build a solid understanding of the subject without assuming any prior knowledge.\n`;
+            break;
+        case Experience.Intermediate:
+            systemPrompt += `The user is an undergraduate student, who is new yet enthusiastic about this subject. They seek to use flashcards to master important details and cultivate a profound understanding of the topic. Therefore, the flashcards you generate should uphold academic integrity, presenting detailed insights and promoting inquisitive thinking. The aim is to challenge and expand the student's knowledge base in this field.\n`;
+            break;
+        case Experience.Advanced:
+            systemPrompt += `The user is a renowned expert with a doctoral degree and three decades of experience in this subject matter. They aim to refresh advanced concepts and fuel novel research through flashcard revision. Thus, generate flashcards delving into both essential and niche areas of the subject. Focus on areas with potential for groundbreaking discoveries. The goal is to stimulate thought and inspire innovation in this field.\n`;
+            break;
+    }
+
+    // Modify Prompt Depending on Finetuning
+    switch (range) {
+        case Range.Depth:
+            systemPrompt += `Your flashcards must concentrate deeply and intensively on the most relevant areas of the subject matter, helping the user in learning specialized facts, understanding root causes and drawing deep profound insights about the field.\n`;
+            break;
+        case Range.Breadth:
+            systemPrompt += `Your flashcards should investigate the subject matter in relation to tangentially connected fields, sourcing insights and drawing parallels from a variety of disciplines. However, the primary focus should remain on the central topic, thus aiding the user in gaining a comprehensive understanding of the subject and its intersections with other domains.\n`;
+            break;
+        case Range.Balanced:
+            systemPrompt += `Your flashcards must strike a balance between depth and breadth, encapsulating the crucial aspects of the subject matter while not getting lost in extreme specialization. The flashcards should have an awareness of the broader context of the field, offering a glimpse into its relationship with other areas without straying too far from the core topic. This balanced approach will provide the user with a solid foundation in the subject matter, while also equipping them with the ability to see its place in a larger interdisciplinary context.\n`;
+            break;
+    }
+
+    // Strictly Define Output Structure
+    systemPrompt += `Please keep each question no longer than 25 words. Please keep each answer no longer than 100 words. Please ensure that no two flashcards explore exactly the same concept or idea.\n`;
+    return systemPrompt;
 }

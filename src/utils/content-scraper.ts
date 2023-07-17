@@ -38,10 +38,10 @@ export default class ContentScraper {
         const scrapedData = ScrapedData.parse(data);
 
         const headersContent = scrapedData.headers.map(
-            (header) => header.content
+            (header) => header.content,
         );
         const paragraphsContent = scrapedData.paragraphs.map(
-            (paragraph) => paragraph.content
+            (paragraph) => paragraph.content,
         );
 
         // Join into a single string

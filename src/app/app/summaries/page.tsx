@@ -1,25 +1,41 @@
 "use client";
 
-import Link from "next/link";
-import { PageTitle } from "../../../../ui/components";
-import { trpc } from "@/src/app/utils/trpc";
+import {
+    H2,
+    H3,
+    PageTitle,
+    ScrollArea,
+    ScrollBar,
+    SummaryCard,
+} from "@/ui/components";
+import { trpc } from "../../utils/trpc";
 
 export default function SummariesPage() {
-    const itemId = "a5a618b3-b864-46b4-8ba6-f517d6cc06b5";
-    const itemQuery = trpc.summary.getItemSummaries.useQuery({ itemId });
-    const data = itemQuery.data;
+    const latestSummariesQuery = trpc.summary.getLatestSummaries.useQuery();
 
     return (
         <div className="flex flex-col">
             <PageTitle>Summaries</PageTitle>
-            <div>
-                {data?.map((summary) => (
-                    <div key={summary.id}>
-                        <Link href={`app/summaries/${summary.id}`}>
-                            Go to summary {summary.id}
-                        </Link>
-                    </div>
-                ))}
+            <div className="flex flex-col gap-5">
+                <div className="bg-background mx-8 p-6 border rounded-lg">
+                    <H2 className="mb-5">My Summaries</H2>
+                    <H3 className="mb-3">Latest Generated</H3>
+                    <ScrollArea type="scroll">
+                        <div className="flex gap-3 p-1">
+                            {latestSummariesQuery.data?.map((summary) => (
+                                <SummaryCard
+                                    className="w-80 shrink-0"
+                                    key={summary.id}
+                                    summary={summary}
+                                />
+                            ))}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                </div>
+                <div className="bg-background mx-8 p-6 border rounded-lg">
+                    <H3 className="mb-5">Generate Summary</H3>
+                </div>
             </div>
         </div>
     );
