@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import {
+    Badge,
     Button,
     Command,
     CommandEmpty,
@@ -23,6 +24,7 @@ interface TagSelectorProps {
     value: string;
     setValue: (name: string, index: number) => void;
     remove: (index: number) => void;
+    disabled?: boolean;
 }
 
 export function TagSelector({
@@ -31,6 +33,7 @@ export function TagSelector({
     value,
     setValue,
     remove,
+    disabled,
 }: TagSelectorProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -42,32 +45,38 @@ export function TagSelector({
             <PopoverTrigger asChild>
                 {index === -1 ? (
                     <Button
+                        className="px-3 bg-slate-50"
                         variant="outline"
-                        size="xs"
+                        size="default"
                         role="combobox"
                         aria-expanded={open}
+                        disabled={disabled}
                     >
                         <Plus size={16} />
                     </Button>
                 ) : (
                     <Button
-                        className="px-4 group relative"
-                        variant="secondary"
-                        size="xs"
+                        className="px-4 group relative shadow-sm"
+                        variant="outline"
+                        size="default"
                         role="combobox"
                         aria-expanded={open}
+                        disabled={disabled}
                     >
                         {value}
-                        <span className="absolute -right-3 -bottom-2 bg-background p-1 border text-foreground opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 rounded-full z-10">
-                            <Edit size={13} />
-                        </span>
+                        <Badge
+                            variant="outline"
+                            className="absolute -right-3 -bottom-2 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 z-10"
+                        >
+                            <Edit size={12} />
+                        </Badge>
                     </Button>
                 )}
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-[250px] p-0">
                 <Command>
                     <CommandInput
-                        placeholder="Search or Add..."
+                        placeholder="Search or add tag..."
                         value={searchValue}
                         onValueChange={setSearchValue}
                     />

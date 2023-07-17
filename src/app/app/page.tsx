@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { trpc } from "@/src/app/utils/trpc";
-import { Loader } from "@/ui/components/Loader";
+import { Loader } from "@/ui/components";
 
 export default function page() {
     const { data } = trpc.user.isLoggedIn.useQuery();
@@ -10,7 +10,7 @@ export default function page() {
     if (data === undefined) {
         return (
             <div className="w-full h-screen flex justify-center items-center">
-                <Loader />
+                <Loader varient="ellipsis" />
             </div>
         );
     } else if (data) {
