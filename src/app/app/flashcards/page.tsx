@@ -112,11 +112,15 @@ export default function FlashcardsPage() {
                             //     key={item.id}
                             //     className="bg-background/90 backdrop-blur-md p-0 w-[25rem] max-h-[50vh] overflow-auto rounded-lg"
                             // >
-                            <Card key={item.id} className="w-[25rem] h-[460px] max-h-[50vh] overflow-auto rounded-lg">
+                            <Card
+                                key={item.id}
+                                className="w-[25rem] h-[460px] max-h-[50vh] overflow-auto rounded-lg"
+                            >
                                 <ItemCard
                                     className="bg-transparent border-none"
                                     data={item}
                                     hideOptions
+                                    format={{ growHeight: true }}
                                 />
                             </Card>
                             // </div>

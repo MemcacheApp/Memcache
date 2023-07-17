@@ -44,6 +44,11 @@ interface ItemCardProps {
     onSelect?: (id: string) => void;
     className?: string;
     hideOptions?: boolean;
+    format?: ItemCardFormat;
+}
+
+export interface ItemCardFormat {
+    growHeight?: boolean; // Height of SimpleItemCardFormat grows to fit container of the SimpleItemCard
 }
 
 export function ItemCard({
@@ -52,6 +57,7 @@ export function ItemCard({
     onSelect,
     className,
     hideOptions,
+    format,
 }: ItemCardProps) {
     const [isOpenSummaries, setIsOpenSummaries] = useState(false);
 
@@ -125,6 +131,7 @@ export function ItemCard({
                 thumbnail={data.thumbnail}
                 siteName={data.siteName}
                 favicon={data.favicon}
+                format={format}
                 footerRight={
                     hideOptions ? undefined : (
                         <>
