@@ -283,7 +283,7 @@ function SaveOptions({
     return (
         <div
             className={cn(
-                "relative flex flex-col gap-3 bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
+                "relative flex flex-col max-h-[75vh] overflow-auto gap-3 bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
                 { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse }
             )}
         >

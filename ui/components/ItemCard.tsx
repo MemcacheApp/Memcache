@@ -104,6 +104,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     onSelect(data.id);
                 }}
                 url={data.url}
+                type={data.type}
                 title={data.title}
                 collection={data.collection}
                 tags={data.tags}
