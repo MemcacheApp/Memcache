@@ -14,7 +14,7 @@ export default function CollectionsPage() {
             <div className="flex flex-col gap-3 md:mx-8 pb-8">
                 {data?.map((collection) => (
                     <div key={collection.name}>
-                        <Link href={`app/collections/${collection.name}`}>
+                        <Link href={`app/collections/${collection.id}`}>
                             Go to collection &apos;{collection.name}&apos;
                         </Link>
                     </div>
