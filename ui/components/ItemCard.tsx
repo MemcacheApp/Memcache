@@ -69,7 +69,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
     };
 
     const statusNums = Object.values(StatusEnum).filter(
-        (value): value is number => typeof value === "number"
+        (value): value is number => typeof value === "number",
     );
 
     const generateFlashcardsMutation =
@@ -98,7 +98,7 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     "transition-[transform,border-color]",
                     selected
                         ? "scale-[101%] shadow-md border-slate-500"
-                        : "scale-100"
+                        : "scale-100",
                 )}
                 onClick={() => {
                     onSelect(data.id);

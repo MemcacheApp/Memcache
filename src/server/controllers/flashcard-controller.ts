@@ -51,7 +51,7 @@ export default class FlashcardController {
         itemId: string,
         numOfFlashcards: number,
         experience: Experience,
-        range: Range
+        range: Range,
     ) {
         const item = await ItemController.getItem(itemId);
         const content = await ContentScraper.scrapeContent({
@@ -168,9 +168,9 @@ export default class FlashcardController {
             const response_message = chatCompletion.data.choices[0].message;
 
             console.log(
-                `\nGenerating flashcard ${i} (AI makes function call):`
+                `\nGenerating flashcard ${i} (AI makes function call):`,
             );
-            console.dir(chatCompletion.data, { depth: null });
+            // console.dir(chatCompletion.data, { depth: null });
 
             // Check if the AI wants to call a function
             if (response_message?.function_call) {
@@ -186,8 +186,9 @@ export default class FlashcardController {
                             GetFlashcardParams.parse(functionArguments);
                         // Call the function
                         const functionCallResult = getFlashcard(
-                            parsedGetFlashcardParams
+                            parsedGetFlashcardParams,
                         );
+                        console.dir(functionCallResult, { depth: null });
                         // TODO: Store new Flashcard in database
                         // Put function call response into message history for the AI to read
                         messages.push(response_message); // This is a ChatCompletionResponseMessage authored by the AI assistant
@@ -204,7 +205,7 @@ export default class FlashcardController {
                         if (e instanceof z.ZodError) {
                             throw new GenerateFlashcardError(
                                 "InvalidAIFunctionArgumentsGenerated",
-                                `Bad AI function call: invalid arguments to getFlashcard: ${functionArguments}`
+                                `Bad AI function call: invalid arguments to getFlashcard: ${functionArguments}`,
                             );
                         } else {
                             throw e;
@@ -213,13 +214,13 @@ export default class FlashcardController {
                 } else {
                     throw new GenerateFlashcardError(
                         "InvalidAIFunctionnameCalled",
-                        `Bad AI function call: unknown function name called: ${functionCall.name}`
+                        `Bad AI function call: unknown function name called: ${functionCall.name}`,
                     );
                 }
             } else {
                 throw new GenerateFlashcardError(
                     "IncorrectAIResponse",
-                    `AI did not call function getFlashcard`
+                    `AI did not call function getFlashcard`,
                 );
             }
 
