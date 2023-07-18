@@ -36,6 +36,16 @@ export const summaryRouter = router({
                 });
             }
         }),
+    getUserSummaries: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return SummaryController.getUserSummaries(ctx.userId);
+        } catch (e) {
+            console.error(e);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+            });
+        }
+    }),
     getLatestSummaries: protectedProcedure.query(async ({ ctx }) => {
         try {
             return SummaryController.getLatestSummaries(ctx.userId);

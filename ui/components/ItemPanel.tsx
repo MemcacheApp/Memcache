@@ -78,10 +78,10 @@ export function ItemPanel() {
                     </Button>
                 </div>
 
-                {ids.length > 1 ? (
-                    <div>Select {ids.length} items</div>
-                ) : (
+                {ids.length === 1 ? (
                     <SingleItem itemId={ids[0]} />
+                ) : (
+                    <div>Select {ids.length} items</div>
                 )}
             </Card>
         </div>

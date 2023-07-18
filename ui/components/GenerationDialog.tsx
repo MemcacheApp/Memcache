@@ -23,25 +23,30 @@ import {
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 
-interface SummariesDialogProps {
+interface GenerateSummaryDialogProps {
     data: Item & { collection: Collection; tags: Tag[] };
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    viewSummaries: () => void;
 }
 
-export function SummariesDialog({
+export function GenerateSummaryDialog({
     data,
     open,
     onOpenChange,
-}: SummariesDialogProps) {
+    viewSummaries,
+}: GenerateSummaryDialogProps) {
+    const ctx = trpc.useContext();
+
     const [numOfWords, setNumOfWords] = useState(250);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
 
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
-        onSuccess(data) {
-            console.log("Successfully generated summary:");
-            console.log(data);
+        onSuccess() {
+            ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
+            onOpenChange(false);
+            viewSummaries();
         },
     });
 
@@ -52,15 +57,13 @@ export function SummariesDialog({
             experience,
             finetuning,
         });
-        // TODO: show toast notification: "Generating summary..."
-        onOpenChange(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Generate Flashcards</DialogTitle>
+                    <DialogTitle>Generate Summary</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
@@ -133,13 +136,17 @@ export function SummariesDialog({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={generateSummaryMutation.isLoading}
+                    >
+                        Generate
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
-
 interface FlashcardsDialogProps {
     data: Item & { collection: Collection; tags: Tag[] };
     open: boolean;

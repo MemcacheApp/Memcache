@@ -25,7 +25,7 @@ import {
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { cn } from "../utils";
-import { FlashcardsDialog, SummariesDialog } from "./GenerationDialog";
+import { FlashcardsDialog, GenerateSummaryDialog } from "./GenerationDialog";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -72,6 +72,14 @@ export function ItemCard({
         }
     };
 
+    const openSummaries = () => {
+        setIsOpenSummaries(true);
+    };
+
+    const openFlashcards = () => {
+        setIsOpenFlashcards(true);
+    };
+
     const statusNums = Object.values(StatusEnum).filter(
         (value): value is number => typeof value === "number",
     );
@@ -108,8 +116,8 @@ export function ItemCard({
                         <>
                             <ItemDropdownMenu
                                 data={data}
-                                openSummaries={() => setIsOpenSummaries(true)}
-                                openFlashcards={() => setIsOpenFlashcards(true)}
+                                openSummaries={openSummaries}
+                                openFlashcards={openFlashcards}
                             />
                             {statusNums.map((value) => (
                                 <Button
@@ -128,10 +136,11 @@ export function ItemCard({
                     )
                 }
             />
-            <SummariesDialog
+            <GenerateSummaryDialog
                 data={data}
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
+                viewSummaries={() => setIsOpenSummaries(true)}
             />
             <FlashcardsDialog
                 data={data}
