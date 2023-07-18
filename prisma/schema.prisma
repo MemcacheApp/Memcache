@@ -89,18 +89,21 @@ model ResetCode {
 }
 
 model Flashcard {
-  id       String   @id
-  source   Item     @relation(fields: [itemId], references: [id])
+  id       String            @id
+  source   Item              @relation(fields: [itemId], references: [id])
   question String
   answer   String
   dueDate  DateTime
   itemId   String
+  reviews  FlashcardReview[]
 }
 
 model FlashcardReview {
-  id        String                @id
-  timestamp DateTime
-  rating    FlashcardReviewRating
+  id          String                @id
+  timestamp   DateTime
+  rating      FlashcardReviewRating
+  Flashcard   Flashcard?            @relation(fields: [flashcardId], references: [id])
+  flashcardId String?
 }
 
 enum FlashcardReviewRating {
