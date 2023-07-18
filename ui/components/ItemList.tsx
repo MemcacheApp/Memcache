@@ -11,6 +11,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
     ItemCard,
+    TagSelector,
 } from ".";
 import { useMemo } from "react";
 import {
@@ -19,6 +20,7 @@ import {
     CircleDot,
     Inbox,
     SquareStack,
+    Tags,
     Trash2,
     X,
 } from "lucide-react";
@@ -107,6 +109,7 @@ function NormalOptions() {
     return (
         <>
             <StatusToggle />
+            <TagFilterSelector />
             <Button
                 variant="outline"
                 className="w-10 rounded-full p-0 shrink-0"
@@ -277,5 +280,33 @@ function StatusToggle() {
                 Archive
             </Button>
         </div>
+    );
+}
+
+function TagFilterSelector() {
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger>
+                <Button variant="outline">
+                    <Tags className="mr-2" size={18} />
+                    Tags
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <TagSelector
+                    tags={tagsQuery.data}
+                    index={-1}
+                    value={""}
+                    setValue={() => {
+                        true;
+                    }}
+                    remove={() => {
+                        true;
+                    }}
+                />
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }
