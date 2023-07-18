@@ -24,7 +24,7 @@ export const flashcardsRouter = router({
                 numOfFlashcards: z.number(),
                 experience: z.nativeEnum(FlashcardExperience),
                 range: z.nativeEnum(FlashcardRange),
-            })
+            }),
         )
         .mutation(async ({ ctx, input }) => {
             try {
@@ -34,7 +34,7 @@ export const flashcardsRouter = router({
                     itemId,
                     numOfFlashcards,
                     experience,
-                    range
+                    range,
                 );
             } catch (e) {
                 console.error(e);
@@ -47,7 +47,7 @@ export const flashcardsRouter = router({
     getUserFlashcards: protectedProcedure.query(async ({ ctx }) => {
         try {
             const flashcards = await FlashcardController.getUserFlashcards(
-                ctx.userId
+                ctx.userId,
             );
             return flashcards;
         } catch (e) {

@@ -162,16 +162,18 @@ export default class FlashcardController {
 
                         // console.dir(functionCallResult, { depth: null });
                         const today = new Date();
-                        const tomorrow = new Date(today);
-                        tomorrow.setDate(tomorrow.getDate() + 1);
-                        tomorrow.setHours(0, 0, 0, 0);
+                        const dueDate = new Date(today);
+                        if (Math.random() > 0.5) {
+                            // 50% change due tomorrow / due now (LATTER FOR DEMO PURPOSES ONLY)
+                            dueDate.setDate(dueDate.getDate() + 1);
+                        }
                         const newFlashcard: Flashcard = {
                             id: functionCallResult.id,
                             question: functionCallResult.question,
                             answer: functionCallResult.answer,
                             itemId,
                             userId,
-                            dueDate: tomorrow, // Initial due date when flashcard is created is the next day
+                            dueDate, // For demo purposes, due date is some random time
                             experience,
                             range,
                         };
