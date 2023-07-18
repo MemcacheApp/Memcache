@@ -20,9 +20,10 @@ import {
     TabsTrigger,
     DialogFooter,
     SimpleItemCard,
+    SummaryCard,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
-import { Item, Collection, Tag } from "@prisma/client";
+import { Item, Collection, Tag, Summary } from "@prisma/client";
 import {
     ExternalLink as ExternalLinkIcon,
     Trash2,
@@ -30,6 +31,7 @@ import {
     PanelRightOpen,
     Newspaper,
     LayoutDashboard,
+    PlusIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "../utils";
@@ -53,9 +55,13 @@ export function ItemCard({
     hideOptions,
 }: ItemCardProps) {
     const [isOpenSummaries, setIsOpenSummaries] = useState(false);
+    const [isOpenGenerateSummary, setIsOpenGenerateSummary] = useState(false);
 
     const ctx = trpc.useContext();
 
+    const getItemSummariesQuery = trpc.summary.getItemSummaries.useQuery({
+        itemId: data.id,
+    });
     const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
@@ -72,6 +78,16 @@ export function ItemCard({
             });
         } catch (error) {
             console.error(error);
+        }
+    };
+
+    const openSummaries = () => {
+        if (getItemSummariesQuery.data) {
+            if (getItemSummariesQuery.data.length > 0) {
+                setIsOpenSummaries(true);
+            } else {
+                setIsOpenGenerateSummary(true);
+            }
         }
     };
 
@@ -110,7 +126,7 @@ export function ItemCard({
                         <>
                             <ItemDropdownMenu
                                 data={data}
-                                openSummaries={() => setIsOpenSummaries(true)}
+                                openSummaries={openSummaries}
                             />
                             {statusNums.map((value) => (
                                 <Button
@@ -130,9 +146,16 @@ export function ItemCard({
                 }
             />
             <SummariesDialog
-                data={data}
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
+                data={data}
+                summaries={getItemSummariesQuery.data}
+                newSummary={() => setIsOpenGenerateSummary(true)}
+            />
+            <GenerateSummaryDialog
+                data={data}
+                open={isOpenGenerateSummary}
+                onOpenChange={setIsOpenGenerateSummary}
             />
         </>
     );
@@ -220,12 +243,60 @@ function ItemDropdownMenu({ data, openSummaries }: ItemDropdownMenuProps) {
 }
 
 interface SummariesDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    data: Item & { collection: Collection; tags: Tag[] };
+    summaries: (Summary & { isFullText: boolean })[] | undefined;
+    newSummary: () => void;
+}
+
+function SummariesDialog({
+    open,
+    onOpenChange,
+    data,
+    summaries,
+    newSummary,
+}: SummariesDialogProps) {
+    const handleNewSummary = () => {
+        onOpenChange(false);
+        newSummary();
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Summaries</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-5">
+                    {summaries?.map((summary) => (
+                        <SummaryCard
+                            key={summary.id}
+                            item={data}
+                            summary={summary}
+                        />
+                    ))}
+                    <Button variant="outline" onClick={handleNewSummary}>
+                        <PlusIcon className="mr-2" size={16} /> Generate New
+                        Summary
+                    </Button>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+interface GenerateSummaryDialogProps {
     data: Item & { collection: Collection; tags: Tag[] };
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-function SummariesDialog({ data, open, onOpenChange }: SummariesDialogProps) {
+function GenerateSummaryDialog({
+    data,
+    open,
+    onOpenChange,
+}: GenerateSummaryDialogProps) {
     const [numOfWords, setNumOfWords] = useState(250);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
@@ -249,7 +320,7 @@ function SummariesDialog({ data, open, onOpenChange }: SummariesDialogProps) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Summaries</DialogTitle>
+                    <DialogTitle>Generate Summary</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
