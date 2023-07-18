@@ -7,6 +7,7 @@ import {
 } from "openai";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { prisma } from "../db/prisma";
 import openai from "../utils/openai";
 import { GenerateFlashcardError } from "./errors/flashcard";
 import ItemController from "./item-controller";
@@ -137,10 +138,15 @@ export default class FlashcardController {
                             parsedGetFlashcardParams
                         );
                         console.dir(functionCallResult, { depth: null });
-                        console.log("\n\n\n\n\n\n\n\n\n");
-                        console.log(functionCallResult.question);
-                        console.log(functionCallResult.answer);
-                        // TODO: Store new Flashcard in database
+                        await prisma.flashcard.create({
+                            data: {
+                                ...functionCallResult,
+                                itemId,
+                                userId,
+                                dueDate: new Date(), // TODO: add valid due date
+                            },
+                        });
+
                         // Put function call response into message history for the AI to read
                         messages.push(response_message); // This is a ChatCompletionResponseMessage authored by the AI assistant
                         messages.push({
