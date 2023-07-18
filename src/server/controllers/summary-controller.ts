@@ -48,6 +48,9 @@ export default class SummaryController {
             where: {
                 itemId,
             },
+            orderBy: {
+                createdAt: "desc",
+            },
         });
 
         const trimmedSummaries = summaries.map((summary) => {
