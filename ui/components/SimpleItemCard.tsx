@@ -85,7 +85,6 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
         </Card>
     );
 }
-
 function Footer(props: SimpleItemCardProps) {
     console.log(props.className);
 

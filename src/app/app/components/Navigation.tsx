@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { trpc } from "@/src/app/utils/trpc";
 import {
     Album,
+    ArrowRight,
     Globe2,
     LayoutDashboard,
     Newspaper,
@@ -78,21 +79,25 @@ function Collections() {
         <li className="mt-2">
             <div className="ml-2 flex flex-row items-center gap-2 py-2">
                 <Package2 size={12} className="text-slate-450" />
-                <p className="text-slate-450 text-[12px] tracking-widest">
-                    COLLECTIONS
+                <p className="text-slate-450 text-[12px] tracking-widest uppercase">
+                    collections
                 </p>
             </div>
-            <ul>
+            <ul className="flex flex-col gap-1 list-none">
                 {collections
                     ? collections.map((collection) => (
                           <NavigationItem
                               key={collection.id}
-                              href={`/app/collection/${collection.id}`}
+                              href={`/app/collections/${collection.id}`}
                           >
                               {collection.name}
                           </NavigationItem>
                       ))
                     : null}
+                <NavigationItem href={`/app/collections`}>
+                    {"See all"}
+                    <ArrowRight size={14} className="ml-2" />
+                </NavigationItem>
             </ul>
         </li>
     );
