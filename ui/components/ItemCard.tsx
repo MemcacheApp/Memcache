@@ -400,7 +400,12 @@ function GenerateSummaryDialog({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={generateSummaryMutation.isLoading}
+                    >
+                        Generate
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
