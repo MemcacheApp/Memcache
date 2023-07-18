@@ -138,12 +138,16 @@ export default class FlashcardController {
                             parsedGetFlashcardParams
                         );
                         console.dir(functionCallResult, { depth: null });
+                        const today = new Date();
+                        const tomorrow = new Date(today);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow.setHours(0, 0, 0, 0);
                         await prisma.flashcard.create({
                             data: {
                                 ...functionCallResult,
                                 itemId,
                                 userId,
-                                dueDate: new Date(), // TODO: add valid due date
+                                dueDate: tomorrow, // Initial due date when flashcard is created is the next day
                             },
                         });
 
