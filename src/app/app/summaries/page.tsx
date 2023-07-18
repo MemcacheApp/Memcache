@@ -1,13 +1,13 @@
 "use client";
 
 import {
-    Link,
     Loader,
     PageTitle,
     ScrollArea,
     ScrollBar,
     SummaryCard,
 } from "@/ui/components";
+import NextLink from "next/link";
 import { trpc } from "../../utils/trpc";
 import { ArrowRightIcon } from "lucide-react";
 
@@ -37,18 +37,18 @@ export default function SummariesPage() {
                                         )
                                     )}
                                     {latestSummariesQuery.data.hasMore ? (
-                                        <Link
-                                            className="group flex flex-col gap-3 items-center p-16 self-center"
+                                        <NextLink
+                                            className="group flex flex-col gap-3 items-center p-16 self-center outline-none"
                                             href="/app/summaries/all"
                                         >
-                                            <div className="border group-hover:border-foreground group-hover:text-foreground transition-colors text-slate-600 p-3 rounded-full ">
+                                            <div className="border group-hover:border-foreground group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 transition-colors text-slate-600 p-3 rounded-full ">
                                                 <ArrowRightIcon
                                                     size={30}
                                                     absoluteStrokeWidth
                                                 />
                                             </div>
                                             More...
-                                        </Link>
+                                        </NextLink>
                                     ) : null}
                                 </>
                             ) : (
