@@ -87,7 +87,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                             {props.collection ? (
                                 <Link
                                     className="flex items-center gap-2 my-2"
-                                    href={`/app/collection/${props.collection.id}`}
+                                    href={`/app/collections/${props.collection.id}`}
                                 >
                                     <Package2 size={16} />
                                     {props.collection.name}

@@ -26,7 +26,11 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { cn } from "../utils";
 import renderIcon from "@/src/app/utils/renderIcon";
 
-export function ItemList() {
+interface ItemListProps {
+    collectionId?: string;
+}
+
+export function ItemList(props: ItemListProps) {
     const { activeStatus, selectedItems, selectItem } = useItemListStore(
         (state) => ({
             activeStatus: state.activeStatus,
@@ -39,7 +43,7 @@ export function ItemList() {
 
     const items = useMemo(() => {
         if (itemsQuery.data) {
-            return itemsQuery.data
+            const data = itemsQuery.data
                 .filter(
                     (item) =>
                         activeStatus === null || activeStatus === item.status
@@ -47,10 +51,16 @@ export function ItemList() {
                 .sort(
                     (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
                 );
+            if (props.collectionId) {
+                return data.filter(
+                    (item) => item.collection.id === props.collectionId
+                );
+            }
+            return data;
         } else {
             return [];
         }
-    }, [itemsQuery.data, activeStatus]);
+    }, [itemsQuery.data, props, activeStatus]);
 
     return (
         <div className="flex flex-col gap-3 md:mx-8 pb-8">
