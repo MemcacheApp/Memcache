@@ -150,14 +150,11 @@ export default class FlashcardController {
                             parsedGetFlashcardParams
                         );
 
-                        console.log(functionCallResult);
                         // console.dir(functionCallResult, { depth: null });
                         const today = new Date();
                         const tomorrow = new Date(today);
                         tomorrow.setDate(tomorrow.getDate() + 1);
                         tomorrow.setHours(0, 0, 0, 0);
-                        // TODO: error handling here
-                        console.log("first");
                         const newFlashcard: Flashcard = {
                             id: functionCallResult.id,
                             question: functionCallResult.question,
@@ -166,13 +163,13 @@ export default class FlashcardController {
                             userId,
                             dueDate: tomorrow, // Initial due date when flashcard is created is the next day
                         };
-                        console.log(newFlashcard);
                         try {
-                            prisma.flashcard.create({ data: newFlashcard });
+                            await prisma.flashcard.create({
+                                data: newFlashcard,
+                            });
                         } catch (error) {
                             console.log(error);
                         }
-                        console.log("second");
 
                         // Put function call response into message history for the AI to read
                         messages.push(response_message); // This is a ChatCompletionResponseMessage authored by the AI assistant
