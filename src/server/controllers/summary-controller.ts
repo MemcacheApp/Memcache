@@ -80,10 +80,17 @@ export default class SummaryController {
                 },
             },
         });
-        return summaries.map((summary) => ({
+
+        const hasMore = summaries.length > 5;
+        const trimmedSummaries = summaries.slice(0, 5).map((summary) => ({
             ...summary,
             content: summary.content.substring(0, 300),
         }));
+
+        return {
+            hasMore,
+            summaries: trimmedSummaries,
+        };
     }
 
     static async scrapeContent({ url }: { url: string }) {
@@ -226,21 +233,30 @@ export default class SummaryController {
                        """
                        Thank you.`;
 
-        // TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't
-        const chatCompletion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "system",
-                    content: gptrequest,
-                },
-            ],
-            max_tokens: numOfWords * 2,
-            temperature: 1, // Neutral temperature due to extensive prompt
-        });
+        let summaryContent;
 
-        const summaryContent =
-            chatCompletion.data.choices[0].message?.content || "";
+        if (process.env.NODE_ENV === "development") {
+            summaryContent = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sit amet vulputate arcu. Suspendisse blandit nunc et vulputate pellentesque. Quisque non neque blandit, facilisis lectus tempus, ullamcorper elit. Nulla facilisi. Ut vel justo metus. Nulla placerat mi tortor, vitae rhoncus felis luctus eget. Phasellus sit amet elit bibendum, elementum erat in, luctus orci. Praesent vel lorem dui. Integer blandit molestie sem condimentum fringilla.
+            Curabitur pharetra purus ac ante gravida semper. Nam sit amet sapien enim. Phasellus blandit et sem non pellentesque. Nulla dictum orci at scelerisque tempor. Proin ultricies luctus odio, nec pellentesque arcu blandit vitae. Ut quis varius eros. Morbi vitae suscipit nisl, ut rutrum lorem. Donec tincidunt elementum imperdiet.
+            Quisque dictum nisl mi, non posuere mi egestas et. Pellentesque pellentesque sem id quam hendrerit tincidunt. Morbi volutpat fringilla lorem id venenatis. Nunc hendrerit lorem ut lacus egestas dapibus. Nullam non luctus urna. Duis convallis tincidunt ipsum, at pretium dui dapibus sit amet. Nam justo est, aliquet a vulputate fringilla, gravida eleifend eros. Sed vel accumsan neque. Maecenas vitae laoreet elit. Fusce quis dapibus lectus, eu fringilla lacus. Quisque eget ipsum pellentesque, porta augue euismod, efficitur turpis. Cras ut venenatis libero. Duis nulla ante, vulputate fringilla ante in, semper consequat metus. Quisque at tempor sem, sit amet porta libero. Fusce semper, sem eu commodo porttitor, dolor nunc ultrices elit, eget tincidunt lectus nunc non tortor.
+            Donec congue elit est. Donec vitae eros ut ipsum dapibus blandit. Pellentesque fringilla, lectus tempor pretium condimentum, nibh elit semper risus, at dapibus ipsum massa eget nisl. In placerat elit eu pellentesque luctus. Phasellus rhoncus erat eros, et egestas lectus consectetur vel. Nullam at maximus ante, id tristique mi. Aliquam sollicitudin justo odio, vitae aliquam metus vestibulum ac.
+            Pellentesque semper nec quam ac dignissim. Maecenas vestibulum sollicitudin fermentum. Praesent dignissim dolor nec nisl consectetur, at euismod nisl euismod. Donec tincidunt tincidunt felis quis volutpat. In facilisis a ligula ac vehicula. Integer ut mauris in nulla vehicula fringilla. Etiam a erat tempus massa mollis facilisis. In nec erat vitae tortor suscipit congue nec ac dui. Phasellus non elementum ligula.`;
+        } else {
+            // TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't
+            const chatCompletion = await openai.createChatCompletion({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: gptrequest,
+                    },
+                ],
+                max_tokens: numOfWords * 2,
+                temperature: 1, // Neutral temperature due to extensive prompt
+            });
+            summaryContent =
+                chatCompletion.data.choices[0].message?.content || "";
+        }
 
         await prisma.summary.create({
             data: {
