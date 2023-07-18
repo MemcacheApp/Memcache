@@ -21,9 +21,10 @@ import {
     DialogFooter,
     SimpleItemCard,
     SummaryCard,
+    Loader,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
-import { Item, Collection, Tag, Summary } from "@prisma/client";
+import { Item, Collection, Tag } from "@prisma/client";
 import {
     ExternalLink as ExternalLinkIcon,
     Trash2,
@@ -36,7 +37,7 @@ import {
 import Link from "next/link";
 import { cn } from "../utils";
 import renderIcon from "@/src/app/utils/renderIcon";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Experience, Finetuning } from "@/src/datatypes/summary";
 
 interface ItemCardProps {
@@ -59,9 +60,6 @@ export function ItemCard({
 
     const ctx = trpc.useContext();
 
-    const getItemSummariesQuery = trpc.summary.getItemSummaries.useQuery({
-        itemId: data.id,
-    });
     const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
@@ -82,13 +80,7 @@ export function ItemCard({
     };
 
     const openSummaries = () => {
-        if (getItemSummariesQuery.data) {
-            if (getItemSummariesQuery.data.length > 0) {
-                setIsOpenSummaries(true);
-            } else {
-                setIsOpenGenerateSummary(true);
-            }
-        }
+        setIsOpenSummaries(true);
     };
 
     const statusNums = Object.values(StatusEnum).filter(
@@ -149,7 +141,6 @@ export function ItemCard({
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
                 data={data}
-                summaries={getItemSummariesQuery.data}
                 newSummary={() => setIsOpenGenerateSummary(true)}
             />
             <GenerateSummaryDialog
@@ -247,7 +238,6 @@ interface SummariesDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     data: Item & { collection: Collection; tags: Tag[] };
-    summaries: (Summary & { isFullText: boolean })[] | undefined;
     newSummary: () => void;
 }
 
@@ -255,13 +245,38 @@ function SummariesDialog({
     open,
     onOpenChange,
     data,
-    summaries,
     newSummary,
 }: SummariesDialogProps) {
-    const handleNewSummary = () => {
+    const getItemSummariesQuery = trpc.summary.getItemSummaries.useQuery(
+        {
+            itemId: data.id,
+        },
+        { refetchOnWindowFocus: false, enabled: false }
+    );
+
+    const handleNewSummary = useCallback(() => {
         onOpenChange(false);
         newSummary();
-    };
+    }, []);
+
+    useEffect(() => {
+        if (open) {
+            if (getItemSummariesQuery.data === undefined) {
+                getItemSummariesQuery.refetch();
+            } else if (getItemSummariesQuery.data.length === 0) {
+                handleNewSummary();
+            }
+        }
+    }, [open]);
+
+    useEffect(() => {
+        if (
+            getItemSummariesQuery.data &&
+            getItemSummariesQuery.data.length === 0
+        ) {
+            handleNewSummary();
+        }
+    }, [getItemSummariesQuery.data]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -270,17 +285,26 @@ function SummariesDialog({
                     <DialogTitle>Summaries</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-5">
-                    {summaries?.map((summary) => (
-                        <SummaryCard
-                            key={summary.id}
-                            item={data}
-                            summary={summary}
-                        />
-                    ))}
-                    <Button variant="outline" onClick={handleNewSummary}>
-                        <PlusIcon className="mr-2" size={16} /> Generate New
-                        Summary
-                    </Button>
+                    {getItemSummariesQuery.data !== undefined ? (
+                        <>
+                            {getItemSummariesQuery.data.map((summary) => (
+                                <SummaryCard
+                                    key={summary.id}
+                                    item={data}
+                                    summary={summary}
+                                />
+                            ))}
+                            <Button
+                                variant="outline"
+                                onClick={handleNewSummary}
+                            >
+                                <PlusIcon className="mr-2" size={16} /> Generate
+                                New Summary
+                            </Button>
+                        </>
+                    ) : (
+                        <Loader varient="ellipsis" />
+                    )}
                 </div>
             </DialogContent>
         </Dialog>
