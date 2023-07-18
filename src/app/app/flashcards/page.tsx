@@ -82,20 +82,20 @@ export default function FlashcardsPage() {
 
             {flashcardsData?.map((flashcard) => (
                 <div
-                    className="px-4 my-4 flex flex-col gap-3"
+                    className="flex flex-col gap-3 px-4 my-4"
                     key={flashcard.id}
                 >
                     <div className="flex">
                         <div className="mr-2 italic">Question:</div>
                         <div>{flashcard.question}</div>
                     </div>
-                    <div className="flex align-center mt-2 ">
+                    <div className="flex mt-2 align-center ">
                         <div className="mr-2 italic">Answer:</div>
                         <div className="text-semibold">{flashcard.answer}</div>
                     </div>
                 </div>
             ))}
-            <Card className="rounded-lg mx-8 p-6">
+            <Card className="p-6 mx-8 rounded-lg">
                 <H3>Generate Flashards</H3>
                 <div className="mt-3 mb-4">
                     <Input
@@ -123,12 +123,12 @@ export default function FlashcardsPage() {
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>
             </Card>
-            <Card className="rounded-lg mx-8 p-6">
+            <Card className="p-6 mx-8 rounded-lg">
                 <H3>My Flashcards</H3>
                 <H4>Revision Queue</H4>
                 <H4>Recently Viewed</H4>
             </Card>
-            <Card className="rounded-lg mx-8 p-6">
+            <Card className="p-6 mx-8 rounded-lg">
                 <H3>Items with Flashcards</H3>
                 <H4>Recently Created</H4>
             </Card>

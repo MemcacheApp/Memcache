@@ -76,7 +76,7 @@ export default class SummaryController {
         itemId: string,
         numOfWords: number,
         experience: Experience,
-        finetuning: Finetuning,
+        finetuning: Finetuning
     ) {
         const item = await ItemController.getItem(itemId);
         const content = await ContentScraper.scrapeContent({
