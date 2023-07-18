@@ -1,6 +1,10 @@
 "use client";
 
-import { Range } from "@/src/datatypes/flashcard";
+import {
+    FlashcardExperience,
+    FlashcardExperienceNames,
+    FlashcardRange,
+} from "@/src/datatypes/flashcard";
 import { Experience, Finetuning } from "@/src/datatypes/summary";
 import { Collection, Item, Tag } from "@prisma/client";
 import { useState } from "react";
@@ -148,8 +152,10 @@ export function FlashcardsDialog({
     onOpenChange,
 }: FlashcardsDialogProps) {
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
-    const [experience, setExperience] = useState(Experience.Intermediate);
-    const [range, setRange] = useState(Range.Balanced);
+    const [experience, setExperience] = useState(
+        FlashcardExperience.Intermediate,
+    );
+    const [range, setRange] = useState(FlashcardRange.Balanced);
 
     const generateFlashcardsMutation =
         trpc.flashcards.generateFlashcards.useMutation({
@@ -206,19 +212,31 @@ export function FlashcardsDialog({
                         >
                             <TabsList>
                                 <TabsTrigger
-                                    value={Experience.Beginner.toString()}
+                                    value={FlashcardExperience.Beginner.toString()}
                                 >
-                                    Beginner
+                                    {
+                                        FlashcardExperienceNames[
+                                            FlashcardExperience.Beginner
+                                        ]
+                                    }
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Experience.Intermediate.toString()}
+                                    value={FlashcardExperience.Intermediate.toString()}
                                 >
-                                    Intermediate
+                                    {
+                                        FlashcardExperienceNames[
+                                            FlashcardExperience.Intermediate
+                                        ]
+                                    }
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Experience.Advanced.toString()}
+                                    value={FlashcardExperience.Advanced.toString()}
                                 >
-                                    Advanced
+                                    {
+                                        FlashcardExperienceNames[
+                                            FlashcardExperience.Advanced
+                                        ]
+                                    }
                                 </TabsTrigger>
                             </TabsList>
                         </Tabs>
@@ -231,13 +249,19 @@ export function FlashcardsDialog({
                             onValueChange={(value) => setRange(parseInt(value))}
                         >
                             <TabsList>
-                                <TabsTrigger value={Range.Depth.toString()}>
+                                <TabsTrigger
+                                    value={FlashcardRange.Depth.toString()}
+                                >
                                     Depth
                                 </TabsTrigger>
-                                <TabsTrigger value={Range.Breadth.toString()}>
+                                <TabsTrigger
+                                    value={FlashcardRange.Breadth.toString()}
+                                >
                                     Breadth
                                 </TabsTrigger>
-                                <TabsTrigger value={Range.Balanced.toString()}>
+                                <TabsTrigger
+                                    value={FlashcardRange.Balanced.toString()}
+                                >
                                     Balanced
                                 </TabsTrigger>
                             </TabsList>

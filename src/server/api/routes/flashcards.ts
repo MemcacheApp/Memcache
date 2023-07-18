@@ -1,4 +1,4 @@
-import { Experience, Range } from "@/src/datatypes/flashcard";
+import { FlashcardExperience, FlashcardRange } from "@/src/datatypes/flashcard";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import FlashcardController from "../../controllers/flashcard-controller";
@@ -22,8 +22,8 @@ export const flashcardsRouter = router({
             z.object({
                 itemId: z.string(),
                 numOfFlashcards: z.number(),
-                experience: z.nativeEnum(Experience),
-                range: z.nativeEnum(Range),
+                experience: z.nativeEnum(FlashcardExperience),
+                range: z.nativeEnum(FlashcardRange),
             })
         )
         .mutation(async ({ ctx, input }) => {

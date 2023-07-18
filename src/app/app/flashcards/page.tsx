@@ -1,8 +1,23 @@
 "use client";
 
-import { Card, Input, ItemCard, ScrollArea, ScrollBar } from "@/ui/components";
+import {
+    FlashcardExperience,
+    FlashcardExperienceNames,
+    FlashcardRange,
+    FlashcardRangeNames,
+} from "@/src/datatypes/flashcard";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    Input,
+    ItemCard,
+    ScrollArea,
+    ScrollBar,
+} from "@/ui/components";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { H4 } from "@/ui/components/typography";
+import { cn } from "@/ui/utils";
 import { Collection, Item, Tag } from "@prisma/client";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
@@ -15,6 +30,8 @@ const flashcardsData = [
         question:
             "What is the purpose of the protocol parameter in the WebSocket constructor?",
         answer: "The protocol parameter is used to indicate sub-protocols, allowing a server to implement multiple WebSocket sub-protocols.",
+        experience: FlashcardExperience.Intermediate,
+        range: FlashcardRange.Depth,
         due: "2023-07-23T18:20:36.970+10:00",
         reviews: [
             {
@@ -38,11 +55,38 @@ const flashcardsData = [
                 rating: ReviewRatingEnum.Easy,
             },
         ],
+        item: {
+            id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
+            type: "article",
+            status: 0,
+            collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
+            title: "Writing WebSocket client applications - Web APIs | MDN",
+            url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",
+            description:
+                "WebSocket client applications use the WebSocket API to communicate with WebSocket servers using the WebSocket protocol.",
+            thumbnail:
+                "https://images.nightcafe.studio/jobs/UUCFR8ZnsnXKdbDPXntw/UUCFR8ZnsnXKdbDPXntw_7.4977x.jpg?tr=w-1600,c-at_max",
+            createdAt: "2023-07-17T05:22:07.265Z",
+            userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
+            siteName: "developer.mozilla.org",
+            duration: null,
+            releaseTime: null,
+            author: null,
+            favicon: null,
+            tags: [],
+            collection: {
+                id: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
+                name: "Default",
+                userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
+            },
+        },
     },
     {
         id: 2,
         question: "What parameter does the WebSocket constructor accept?",
         answer: "The WebSocket constructor accepts a URL and an optional protocol parameter.",
+        experience: FlashcardExperience.Intermediate,
+        range: FlashcardRange.Depth,
         due: "2023-07-27T20:45:18.758+10:00",
         reviews: [
             {
@@ -56,6 +100,31 @@ const flashcardsData = [
                 rating: ReviewRatingEnum.Easy,
             },
         ],
+        item: {
+            id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
+            type: "article",
+            status: 0,
+            collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
+            title: "Writing WebSocket client applications - Web APIs | MDN",
+            url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",
+            description:
+                "WebSocket client applications use the WebSocket API to communicate with WebSocket servers using the WebSocket protocol.",
+            thumbnail:
+                "https://images.nightcafe.studio/jobs/UUCFR8ZnsnXKdbDPXntw/UUCFR8ZnsnXKdbDPXntw_7.4977x.jpg?tr=w-1600,c-at_max",
+            createdAt: "2023-07-17T05:22:07.265Z",
+            userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
+            siteName: "developer.mozilla.org",
+            duration: null,
+            releaseTime: null,
+            author: null,
+            favicon: null,
+            tags: [],
+            collection: {
+                id: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
+                name: "Default",
+                userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
+            },
+        },
     },
 ];
 
@@ -126,6 +195,75 @@ export default function FlashcardsPage() {
             <Card className="rounded-lg mx-8 p-6">
                 <H3>My Flashcards</H3>
                 <H4>Revision Queue</H4>
+                <ScrollArea type="scroll">
+                    <div className="flex gap-3 p-1">
+                        {flashcardsData?.map((flashcard) => (
+                            <Card
+                                key={flashcard.id}
+                                className="w-[30rem] h-[26rem] max-h-[50vh] bg-transparent"
+                            >
+                                <div
+                                    className={cn(
+                                        "group/flashcardpreview w-full relative border rounded-t-lg overflow-hidden aspect-[16/9] hover:",
+                                        "transition-[transform,border-color,border-radius]",
+                                        "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer",
+                                    )}
+                                >
+                                    <img
+                                        src={
+                                            flashcard.item.thumbnail ??
+                                            "https://www.maxpixel.net/static/photo/2x/Snow-Peaks-Ai-Generated-Artwork-Mountains-Forest-7903258.jpg"
+                                        }
+                                        alt="Image"
+                                        className="absolute w-full h-full object-cover object-center blur group-hover/flashcardpreview:blur-[6px] transition"
+                                    />
+                                    <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 flex flex-col justify-between items-center shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset] group-hover/flashcardpreview:bg-black/40 transition">
+                                        <div className="px-4 pt-4 pb-3 w-[75%] max-w-[24rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center">
+                                            {flashcard.question}
+                                        </div>
+                                        <div className="px-4 py-2">
+                                            <button className="bg-slate-200/20 px-7 py-2 rounded-full hover:bg-slate-100/30">
+                                                View
+                                            </button>
+                                        </div>
+                                        <div className="px-4 py-3 flex gap-2 text-sm text-slate-400/90">
+                                            <span>
+                                                {
+                                                    FlashcardExperienceNames[
+                                                        flashcard.experience
+                                                    ]
+                                                }
+                                            </span>
+                                            <span>&#183;</span>
+                                            <span>
+                                                {
+                                                    FlashcardRangeNames[
+                                                        flashcard.range
+                                                    ]
+                                                }
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <CardHeader className="overflow-y-hidden">
+                                        {flashcard.item.title ? (
+                                            <CardTitle>
+                                                {flashcard.item.title}
+                                            </CardTitle>
+                                        ) : null}
+                                        {flashcard.item.description ? (
+                                            <p className="mt-3 overflow-hidden">
+                                                {flashcard.item.description}
+                                            </p>
+                                        ) : null}
+                                    </CardHeader>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
                 <H4>Recently Viewed</H4>
             </Card>
             <Card className="rounded-lg mx-8 p-6">
@@ -146,3 +284,36 @@ export default function FlashcardsPage() {
         </div>
     );
 }
+
+// interface ThumbnailProps {
+//     type: string | undefined;
+//     loading: boolean | undefined;
+//     thumbnail: string | undefined | null;
+// }
+
+// function Thumbnail(props: ThumbnailProps) {
+//     if (props.loading) {
+//         return (
+//             <Skeleton className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 aspect-[16/9] @lg:m-6 shrink-0 @lg:border rounded-t-lg overflow-hidden" />
+//         );
+//     } else if (props.thumbnail) {
+//         return (
+//             <div
+//                 className={cn(
+//                     "order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 @lg:m-6 shrink-0 border rounded-t-lg @lg:rounded-lg overflow-hidden",
+//                     props.type?.startsWith("music")
+//                         ? "aspect-square"
+//                         : "aspect-[16/9]",
+//                 )}
+//             >
+//                 <img
+//                     src={props.thumbnail}
+//                     alt="Image"
+//                     className="object-cover object-center relative w-full h-full"
+//                 />
+//             </div>
+//         );
+//     } else {
+//         return null;
+//     }
+// }
