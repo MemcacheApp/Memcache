@@ -67,6 +67,39 @@ export default class SummaryController {
         return trimmedSummaries;
     }
 
+    static async getUserSummaries(userId: string) {
+        const summaries = await prisma.summary.findMany({
+            where: {
+                item: {
+                    userId,
+                },
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            include: {
+                item: {
+                    include: {
+                        collection: true,
+                        tags: true,
+                    },
+                },
+            },
+        });
+        const trimmedSummaries = summaries.map((summary) => {
+            const isFullText = summary.content.length <= 300;
+            return {
+                ...summary,
+                isFullText,
+                content: isFullText
+                    ? summary.content
+                    : summary.content.substring(0, 300) + "…",
+            };
+        });
+
+        return trimmedSummaries;
+    }
+
     static async getLatestSummaries(userId: string) {
         const summaries = await prisma.summary.findMany({
             where: {

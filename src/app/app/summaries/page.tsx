@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    Link,
     Loader,
     PageTitle,
     ScrollArea,
@@ -19,10 +20,17 @@ export default function SummariesPage() {
             <PageTitle>Summaries</PageTitle>
             <div className="flex flex-col gap-5">
                 <div className="bg-background mx-8 p-6 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-5">My Summaries</h2>
-                    <h3 className="text-lg font-medium mb-3">
-                        Latest Generated
-                    </h3>
+                    <div className="flex justify-between mb-5">
+                        <h2 className="text-xl font-semibold">My Summaries</h2>
+                        <Link
+                            href="/app/summaries/all"
+                            className="flex items-center gap-2"
+                        >
+                            See All
+                            <ArrowRightIcon size={20} />
+                        </Link>
+                    </div>
+
                     <ScrollArea type="scroll">
                         <div className="flex gap-3 p-1">
                             {latestSummariesQuery.data ? (

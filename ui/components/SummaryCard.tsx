@@ -78,7 +78,7 @@ export function SummaryCard(props: SummaryCardProps) {
                     </Popover>
                 ) : null}
             </CardTitle>
-            <div className="flex justify-between text-slate-500 my-3 text-sm">
+            <div className="flex justify-between flex-wrap gap-3 text-slate-500 my-3 text-sm">
                 <div className="flex gap-2 items-center">
                     {summary.createdAt.toLocaleDateString()}
                 </div>
