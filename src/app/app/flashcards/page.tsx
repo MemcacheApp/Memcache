@@ -16,40 +16,39 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    Input,
     ItemCard,
     ScrollArea,
     ScrollBar,
-    SimpleItemCardFooter,
+    SimpleItemCardFooter
 } from "@/ui/components";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { Progress } from "@/ui/components/Progress";
 import { H4 } from "@/ui/components/typography";
 import { cn } from "@/ui/utils";
-import { Collection, Item, Tag } from "@prisma/client";
+import { Collection, Flashcard, Item, Tag } from "@prisma/client";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
 import { ReviewRatingEnum } from "../../utils/ReviewRating";
 import { trpc } from "../../utils/trpc";
 
-interface Flashcard {
+interface DummyFlashcard {
     id: number;
     question: string;
     answer: string;
     experience: FlashcardExperience;
     range: FlashcardRange;
     due: string;
-    reviews: FlashcardReview[];
+    reviews: DummyFlashcardReview[];
     item: Item & { collection: Collection; tags: Tag[] };
 }
 
-interface FlashcardReview {
+interface DummyFlashcardReview {
     id: number;
     timestamp: string;
     rating: ReviewRatingEnum;
 }
 
-const flashcardsData: Flashcard[] = [
+const dummyFlashcardsData: DummyFlashcard[] = [
     {
         id: 1,
         question:
@@ -171,8 +170,10 @@ export default function FlashcardsPage() {
         (Item & { collection: Collection; tags: Tag[] }) | null
     >(null);
 
-    const [selectedFlashcard, setSelectedFlashcard] =
-        useState<Flashcard | null>(null);
+    const [selectedFlashcard, setSelectedFlashcard] = useState<
+        | (Flashcard & { item: Item & { collection: Collection; tags: Tag[] } })
+        | null
+    >(null);
 
     return (
         <div className="flex flex-col gap-5">
@@ -195,14 +196,6 @@ export default function FlashcardsPage() {
             ))}
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>Generate Flashards</H3>
-                <div className="mt-3 mb-4">
-                    <Input
-                        className="text-base border-solid rounded-md"
-                        placeholder="https://"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                    />
-                </div>
                 <H4>Suggested</H4>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
@@ -226,7 +219,7 @@ export default function FlashcardsPage() {
                 <H4>Revision Queue</H4>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
-                        {flashcardsData?.map((flashcard) => (
+                        {flashcardsQuery.data?.map((flashcard) => (
                             <Card
                                 key={flashcard.id}
                                 className="w-[30rem] h-[26rem] max-h-[50vh] bg-transparent"
@@ -341,7 +334,9 @@ function FlashcardDialog({
     open,
     onOpenChange,
 }: {
-    flashcard: Flashcard;
+    flashcard: Flashcard & {
+        item: Item & { collection: Collection; tags: Tag[] };
+    };
     item: Item & { collection: Collection; tags: Tag[] };
     open: boolean;
     onOpenChange: (value: boolean) => void;

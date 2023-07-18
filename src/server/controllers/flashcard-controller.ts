@@ -70,6 +70,12 @@ export default class FlashcardController {
                 },
                 include: {
                     reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
                 },
             });
             return flashcards;
@@ -166,6 +172,8 @@ export default class FlashcardController {
                             itemId,
                             userId,
                             dueDate: tomorrow, // Initial due date when flashcard is created is the next day
+                            experience,
+                            range,
                         };
                         try {
                             await prisma.flashcard.create({

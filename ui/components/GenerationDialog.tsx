@@ -159,10 +159,10 @@ export function FlashcardsDialog({
     onOpenChange,
 }: FlashcardsDialogProps) {
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
-    const [experience, setExperience] = useState(
+    const [experience, setExperience] = useState<FlashcardExperience>(
         FlashcardExperience.Intermediate,
     );
-    const [range, setRange] = useState(FlashcardRange.Balanced);
+    const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
     const ctx = trpc.useContext();
 
@@ -214,9 +214,19 @@ export function FlashcardsDialog({
                         <Label htmlFor="experience">Experience</Label>
                         <Tabs
                             id="experience"
-                            value={experience.toString()}
+                            value={experience}
                             onValueChange={(value) =>
-                                setExperience(parseInt(value))
+                                (
+                                    Object.values(
+                                        FlashcardExperience,
+                                    ) as string[]
+                                ).includes(value)
+                                    ? setExperience(
+                                          value as FlashcardExperience,
+                                      )
+                                    : setExperience(
+                                          FlashcardExperience.Intermediate,
+                                      )
                             }
                         >
                             <TabsList>
@@ -254,23 +264,23 @@ export function FlashcardsDialog({
                         <Label htmlFor="range">range</Label>
                         <Tabs
                             id="range"
-                            value={range.toString()}
-                            onValueChange={(value) => setRange(parseInt(value))}
+                            value={range}
+                            onValueChange={(value) =>
+                                (
+                                    Object.values(FlashcardRange) as string[]
+                                ).includes(value)
+                                    ? setRange(value as FlashcardRange)
+                                    : setRange(FlashcardRange.Balanced)
+                            }
                         >
                             <TabsList>
-                                <TabsTrigger
-                                    value={FlashcardRange.Depth.toString()}
-                                >
+                                <TabsTrigger value={FlashcardRange.Depth}>
                                     Depth
                                 </TabsTrigger>
-                                <TabsTrigger
-                                    value={FlashcardRange.Breadth.toString()}
-                                >
+                                <TabsTrigger value={FlashcardRange.Breadth}>
                                     Breadth
                                 </TabsTrigger>
-                                <TabsTrigger
-                                    value={FlashcardRange.Balanced.toString()}
-                                >
+                                <TabsTrigger value={FlashcardRange.Balanced}>
                                     Balanced
                                 </TabsTrigger>
                             </TabsList>
