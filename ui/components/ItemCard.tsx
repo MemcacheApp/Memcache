@@ -156,6 +156,7 @@ export function ItemCard({
                 data={data}
                 open={isOpenGenerateSummary}
                 onOpenChange={setIsOpenGenerateSummary}
+                viewSummaries={() => setIsOpenSummaries(true)}
             />
         </>
     );
@@ -290,20 +291,26 @@ interface GenerateSummaryDialogProps {
     data: Item & { collection: Collection; tags: Tag[] };
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    viewSummaries: () => void;
 }
 
 function GenerateSummaryDialog({
     data,
     open,
     onOpenChange,
+    viewSummaries,
 }: GenerateSummaryDialogProps) {
+    const ctx = trpc.useContext();
+
     const [numOfWords, setNumOfWords] = useState(250);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
 
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
-        onSuccess(data) {
-            console.log(data);
+        onSuccess() {
+            ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
+            onOpenChange(false);
+            viewSummaries();
         },
     });
 
