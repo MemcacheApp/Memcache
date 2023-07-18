@@ -19,7 +19,10 @@ import { useRouter } from "next/navigation";
 
 interface SummaryCardProps {
     className?: string;
-    summary: Summary & { item: Item & { collection: Collection; tags: Tag[] } };
+    summary: Summary & {
+        isFullText: boolean;
+        item: Item & { collection: Collection; tags: Tag[] };
+    };
 }
 
 export function SummaryCard({ className, summary }: SummaryCardProps) {
@@ -33,11 +36,13 @@ export function SummaryCard({ className, summary }: SummaryCardProps) {
             )}
             onClick={() => push(`/app/summaries/${summary.id}`)}
         >
-            <div className="absolute left-0 right-0 bottom-0">
-                <div className="h-32 bg-gradient-to-b from-background/0 to-background pointer-events-none"></div>
-                <div className="h-5 bg-background pointer-events-none"></div>
-                <ChevronDownIcon className="absolute bottom-3 left-1/2 -translate-x-1/2 text-slate-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
-            </div>
+            {summary.isFullText ? null : (
+                <div className="absolute left-0 right-0 bottom-0">
+                    <div className="h-32 bg-gradient-to-b from-background/0 to-background pointer-events-none"></div>
+                    <div className="h-5 bg-background pointer-events-none"></div>
+                    <ChevronDownIcon className="absolute bottom-3 left-1/2 -translate-x-1/2 text-slate-500 transition-opacity duration-200 opacity-0 group-hover:opacity-100" />
+                </div>
+            )}
             <CardTitle className="text-xl">
                 <Link href={`/app/summaries/${summary.id}`}>
                     {summary.item.title}

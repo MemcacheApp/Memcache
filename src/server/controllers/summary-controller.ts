@@ -82,10 +82,16 @@ export default class SummaryController {
         });
 
         const hasMore = summaries.length > 5;
-        const trimmedSummaries = summaries.slice(0, 5).map((summary) => ({
-            ...summary,
-            content: summary.content.substring(0, 300),
-        }));
+        const trimmedSummaries = summaries.slice(0, 5).map((summary) => {
+            const isFullText = summary.content.length <= 300;
+            return {
+                ...summary,
+                isFullText,
+                content: isFullText
+                    ? summary.content
+                    : summary.content.substring(0, 300) + "…",
+            };
+        });
 
         return {
             hasMore,
