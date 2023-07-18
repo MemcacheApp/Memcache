@@ -63,6 +63,7 @@ export default function FlashcardsPage() {
     const [url, setUrl] = useState("");
 
     const itemsQuery = trpc.item.getUserItems.useQuery();
+    const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
 
     const suggestedItems =
         itemsQuery.data
@@ -80,7 +81,7 @@ export default function FlashcardsPage() {
         <div className="flex flex-col gap-5">
             <PageTitle>Flashcards</PageTitle>
 
-            {flashcardsData?.map((flashcard) => (
+            {flashcardsQuery.data?.map((flashcard) => (
                 <div
                     className="flex flex-col gap-3 px-4 my-4"
                     key={flashcard.id}

@@ -151,12 +151,14 @@ export function FlashcardsDialog({
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [range, setRange] = useState(Range.Balanced);
 
+    const ctx = trpc.useContext();
+
     const generateFlashcardsMutation =
         trpc.flashcards.generateFlashcards.useMutation({
             onSuccess(data) {
                 console.log("Successfully generated flashcards:");
-
                 console.log(data);
+                ctx.flashcards.getUserFlashcards.invalidate();
             },
             onError: (err) => {
                 console.error(err);
