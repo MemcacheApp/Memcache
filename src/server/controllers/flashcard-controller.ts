@@ -63,17 +63,21 @@ const functions: ChatCompletionFunctions[] = [
 
 export default class FlashcardController {
     static async getUserFlashcards(userId: string) {
-        // TODO: error check
-        const flashcards = await prisma.flashcard.findMany({
-            where: {
-                userId,
-            },
-            include: {
-                reviews: true,
-            },
-        });
-        return flashcards;
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                },
+                include: {
+                    reviews: true,
+                },
+            });
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
     }
+
     static async generateFlashcards(
         userId: string,
         itemId: string,
@@ -167,8 +171,8 @@ export default class FlashcardController {
                             await prisma.flashcard.create({
                                 data: newFlashcard,
                             });
-                        } catch (error) {
-                            console.log(error);
+                        } catch (e) {
+                            console.log(e);
                         }
 
                         // Put function call response into message history for the AI to read
