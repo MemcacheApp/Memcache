@@ -48,16 +48,20 @@ export default class SummaryController {
             where: {
                 itemId,
             },
-            select: {
-                id: true,
-                createdAt: true,
-                wordCount: true,
-                experience: true,
-                finetuning: true,
-            },
         });
 
-        return summaries;
+        const trimmedSummaries = summaries.map((summary) => {
+            const isFullText = summary.content.length <= 300;
+            return {
+                ...summary,
+                isFullText,
+                content: isFullText
+                    ? summary.content
+                    : summary.content.substring(0, 300) + "…",
+            };
+        });
+
+        return trimmedSummaries;
     }
 
     static async getLatestSummaries(userId: string) {
