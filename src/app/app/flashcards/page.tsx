@@ -7,15 +7,23 @@ import {
     FlashcardRangeNames,
 } from "@/src/datatypes/flashcard";
 import {
+    Button,
     Card,
     CardHeader,
     CardTitle,
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
     Input,
     ItemCard,
     ScrollArea,
     ScrollBar,
+    SimpleItemCardFooter,
 } from "@/ui/components";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
+import { Progress } from "@/ui/components/Progress";
 import { H4 } from "@/ui/components/typography";
 import { cn } from "@/ui/utils";
 import { Collection, Item, Tag } from "@prisma/client";
@@ -24,7 +32,24 @@ import { H3, PageTitle } from "../../../../ui/components/typography";
 import { ReviewRatingEnum } from "../../utils/ReviewRating";
 import { trpc } from "../../utils/trpc";
 
-const flashcardsData = [
+interface Flashcard {
+    id: number;
+    question: string;
+    answer: string;
+    experience: FlashcardExperience;
+    range: FlashcardRange;
+    due: string;
+    reviews: FlashcardReview[];
+    item: Item & { collection: Collection; tags: Tag[] };
+}
+
+interface FlashcardReview {
+    id: number;
+    timestamp: string;
+    rating: ReviewRatingEnum;
+}
+
+const flashcardsData: Flashcard[] = [
     {
         id: 1,
         question:
@@ -66,7 +91,7 @@ const flashcardsData = [
                 "WebSocket client applications use the WebSocket API to communicate with WebSocket servers using the WebSocket protocol.",
             thumbnail:
                 "https://images.nightcafe.studio/jobs/UUCFR8ZnsnXKdbDPXntw/UUCFR8ZnsnXKdbDPXntw_7.4977x.jpg?tr=w-1600,c-at_max",
-            createdAt: "2023-07-17T05:22:07.265Z",
+            createdAt: new Date("2023-07-17T05:22:07.265Z"),
             userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
             siteName: "developer.mozilla.org",
             duration: null,
@@ -111,7 +136,7 @@ const flashcardsData = [
                 "WebSocket client applications use the WebSocket API to communicate with WebSocket servers using the WebSocket protocol.",
             thumbnail:
                 "https://images.nightcafe.studio/jobs/UUCFR8ZnsnXKdbDPXntw/UUCFR8ZnsnXKdbDPXntw_7.4977x.jpg?tr=w-1600,c-at_max",
-            createdAt: "2023-07-17T05:22:07.265Z",
+            createdAt: new Date("2023-07-17T05:22:07.265Z"),
             userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
             siteName: "developer.mozilla.org",
             duration: null,
@@ -144,6 +169,9 @@ export default function FlashcardsPage() {
     const [selectedItem, setSelectedItem] = useState<
         (Item & { collection: Collection; tags: Tag[] }) | null
     >(null);
+
+    const [selectedFlashcard, setSelectedFlashcard] =
+        useState<Flashcard | null>(null);
 
     return (
         <div className="flex flex-col gap-5">
@@ -208,6 +236,9 @@ export default function FlashcardsPage() {
                                         "transition-[transform,border-color,border-radius]",
                                         "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer",
                                     )}
+                                    onClick={() =>
+                                        setSelectedFlashcard(flashcard)
+                                    }
                                 >
                                     <img
                                         src={
@@ -252,19 +283,25 @@ export default function FlashcardsPage() {
                                                 {flashcard.item.title}
                                             </CardTitle>
                                         ) : null}
-                                        {flashcard.item.description ? (
-                                            <p className="mt-3 overflow-hidden">
-                                                {flashcard.item.description}
-                                            </p>
-                                        ) : null}
                                     </CardHeader>
+                                    <SimpleItemCardFooter
+                                        url={flashcard.item.url}
+                                        type={flashcard.item.type}
+                                        title={flashcard.item.title}
+                                        collection={flashcard.item.collection}
+                                        tags={flashcard.item.tags}
+                                        description={flashcard.item.description}
+                                        thumbnail={flashcard.item.thumbnail}
+                                        siteName={flashcard.item.siteName}
+                                        favicon={flashcard.item.favicon}
+                                    />
                                 </div>
                             </Card>
                         ))}
                     </div>
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>
-                <H4>Recently Viewed</H4>
+                <H4 className="mt-3">Recently Viewed</H4>
             </Card>
             <Card className="rounded-lg mx-8 p-6">
                 <H3>Items with Flashcards</H3>
@@ -281,7 +318,138 @@ export default function FlashcardsPage() {
                     }}
                 />
             )}
+            {selectedFlashcard && (
+                <FlashcardDialog
+                    flashcard={selectedFlashcard}
+                    item={selectedFlashcard.item}
+                    open={selectedFlashcard !== null}
+                    onOpenChange={(value) => {
+                        if (!value) {
+                            setSelectedFlashcard(null);
+                        }
+                    }}
+                />
+            )}
         </div>
+    );
+}
+
+function FlashcardDialog({
+    flashcard,
+    item,
+    open,
+    onOpenChange,
+}: {
+    flashcard: Flashcard;
+    item: Item & { collection: Collection; tags: Tag[] };
+    open: boolean;
+    onOpenChange: (value: boolean) => void;
+}) {
+    const [showAnswer, setShowAnswer] = useState(false);
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="w-[85%] sm:max-w-[860px]">
+                <DialogHeader>
+                    <DialogTitle>Flashcard</DialogTitle>
+                </DialogHeader>
+                <div
+                    className={cn(
+                        "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]",
+                    )}
+                >
+                    <img
+                        src={
+                            flashcard.item.thumbnail ??
+                            "https://www.maxpixel.net/static/photo/2x/Snow-Peaks-Ai-Generated-Artwork-Mountains-Forest-7903258.jpg"
+                        }
+                        alt="Image"
+                        className="absolute w-full h-full object-cover object-center blur"
+                    />
+                    <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 flex flex-col justify-evenly items-center shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset]">
+                        <div
+                            className={cn(
+                                "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center",
+                            )}
+                        >
+                            {flashcard.question}
+                        </div>
+
+                        <div
+                            className={cn(
+                                "px-4 py-2 h-full grow transition-[height,width,border-style,transform]",
+                                {
+                                    "h-1 py-0 w-[45%] border-solid border-t-2":
+                                        showAnswer,
+                                },
+                            )}
+                        >
+                            <button
+                                className={cn(
+                                    "bg-slate-200/20 px-10 py-4 rounded-full hover:bg-slate-100/30",
+                                    { "hidden ": showAnswer },
+                                )}
+                                onClick={() => {
+                                    setShowAnswer(true);
+                                    console.log("clicked");
+                                }}
+                            >
+                                Answer
+                            </button>
+                        </div>
+                        <div
+                            className={cn(
+                                "px-4 py-0 h-0 w-[90%] max-w-[56rem] opacity-0 text-center flex items-center transition-[height,opacity] overflow-y-hidden",
+                                {
+                                    "h-full grow py-2 opacity-1": showAnswer,
+                                },
+                            )}
+                        >
+                            {flashcard.answer}
+                        </div>
+                    </div>
+                </div>
+                <div className="w-[65%]">
+                    <div className="w-full flex flex-col justify-between">
+                        <div className="py-1 flex justify-between items-center">
+                            <div className="font-semibold">Due tomorrow</div>
+                            <div>Last revisited 3 days ago</div>
+                        </div>
+                        <div className="py-1 flex justify-between items-center">
+                            <div className="text-xl px-1 mr-2">{"65%"}</div>
+                            <Progress value={65} />
+                        </div>
+                        <div className="py-1 flex gap-2 text-sm text-slate-400/90">
+                            <span>
+                                {FlashcardExperienceNames[flashcard.experience]}
+                            </span>
+                            <span>&#183;</span>
+                            <span>{FlashcardRangeNames[flashcard.range]}</span>
+                        </div>
+                    </div>
+                    <CardHeader className="px-0 overflow-y-hidden">
+                        {item.title ? (
+                            <CardTitle>{item.title}</CardTitle>
+                        ) : null}
+                    </CardHeader>
+                    <SimpleItemCardFooter
+                        url={item.url}
+                        type={item.type}
+                        title={item.title}
+                        collection={item.collection}
+                        tags={item.tags}
+                        description={item.description}
+                        thumbnail={item.thumbnail}
+                        siteName={item.siteName}
+                        favicon={item.favicon}
+                        className="px-0"
+                    />
+                </div>
+                <DialogFooter>
+                    <Button onClick={() => onOpenChange(false)}>Return</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
 
