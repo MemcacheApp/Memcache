@@ -81,7 +81,7 @@ export function ItemCard({
     };
 
     const statusNums = Object.values(StatusEnum).filter(
-        (value): value is number => typeof value === "number",
+        (value): value is number => typeof value === "number"
     );
 
     return (
@@ -92,7 +92,7 @@ export function ItemCard({
                     selected
                         ? "scale-[101%] shadow-md border-slate-500"
                         : "scale-100",
-                    className,
+                    className
                 )}
                 onClick={
                     onSelect

@@ -28,7 +28,7 @@ export function ItemList(props: ItemListProps) {
             activeStatus: state.activeStatus,
             selectedItems: state.selectedItems,
             selectItem: state.selectItem,
-        }),
+        })
     );
 
     const itemsQuery = trpc.item.getUserItems.useQuery();
@@ -38,10 +38,10 @@ export function ItemList(props: ItemListProps) {
             const data = itemsQuery.data
                 .filter(
                     (item) =>
-                        activeStatus === null || activeStatus === item.status,
+                        activeStatus === null || activeStatus === item.status
                 )
                 .sort(
-                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf(), // sort by createdAt
+                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
                 );
             if (props.collectionId) {
                 return data.filter(
@@ -55,7 +55,7 @@ export function ItemList(props: ItemListProps) {
     }, [itemsQuery.data, props, activeStatus]);
 
     return (
-        <div className="flex flex-col gap-3 md:mx-8 pb-8">
+        <div className="flex flex-col gap-3 pb-8 md:mx-8">
             <Options />
             {items && items.length > 0 ? (
                 items.map((item) => (
@@ -67,7 +67,7 @@ export function ItemList(props: ItemListProps) {
                     />
                 ))
             ) : (
-                <div className="w-full px-6 my-8 flex flex-col items-center gap-4">
+                <div className="flex flex-col items-center w-full gap-4 px-6 my-8">
                     <Image
                         src={EmptyInbox}
                         width="128"
@@ -85,7 +85,7 @@ function Options() {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
     return (
-        <div className="max-md:mx-5 flex items-center gap-5">
+        <div className="flex items-center gap-5 max-md:mx-5">
             {isMultiselect ? <MultiselectOptions /> : <NormalOptions />}
         </div>
     );
@@ -93,7 +93,7 @@ function Options() {
 
 function NormalOptions() {
     const enableMultiselect = useItemListStore(
-        (state) => state.enableMultiselect,
+        (state) => state.enableMultiselect
     );
 
     return (
@@ -101,10 +101,10 @@ function NormalOptions() {
             <StatusToggle />
             <Button
                 variant="outline"
-                className="w-10 rounded-full p-0 shrink-0"
+                className="w-10 p-0 rounded-full shrink-0"
                 onClick={enableMultiselect}
             >
-                <div className="flex items-center justify-center h-4 w-4">
+                <div className="flex items-center justify-center w-4 h-4">
                     <SquareStack />
                 </div>
                 <span className="sr-only">Multiselect</span>
@@ -119,7 +119,7 @@ function MultiselectOptions() {
             selectedItems: state.selectedItems,
             showPanel: state.showPanel,
             disableMultiselect: state.disableMultiselect,
-        }),
+        })
     );
 
     const ctx = trpc.useContext();
@@ -158,13 +158,13 @@ function MultiselectOptions() {
     };
 
     const statusNames = Object.values(StatusEnum).filter(
-        (value): value is string => typeof value === "string",
+        (value): value is string => typeof value === "string"
     );
     const statusNums = Array.from(statusNames.keys());
 
     return (
         <>
-            <div className="flex items-center h-12 gap-5 whitespace-nowrap overflow-x-auto grow">
+            <div className="flex items-center h-12 gap-5 overflow-x-auto whitespace-nowrap grow">
                 <div className="flex items-center">
                     <SquareStack size={18} className="mr-2" />
                     <span className="font-medium">
@@ -212,10 +212,10 @@ function MultiselectOptions() {
             </Button>
             <Button
                 variant="outline"
-                className="w-10 rounded-full p-0 shrink-0"
+                className="w-10 p-0 rounded-full shrink-0"
                 onClick={disableMultiselect}
             >
-                <div className="flex items-center justify-center h-4 w-4">
+                <div className="flex items-center justify-center w-4 h-4">
                     <X />
                 </div>
                 <span className="sr-only">Exit Multiselect</span>
@@ -231,7 +231,7 @@ function StatusToggle() {
     }));
 
     return (
-        <div className="flex items-center space-x-3 h-12 overflow-x-auto grow">
+        <div className="flex items-center h-12 space-x-3 overflow-x-auto grow">
             {Object.values(StatusEnum)
                 .filter((value) => typeof value === "number")
                 .map((value) => {
@@ -245,7 +245,7 @@ function StatusToggle() {
                         >
                             {renderIcon(
                                 StatusIcons[value as StatusEnum],
-                                "mr-2",
+                                "mr-2"
                             )}
                             {StatusNames[value as StatusEnum]}
                         </Button>

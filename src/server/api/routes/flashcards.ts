@@ -43,4 +43,15 @@ export const flashcardsRouter = router({
                 });
             }
         }),
+
+    getUserFlashcards: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            const flashcards = await FlashcardController.getUserFlashcards(
+                ctx.userId
+            );
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }),
 });

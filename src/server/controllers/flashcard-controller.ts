@@ -1,5 +1,6 @@
 import { FlashcardExperience, FlashcardRange } from "@/src/datatypes/flashcard";
 import ContentScraper from "@/src/utils/content-scraper";
+import { Flashcard } from "@prisma/client";
 import {
     ChatCompletionFunctions,
     ChatCompletionRequestMessage,
@@ -7,6 +8,7 @@ import {
 } from "openai";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { prisma } from "../db/prisma";
 import openai from "../utils/openai";
 import { GenerateFlashcardError } from "./errors/flashcard";
 import ItemController from "./item-controller";
@@ -60,6 +62,22 @@ const functions: ChatCompletionFunctions[] = [
 ];
 
 export default class FlashcardController {
+    static async getUserFlashcards(userId: string) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                },
+                include: {
+                    reviews: true,
+                },
+            });
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     static async generateFlashcards(
         userId: string,
         itemId: string,
@@ -72,7 +90,7 @@ export default class FlashcardController {
             url: item.url,
         });
         const truncatedContent = content.slice(0, 5000); // About 1000 words
-        console.log(`Content: ${truncatedContent}`);
+        // console.log(`Content: ${truncatedContent}`);
 
         const systemPrompt = generateSystemPrompt(
             item.description,
@@ -99,7 +117,6 @@ export default class FlashcardController {
 
         for (let i = 0; i < numOfFlashcards; i++) {
             // TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't
-
             const chatCompletion = await openai.createChatCompletion({
                 model: "gpt-3.5-turbo", // $0.002USD per 1K tokens (don't use GPT-4 it's 30x more expensive)
                 // n: 4, // Number of flashcards to generate
@@ -112,12 +129,12 @@ export default class FlashcardController {
                     name: functionName, // Force the AI to call this function on next chat response
                 },
             });
-
             const response_message = chatCompletion.data.choices[0].message;
+            console.log(response_message);
 
-            console.log(
-                `\nGenerating flashcard ${i} (AI makes function call):`,
-            );
+            // console.log(
+            //     `\nGenerating flashcard ${i} (AI makes function call):`
+            // );
             // console.dir(chatCompletion.data, { depth: null });
 
             // Check if the AI wants to call a function
@@ -136,8 +153,28 @@ export default class FlashcardController {
                         const functionCallResult = getFlashcard(
                             parsedGetFlashcardParams,
                         );
-                        console.dir(functionCallResult, { depth: null });
-                        // TODO: Store new Flashcard in database
+
+                        // console.dir(functionCallResult, { depth: null });
+                        const today = new Date();
+                        const tomorrow = new Date(today);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow.setHours(0, 0, 0, 0);
+                        const newFlashcard: Flashcard = {
+                            id: functionCallResult.id,
+                            question: functionCallResult.question,
+                            answer: functionCallResult.answer,
+                            itemId,
+                            userId,
+                            dueDate: tomorrow, // Initial due date when flashcard is created is the next day
+                        };
+                        try {
+                            await prisma.flashcard.create({
+                                data: newFlashcard,
+                            });
+                        } catch (e) {
+                            console.log(e);
+                        }
+
                         // Put function call response into message history for the AI to read
                         messages.push(response_message); // This is a ChatCompletionResponseMessage authored by the AI assistant
                         messages.push({
