@@ -4,12 +4,13 @@ import React from "react";
 import { Sidebar } from "./components/Sidebar";
 import { useSidebarStore } from "../store/sidebar";
 import classNames from "classnames";
+import "./app.css";
 
 export default function layout({ children }: { children: React.ReactNode }) {
     const isExpand = useSidebarStore((state) => state.isExpand);
 
     return (
-        <div className={"bg-muted h-screen"}>
+        <div className={"h-screen"}>
             <Sidebar />
             <div
                 className={classNames(

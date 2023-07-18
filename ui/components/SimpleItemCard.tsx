@@ -1,9 +1,7 @@
 import { Globe, Package2, TagIcon } from "lucide-react";
-import { Card, CardFooter, CardHeader, CardTitle, Skeleton } from ".";
-import ExternalLink from "./ExternalLink";
+import { Card, CardFooter, CardHeader, CardTitle, ExternalLink, Link, Skeleton } from ".";
 import { cn } from "../utils";
 import { Collection, Tag } from "@prisma/client";
-import Link from "next/link";
 
 interface SimpleItemCardProps {
     type?: string;
@@ -98,11 +96,10 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                     <TagIcon size={16} />
                                     {props.tags.map((tag) => (
                                         <Link
-                                            className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 border shadow-sm"
+                                            className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm"
                                             key={tag.id}
                                             href={`/app/tag/${tag.id}`}
                                             onClick={(e) => e.stopPropagation()}
-                                            tabIndex={-1}
                                         >
                                             {tag.name}
                                         </Link>

@@ -14,8 +14,6 @@ export function Sidebar() {
     const { isExpand, toggle, collapse } = useSidebarStore();
 
     useEffect(() => {
-        document.body.classList.add("bg-muted");
-
         if (window.innerWidth <= 768) {
             collapse();
         }
