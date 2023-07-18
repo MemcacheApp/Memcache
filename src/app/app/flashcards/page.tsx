@@ -366,84 +366,123 @@ function FlashcardDialog({
                         alt="Image"
                         className="absolute w-full h-full object-cover object-center blur"
                     />
-                    <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 flex flex-col justify-evenly items-center shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset]">
-                        <div
-                            className={cn(
-                                "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center",
-                            )}
-                        >
-                            {flashcard.question}
-                        </div>
-
-                        <div
-                            className={cn(
-                                "px-4 py-2 h-full grow transition-[height,width,border-style,transform]",
-                                {
-                                    "h-1 py-0 w-[45%] border-solid border-t-2":
-                                        showAnswer,
-                                },
-                            )}
-                        >
-                            <button
+                    <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset]">
+                        <div className="w-full h-full px-4 py-16 flex flex-col justify-evenly items-center ">
+                            <div
                                 className={cn(
-                                    "bg-slate-200/20 px-10 py-4 rounded-full hover:bg-slate-100/30",
-                                    { "hidden ": showAnswer },
+                                    "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center",
                                 )}
-                                onClick={() => {
-                                    setShowAnswer(true);
-                                    console.log("clicked");
-                                }}
                             >
-                                Answer
-                            </button>
-                        </div>
-                        <div
-                            className={cn(
-                                "px-4 py-0 h-0 w-[90%] max-w-[56rem] opacity-0 text-center flex items-center transition-[height,opacity] overflow-y-hidden",
-                                {
-                                    "h-full grow py-2 opacity-1": showAnswer,
-                                },
-                            )}
-                        >
-                            {flashcard.answer}
+                                {flashcard.question}
+                            </div>
+
+                            <div
+                                className={cn(
+                                    "px-4 py-2 h-full grow transition-[height,width,border-style,transform]",
+                                    {
+                                        "h-1 py-0 w-[45%] border-solid border-t-2":
+                                            showAnswer,
+                                    },
+                                )}
+                            >
+                                <button
+                                    className={cn(
+                                        "bg-slate-200/20 px-10 py-4 rounded-full hover:bg-slate-100/30",
+                                        { "hidden ": showAnswer },
+                                    )}
+                                    onClick={() => {
+                                        setShowAnswer(true);
+                                        console.log("clicked");
+                                    }}
+                                >
+                                    Answer
+                                </button>
+                            </div>
+                            <div
+                                className={cn(
+                                    "px-4 py-0 h-0 w-[90%] max-w-[56rem] opacity-0 text-center flex items-center transition-[height,opacity] overflow-y-hidden",
+                                    {
+                                        "h-full grow py-2 opacity-1":
+                                            showAnswer,
+                                    },
+                                )}
+                            >
+                                {flashcard.answer}
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="w-[65%]">
-                    <div className="w-full flex flex-col justify-between">
-                        <div className="py-1 flex justify-between items-center">
-                            <div className="font-semibold">Due tomorrow</div>
-                            <div>Last revisited 3 days ago</div>
+                <div className="w-full flex ">
+                    <div className="w-[70%] ">
+                        <div className="w-full flex flex-col justify-between">
+                            <div className="py-1 flex justify-between items-center">
+                                <div className="font-semibold">
+                                    Due tomorrow
+                                </div>
+                                <div>Last revisited 3 days ago</div>
+                            </div>
+                            <div className="py-1 flex justify-between items-center">
+                                <div className="text-xl px-1 mr-2">{"65%"}</div>
+                                <Progress value={65} />
+                            </div>
+                            <div className="py-1 flex gap-2 text-sm text-slate-400/90">
+                                <span>
+                                    {
+                                        FlashcardExperienceNames[
+                                            flashcard.experience
+                                        ]
+                                    }
+                                </span>
+                                <span>&#183;</span>
+                                <span>
+                                    {FlashcardRangeNames[flashcard.range]}
+                                </span>
+                            </div>
                         </div>
-                        <div className="py-1 flex justify-between items-center">
-                            <div className="text-xl px-1 mr-2">{"65%"}</div>
-                            <Progress value={65} />
-                        </div>
-                        <div className="py-1 flex gap-2 text-sm text-slate-400/90">
-                            <span>
-                                {FlashcardExperienceNames[flashcard.experience]}
+                        <CardHeader className="px-0 overflow-y-hidden">
+                            {item.title ? (
+                                <CardTitle>{item.title}</CardTitle>
+                            ) : null}
+                        </CardHeader>
+                        <SimpleItemCardFooter
+                            url={item.url}
+                            type={item.type}
+                            title={item.title}
+                            collection={item.collection}
+                            tags={item.tags}
+                            description={item.description}
+                            thumbnail={item.thumbnail}
+                            siteName={item.siteName}
+                            favicon={item.favicon}
+                            className="px-0"
+                        />
+                    </div>
+                    <div className="ml-[2.5rem] flex flex-col gap-2">
+                        <div className="text-easy">
+                            <span className="text-3xl font-bold font-mono">
+                                1
                             </span>
-                            <span>&#183;</span>
-                            <span>{FlashcardRangeNames[flashcard.range]}</span>
+                            <span className="ml-2">easy</span>
+                        </div>
+                        <div className="text-medium">
+                            <span className="text-3xl font-bold font-mono">
+                                4
+                            </span>
+                            <span className="ml-2">medium</span>
+                        </div>
+                        <div className="text-hard">
+                            <span className="text-3xl font-bold font-mono">
+                                3
+                            </span>
+                            <span className="ml-2">hard</span>
+                        </div>
+                        <div className="text-forgot">
+                            <span className="text-3xl font-bold font-mono">
+                                2
+                            </span>
+                            <span className="ml-2">forgot</span>
                         </div>
                     </div>
-                    <CardHeader className="px-0 overflow-y-hidden">
-                        {item.title ? (
-                            <CardTitle>{item.title}</CardTitle>
-                        ) : null}
-                    </CardHeader>
-                    <SimpleItemCardFooter
-                        url={item.url}
-                        type={item.type}
-                        title={item.title}
-                        collection={item.collection}
-                        tags={item.tags}
-                        description={item.description}
-                        thumbnail={item.thumbnail}
-                        siteName={item.siteName}
-                        favicon={item.favicon}
-                        className="px-0"
-                    />
                 </div>
                 <DialogFooter>
                     <Button onClick={() => onOpenChange(false)}>Return</Button>
