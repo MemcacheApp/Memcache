@@ -73,7 +73,7 @@ export function ItemList(props: ItemListProps) {
         } else {
             return [];
         }
-    }, [itemsQuery.data, activeStatus, includedTags.size, excludedTags.size]);
+    }, [itemsQuery.data, activeStatus]);
 
     return (
         <div className="flex flex-col gap-3 md:mx-8 pb-8">
