@@ -324,13 +324,12 @@ function TagFilterSelector({
     excludedTags: Set<string>;
 }) {
     const [tagCount, setTagCount] = useState(0);
-
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
     const ctx = trpc.useContext();
+
     useEffect(() => {
         ctx.item.getUserItems.invalidate();
     }, [tagCount]);
-
-    const tagsQuery = trpc.tag.getUserTags.useQuery();
 
     return (
         <DropdownMenu>

@@ -118,6 +118,16 @@ export default class ItemController {
             where: {
                 userId,
                 tags: {
+                    some: {
+                        name:
+                            includedTags && includedTags.length
+                                ? {
+                                      in: includedTags,
+                                  }
+                                : {
+                                      notIn: [],
+                                  },
+                    },
                     none: {
                         name: {
                             in: excludedTags,
@@ -130,6 +140,7 @@ export default class ItemController {
                 collection: true,
             },
         });
+
         return items;
     }
 
