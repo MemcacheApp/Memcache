@@ -78,10 +78,10 @@ export function ItemPanel() {
                     </Button>
                 </div>
 
-                {ids.length > 1 ? (
-                    <div>Select {ids.length} items</div>
-                ) : (
+                {ids.length === 1 ? (
                     <SingleItem itemId={ids[0]} />
+                ) : (
+                    <div>Select {ids.length} items</div>
                 )}
             </Card>
         </div>
@@ -195,7 +195,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
                     <Subtitle Icon={Package2}>Collection</Subtitle>
                     <div className="flex justify-between items-center">
                         <Link
-                            href={`/app/collection/${data.collection.id}`}
+                            href={`/app/collections/${data.collection.id}`}
                             className="text-slate-600 font-medium underline"
                         >
                             {data.collection.name}
