@@ -7,7 +7,8 @@ import {
 } from "@/src/datatypes/flashcard";
 import { Experience, Finetuning } from "@/src/datatypes/summary";
 import { Collection, Item, Tag } from "@prisma/client";
-import { useState } from "react";
+import { PlusIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Button,
     Dialog,
@@ -17,11 +18,90 @@ import {
     DialogTitle,
     Input,
     Label,
+    Loader,
+    SummaryCard,
     Tabs,
     TabsList,
     TabsTrigger,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
+
+interface SummariesDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    data: Item & { collection: Collection; tags: Tag[] };
+    newSummary: () => void;
+}
+
+export function SummariesDialog({
+    open,
+    onOpenChange,
+    data,
+    newSummary,
+}: SummariesDialogProps) {
+    const getItemSummariesQuery = trpc.summary.getItemSummaries.useQuery(
+        {
+            itemId: data.id,
+        },
+        { refetchOnWindowFocus: false, enabled: false }
+    );
+
+    const handleNewSummary = useCallback(() => {
+        onOpenChange(false);
+        newSummary();
+    }, []);
+
+    useEffect(() => {
+        if (open) {
+            if (getItemSummariesQuery.data === undefined) {
+                getItemSummariesQuery.refetch();
+            } else if (getItemSummariesQuery.data.length === 0) {
+                handleNewSummary();
+            }
+        }
+    }, [open]);
+
+    useEffect(() => {
+        if (
+            getItemSummariesQuery.data &&
+            getItemSummariesQuery.data.length === 0
+        ) {
+            handleNewSummary();
+        }
+    }, [getItemSummariesQuery.data]);
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Summaries</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-5">
+                    {getItemSummariesQuery.data !== undefined ? (
+                        <>
+                            {getItemSummariesQuery.data.map((summary) => (
+                                <SummaryCard
+                                    key={summary.id}
+                                    item={data}
+                                    summary={summary}
+                                />
+                            ))}
+                            <Button
+                                variant="outline"
+                                onClick={handleNewSummary}
+                            >
+                                <PlusIcon className="mr-2" size={16} /> Generate
+                                New Summary
+                            </Button>
+                        </>
+                    ) : (
+                        <Loader varient="ellipsis" />
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+}
 
 interface GenerateSummaryDialogProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -160,7 +240,7 @@ export function FlashcardsDialog({
 }: FlashcardsDialogProps) {
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
     const [experience, setExperience] = useState<FlashcardExperience>(
-        FlashcardExperience.Intermediate,
+        FlashcardExperience.Intermediate
     );
     const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
@@ -218,14 +298,14 @@ export function FlashcardsDialog({
                             onValueChange={(value) =>
                                 (
                                     Object.values(
-                                        FlashcardExperience,
+                                        FlashcardExperience
                                     ) as string[]
                                 ).includes(value)
                                     ? setExperience(
-                                          value as FlashcardExperience,
+                                          value as FlashcardExperience
                                       )
                                     : setExperience(
-                                          FlashcardExperience.Intermediate,
+                                          FlashcardExperience.Intermediate
                                       )
                             }
                         >

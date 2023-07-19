@@ -25,7 +25,11 @@ import {
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { cn } from "../utils";
-import { FlashcardsDialog, GenerateSummaryDialog } from "./GenerationDialog";
+import {
+    FlashcardsDialog,
+    GenerateSummaryDialog,
+    SummariesDialog,
+} from "./GenerationDialog";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -49,6 +53,7 @@ export function ItemCard({
     format,
 }: ItemCardProps) {
     const [isOpenSummaries, setIsOpenSummaries] = useState(false);
+    const [isOpenGenrateSummary, setIsOpenGenerateSummary] = useState(false);
     const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
 
     const ctx = trpc.useContext();
@@ -136,10 +141,16 @@ export function ItemCard({
                     )
                 }
             />
-            <GenerateSummaryDialog
+            <SummariesDialog
                 data={data}
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
+                newSummary={() => setIsOpenGenerateSummary(true)}
+            />
+            <GenerateSummaryDialog
+                data={data}
+                open={isOpenGenrateSummary}
+                onOpenChange={setIsOpenGenerateSummary}
                 viewSummaries={() => setIsOpenSummaries(true)}
             />
             <FlashcardsDialog
