@@ -1,17 +1,17 @@
 "use client";
 
-import { P, PageTitle } from "@/ui/components";
 import { trpc } from "@/src/app/utils/trpc";
+import { P, PageTitle } from "@/ui/components";
 
 interface SummaryDetailPageProps {
     params: {
-        slug: string;
+        id: string;
     };
 }
 
 export default function SummaryDetailPage({ params }: SummaryDetailPageProps) {
     const itemQuery = trpc.summary.getSummary.useQuery({
-        summaryId: params.slug,
+        summaryId: params.id,
     });
     const data = itemQuery.data;
 
@@ -19,7 +19,7 @@ export default function SummaryDetailPage({ params }: SummaryDetailPageProps) {
         <div className="flex flex-col">
             <PageTitle>Summary of {data?.item.title} </PageTitle>
             <div className="mx-8">
-                <P>ID: {params.slug}</P>
+                <P>ID: {params.id}</P>
                 <P className="whitespace-pre-line">{data?.content}</P>
             </div>
         </div>

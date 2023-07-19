@@ -79,14 +79,16 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     loading={props.loading}
                     thumbnail={props.thumbnail}
                 />
-                <Footer {...props} className="flex @lg:hidden order-3" />
+                <SimpleItemCardFooter
+                    {...props}
+                    className="flex @lg:hidden order-3"
+                />
             </div>
-            <Footer {...props} className="hidden @lg:flex" />
+            <SimpleItemCardFooter {...props} className="hidden @lg:flex" />
         </Card>
     );
 }
-
-function Footer(props: SimpleItemCardProps) {
+export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     console.log(props.className);
 
     return (

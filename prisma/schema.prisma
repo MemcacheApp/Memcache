@@ -90,15 +90,17 @@ model ResetCode {
 }
 
 model Flashcard {
-  id       String            @id
-  question String
-  answer   String
-  dueDate  DateTime
-  reviews  FlashcardReview[]
-  userId   String
-  user     User              @relation(fields: [userId], references: [id])
-  itemId   String
-  item     Item              @relation(fields: [itemId], references: [id])
+  id         String              @id
+  question   String
+  answer     String
+  dueDate    DateTime
+  reviews    FlashcardReview[]
+  userId     String
+  user       User                @relation(fields: [userId], references: [id])
+  itemId     String
+  item       Item                @relation(fields: [itemId], references: [id])
+  experience FlashcardExperience
+  range      FlashcardRange
 }
 
 model FlashcardReview {
@@ -114,4 +116,16 @@ enum FlashcardReviewRating {
   MEDIUM
   HARD
   FORGOT
+}
+
+enum FlashcardExperience {
+  Beginner
+  Intermediate
+  Advanced
+}
+
+enum FlashcardRange {
+  Depth
+  Breadth
+  Balanced
 }
