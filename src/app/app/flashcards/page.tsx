@@ -1,6 +1,13 @@
 "use client";
 
-import { Card, Input, ItemCard, ScrollArea, ScrollBar } from "@/ui/components";
+import {
+    Card,
+    Input,
+    ItemCard,
+    Link,
+    ScrollArea,
+    ScrollBar,
+} from "@/ui/components";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { H4 } from "@/ui/components/typography";
 import { Collection, Item, Tag } from "@prisma/client";
@@ -59,9 +66,60 @@ const flashcardsData = [
     },
 ];
 
-export default function FlashcardsPage() {
-    const [url, setUrl] = useState("");
+function FlashcardSearchResult({ item }: { item: Item }) {
+    const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
 
+    return (
+        <>
+            <div
+                key={item.id}
+                onClick={() => setIsOpenFlashcards(true)}
+                className="flex justify-between h-24 px-2 py-3 rounded-md hover:bg-slate-100"
+            >
+                <div className="flex flex-col justify-between">
+                    <div className="flex">
+                        <h3 className="mr-2 text-lg font-semibold leading-6 tracking-tight">
+                            {item.title}
+                        </h3>
+                        {/* <ExternalLink /> */}
+                    </div>
+                    <div>
+                        {item.tags.map((tag: Tag) => {
+                            return (
+                                <div key={tag.id}>
+                                    <Link
+                                        className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm w-fit"
+                                        href={`/app/tag/${tag.id}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {tag.name}
+                                    </Link>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+                {item.thumbnail ? (
+                    <img
+                        src={item.thumbnail}
+                        alt="Image"
+                        className="rounded-sm w-36"
+                    />
+                ) : (
+                    ""
+                )}
+            </div>
+            <FlashcardsDialog
+                data={item}
+                open={isOpenFlashcards}
+                onOpenChange={setIsOpenFlashcards}
+            />
+        </>
+    );
+}
+
+export default function FlashcardsPage() {
+    const [itemInput, setItemInput] = useState("");
     const itemsQuery = trpc.item.getUserItems.useQuery();
     const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
 
@@ -98,13 +156,38 @@ export default function FlashcardsPage() {
             ))}
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>Generate Flashards</H3>
-                <div className="mt-3 mb-4">
+                <div className="relative mt-3 mb-4">
                     <Input
                         className="text-base border-solid rounded-md"
-                        placeholder="https://"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
+                        placeholder="Article title..."
+                        value={itemInput}
+                        onChange={(e) => setItemInput(e.target.value)}
                     />
+
+                    {itemInput &&
+                        itemsQuery.data &&
+                        itemsQuery.data.filter((item) => {
+                            return item.title
+                                .toLowerCase()
+                                .includes(itemInput.toLowerCase());
+                        }).length > 0 && (
+                            <div className="absolute z-10 w-full px-1 py-1 bg-white border border-solid rounded-md top-12 border-input">
+                                {itemsQuery.data
+                                    ?.filter((item) => {
+                                        return item.title
+                                            .toLowerCase()
+                                            .includes(itemInput.toLowerCase());
+                                    })
+                                    .map((item) => {
+                                        return (
+                                            <FlashcardSearchResult
+                                                key={item.id}
+                                                item={item}
+                                            />
+                                        );
+                                    })}
+                            </div>
+                        )}
                 </div>
                 <H4>Suggested</H4>
                 <ScrollArea type="scroll">
