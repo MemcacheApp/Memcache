@@ -14,7 +14,7 @@ import {
     ItemCard,
     TagSelector,
 } from ".";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Archive,
     CheckCircle2,
@@ -324,6 +324,12 @@ function TagFilterSelector({
     excludedTags: Set<string>;
 }) {
     const [tagCount, setTagCount] = useState(0);
+
+    const ctx = trpc.useContext();
+    useEffect(() => {
+        ctx.item.getUserItems.invalidate();
+    }, [tagCount]);
+
     const tagsQuery = trpc.tag.getUserTags.useQuery();
 
     return (
