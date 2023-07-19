@@ -6,6 +6,7 @@ import Image from "next/image";
 import EmptyInbox from "@/public/EmptyInbox.svg";
 import {
     Button,
+    Card,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -294,18 +295,39 @@ function TagFilterSelector() {
                     Tags
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-                <TagSelector
-                    tags={tagsQuery.data}
-                    index={-1}
-                    value={""}
-                    setValue={() => {
-                        true;
-                    }}
-                    remove={() => {
-                        true;
-                    }}
-                />
+            <DropdownMenuContent className="flex flex-col gap-1">
+                <Card className="p-1">
+                    <div className="font-medium">Include:</div>
+                    <div>
+                        <TagSelector
+                            tags={tagsQuery.data}
+                            index={-1}
+                            value={""}
+                            setValue={() => {
+                                true;
+                            }}
+                            remove={() => {
+                                true;
+                            }}
+                        />
+                    </div>
+                </Card>
+                <Card className="p-1">
+                    <div className="text-red-600 font-medium">Exclude:</div>
+                    <div>
+                        <TagSelector
+                            tags={tagsQuery.data}
+                            index={-1}
+                            value={""}
+                            setValue={() => {
+                                true;
+                            }}
+                            remove={() => {
+                                true;
+                            }}
+                        />
+                    </div>
+                </Card>
             </DropdownMenuContent>
         </DropdownMenu>
     );
