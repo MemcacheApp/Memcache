@@ -14,7 +14,7 @@ import {
     ItemCard,
     TagSelector,
 } from ".";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
     Archive,
     CheckCircle2,
@@ -28,21 +28,31 @@ import {
 import { useItemListStore } from "@/src/app/store/item-list";
 import { cn } from "../utils";
 import renderIcon from "@/src/app/utils/renderIcon";
+import SimpleTag from "./SimpleTag";
 
 interface ItemListProps {
     collectionId?: string;
 }
 
 export function ItemList(props: ItemListProps) {
-    const { activeStatus, selectedItems, selectItem } = useItemListStore(
-        (state) => ({
-            activeStatus: state.activeStatus,
-            selectedItems: state.selectedItems,
-            selectItem: state.selectItem,
-        })
-    );
+    const {
+        selectItem,
+        activeStatus,
+        selectedItems,
+        includedTags,
+        excludedTags,
+    } = useItemListStore((state) => ({
+        selectItem: state.selectItem,
+        activeStatus: state.activeStatus,
+        selectedItems: state.selectedItems,
+        includedTags: state.includedTags,
+        excludedTags: state.excludedTags,
+    }));
 
-    const itemsQuery = trpc.item.getUserItems.useQuery();
+    const itemsQuery = trpc.item.getUserItems.useQuery({
+        includedTags: Array.from(includedTags),
+        excludedTags: Array.from(excludedTags),
+    });
 
     const items = useMemo(() => {
         if (itemsQuery.data) {
@@ -63,11 +73,11 @@ export function ItemList(props: ItemListProps) {
         } else {
             return [];
         }
-    }, [itemsQuery.data, props, activeStatus]);
+    }, [itemsQuery.data, activeStatus, includedTags.size, excludedTags.size]);
 
     return (
         <div className="flex flex-col gap-3 md:mx-8 pb-8">
-            <Options />
+            <Options includedTags={includedTags} excludedTags={excludedTags} />
             {items && items.length > 0 ? (
                 items.map((item) => (
                     <ItemCard
@@ -92,17 +102,36 @@ export function ItemList(props: ItemListProps) {
     );
 }
 
-function Options() {
+function Options({
+    includedTags,
+    excludedTags,
+}: {
+    includedTags: Set<string>;
+    excludedTags: Set<string>;
+}) {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
     return (
         <div className="max-md:mx-5 flex items-center gap-5">
-            {isMultiselect ? <MultiselectOptions /> : <NormalOptions />}
+            {isMultiselect ? (
+                <MultiselectOptions />
+            ) : (
+                <NormalOptions
+                    includedTags={includedTags}
+                    excludedTags={excludedTags}
+                />
+            )}
         </div>
     );
 }
 
-function NormalOptions() {
+function NormalOptions({
+    includedTags,
+    excludedTags,
+}: {
+    includedTags: Set<string>;
+    excludedTags: Set<string>;
+}) {
     const enableMultiselect = useItemListStore(
         (state) => state.enableMultiselect
     );
@@ -110,7 +139,10 @@ function NormalOptions() {
     return (
         <>
             <StatusToggle />
-            <TagFilterSelector />
+            <TagFilterSelector
+                includedTags={includedTags}
+                excludedTags={excludedTags}
+            />
             <Button
                 variant="outline"
                 className="w-10 rounded-full p-0 shrink-0"
@@ -284,7 +316,14 @@ function StatusToggle() {
     );
 }
 
-function TagFilterSelector() {
+function TagFilterSelector({
+    includedTags,
+    excludedTags,
+}: {
+    includedTags: Set<string>;
+    excludedTags: Set<string>;
+}) {
+    const [tagCount, setTagCount] = useState(0);
     const tagsQuery = trpc.tag.getUserTags.useQuery();
 
     return (
@@ -295,35 +334,59 @@ function TagFilterSelector() {
                     Tags
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="flex flex-col gap-1">
+            <DropdownMenuContent className="flex flex-col gap-1 min-w-[240px]">
                 <Card className="p-1">
                     <div className="font-medium">Include:</div>
-                    <div>
+                    <div className="flex flex-wrap gap-3">
+                        {Array.from(includedTags).map((tag, index) => (
+                            <SimpleTag
+                                key={index}
+                                value={tag}
+                                remove={() => {
+                                    includedTags.delete(tag);
+                                    setTagCount(tagCount - 1);
+                                }}
+                            />
+                        ))}
                         <TagSelector
                             tags={tagsQuery.data}
                             index={-1}
-                            value={""}
-                            setValue={() => {
-                                true;
+                            value=""
+                            setValue={(tag) => {
+                                includedTags.add(tag);
+                                setTagCount(tagCount + 1);
                             }}
-                            remove={() => {
-                                true;
+                            remove={(tag) => {
+                                includedTags.delete(tag);
+                                setTagCount(tagCount - 1);
                             }}
                         />
                     </div>
                 </Card>
                 <Card className="p-1">
                     <div className="text-red-600 font-medium">Exclude:</div>
-                    <div>
+                    <div className="flex flex-wrap gap-3">
+                        {Array.from(excludedTags).map((tag, index) => (
+                            <SimpleTag
+                                key={index}
+                                value={tag}
+                                remove={() => {
+                                    excludedTags.delete(tag);
+                                    setTagCount(tagCount - 1);
+                                }}
+                            />
+                        ))}
                         <TagSelector
                             tags={tagsQuery.data}
                             index={-1}
-                            value={""}
-                            setValue={() => {
-                                true;
+                            value=""
+                            setValue={(tag) => {
+                                excludedTags.add(tag);
+                                setTagCount(tagCount + 1);
                             }}
-                            remove={() => {
-                                true;
+                            remove={(tag) => {
+                                excludedTags.delete(tag);
+                                setTagCount(tagCount - 1);
                             }}
                         />
                     </div>

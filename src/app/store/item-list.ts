@@ -4,8 +4,10 @@ import { StatusEnum } from "../utils/Statuses";
 export interface ItemListState {
     activeStatus: StatusEnum;
     isMultiselect: boolean;
-    selectedItems: Set<string>;
     isShowPanel: boolean;
+    selectedItems: Set<string>;
+    includedTags: Set<string>;
+    excludedTags: Set<string>;
 }
 
 export interface ItemListActions {
@@ -21,8 +23,10 @@ export interface ItemListActions {
 const initialState: ItemListState = {
     activeStatus: StatusEnum.Inbox,
     isMultiselect: false,
-    selectedItems: new Set(),
     isShowPanel: false,
+    selectedItems: new Set(),
+    includedTags: new Set(),
+    excludedTags: new Set(),
 };
 
 export const useItemListStore = create<ItemListState & ItemListActions>(

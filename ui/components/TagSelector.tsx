@@ -23,7 +23,7 @@ interface TagSelectorProps {
     index: number;
     value: string;
     setValue: (name: string, index: number) => void;
-    remove: (index: number) => void;
+    remove: (name: string) => void;
     disabled?: boolean;
 }
 
@@ -88,7 +88,7 @@ export function TagSelector({
                                     <CommandItem
                                         className="!text-red-800 font-medium"
                                         onSelect={() => {
-                                            remove(index);
+                                            remove(tagNames[index]);
                                             setOpen(false);
                                         }}
                                     >
