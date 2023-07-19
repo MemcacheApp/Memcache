@@ -1,7 +1,6 @@
-import CollectionController from "../controllers/collection-controller";
-import UserController from "../controllers/user-controller";
 import { PrismaClient } from "@prisma/client";
-import { v4 as uuidv4 } from "uuid";
+import ItemController from "../controllers/item-controller";
+import UserController from "../controllers/user-controller";
 const prisma = new PrismaClient();
 
 const ADMIN_FIRST_NAME = "Ender";
@@ -19,6 +18,8 @@ const ITEMS = [
             "https://assets-global.website-files.com/621e749a546b7592125f38ed/6221e6c759f19819bd5bec04_CodeGen.jpg",
         type: "article",
         siteName: "deepmind.com",
+        collectionName: "AI",
+        tagNames: ["AI", "DeepMind"],
     },
     {
         title: "Writing WebSocket client applications - Web APIs | MDN",
@@ -29,6 +30,8 @@ const ITEMS = [
             "https://developer.mozilla.org/mdn-social-share.cd6c4a5a.png",
         type: "article",
         siteName: "developer.mozilla.org",
+        collectionName: "Web",
+        tagNames: ["WebSockets", "Opensource"],
     },
     {
         title: "Just-In-Time: The Next Generation of Tailwind CSS - Tailwind CSS",
@@ -39,6 +42,8 @@ const ITEMS = [
             "https://tailwindcss.com/_next/static/media/card.79a37188.jpg",
         type: "article",
         siteName: "tailwindcss.com",
+        collectionName: "Web",
+        tagNames: ["CSS", "Tailwind"],
     },
     {
         title: "Meta bets big on AI with custom chips -- and a supercomputer",
@@ -49,6 +54,8 @@ const ITEMS = [
             "https://techcrunch.com/wp-content/uploads/2021/11/facebook-meta-twist.jpg?resize=1200,675",
         type: "article",
         siteName: "TechCrunch",
+        collectionName: "AI",
+        tagNames: ["Meta"],
     },
     {
         title: "Twitter's Recommendation Algorithm",
@@ -59,16 +66,8 @@ const ITEMS = [
             "https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/main-template-assets/Eng_EXPLORE_Pink.png.twimg.768.png",
         type: "article",
         siteName: "blog.twitter.com",
-    },
-    {
-        title: "Just-In-Time: The Next Generation of Tailwind CSS - Tailwind CSS",
-        url: "https://tailwindcss.com/blog/just-in-time-the-next-generation-of-tailwind-css",
-        description:
-            "One of the hardest constraints we've had to deal with as we've improved Tailwind CSS over the years is the generated file size in development. Today I'm super excited to share a new project that makes this constraint a thing of the past: a just-in-time compiler for Tailwind CSS.",
-        thumbnail:
-            "https://tailwindcss.com/_next/static/media/card.79a37188.jpg",
-        type: "article",
-        siteName: "tailwindcss.com",
+        collectionName: "Tech",
+        tagNames: ["Twitter"],
     },
     {
         title: "Ten Years of TypeScript",
@@ -79,6 +78,18 @@ const ITEMS = [
             "https://devblogs.microsoft.com/typescript/wp-content/uploads/sites/11/2018/08/typescriptfeature.png",
         type: "article",
         siteName: "TypeScript",
+        collectionName: "Tech",
+        tagNames: ["TypeScript"],
+    },
+    {
+        url: "https://www.apple.com/au/newsroom/2023/06/introducing-apple-vision-pro/",
+        collectionName: "Tech",
+        tagNames: ["virtual reality", "Apple"],
+    },
+    {
+        url: "https://blog.google/technology/ai/google-palm-2-ai-large-language-model/",
+        collectionName: "AI",
+        tagNames: ["Google", "LLM"],
     },
 ];
 
@@ -88,10 +99,10 @@ async function main() {
             ADMIN_FIRST_NAME,
             ADMIN_LAST_NAME,
             ADMIN_EMAIL,
-            ADMIN_PASSWORD
+            ADMIN_PASSWORD,
         );
         console.log(
-            `Created admin user ${ADMIN_EMAIL} with password ${ADMIN_PASSWORD}`
+            `Created admin user ${ADMIN_EMAIL} with password ${ADMIN_PASSWORD}`,
         );
     } catch (e) {
         if (e instanceof Error) {
@@ -100,26 +111,37 @@ async function main() {
     }
 
     const admin_user = await UserController.userInfoByEmail(ADMIN_EMAIL);
-    const defaultCollection = await CollectionController.getCollectionByName(
-        admin_user.id,
-        "Default"
-    );
+    // const defaultCollection = await CollectionController.getCollectionByName(
+    //     admin_user.id,
+    //     "Default",
+    // );
 
-    await prisma.item.createMany({
-        data: ITEMS.map((item) => ({
-            id: uuidv4(),
-            type: item.type,
-            status: 0,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            collectionId: defaultCollection!.id,
-            title: item.title,
-            url: item.url,
-            description: item.description,
-            thumbnail: item.thumbnail,
-            createdAt: new Date(),
-            userId: admin_user.id,
-            siteName: item.siteName,
-        })),
+    // await prisma.item.createMany({
+    //     data: ITEMS.map((item) => ({
+    //         id: uuidv4(),
+    //         type: item.type,
+    //         status: 0,
+    //         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    //         collectionId: defaultCollection!.id,
+    //         title: item.title,
+    //         url: item.url,
+    //         description: item.description,
+    //         thumbnail: item.thumbnail,
+    //         createdAt: new Date(),
+    //         userId: admin_user.id,
+    //         siteName: item.siteName,
+    //     })),
+    // });
+
+    ITEMS.forEach(async (item) => {
+        await ItemController.createItem(
+            admin_user.id,
+            item.url,
+            "Default",
+            [],
+            // item.collectionName,
+            // item.tagNames,
+        );
     });
 
     console.log(`Created ${ITEMS.length} items for user ${admin_user.email}`);

@@ -1,16 +1,17 @@
 "use client";
 
 import {
+    H4,
     Link,
     Loader,
     PageTitle,
     ScrollArea,
     ScrollBar,
-    SummaryCard,
+    SummaryCard
 } from "@/ui/components";
+import { ArrowRightIcon } from "lucide-react";
 import NextLink from "next/link";
 import { trpc } from "../../utils/trpc";
-import { ArrowRightIcon } from "lucide-react";
 
 export default function SummariesPage() {
     const latestSummariesQuery = trpc.summary.getLatestSummaries.useQuery();
@@ -42,7 +43,7 @@ export default function SummariesPage() {
                                                 key={summary.id}
                                                 summary={summary}
                                             />
-                                        )
+                                        ),
                                     )}
                                     {latestSummariesQuery.data.hasMore ? (
                                         <NextLink
@@ -67,9 +68,7 @@ export default function SummariesPage() {
                     </ScrollArea>
                 </div>
                 <div className="bg-background mx-8 p-6 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-5">
-                        Generate Summary
-                    </h2>
+                    <H4>Generate Summary</H4>
                 </div>
             </div>
         </div>

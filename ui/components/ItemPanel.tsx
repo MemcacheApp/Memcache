@@ -1,20 +1,20 @@
 "use client";
 
-import { trpc } from "@/src/app/utils/trpc";
-import { Card } from "./Card";
-import { LucideIcon, Package2, Tag, X } from "lucide-react";
-import { Button } from "./Button";
-import { CollectionSelector, ExternalLink, TagSelector } from ".";
-import { useEffect, useState } from "react";
-import { cn } from "../utils";
 import { useItemListStore } from "@/src/app/store/item-list";
-import { Separator } from "./Separator";
-import { Table, TableBody, TableCell, TableRow } from "./Table";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
-import MultiToggle from "./MultiToggle";
-import Link from "next/link";
 import { DEBUG } from "@/src/app/utils/constants";
+import { trpc } from "@/src/app/utils/trpc";
+import { LucideIcon, Package2, Tag, X } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { CollectionSelector, ExternalLink, TagSelector } from ".";
+import { cn } from "../utils";
+import { Button } from "./Button";
+import { Card } from "./Card";
+import MultiToggle from "./MultiToggle";
+import { Separator } from "./Separator";
 import SimpleTag from "./SimpleTag";
+import { Table, TableBody, TableCell, TableRow } from "./Table";
 
 export function ItemPanel() {
     const { selectedItems, isShowPanel, dismissPanel } = useItemListStore(
@@ -22,7 +22,7 @@ export function ItemPanel() {
             selectedItems: state.selectedItems,
             isShowPanel: state.isShowPanel,
             dismissPanel: state.dismissPanel,
-        })
+        }),
     );
 
     const ids = Array.from(selectedItems);
@@ -52,7 +52,7 @@ export function ItemPanel() {
                     isCollapse ? "opacity-0" : "opacity-100",
                     {
                         hidden: isHidden,
-                    }
+                    },
                 )}
             ></div>
             <Card
@@ -62,7 +62,7 @@ export function ItemPanel() {
                         hidden: isHidden,
                         "md:translate-x-[20rem]": isCollapse,
                         "max-md:translate-y-[100%]": isCollapse,
-                    }
+                    },
                 )}
             >
                 <div className="flex">
@@ -99,7 +99,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
 
     DEBUG &&
         console.log(
-            `Rendering single item ${data?.title}, status is ${data?.status}}`
+            `Rendering single item ${data?.title}, status is ${data?.status}}`,
         );
 
     const setCollectionOnItem = trpc.item.setItemCollection.useMutation({
@@ -278,7 +278,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
                                                 year: "numeric",
                                                 month: "long",
                                                 day: "numeric",
-                                            }
+                                            },
                                         )}`}</div>
                                     </TableCell>
                                 </TableRow>
@@ -295,7 +295,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
-                                        }
+                                        },
                                     )}`}</div>
                                 </TableCell>
                             </TableRow>

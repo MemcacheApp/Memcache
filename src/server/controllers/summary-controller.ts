@@ -1,24 +1,10 @@
 import { Experience, Finetuning } from "@/src/datatypes/summary";
-import { prisma } from "../db/prisma";
-import scrapeIt from "scrape-it";
+import ContentScraper from "@/src/utils/content-scraper";
 import { v4 as uuidv4 } from "uuid";
-import ItemController from "./item-controller";
+import { prisma } from "../db/prisma";
 import openai from "../utils/openai";
 import { GetSummaryError } from "./errors/summary";
-import { z } from "zod";
-
-const ScrapedData = z.object({
-    headers: z
-        .object({
-            content: z.string(),
-        })
-        .array(),
-    paragraphs: z
-        .object({
-            content: z.string(),
-        })
-        .array(),
-});
+import ItemController from "./item-controller";
 
 export default class SummaryController {
     static async getSummary(summaryId: string) {
@@ -139,41 +125,6 @@ export default class SummaryController {
         };
     }
 
-    static async scrapeContent({ url }: { url: string }) {
-        const { data } = await scrapeIt(url, {
-            headers: {
-                listItem: "h1,h2,h3,h4,h5,h6",
-                data: {
-                    content: {
-                        how: "text",
-                    },
-                },
-            },
-            paragraphs: {
-                listItem: "p",
-                data: {
-                    content: {
-                        how: "text",
-                    },
-                },
-            },
-        });
-
-        const scrapedData = ScrapedData.parse(data);
-
-        const headersContent = scrapedData.headers.map(
-            (header) => header.content
-        );
-        const paragraphsContent = scrapedData.paragraphs.map(
-            (paragraph) => paragraph.content
-        );
-
-        // Join into a single string
-        const content = headersContent.concat(paragraphsContent).join("\n\n");
-
-        return content;
-    }
-
     static async generateSummary(
         itemId: string,
         numOfWords: number,
@@ -181,7 +132,7 @@ export default class SummaryController {
         finetuning: Finetuning
     ) {
         const item = await ItemController.getItem(itemId);
-        const content = await SummaryController.scrapeContent({
+        const content = await ContentScraper.scrapeContent({
             url: item.url,
         });
 

@@ -1,5 +1,12 @@
 import { Collection, Item, Summary, Tag } from "@prisma/client";
 import {
+    ChevronDownIcon,
+    InfoIcon,
+    TimerIcon,
+    WholeWordIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
     Card,
     CardTitle,
     ItemCard,
@@ -8,14 +15,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from ".";
-import {
-    ChevronDownIcon,
-    InfoIcon,
-    TimerIcon,
-    WholeWordIcon,
-} from "lucide-react";
 import { cn } from "../utils";
-import { useRouter } from "next/navigation";
 
 type SummaryCardProps = {
     className?: string;
@@ -47,7 +47,7 @@ export function SummaryCard(props: SummaryCardProps) {
             className={cn(
                 "group relative z-0 overflow-hidden pt-6 px-6 hover:border-slate-500 transition-colors cursor-pointer",
                 { "pb-6": summary.isFullText },
-                className
+                className,
             )}
             onClick={() => push(`/app/summaries/${summary.id}`)}
         >
