@@ -16,7 +16,9 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    Input,
     ItemCard,
+    Link,
     ScrollArea,
     ScrollBar,
     SimpleItemCardFooter,
@@ -152,20 +154,73 @@ const dummyFlashcardsData: DummyFlashcard[] = [
     },
 ];
 
+function FlashcardSearchResult({ item }: { item: Item }) {
+    const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
+
+    return (
+        <>
+            <div
+                key={item.id}
+                onClick={() => setIsOpenFlashcards(true)}
+                className="flex justify-between h-24 px-2 py-3 rounded-md hover:bg-slate-100"
+            >
+                <div className="flex flex-col justify-between">
+                    <div className="flex">
+                        <h3 className="mr-2 text-lg font-semibold leading-6 tracking-tight">
+                            {item.title}
+                        </h3>
+                        {/* <ExternalLink /> */}
+                    </div>
+                    <div>
+                        {item.tags.map((tag: Tag) => {
+                            return (
+                                <div key={tag.id}>
+                                    <Link
+                                        className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm w-fit"
+                                        href={`/app/tag/${tag.id}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {tag.name}
+                                    </Link>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+                {item.thumbnail ? (
+                    <img
+                        src={item.thumbnail}
+                        alt="Image"
+                        className="rounded-sm w-36"
+                    />
+                ) : (
+                    ""
+                )}
+            </div>
+            <FlashcardsDialog
+                data={item}
+                open={isOpenFlashcards}
+                onOpenChange={setIsOpenFlashcards}
+            />
+        </>
+    );
+}
+
 export default function FlashcardsPage() {
+    const [itemInput, setItemInput] = useState("");
     const itemsQuery = trpc.item.getUserItems.useQuery();
     const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
 
     const revisionQueue =
         flashcardsQuery.data?.sort(
-            (a, b) => a.dueDate.valueOf() - b.dueDate.valueOf(),
+            (a, b) => a.dueDate.valueOf() - b.dueDate.valueOf()
         ) ?? [];
 
     const recentlyViewed = flashcardsQuery.data?.sort((a, b) =>
         a.reviews.length > 0 && b.reviews.length > 0
             ? b.reviews.slice(-1)[0].timestamp.valueOf() -
               a.reviews.slice(-1)[0].timestamp.valueOf()
-            : 0,
+            : 0
     );
 
     const suggestedItems =
@@ -191,6 +246,39 @@ export default function FlashcardsPage() {
 
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>Generate Flashards</H3>
+                <div className="relative mt-3 mb-4">
+                    <Input
+                        className="text-base border-solid rounded-md"
+                        placeholder="Article title..."
+                        value={itemInput}
+                        onChange={(e) => setItemInput(e.target.value)}
+                    />
+
+                    {itemInput &&
+                        itemsQuery.data &&
+                        itemsQuery.data.filter((item) => {
+                            return item.title
+                                .toLowerCase()
+                                .includes(itemInput.toLowerCase());
+                        }).length > 0 && (
+                            <div className="absolute z-10 w-full px-1 py-1 bg-white border border-solid rounded-md top-12 border-input">
+                                {itemsQuery.data
+                                    ?.filter((item) => {
+                                        return item.title
+                                            .toLowerCase()
+                                            .includes(itemInput.toLowerCase());
+                                    })
+                                    .map((item) => {
+                                        return (
+                                            <FlashcardSearchResult
+                                                key={item.id}
+                                                item={item}
+                                            />
+                                        );
+                                    })}
+                            </div>
+                        )}
+                </div>
                 <H4>Suggested</H4>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
@@ -285,7 +373,7 @@ function FlashcardPreviewCard({
                 className={cn(
                     "group/flashcardpreview w-full relative border rounded-t-lg overflow-hidden aspect-[16/9] hover:",
                     "transition-[transform,border-color,border-radius]",
-                    "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer",
+                    "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer"
                 )}
                 onClick={onClick}
             >
@@ -302,11 +390,11 @@ function FlashcardPreviewCard({
                         {data.question}
                     </div>
                     <div className="px-4 py-2">
-                        <button className="bg-slate-200/20 px-7 py-2 rounded-full hover:bg-slate-100/30">
+                        <button className="py-2 rounded-full bg-slate-200/20 px-7 hover:bg-slate-100/30">
                             View
                         </button>
                     </div>
-                    <div className="px-4 py-3 flex gap-2 text-sm text-slate-400/90">
+                    <div className="flex gap-2 px-4 py-3 text-sm text-slate-400/90">
                         <span>{FlashcardExperienceNames[data.experience]}</span>
                         <span>&#183;</span>
                         <span>{FlashcardRangeNames[data.range]}</span>
@@ -314,10 +402,10 @@ function FlashcardPreviewCard({
                 </div>
             </div>
             <div>
-                <CardHeader className="overflow-y-hidden pt-2">
-                    <div className="py-1 flex justify-between items-center text-sm">
+                <CardHeader className="pt-2 overflow-y-hidden">
+                    <div className="flex items-center justify-between py-1 text-sm">
                         {data.dueDate.valueOf() < Date.now().valueOf() ? (
-                            <div className="font-semibold text-orange-600 flex items-center gap-1">
+                            <div className="flex items-center gap-1 font-semibold text-orange-600">
                                 {"Due now"}
                             </div>
                         ) : (
@@ -370,7 +458,7 @@ function FlashcardDialog({
                 </DialogHeader>
                 <div
                     className={cn(
-                        "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]",
+                        "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]"
                     )}
                 >
                     <img
@@ -379,13 +467,13 @@ function FlashcardDialog({
                             "https://www.maxpixel.net/static/photo/2x/Snow-Peaks-Ai-Generated-Artwork-Mountains-Forest-7903258.jpg"
                         }
                         alt="Image"
-                        className="absolute w-full h-full object-cover object-center blur"
+                        className="absolute object-cover object-center w-full h-full blur"
                     />
                     <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset]">
-                        <div className="w-full h-full px-4 py-16 flex flex-col justify-evenly items-center ">
+                        <div className="flex flex-col items-center w-full h-full px-4 py-16 justify-evenly ">
                             <div
                                 className={cn(
-                                    "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center",
+                                    "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center"
                                 )}
                             >
                                 {flashcard.question}
@@ -397,13 +485,13 @@ function FlashcardDialog({
                                     {
                                         "h-1 py-0 w-[45%] border-solid border-t-2":
                                             showAnswer,
-                                    },
+                                    }
                                 )}
                             >
                                 <button
                                     className={cn(
                                         "bg-slate-200/20 px-10 py-4 rounded-full hover:bg-slate-100/30",
-                                        { "hidden ": showAnswer },
+                                        { "hidden ": showAnswer }
                                     )}
                                     onClick={() => {
                                         setShowAnswer(true);
@@ -419,7 +507,7 @@ function FlashcardDialog({
                                     {
                                         "h-full grow py-2 opacity-1":
                                             showAnswer,
-                                    },
+                                    }
                                 )}
                             >
                                 {flashcard.answer}
@@ -427,13 +515,13 @@ function FlashcardDialog({
                         </div>
                     </div>
                 </div>
-                <div className="w-full flex ">
+                <div className="flex w-full ">
                     <div className="w-[70%] ">
-                        <div className="w-full flex flex-col justify-between">
-                            <div className="py-1 flex justify-between items-center">
+                        <div className="flex flex-col justify-between w-full">
+                            <div className="flex items-center justify-between py-1">
                                 {flashcard.dueDate.valueOf() <
                                 Date.now().valueOf() ? (
-                                    <div className="font-semibold text-orange-600 flex items-center gap-1">
+                                    <div className="flex items-center gap-1 font-semibold text-orange-600">
                                         {"Due now"}
                                     </div>
                                 ) : (
@@ -443,11 +531,11 @@ function FlashcardDialog({
                                     Last revisited 3 days ago
                                 </div>
                             </div>
-                            <div className="py-1 flex justify-between items-center">
-                                <div className="text-xl px-1 mr-2">{"65%"}</div>
+                            <div className="flex items-center justify-between py-1">
+                                <div className="px-1 mr-2 text-xl">{"65%"}</div>
                                 <Progress value={65} />
                             </div>
-                            <div className="py-1 flex gap-2 text-sm text-slate-400/90">
+                            <div className="flex gap-2 py-1 text-sm text-slate-400/90">
                                 <span>
                                     {
                                         FlashcardExperienceNames[
@@ -481,25 +569,25 @@ function FlashcardDialog({
                     </div>
                     <div className="ml-[2.5rem] flex flex-col gap-2">
                         <div className="text-easy">
-                            <span className="text-3xl font-bold font-mono">
+                            <span className="font-mono text-3xl font-bold">
                                 1
                             </span>
                             <span className="ml-2">easy</span>
                         </div>
                         <div className="text-medium">
-                            <span className="text-3xl font-bold font-mono">
+                            <span className="font-mono text-3xl font-bold">
                                 4
                             </span>
                             <span className="ml-2">medium</span>
                         </div>
                         <div className="text-hard">
-                            <span className="text-3xl font-bold font-mono">
+                            <span className="font-mono text-3xl font-bold">
                                 3
                             </span>
                             <span className="ml-2">hard</span>
                         </div>
                         <div className="text-forgot">
-                            <span className="text-3xl font-bold font-mono">
+                            <span className="font-mono text-3xl font-bold">
                                 2
                             </span>
                             <span className="ml-2">forgot</span>
@@ -538,7 +626,7 @@ function FlashcardDialog({
 //                 <img
 //                     src={props.thumbnail}
 //                     alt="Image"
-//                     className="object-cover object-center relative w-full h-full"
+//                     className="relative object-cover object-center w-full h-full"
 //                 />
 //             </div>
 //         );
