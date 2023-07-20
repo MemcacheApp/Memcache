@@ -304,13 +304,7 @@ function TagFilterSelector() {
             tagCount: state.tagCount,
             setTagCount: state.setTagCount,
         }));
-
     const tagsQuery = trpc.tag.getUserTags.useQuery();
-    const ctx = trpc.useContext();
-
-    useEffect(() => {
-        ctx.item.getUserItems.invalidate();
-    }, [tagCount]);
 
     return (
         <DropdownMenu>
