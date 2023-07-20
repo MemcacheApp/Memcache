@@ -32,7 +32,7 @@ export default function MultiToggle({
     return (
         <div
             className={cn(
-                "bg-muted rounded-[1rem] flex justify-between items-center relative w-[8.6rem]"
+                "bg-muted rounded-[1rem] flex justify-between items-center relative w-[8.6rem]",
             )}
         >
             <div
@@ -46,7 +46,7 @@ export default function MultiToggle({
                             spotlightPosition === StatusEnum.Complete,
                         "left-[6.6rem]":
                             spotlightPosition === StatusEnum.Archive,
-                    }
+                    },
                 )}
             />
             {Object.values(StatusEnum)
@@ -58,7 +58,7 @@ export default function MultiToggle({
                             "rounded-full w-[2rem] h-[2rem] p-[0.4rem] flex justify-center items-center relative text-slate-450 transition-colors hover:cursor-pointer hover:text-black",
                             {
                                 "text-black": value === selectedPosition,
-                            }
+                            },
                         )}
                         onMouseEnter={() => {
                             if (typeof value !== "number") return;

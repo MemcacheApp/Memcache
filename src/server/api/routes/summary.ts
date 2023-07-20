@@ -63,7 +63,7 @@ export const summaryRouter = router({
                 numOfWords: z.number(),
                 experience: z.number(),
                 finetuning: z.number(),
-            })
+            }),
         )
         .mutation(async ({ input }) => {
             try {
@@ -72,7 +72,7 @@ export const summaryRouter = router({
                     itemId,
                     numOfWords,
                     experience,
-                    finetuning
+                    finetuning,
                 );
             } catch (e) {
                 console.error(e);

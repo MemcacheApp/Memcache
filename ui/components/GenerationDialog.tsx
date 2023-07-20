@@ -43,7 +43,7 @@ export function SummariesDialog({
         {
             itemId: data.id,
         },
-        { refetchOnWindowFocus: false, enabled: false }
+        { refetchOnWindowFocus: false, enabled: false },
     );
 
     const handleNewSummary = useCallback(() => {
@@ -240,7 +240,7 @@ export function FlashcardsDialog({
 }: FlashcardsDialogProps) {
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
     const [experience, setExperience] = useState<FlashcardExperience>(
-        FlashcardExperience.Intermediate
+        FlashcardExperience.Intermediate,
     );
     const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
@@ -298,14 +298,14 @@ export function FlashcardsDialog({
                             onValueChange={(value) =>
                                 (
                                     Object.values(
-                                        FlashcardExperience
+                                        FlashcardExperience,
                                     ) as string[]
                                 ).includes(value)
                                     ? setExperience(
-                                          value as FlashcardExperience
+                                          value as FlashcardExperience,
                                       )
                                     : setExperience(
-                                          FlashcardExperience.Intermediate
+                                          FlashcardExperience.Intermediate,
                                       )
                             }
                         >

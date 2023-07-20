@@ -36,10 +36,10 @@ export default function ResetPasswordPage() {
             {
                 onSuccess: () => {
                     push(
-                        `/auth/reset-password/verification-code?email=${data.email}`
+                        `/auth/reset-password/verification-code?email=${data.email}`,
                     );
                 },
-            }
+            },
         );
     });
 
