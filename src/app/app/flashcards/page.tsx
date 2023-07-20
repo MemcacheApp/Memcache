@@ -154,7 +154,11 @@ const dummyFlashcardsData: DummyFlashcard[] = [
     },
 ];
 
-function FlashcardSearchResult({ item }: { item: Item }) {
+function FlashcardSearchResult({
+    item,
+}: {
+    item: Item & { tags: Tag[]; collection: Collection };
+}) {
     const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
 
     return (
