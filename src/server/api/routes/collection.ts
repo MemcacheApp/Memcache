@@ -21,7 +21,7 @@ export const collectionRouter = router({
         .query(async ({ input }) => {
             try {
                 return await CollectionController.getCollection(
-                    input.collectionId
+                    input.collectionId,
                 );
             } catch (e) {
                 if (e instanceof GetCollectionError) {

@@ -39,7 +39,7 @@ export function SaveInput() {
                     "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     {
                         "opacity-0": isShowPopover,
-                    }
+                    },
                 )}
                 onClick={showPopover}
             >
@@ -127,7 +127,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                 "fixed top-0 bottom-0 left-0 right-0 transition-[background-color,backdrop-filter]",
                                 {
                                     "bg-white/80 backdrop-blur-sm": !isCollapse,
-                                }
+                                },
                             )}
                             onClick={onDismiss}
                         ></div>
@@ -136,7 +136,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                 "@container flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
                                 isCollapse
                                     ? "opacity-0 scale-95"
-                                    : "opacity-100 scale-100"
+                                    : "opacity-100 scale-100",
                             )}
                             action=""
                             onSubmit={handleSubmit}
@@ -146,7 +146,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                     "relative h-12 bg-background shadow-lg rounded-t-lg border pointer-events-auto",
                                     url
                                         ? "@xl:rounded-br-md"
-                                        : "rounded-br-md rounded-bl-md"
+                                        : "rounded-br-md rounded-bl-md",
                                 )}
                             >
                                 <Input
@@ -159,7 +159,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                 <Button
                                     className={cn(
                                         "absolute right-2 top-1/2 -translate-y-1/2 z-10 text-slate-500 rounded-full p-1",
-                                        { hidden: !url }
+                                        { hidden: !url },
                                     )}
                                     onClick={clearInput}
                                     type="button"
@@ -215,7 +215,7 @@ function SaveOptions({
         {
             url,
         },
-        { refetchOnWindowFocus: false, enabled: false }
+        { refetchOnWindowFocus: false, enabled: false },
     );
 
     const refresh = useCallback(() => {
@@ -282,7 +282,7 @@ function SaveOptions({
         <div
             className={cn(
                 "relative flex flex-col max-h-[75vh] overflow-auto gap-3 bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
-                { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse }
+                { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse },
             )}
         >
             <SimpleItemCard

@@ -28,7 +28,7 @@ function Ellipsis(props: LoaderImplProps) {
             className={cn(
                 ellipsisStyles["lds-ellipsis"],
                 "inline-block relative w-20 h-20",
-                props.className
+                props.className,
             )}
         >
             <div></div>
@@ -48,7 +48,7 @@ function Ring(props: LoaderImplProps) {
             className={cn(
                 ringStyles["lds-ring"],
                 "inline-block relative w-10 h-10",
-                props.className
+                props.className,
             )}
         >
             <div></div>

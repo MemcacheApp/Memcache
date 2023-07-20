@@ -1,6 +1,6 @@
 export const includeCaseInsensitive = (
     arr: string[] | undefined,
-    s: string
+    s: string,
 ) => {
     if (!arr) return false;
     for (const item of arr) {

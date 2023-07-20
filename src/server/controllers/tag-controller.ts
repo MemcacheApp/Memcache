@@ -10,7 +10,7 @@ export default class TagController {
         if (await this.getTagByName(userId, name)) {
             throw new CreateTagError(
                 "TagExist",
-                `Tag ${name} already exists for user ${userId}`
+                `Tag ${name} already exists for user ${userId}`,
             );
         }
 
@@ -88,7 +88,7 @@ export default class TagController {
 
     static async getOrCreateTags(userId: string, names: string[]) {
         return Promise.all(
-            names.map((name) => this.getOrCreateTag(userId, name))
+            names.map((name) => this.getOrCreateTag(userId, name)),
         );
     }
 }

@@ -17,7 +17,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
                     "flex flex-col items-center transition-[margin-left]",
                     {
                         "md:ml-64": isExpand,
-                    }
+                    },
                 )}
             >
                 <main className="w-full max-w-[1200px]">{children}</main>

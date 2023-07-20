@@ -16,7 +16,7 @@ export const TrpcProvider = ({ children }: TrpcProviderProps) => {
         () =>
             new QueryClient({
                 defaultOptions: { queries: { staleTime: 5000 } },
-            })
+            }),
     );
 
     const [trpcClient] = useState(() =>
@@ -37,7 +37,7 @@ export const TrpcProvider = ({ children }: TrpcProviderProps) => {
                 }),
             ],
             transformer: superjson,
-        })
+        }),
     );
     return (
         <trpc.Provider client={trpcClient} queryClient={queryClient}>

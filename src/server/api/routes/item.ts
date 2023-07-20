@@ -25,14 +25,14 @@ export const itemRouter = router({
                     includedTags: z.string().array().optional(),
                     excludedTags: z.string().array().optional(),
                 })
-                .optional()
+                .optional(),
         )
         .query(async ({ ctx, input }) => {
             try {
                 return await ItemController.getUserItems(
                     ctx.userId,
                     input?.includedTags,
-                    input?.excludedTags
+                    input?.excludedTags,
                 );
             } catch (e) {
                 console.error(e);
@@ -47,7 +47,7 @@ export const itemRouter = router({
                 url: z.string(),
                 collectionName: z.string(),
                 tagNames: z.string().array(),
-            })
+            }),
         )
         .mutation(async ({ ctx, input }) => {
             try {
@@ -55,7 +55,7 @@ export const itemRouter = router({
                     ctx.userId,
                     input.url,
                     input.collectionName,
-                    input.tagNames
+                    input.tagNames,
                 );
             } catch (e) {
                 if (e instanceof FetchURLError) {
@@ -75,7 +75,7 @@ export const itemRouter = router({
         .input(
             z.object({
                 url: z.string(),
-            })
+            }),
         )
         .query(async ({ input }) => {
             try {
@@ -125,7 +125,7 @@ export const itemRouter = router({
                 await ItemController.updateItemStatus(
                     ctx.userId,
                     input.itemId,
-                    input.status
+                    input.status,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -153,7 +153,7 @@ export const itemRouter = router({
                 await ItemController.setItemCollection(
                     ctx.userId,
                     input.itemId,
-                    input.collectionName
+                    input.collectionName,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -181,7 +181,7 @@ export const itemRouter = router({
                 await ItemController.addTag(
                     ctx.userId,
                     input.itemId,
-                    input.tagName
+                    input.tagName,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -209,7 +209,7 @@ export const itemRouter = router({
                 await ItemController.removeTag(
                     ctx.userId,
                     input.itemId,
-                    input.tagId
+                    input.tagId,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -241,7 +241,7 @@ export const itemRouter = router({
             return ItemController.updateItemStatus(
                 ctx.userId,
                 input.itemId,
-                input.status
+                input.status,
             );
         }),
 });

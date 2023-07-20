@@ -71,7 +71,7 @@ export function CollectionSelector({
                                 {!searchValue ||
                                 includeCaseInsensitive(
                                     collectionNames,
-                                    searchValue
+                                    searchValue,
                                 ) ? null : (
                                     <CommandItem
                                         onSelect={() => {
@@ -96,7 +96,7 @@ export function CollectionSelector({
                                                 "mr-2 h-4 w-4",
                                                 collection === value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                             )}
                                         />
                                         {collection}
