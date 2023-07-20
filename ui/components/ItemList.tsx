@@ -34,14 +34,12 @@ export function ItemList(props: ItemListProps) {
         selectedItems,
         includedTags,
         excludedTags,
-        tagCount,
     } = useItemListStore((state) => ({
         selectItem: state.selectItem,
         activeStatus: state.activeStatus,
         selectedItems: state.selectedItems,
         includedTags: state.includedTags,
         excludedTags: state.excludedTags,
-        tagCount: state.tagCount,
     }));
 
     const itemsQuery = trpc.item.getUserItems.useQuery({
@@ -68,7 +66,7 @@ export function ItemList(props: ItemListProps) {
         } else {
             return [];
         }
-    }, [itemsQuery.data, activeStatus, tagCount]);
+    }, [itemsQuery.data, activeStatus, includedTags, excludedTags]);
 
     return (
         <div className="flex flex-col gap-3 pb-8 md:mx-8">
@@ -275,12 +273,12 @@ function StatusToggle() {
 function TagFilterSelector() {
     const tagsQuery = trpc.tag.getUserTags.useQuery();
 
-    const { includedTags, excludedTags, tagCount, setTagCount } =
+    const { includedTags, excludedTags, setIncludedTags, setExcludedTags } =
         useItemListStore((state) => ({
             includedTags: state.includedTags,
             excludedTags: state.excludedTags,
-            tagCount: state.tagCount,
-            setTagCount: state.setTagCount,
+            setIncludedTags: state.setIncludedTags,
+            setExcludedTags: state.setExcludedTags,
         }));
 
     return (
@@ -301,7 +299,7 @@ function TagFilterSelector() {
                                 value={tag}
                                 remove={() => {
                                     includedTags.delete(tag);
-                                    setTagCount(tagCount - 1);
+                                    setIncludedTags(new Set(includedTags));
                                 }}
                             />
                         ))}
@@ -311,11 +309,11 @@ function TagFilterSelector() {
                             value=""
                             setValue={(tag) => {
                                 includedTags.add(tag);
-                                setTagCount(tagCount + 1);
+                                setIncludedTags(new Set(includedTags));
                             }}
                             remove={(tag) => {
                                 includedTags.delete(tag);
-                                setTagCount(tagCount - 1);
+                                setIncludedTags(new Set(includedTags));
                             }}
                         />
                     </div>
@@ -329,7 +327,7 @@ function TagFilterSelector() {
                                 value={tag}
                                 remove={() => {
                                     excludedTags.delete(tag);
-                                    setTagCount(tagCount - 1);
+                                    setExcludedTags(new Set(excludedTags));
                                 }}
                             />
                         ))}
@@ -339,11 +337,11 @@ function TagFilterSelector() {
                             value=""
                             setValue={(tag) => {
                                 excludedTags.add(tag);
-                                setTagCount(tagCount + 1);
+                                setExcludedTags(new Set(excludedTags));
                             }}
                             remove={(tag) => {
                                 excludedTags.delete(tag);
-                                setTagCount(tagCount - 1);
+                                setExcludedTags(new Set(excludedTags));
                             }}
                         />
                     </div>
