@@ -57,13 +57,13 @@ export function ItemList(props: ItemListProps) {
 
             if (collectionId) {
                 items = items.filter(
-                    (item) => collectionId === item.collection.id
+                    (item) => collectionId === item.collection.id,
                 );
             }
             return items
                 .filter((item) => activeStatus === item.status)
                 .sort(
-                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
+                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf(), // sort by createdAt
                 );
         } else {
             return [];
@@ -109,7 +109,7 @@ function Options() {
 
 function NormalOptions() {
     const enableMultiselect = useItemListStore(
-        (state) => state.enableMultiselect
+        (state) => state.enableMultiselect,
     );
 
     return (
@@ -136,7 +136,7 @@ function MultiselectOptions() {
             selectedItems: state.selectedItems,
             showPanel: state.showPanel,
             disableMultiselect: state.disableMultiselect,
-        })
+        }),
     );
 
     const ctx = trpc.useContext();
@@ -175,7 +175,7 @@ function MultiselectOptions() {
     };
 
     const statusNames = Object.values(StatusEnum).filter(
-        (value): value is string => typeof value === "string"
+        (value): value is string => typeof value === "string",
     );
     const statusNums = Array.from(statusNames.keys());
 
@@ -262,7 +262,7 @@ function StatusToggle() {
                         >
                             {renderIcon(
                                 StatusIcons[value as StatusEnum],
-                                "mr-2"
+                                "mr-2",
                             )}
                             {StatusNames[value as StatusEnum]}
                         </Button>
@@ -291,7 +291,7 @@ function TagFilterSelector() {
                     Tags
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="flex flex-col gap-1 min-w-[240px]">
+            <DropdownMenuContent className="flex flex-col gap-1 w-[300px]">
                 <Card className="p-1">
                     <div className="font-medium">Include:</div>
                     <div className="flex flex-wrap gap-3">

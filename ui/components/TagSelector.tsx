@@ -1,5 +1,7 @@
 "use client";
 
+import { Tag } from "@prisma/client";
+import { Check, Edit, Plus, Trash } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
     Badge,
@@ -14,9 +16,7 @@ import {
     PopoverTrigger,
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
-import { Check, Edit, Plus, Trash } from "lucide-react";
 import { cn } from "../utils";
-import { Tag } from "@prisma/client";
 
 interface TagSelectorProps {
     tags: Tag[] | undefined;
@@ -45,9 +45,9 @@ export function TagSelector({
             <PopoverTrigger asChild>
                 {index === -1 ? (
                     <Button
-                        className="px-3 bg-slate-50"
+                        className="px-2 bg-slate-50"
                         variant="outline"
-                        size="default"
+                        size="xs"
                         role="combobox"
                         aria-expanded={open}
                         disabled={disabled}
@@ -56,9 +56,9 @@ export function TagSelector({
                     </Button>
                 ) : (
                     <Button
-                        className="px-4 group relative shadow-sm"
+                        className="px-2 group relative shadow-sm"
                         variant="outline"
-                        size="default"
+                        size="xs"
                         role="combobox"
                         aria-expanded={open}
                         disabled={disabled}
@@ -99,7 +99,7 @@ export function TagSelector({
                                 {!searchValue ||
                                 includeCaseInsensitive(
                                     tagNames,
-                                    searchValue
+                                    searchValue,
                                 ) ? null : (
                                     <CommandItem
                                         onSelect={() => {
@@ -124,7 +124,7 @@ export function TagSelector({
                                                 "mr-2 h-4 w-4",
                                                 tag === value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                             )}
                                         />
                                         {tag}
