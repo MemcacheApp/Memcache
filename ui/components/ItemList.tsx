@@ -14,7 +14,7 @@ import {
     ItemCard,
     TagSelector,
 } from ".";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import {
     Archive,
     CheckCircle2,
@@ -300,27 +300,14 @@ function StatusToggle() {
 
 function TagFilterSelector() {
     const tagsQuery = trpc.tag.getUserTags.useQuery();
-    const ctx = trpc.useContext();
 
-    const {
-        includedTags,
-        excludedTags,
-        addIncludedTag,
-        removeIncludedTag,
-        addExcludedTag,
-        removeExcludedTag,
-    } = useItemListStore((state) => ({
-        includedTags: state.includedTags,
-        excludedTags: state.excludedTags,
-        addIncludedTag: state.addIncludedTag,
-        removeIncludedTag: state.removeIncludedTag,
-        addExcludedTag: state.addExcludedTag,
-        removeExcludedTag: state.removeExcludedTag,
-    }));
-
-    useEffect(() => {
-        ctx.item.getUserItems.invalidate();
-    }, [includedTags, excludedTags]);
+    const { includedTags, excludedTags, tagCount, setTagCount } =
+        useItemListStore((state) => ({
+            includedTags: state.includedTags,
+            excludedTags: state.excludedTags,
+            tagCount: state.tagCount,
+            setTagCount: state.setTagCount,
+        }));
 
     return (
         <DropdownMenu>
@@ -339,7 +326,8 @@ function TagFilterSelector() {
                                 key={index}
                                 value={tag}
                                 remove={() => {
-                                    removeIncludedTag(tag);
+                                    includedTags.delete(tag);
+                                    setTagCount(tagCount - 1);
                                 }}
                             />
                         ))}
@@ -348,10 +336,12 @@ function TagFilterSelector() {
                             index={-1}
                             value=""
                             setValue={(tag) => {
-                                addIncludedTag(tag);
+                                includedTags.add(tag);
+                                setTagCount(tagCount + 1);
                             }}
                             remove={(tag) => {
-                                removeIncludedTag(tag);
+                                includedTags.delete(tag);
+                                setTagCount(tagCount - 1);
                             }}
                         />
                     </div>
@@ -364,7 +354,8 @@ function TagFilterSelector() {
                                 key={index}
                                 value={tag}
                                 remove={() => {
-                                    removeExcludedTag(tag);
+                                    excludedTags.delete(tag);
+                                    setTagCount(tagCount - 1);
                                 }}
                             />
                         ))}
@@ -373,10 +364,12 @@ function TagFilterSelector() {
                             index={-1}
                             value=""
                             setValue={(tag) => {
-                                addExcludedTag(tag);
+                                excludedTags.add(tag);
+                                setTagCount(tagCount + 1);
                             }}
                             remove={(tag) => {
-                                removeExcludedTag(tag);
+                                excludedTags.delete(tag);
+                                setTagCount(tagCount - 1);
                             }}
                         />
                     </div>

@@ -20,17 +20,19 @@ export const itemRouter = router({
         }),
     getUserItems: protectedProcedure
         .input(
-            z.object({
-                includedTags: z.string().array().optional(),
-                excludedTags: z.string().array().optional(),
-            })
+            z
+                .object({
+                    includedTags: z.string().array().optional(),
+                    excludedTags: z.string().array().optional(),
+                })
+                .optional()
         )
         .query(async ({ ctx, input }) => {
             try {
                 return await ItemController.getUserItems(
                     ctx.userId,
-                    input.includedTags,
-                    input.excludedTags
+                    input?.includedTags,
+                    input?.excludedTags
                 );
             } catch (e) {
                 console.error(e);
