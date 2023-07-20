@@ -14,7 +14,7 @@ import {
     ItemCard,
     TagSelector,
 } from ".";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
     Archive,
     CheckCircle2,
