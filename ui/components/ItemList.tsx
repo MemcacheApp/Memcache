@@ -63,17 +63,17 @@ export function ItemList(props: ItemListProps) {
     const items = useMemo(() => {
         if (itemsQuery.data) {
             let items = itemsQuery.data;
-            if (activeStatus) {
-                items = items.filter((item) => activeStatus === item.status);
-            }
+
             if (collectionId) {
                 items = items.filter(
                     (item) => collectionId === item.collection.id
                 );
             }
-            return items.sort(
-                (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
-            );
+            return items
+                .filter((item) => activeStatus === item.status)
+                .sort(
+                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
+                );
         } else {
             return [];
         }
