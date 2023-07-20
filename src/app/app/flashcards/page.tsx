@@ -213,14 +213,14 @@ export default function FlashcardsPage() {
 
     const revisionQueue =
         flashcardsQuery.data?.sort(
-            (a, b) => a.dueDate.valueOf() - b.dueDate.valueOf()
+            (a, b) => a.dueDate.valueOf() - b.dueDate.valueOf(),
         ) ?? [];
 
     const recentlyViewed = flashcardsQuery.data?.sort((a, b) =>
         a.reviews.length > 0 && b.reviews.length > 0
             ? b.reviews.slice(-1)[0].timestamp.valueOf() -
               a.reviews.slice(-1)[0].timestamp.valueOf()
-            : 0
+            : 0,
     );
 
     const suggestedItems =
@@ -373,7 +373,7 @@ function FlashcardPreviewCard({
                 className={cn(
                     "group/flashcardpreview w-full relative border rounded-t-lg overflow-hidden aspect-[16/9] hover:",
                     "transition-[transform,border-color,border-radius]",
-                    "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer"
+                    "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer",
                 )}
                 onClick={onClick}
             >
@@ -458,7 +458,7 @@ function FlashcardDialog({
                 </DialogHeader>
                 <div
                     className={cn(
-                        "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]"
+                        "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]",
                     )}
                 >
                     <img
@@ -473,7 +473,7 @@ function FlashcardDialog({
                         <div className="flex flex-col items-center w-full h-full px-4 py-16 justify-evenly ">
                             <div
                                 className={cn(
-                                    "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center"
+                                    "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center",
                                 )}
                             >
                                 {flashcard.question}
@@ -485,13 +485,13 @@ function FlashcardDialog({
                                     {
                                         "h-1 py-0 w-[45%] border-solid border-t-2":
                                             showAnswer,
-                                    }
+                                    },
                                 )}
                             >
                                 <button
                                     className={cn(
                                         "bg-slate-200/20 px-10 py-4 rounded-full hover:bg-slate-100/30",
-                                        { "hidden ": showAnswer }
+                                        { "hidden ": showAnswer },
                                     )}
                                     onClick={() => {
                                         setShowAnswer(true);
@@ -507,7 +507,7 @@ function FlashcardDialog({
                                     {
                                         "h-full grow py-2 opacity-1":
                                             showAnswer,
-                                    }
+                                    },
                                 )}
                             >
                                 {flashcard.answer}

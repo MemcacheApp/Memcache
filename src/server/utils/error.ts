@@ -5,12 +5,12 @@ function ensureError(error: unknown): Error;
 
 function ensureError<E extends Error>(
     error: unknown,
-    errorType?: Constructor<E>
+    errorType?: Constructor<E>,
 ): E;
 
 function ensureError<E extends Error>(
     error: unknown,
-    errorType?: Constructor<E>
+    errorType?: Constructor<E>,
 ) {
     if (errorType) {
         if (error instanceof errorType) {
@@ -31,7 +31,7 @@ function ensureError<E extends Error>(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createError<K extends keyof any>(
     name: string,
-    msgs: Record<K, string>
+    msgs: Record<K, string>,
 ) {
     const _err = class extends Error {
         kind: K;
@@ -50,4 +50,4 @@ function createError<K extends keyof any>(
     return _err;
 }
 
-export { ensureError, createError };
+export { createError, ensureError };

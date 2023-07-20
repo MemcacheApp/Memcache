@@ -1,8 +1,8 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import CollectionController from "../../controllers/collection-controller";
-import { protectedProcedure, router } from "../trpc";
 import { GetCollectionError } from "../../controllers/errors/collection";
-import { TRPCError } from "@trpc/server";
+import { protectedProcedure, router } from "../trpc";
 
 export const collectionRouter = router({
     getUserCollections: protectedProcedure.query(async ({ ctx }) => {
@@ -21,7 +21,7 @@ export const collectionRouter = router({
         .query(async ({ input }) => {
             try {
                 return await CollectionController.getCollection(
-                    input.collectionId
+                    input.collectionId,
                 );
             } catch (e) {
                 if (e instanceof GetCollectionError) {

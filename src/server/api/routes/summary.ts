@@ -1,8 +1,8 @@
-import { protectedProcedure, router } from "../trpc";
-import SummaryController from "../../controllers/summary-controller";
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { GetSummaryError } from "../../controllers/errors/summary";
+import SummaryController from "../../controllers/summary-controller";
+import { protectedProcedure, router } from "../trpc";
 
 export const summaryRouter = router({
     getSummary: protectedProcedure
@@ -63,7 +63,7 @@ export const summaryRouter = router({
                 numOfWords: z.number(),
                 experience: z.number(),
                 finetuning: z.number(),
-            })
+            }),
         )
         .mutation(async ({ input }) => {
             try {
@@ -72,7 +72,7 @@ export const summaryRouter = router({
                     itemId,
                     numOfWords,
                     experience,
-                    finetuning
+                    finetuning,
                 );
             } catch (e) {
                 console.error(e);
