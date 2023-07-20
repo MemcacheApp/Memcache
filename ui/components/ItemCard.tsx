@@ -1,50 +1,60 @@
 "use client";
 
 import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
+import renderIcon from "@/src/app/utils/renderIcon";
+import { Collection, Item, Tag } from "@prisma/client";
 import {
+    ExternalLink as ExternalLinkIcon,
+    LayoutDashboard,
+    MoreHorizontal,
+    Newspaper,
+    PanelRightOpen,
+    Trash2,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import {
+    Button,
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuIconItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-    DropdownMenuGroup,
-    Button,
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    Label,
-    Input,
-    Tabs,
-    TabsList,
-    TabsTrigger,
-    DialogFooter,
     SimpleItemCard,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
-import { Item, Collection, Tag } from "@prisma/client";
-import {
-    ExternalLink as ExternalLinkIcon,
-    Trash2,
-    MoreHorizontal,
-    PanelRightOpen,
-    Newspaper,
-    LayoutDashboard,
-} from "lucide-react";
-import Link from "next/link";
 import { cn } from "../utils";
-import renderIcon from "@/src/app/utils/renderIcon";
-import { useState } from "react";
-import { Experience, Finetuning } from "@/src/datatypes/summary";
+import {
+    FlashcardsDialog,
+    GenerateSummaryDialog,
+    SummariesDialog,
+} from "./GenerationDialog";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
-    selected: boolean;
-    onSelect: (id: string) => void;
+    selected?: boolean;
+    onSelect?: (id: string) => void;
+    className?: string;
+    hideOptions?: boolean;
+    format?: ItemCardFormat;
 }
 
-export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
+export interface ItemCardFormat {
+    growHeight?: boolean; // Height of SimpleItemCardFormat grows to fit container of the SimpleItemCard
+}
+
+export function ItemCard({
+    data,
+    selected,
+    onSelect,
+    className,
+    hideOptions,
+    format,
+}: ItemCardProps) {
     const [isOpenSummaries, setIsOpenSummaries] = useState(false);
+    const [isOpenGenrateSummary, setIsOpenGenerateSummary] = useState(false);
+    const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
 
     const ctx = trpc.useContext();
 
@@ -67,6 +77,14 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
         }
     };
 
+    const openSummaries = () => {
+        setIsOpenSummaries(true);
+    };
+
+    const openFlashcards = () => {
+        setIsOpenFlashcards(true);
+    };
+
     const statusNums = Object.values(StatusEnum).filter(
         (value): value is number => typeof value === "number"
     );
@@ -78,11 +96,16 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                     "transition-[transform,border-color]",
                     selected
                         ? "scale-[101%] shadow-md border-slate-500"
-                        : "scale-100"
+                        : "scale-100",
+                    className
                 )}
-                onClick={() => {
-                    onSelect(data.id);
-                }}
+                onClick={
+                    onSelect
+                        ? () => {
+                              onSelect(data.id);
+                          }
+                        : undefined
+                }
                 url={data.url}
                 type={data.type}
                 title={data.title}
@@ -92,32 +115,48 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
                 thumbnail={data.thumbnail}
                 siteName={data.siteName}
                 favicon={data.favicon}
+                format={format}
                 footerRight={
-                    <>
-                        <ItemDropdownMenu
-                            data={data}
-                            openSummaries={() => setIsOpenSummaries(true)}
-                        />
-                        {statusNums.map((value) => (
-                            <Button
-                                key={value}
-                                variant={"icon"}
-                                size={"none"}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUpdateItemStatus(value);
-                                }}
-                            >
-                                {renderIcon(StatusIcons[value])}
-                            </Button>
-                        ))}
-                    </>
+                    hideOptions ? undefined : (
+                        <>
+                            <ItemDropdownMenu
+                                data={data}
+                                openSummaries={openSummaries}
+                                openFlashcards={openFlashcards}
+                            />
+                            {statusNums.map((value) => (
+                                <Button
+                                    key={value}
+                                    variant={"icon"}
+                                    size={"none"}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleUpdateItemStatus(value);
+                                    }}
+                                >
+                                    {renderIcon(StatusIcons[value])}
+                                </Button>
+                            ))}
+                        </>
+                    )
                 }
             />
             <SummariesDialog
                 data={data}
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
+                newSummary={() => setIsOpenGenerateSummary(true)}
+            />
+            <GenerateSummaryDialog
+                data={data}
+                open={isOpenGenrateSummary}
+                onOpenChange={setIsOpenGenerateSummary}
+                viewSummaries={() => setIsOpenSummaries(true)}
+            />
+            <FlashcardsDialog
+                data={data}
+                open={isOpenFlashcards}
+                onOpenChange={setIsOpenFlashcards}
             />
         </>
     );
@@ -126,9 +165,14 @@ export function ItemCard({ data, selected, onSelect }: ItemCardProps) {
 interface ItemDropdownMenuProps {
     data: Item & { collection: Collection; tags: Tag[] };
     openSummaries: () => void;
+    openFlashcards: () => void;
 }
 
-function ItemDropdownMenu({ data, openSummaries }: ItemDropdownMenuProps) {
+function ItemDropdownMenu({
+    data,
+    openSummaries,
+    openFlashcards,
+}: ItemDropdownMenuProps) {
     const ctx = trpc.useContext();
 
     const deleteItemMutation = trpc.item.deleteItem.useMutation({
@@ -175,7 +219,13 @@ function ItemDropdownMenu({ data, openSummaries }: ItemDropdownMenuProps) {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                    <DropdownMenuIconItem Icon={LayoutDashboard}>
+                    <DropdownMenuIconItem
+                        Icon={LayoutDashboard}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            openFlashcards();
+                        }}
+                    >
                         Flashcards
                     </DropdownMenuIconItem>
                     <DropdownMenuIconItem
@@ -201,115 +251,5 @@ function ItemDropdownMenu({ data, openSummaries }: ItemDropdownMenuProps) {
                 </DropdownMenuIconItem>
             </DropdownMenuContent>
         </DropdownMenu>
-    );
-}
-
-interface SummariesDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-}
-
-function SummariesDialog({ data, open, onOpenChange }: SummariesDialogProps) {
-    const [numOfWords, setNumOfWords] = useState(250);
-    const [experience, setExperience] = useState(Experience.Intermediate);
-    const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
-
-    const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
-        onSuccess(data) {
-            console.log(data);
-        },
-    });
-
-    const handleSubmit = () => {
-        generateSummaryMutation.mutate({
-            itemId: data.id,
-            numOfWords,
-            experience,
-            finetuning,
-        });
-    };
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Summaries</DialogTitle>
-                </DialogHeader>
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="numofwords">Number of words</Label>
-                        <Input
-                            className="w-32"
-                            id="numofwords"
-                            type="number"
-                            value={numOfWords}
-                            onChange={(e) =>
-                                setNumOfWords(parseInt(e.target.value))
-                            }
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="experience">Experience</Label>
-                        <Tabs
-                            id="experience"
-                            value={experience.toString()}
-                            onValueChange={(value) =>
-                                setExperience(parseInt(value))
-                            }
-                        >
-                            <TabsList>
-                                <TabsTrigger
-                                    value={Experience.Beginner.toString()}
-                                >
-                                    Beginner
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Experience.Intermediate.toString()}
-                                >
-                                    Intermediate
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Experience.Advanced.toString()}
-                                >
-                                    Advanced
-                                </TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="finetuning">Finetuning</Label>
-                        <Tabs
-                            id="finetuning"
-                            value={finetuning.toString()}
-                            onValueChange={(value) =>
-                                setFinetuning(parseInt(value))
-                            }
-                        >
-                            <TabsList>
-                                <TabsTrigger
-                                    value={Finetuning.Qualitative.toString()}
-                                >
-                                    Qualitative
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Finetuning.Quantitative.toString()}
-                                >
-                                    Quantitative
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    value={Finetuning.Mixed.toString()}
-                                >
-                                    Mixed
-                                </TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     );
 }

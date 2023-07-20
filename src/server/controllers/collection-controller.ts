@@ -1,7 +1,7 @@
-import { prisma } from "../db/prisma";
-import { v4 as uuidv4 } from "uuid";
-import { CreateCollectionError, GetCollectionError } from "./errors/collection";
 import { Prisma } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
+import { prisma } from "../db/prisma";
+import { CreateCollectionError, GetCollectionError } from "./errors/collection";
 
 export default class CollectionController {
     /**
@@ -23,7 +23,7 @@ export default class CollectionController {
                 ) {
                     throw new CreateCollectionError(
                         "CollectionExist",
-                        `Collection ${name} already exists for user ${userId}`
+                        `Collection ${name} already exists for user ${userId}`,
                     );
                 } else {
                     throw err;

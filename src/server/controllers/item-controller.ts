@@ -1,12 +1,12 @@
-import { prisma } from "../db/prisma";
-import { v4 as uuidv4 } from "uuid";
-import CollectionController from "./collection-controller";
-import TagController from "./tag-controller";
 import ogs from "open-graph-scraper";
+import { v4 as uuidv4 } from "uuid";
+import { ItemMetadata } from "../../datatypes/item";
+import { hostname } from "../../utils";
+import { prisma } from "../db/prisma";
+import CollectionController from "./collection-controller";
 import { FetchURLError, GetItemError } from "./errors/item";
 import { AuthError } from "./errors/user";
-import { ItemMetadata } from "@/src/datatypes/item";
-import { hostname } from "@/src/utils";
+import TagController from "./tag-controller";
 
 export default class ItemController {
     /**
@@ -47,11 +47,11 @@ export default class ItemController {
         userId: string,
         url: string,
         collectionName: string,
-        tagNames: string[]
+        tagNames: string[],
     ) {
         const collection = await CollectionController.getOrCreateCollection(
             userId,
-            collectionName
+            collectionName,
         );
         const tags = await TagController.getOrCreateTags(userId, tagNames);
 
@@ -177,7 +177,7 @@ export default class ItemController {
     static async updateItemStatus(
         userId: string,
         itemId: string,
-        status: number
+        status: number,
     ) {
         const item = await this.getItem(itemId);
 
@@ -202,11 +202,11 @@ export default class ItemController {
     static async setItemCollection(
         userId: string,
         itemId: string,
-        collectionName: string
+        collectionName: string,
     ) {
         const collection = await CollectionController.getOrCreateCollection(
             userId,
-            collectionName
+            collectionName,
         );
 
         const item = await this.getItem(itemId);

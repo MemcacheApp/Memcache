@@ -20,6 +20,7 @@ model User {
   items       Item[]
   collections Collection[]
   tags        Tag[]
+  Flashcard   Flashcard[]
 }
 
 model Session {
@@ -29,10 +30,10 @@ model Session {
 }
 
 model Item {
-  id           String     @id
+  id           String      @id
   type         String
   status       Int
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection  @relation(fields: [collectionId], references: [id])
   collectionId String
   tags         Tag[]
   title        String
@@ -40,7 +41,7 @@ model Item {
   description  String
   thumbnail    String?
   createdAt    DateTime
-  user         User       @relation(fields: [userId], references: [id])
+  user         User        @relation(fields: [userId], references: [id])
   userId       String
   siteName     String
   duration     Int?
@@ -48,6 +49,7 @@ model Item {
   author       String?
   favicon      String?
   summaries    Summary[]
+  Flashcard    Flashcard[]
 }
 
 model Summary {
@@ -85,4 +87,45 @@ model ResetCode {
   userId   String   @id
   code     String
   createAt DateTime
+}
+
+model Flashcard {
+  id         String              @id
+  question   String
+  answer     String
+  dueDate    DateTime
+  reviews    FlashcardReview[]
+  userId     String
+  user       User                @relation(fields: [userId], references: [id])
+  itemId     String
+  item       Item                @relation(fields: [itemId], references: [id])
+  experience FlashcardExperience
+  range      FlashcardRange
+}
+
+model FlashcardReview {
+  id          String                @id
+  timestamp   DateTime
+  rating      FlashcardReviewRating
+  Flashcard   Flashcard             @relation(fields: [flashcardId], references: [id])
+  flashcardId String
+}
+
+enum FlashcardReviewRating {
+  EASY
+  MEDIUM
+  HARD
+  FORGOT
+}
+
+enum FlashcardExperience {
+  Beginner
+  Intermediate
+  Advanced
+}
+
+enum FlashcardRange {
+  Depth
+  Breadth
+  Balanced
 }

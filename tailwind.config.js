@@ -49,6 +49,10 @@ export const theme = {
             slate: {
                 450: "#7A899F", // midpoint between 400 and 500
             },
+            easy: "#87d9c0",
+            medium: "#87afde",
+            hard: "#b588e1",
+            forgot: "#e18a9a",
         },
         borderRadius: {
             lg: `var(--radius)`,

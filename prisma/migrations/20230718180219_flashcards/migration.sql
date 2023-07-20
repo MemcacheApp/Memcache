@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Flashcard" ALTER COLUMN "experience" DROP DEFAULT,
+ALTER COLUMN "range" DROP DEFAULT;
