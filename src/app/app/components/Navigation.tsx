@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { trpc } from "@/src/app/utils/trpc";
-import { cn } from "@/ui/utils";
 import {
     Album,
     ArrowRight,
@@ -10,8 +11,7 @@ import {
     Newspaper,
     Package2,
 } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { cn } from "@/ui/utils";
 
 interface NavigationItemProps {
     children?: React.ReactNode;
@@ -28,7 +28,7 @@ export function NavigationItem(props: NavigationItemProps) {
                 href={props.href}
                 className={cn(
                     "flex items-center h-10 py-2 px-4 rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground hover:no-underline",
-                    { "bg-accent": pathname === props.href },
+                    { "bg-accent": pathname === props.href }
                 )}
             >
                 {props.icon ? <span className="mr-3">{props.icon}</span> : null}

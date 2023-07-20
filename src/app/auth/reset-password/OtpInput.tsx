@@ -29,7 +29,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
 
     const inputOnChange = (
         e: React.ChangeEvent<HTMLInputElement>,
-        idx: number,
+        idx: number
     ) => {
         const target = e.target;
         let targetValue = target.value.trim();

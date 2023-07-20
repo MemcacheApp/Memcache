@@ -7,7 +7,7 @@ import {
     PageTitle,
     ScrollArea,
     ScrollBar,
-    SummaryCard,
+    SummaryCard
 } from "@/ui/components";
 import { ArrowRightIcon } from "lucide-react";
 import NextLink from "next/link";

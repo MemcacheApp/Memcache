@@ -1,12 +1,12 @@
 "use client";
 
-import { trpc } from "@/src/app/utils/trpc";
-import { Button } from "@/ui/components";
 import { SquareAsterisk } from "lucide-react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
+import Link from "next/link";
+import { Button } from "@/ui/components";
+import { trpc } from "@/src/app/utils/trpc";
 
 type InputError = "white-space" | "invalid-code" | null;
 
@@ -28,14 +28,14 @@ export default function VerificationCodePage() {
             email,
             code: otp,
         },
-        { refetchOnWindowFocus: false, enabled: false },
+        { refetchOnWindowFocus: false, enabled: false }
     );
 
     useEffect(() => {
         if (verifyResetCodeQuery.data) {
             setError(null);
             push(
-                `/auth/reset-password/new-password?email=${email}&code=${otp}`,
+                `/auth/reset-password/new-password?email=${email}&code=${otp}`
             );
         } else if (verifyResetCodeQuery.data === false) {
             setError("invalid-code");

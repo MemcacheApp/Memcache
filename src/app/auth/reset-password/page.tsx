@@ -4,10 +4,10 @@ import { Button, Input, Label } from "@/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { trpc } from "../../utils/trpc";
+import { useRouter } from "next/navigation";
 
 const emailFormSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -36,10 +36,10 @@ export default function ResetPasswordPage() {
             {
                 onSuccess: () => {
                     push(
-                        `/auth/reset-password/verification-code?email=${data.email}`,
+                        `/auth/reset-password/verification-code?email=${data.email}`
                     );
                 },
-            },
+            }
         );
     });
 

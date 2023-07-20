@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@/ui/components";
-import classNames from "classnames";
 import { Menu, User } from "lucide-react";
+import { Navigation } from "./Navigation";
+import { useEffect, useState } from "react";
+import { Button } from "@/ui/components";
+import { trpc } from "../../utils/trpc";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import classNames from "classnames";
 import { useSidebarStore } from "../../store/sidebar";
-import { trpc } from "../../utils/trpc";
-import { Navigation } from "./Navigation";
 
 export function Sidebar() {
     const { isExpand, toggle, collapse } = useSidebarStore();
@@ -69,7 +69,7 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                 {
                     hidden: isHidden,
                     "-translate-x-64": isCollapse,
-                },
+                }
             )}
         >
             <Navigation />
@@ -79,7 +79,7 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                         href="/app/profile"
                         className={classNames(
                             "flex items-center h-10 py-2 px-4 rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground w-full",
-                            { "bg-accent": pathname === "/app/profile" },
+                            { "bg-accent": pathname === "/app/profile" }
                         )}
                     >
                         <User size={20} className="mr-3" />

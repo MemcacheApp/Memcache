@@ -1,5 +1,7 @@
-import { TRPCError } from "@trpc/server";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+import UserController from "../../controllers/user-controller";
 import {
     CreateUserError,
     GetUserError,
@@ -7,8 +9,6 @@ import {
     SendEmailError,
     VerifyCodeError,
 } from "../../controllers/errors/user";
-import UserController from "../../controllers/user-controller";
-import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
     createUser: publicProcedure
@@ -18,7 +18,7 @@ export const userRouter = router({
                 lastName: z.string(),
                 email: z.string(),
                 password: z.string(),
-            }),
+            })
         )
         .mutation(async ({ ctx, input }) => {
             try {
@@ -26,12 +26,12 @@ export const userRouter = router({
                     input.firstName,
                     input.lastName,
                     input.email,
-                    input.password,
+                    input.password
                 );
 
                 ctx.resHeaders.set(
                     "set-cookie",
-                    `jwt=${token};HttpOnly;Secure;`,
+                    `jwt=${token};HttpOnly;Secure;`
                 );
             } catch (e) {
                 if (e instanceof CreateUserError) {
@@ -52,17 +52,17 @@ export const userRouter = router({
             z.object({
                 email: z.string(),
                 password: z.string(),
-            }),
+            })
         )
         .mutation(async ({ ctx, input }) => {
             try {
                 const { token } = await UserController.login(
                     input.email,
-                    input.password,
+                    input.password
                 );
                 ctx.resHeaders.set(
                     "set-cookie",
-                    `jwt=${token};HttpOnly;Secure;`,
+                    `jwt=${token};HttpOnly;Secure;`
                 );
             } catch (e) {
                 if (e instanceof LoginError) {
@@ -90,7 +90,7 @@ export const userRouter = router({
         .input(
             z.object({
                 email: z.string(),
-            }),
+            })
         )
         .mutation(async ({ input }) => {
             try {
@@ -119,7 +119,7 @@ export const userRouter = router({
             z.object({
                 email: z.string(),
                 code: z.string(),
-            }),
+            })
         )
         .query(async ({ input }) => {
             try {
@@ -135,14 +135,14 @@ export const userRouter = router({
                 email: z.string(),
                 code: z.string(),
                 newPassword: z.string(),
-            }),
+            })
         )
         .mutation(async ({ input }) => {
             try {
                 return await UserController.updatePassword(
                     input.email,
                     input.code,
-                    input.newPassword,
+                    input.newPassword
                 );
             } catch (e) {
                 if (e instanceof GetUserError) {
@@ -167,13 +167,13 @@ export const userRouter = router({
         .input(
             z.object({
                 newEmail: z.string(),
-            }),
+            })
         )
         .mutation(async ({ input, ctx }) => {
             try {
                 return await UserController.updateEmail(
                     ctx.userId,
-                    input.newEmail,
+                    input.newEmail
                 );
             } catch (e) {
                 if (e instanceof GetUserError) {
@@ -193,13 +193,13 @@ export const userRouter = router({
         .input(
             z.object({
                 newFirstName: z.string(),
-            }),
+            })
         )
         .mutation(async ({ input, ctx }) => {
             try {
                 return await UserController.updateFirstName(
                     ctx.userId,
-                    input.newFirstName,
+                    input.newFirstName
                 );
             } catch (e) {
                 if (e instanceof GetUserError) {
@@ -219,13 +219,13 @@ export const userRouter = router({
         .input(
             z.object({
                 newLastName: z.string(),
-            }),
+            })
         )
         .mutation(async ({ input, ctx }) => {
             try {
                 return await UserController.updateLastName(
                     ctx.userId,
-                    input.newLastName,
+                    input.newLastName
                 );
             } catch (e) {
                 if (e instanceof GetUserError) {

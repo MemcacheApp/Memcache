@@ -66,5 +66,5 @@ export const useItemListStore = create<ItemListState & ItemListActions>(
         dismissPanel: () => set({ isShowPanel: false }),
 
         reset: () => set(initialState),
-    }),
+    })
 );
