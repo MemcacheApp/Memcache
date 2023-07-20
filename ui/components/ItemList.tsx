@@ -41,12 +41,14 @@ export function ItemList(props: ItemListProps) {
         selectedItems,
         includedTags,
         excludedTags,
+        tagCount,
     } = useItemListStore((state) => ({
         selectItem: state.selectItem,
         activeStatus: state.activeStatus,
         selectedItems: state.selectedItems,
         includedTags: state.includedTags,
         excludedTags: state.excludedTags,
+        tagCount: state.tagCount,
     }));
 
     const itemsQuery = trpc.item.getUserItems.useQuery({
@@ -73,11 +75,11 @@ export function ItemList(props: ItemListProps) {
         } else {
             return [];
         }
-    }, [itemsQuery.data, activeStatus]);
+    }, [itemsQuery.data, activeStatus, tagCount]);
 
     return (
         <div className="flex flex-col gap-3 md:mx-8 pb-8">
-            <Options includedTags={includedTags} excludedTags={excludedTags} />
+            <Options />
             {items && items.length > 0 ? (
                 items.map((item) => (
                     <ItemCard
@@ -102,36 +104,17 @@ export function ItemList(props: ItemListProps) {
     );
 }
 
-function Options({
-    includedTags,
-    excludedTags,
-}: {
-    includedTags: Set<string>;
-    excludedTags: Set<string>;
-}) {
+function Options() {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
     return (
         <div className="max-md:mx-5 flex items-center gap-5">
-            {isMultiselect ? (
-                <MultiselectOptions />
-            ) : (
-                <NormalOptions
-                    includedTags={includedTags}
-                    excludedTags={excludedTags}
-                />
-            )}
+            {isMultiselect ? <MultiselectOptions /> : <NormalOptions />}
         </div>
     );
 }
 
-function NormalOptions({
-    includedTags,
-    excludedTags,
-}: {
-    includedTags: Set<string>;
-    excludedTags: Set<string>;
-}) {
+function NormalOptions() {
     const enableMultiselect = useItemListStore(
         (state) => state.enableMultiselect
     );
@@ -139,10 +122,7 @@ function NormalOptions({
     return (
         <>
             <StatusToggle />
-            <TagFilterSelector
-                includedTags={includedTags}
-                excludedTags={excludedTags}
-            />
+            <TagFilterSelector />
             <Button
                 variant="outline"
                 className="w-10 rounded-full p-0 shrink-0"
@@ -316,14 +296,15 @@ function StatusToggle() {
     );
 }
 
-function TagFilterSelector({
-    includedTags,
-    excludedTags,
-}: {
-    includedTags: Set<string>;
-    excludedTags: Set<string>;
-}) {
-    const [tagCount, setTagCount] = useState(0);
+function TagFilterSelector() {
+    const { includedTags, excludedTags, tagCount, setTagCount } =
+        useItemListStore((state) => ({
+            includedTags: state.includedTags,
+            excludedTags: state.excludedTags,
+            tagCount: state.tagCount,
+            setTagCount: state.setTagCount,
+        }));
+
     const tagsQuery = trpc.tag.getUserTags.useQuery();
     const ctx = trpc.useContext();
 

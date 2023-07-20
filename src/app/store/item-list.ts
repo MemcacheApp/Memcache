@@ -8,10 +8,12 @@ export interface ItemListState {
     selectedItems: Set<string>;
     includedTags: Set<string>;
     excludedTags: Set<string>;
+    tagCount: number;
 }
 
 export interface ItemListActions {
     setActiveStatus: (activeStatus: StatusEnum) => void;
+    setTagCount: (tagCount: number) => void;
     enableMultiselect: () => void;
     disableMultiselect: () => void;
     selectItem: (id: string) => void;
@@ -27,6 +29,7 @@ const initialState: ItemListState = {
     selectedItems: new Set(),
     includedTags: new Set(),
     excludedTags: new Set(),
+    tagCount: 0,
 };
 
 export const useItemListStore = create<ItemListState & ItemListActions>(
@@ -34,6 +37,7 @@ export const useItemListStore = create<ItemListState & ItemListActions>(
         ...initialState,
 
         setActiveStatus: (activeStatus) => set({ activeStatus }),
+        setTagCount: (tagCount) => set({ tagCount }),
 
         enableMultiselect: () => set({ isMultiselect: true }),
         disableMultiselect: () =>
