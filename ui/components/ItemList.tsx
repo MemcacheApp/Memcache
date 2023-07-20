@@ -14,7 +14,7 @@ import {
     ItemCard,
     TagSelector,
 } from ".";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
     Archive,
     CheckCircle2,
@@ -35,6 +35,8 @@ interface ItemListProps {
 }
 
 export function ItemList(props: ItemListProps) {
+    const { collectionId } = props;
+
     const {
         selectItem,
         activeStatus,
@@ -58,20 +60,18 @@ export function ItemList(props: ItemListProps) {
 
     const items = useMemo(() => {
         if (itemsQuery.data) {
-            const data = itemsQuery.data
-                .filter(
-                    (item) =>
-                        activeStatus === null || activeStatus === item.status
-                )
-                .sort(
-                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
-                );
-            if (props.collectionId) {
-                return data.filter(
-                    (item) => item.collection.id === props.collectionId
+            let items = itemsQuery.data;
+            if (activeStatus) {
+                items = items.filter((item) => activeStatus === item.status);
+            }
+            if (collectionId) {
+                items = items.filter(
+                    (item) => collectionId === item.collection.id
                 );
             }
-            return data;
+            return items.sort(
+                (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
+            );
         } else {
             return [];
         }
