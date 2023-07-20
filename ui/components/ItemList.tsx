@@ -291,7 +291,7 @@ function TagFilterSelector() {
                     Tags
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="flex flex-col gap-1 w-[300px]">
+            <DropdownMenuContent className="flex flex-col gap-1 w-[250px]">
                 <Card className="p-1">
                     <div className="font-medium">Include:</div>
                     <div className="flex flex-wrap gap-3">
