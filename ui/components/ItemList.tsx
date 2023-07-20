@@ -50,8 +50,10 @@ export function ItemList(props: ItemListProps) {
     }));
 
     const itemsQuery = trpc.item.getUserItems.useQuery({
-        includedTags: Array.from(includedTags),
-        excludedTags: Array.from(excludedTags),
+        includedTags:
+            includedTags.size > 0 ? Array.from(includedTags) : undefined,
+        excludedTags:
+            excludedTags.size > 0 ? Array.from(excludedTags) : undefined,
     });
 
     const items = useMemo(() => {
@@ -77,7 +79,7 @@ export function ItemList(props: ItemListProps) {
 
     return (
         <div className="flex flex-col gap-3 md:mx-8 pb-8">
-            <Options includedTags={includedTags} excludedTags={excludedTags} />
+            <Options />
             {items && items.length > 0 ? (
                 items.map((item) => (
                     <ItemCard
@@ -102,36 +104,17 @@ export function ItemList(props: ItemListProps) {
     );
 }
 
-function Options({
-    includedTags,
-    excludedTags,
-}: {
-    includedTags: Set<string>;
-    excludedTags: Set<string>;
-}) {
+function Options() {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
     return (
         <div className="max-md:mx-5 flex items-center gap-5">
-            {isMultiselect ? (
-                <MultiselectOptions />
-            ) : (
-                <NormalOptions
-                    includedTags={includedTags}
-                    excludedTags={excludedTags}
-                />
-            )}
+            {isMultiselect ? <MultiselectOptions /> : <NormalOptions />}
         </div>
     );
 }
 
-function NormalOptions({
-    includedTags,
-    excludedTags,
-}: {
-    includedTags: Set<string>;
-    excludedTags: Set<string>;
-}) {
+function NormalOptions() {
     const enableMultiselect = useItemListStore(
         (state) => state.enableMultiselect
     );
@@ -139,10 +122,7 @@ function NormalOptions({
     return (
         <>
             <StatusToggle />
-            <TagFilterSelector
-                includedTags={includedTags}
-                excludedTags={excludedTags}
-            />
+            <TagFilterSelector />
             <Button
                 variant="outline"
                 className="w-10 rounded-full p-0 shrink-0"
@@ -316,20 +296,29 @@ function StatusToggle() {
     );
 }
 
-function TagFilterSelector({
-    includedTags,
-    excludedTags,
-}: {
-    includedTags: Set<string>;
-    excludedTags: Set<string>;
-}) {
-    const [tagCount, setTagCount] = useState(0);
+function TagFilterSelector() {
     const tagsQuery = trpc.tag.getUserTags.useQuery();
     const ctx = trpc.useContext();
 
+    const {
+        includedTags,
+        excludedTags,
+        addIncludedTag,
+        removeIncludedTag,
+        addExcludedTag,
+        removeExcludedTag,
+    } = useItemListStore((state) => ({
+        includedTags: state.includedTags,
+        excludedTags: state.excludedTags,
+        addIncludedTag: state.addIncludedTag,
+        removeIncludedTag: state.removeIncludedTag,
+        addExcludedTag: state.addExcludedTag,
+        removeExcludedTag: state.removeExcludedTag,
+    }));
+
     useEffect(() => {
         ctx.item.getUserItems.invalidate();
-    }, [tagCount]);
+    }, [includedTags, excludedTags]);
 
     return (
         <DropdownMenu>
@@ -348,8 +337,7 @@ function TagFilterSelector({
                                 key={index}
                                 value={tag}
                                 remove={() => {
-                                    includedTags.delete(tag);
-                                    setTagCount(tagCount - 1);
+                                    removeIncludedTag(tag);
                                 }}
                             />
                         ))}
@@ -358,12 +346,10 @@ function TagFilterSelector({
                             index={-1}
                             value=""
                             setValue={(tag) => {
-                                includedTags.add(tag);
-                                setTagCount(tagCount + 1);
+                                addIncludedTag(tag);
                             }}
                             remove={(tag) => {
-                                includedTags.delete(tag);
-                                setTagCount(tagCount - 1);
+                                removeIncludedTag(tag);
                             }}
                         />
                     </div>
@@ -376,8 +362,7 @@ function TagFilterSelector({
                                 key={index}
                                 value={tag}
                                 remove={() => {
-                                    excludedTags.delete(tag);
-                                    setTagCount(tagCount - 1);
+                                    removeExcludedTag(tag);
                                 }}
                             />
                         ))}
@@ -386,12 +371,10 @@ function TagFilterSelector({
                             index={-1}
                             value=""
                             setValue={(tag) => {
-                                excludedTags.add(tag);
-                                setTagCount(tagCount + 1);
+                                addExcludedTag(tag);
                             }}
                             remove={(tag) => {
-                                excludedTags.delete(tag);
-                                setTagCount(tagCount - 1);
+                                removeExcludedTag(tag);
                             }}
                         />
                     </div>
