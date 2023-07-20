@@ -109,16 +109,37 @@ export default class ItemController {
         return item;
     }
 
-    static async getUserItems(userId: string) {
+    static async getUserItems(
+        userId: string,
+        includedTags?: string[],
+        excludedTags?: string[]
+    ) {
         const items = await prisma.item.findMany({
             where: {
                 userId,
+                tags: {
+                    some: includedTags
+                        ? {
+                              name: {
+                                  in: includedTags,
+                              },
+                          }
+                        : undefined,
+                    none: excludedTags
+                        ? {
+                              name: {
+                                  in: excludedTags,
+                              },
+                          }
+                        : undefined,
+                },
             },
             include: {
                 tags: true,
                 collection: true,
             },
         });
+
         return items;
     }
 

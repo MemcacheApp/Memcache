@@ -274,10 +274,8 @@ function SaveOptions({
         }
     };
 
-    const removeTag = (index: number) => {
-        const newTags = [...tags];
-        newTags.splice(index, 1);
-        setTags(newTags);
+    const removeTag = (name: string) => {
+        setTags(tags.filter((tagName) => tagName != name));
     };
 
     return (

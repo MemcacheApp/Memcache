@@ -5,54 +5,68 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import renderIcon from "@/src/app/utils/renderIcon";
 import { trpc } from "@/src/app/utils/trpc";
-import { SquareStack, Trash2, X } from "lucide-react";
+import { SquareStack, Tags, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
 import {
     Button,
+    Card,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
     ItemCard,
+    TagSelector,
 } from ".";
 import { cn } from "../utils";
+import SimpleTag from "./SimpleTag";
 
 interface ItemListProps {
     collectionId?: string;
 }
 
 export function ItemList(props: ItemListProps) {
-    const { activeStatus, selectedItems, selectItem } = useItemListStore(
-        (state) => ({
-            activeStatus: state.activeStatus,
-            selectedItems: state.selectedItems,
-            selectItem: state.selectItem,
-        })
-    );
+    const { collectionId } = props;
 
-    const itemsQuery = trpc.item.getUserItems.useQuery();
+    const {
+        selectItem,
+        activeStatus,
+        selectedItems,
+        includedTags,
+        excludedTags,
+    } = useItemListStore((state) => ({
+        selectItem: state.selectItem,
+        activeStatus: state.activeStatus,
+        selectedItems: state.selectedItems,
+        includedTags: state.includedTags,
+        excludedTags: state.excludedTags,
+    }));
+
+    const itemsQuery = trpc.item.getUserItems.useQuery({
+        includedTags:
+            includedTags.size > 0 ? Array.from(includedTags) : undefined,
+        excludedTags:
+            excludedTags.size > 0 ? Array.from(excludedTags) : undefined,
+    });
 
     const items = useMemo(() => {
         if (itemsQuery.data) {
-            const data = itemsQuery.data
-                .filter(
-                    (item) =>
-                        activeStatus === null || activeStatus === item.status
-                )
-                .sort(
-                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf() // sort by createdAt
-                );
-            if (props.collectionId) {
-                return data.filter(
-                    (item) => item.collection.id === props.collectionId
+            let items = itemsQuery.data;
+
+            if (collectionId) {
+                items = items.filter(
+                    (item) => collectionId === item.collection.id,
                 );
             }
-            return data;
+            return items
+                .filter((item) => activeStatus === item.status)
+                .sort(
+                    (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf(), // sort by createdAt
+                );
         } else {
             return [];
         }
-    }, [itemsQuery.data, props, activeStatus]);
+    }, [itemsQuery.data, activeStatus, includedTags, excludedTags]);
 
     return (
         <div className="flex flex-col gap-3 pb-8 md:mx-8">
@@ -93,12 +107,13 @@ function Options() {
 
 function NormalOptions() {
     const enableMultiselect = useItemListStore(
-        (state) => state.enableMultiselect
+        (state) => state.enableMultiselect,
     );
 
     return (
         <>
             <StatusToggle />
+            <TagFilterSelector />
             <Button
                 variant="outline"
                 className="w-10 p-0 rounded-full shrink-0"
@@ -119,7 +134,7 @@ function MultiselectOptions() {
             selectedItems: state.selectedItems,
             showPanel: state.showPanel,
             disableMultiselect: state.disableMultiselect,
-        })
+        }),
     );
 
     const ctx = trpc.useContext();
@@ -158,7 +173,7 @@ function MultiselectOptions() {
     };
 
     const statusNames = Object.values(StatusEnum).filter(
-        (value): value is string => typeof value === "string"
+        (value): value is string => typeof value === "string",
     );
     const statusNums = Array.from(statusNames.keys());
 
@@ -245,12 +260,93 @@ function StatusToggle() {
                         >
                             {renderIcon(
                                 StatusIcons[value as StatusEnum],
-                                "mr-2"
+                                "mr-2",
                             )}
                             {StatusNames[value as StatusEnum]}
                         </Button>
                     );
                 })}
         </div>
+    );
+}
+
+function TagFilterSelector() {
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
+
+    const { includedTags, excludedTags, setIncludedTags, setExcludedTags } =
+        useItemListStore((state) => ({
+            includedTags: state.includedTags,
+            excludedTags: state.excludedTags,
+            setIncludedTags: state.setIncludedTags,
+            setExcludedTags: state.setExcludedTags,
+        }));
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger>
+                <Button variant="outline">
+                    <Tags className="mr-2" size={18} />
+                    Tags
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="flex flex-col gap-1 w-[250px]">
+                <Card className="p-1">
+                    <div className="font-medium">Include:</div>
+                    <div className="flex flex-wrap gap-3">
+                        {Array.from(includedTags).map((tag, index) => (
+                            <SimpleTag
+                                key={index}
+                                value={tag}
+                                remove={() => {
+                                    includedTags.delete(tag);
+                                    setIncludedTags(new Set(includedTags));
+                                }}
+                            />
+                        ))}
+                        <TagSelector
+                            tags={tagsQuery.data}
+                            index={-1}
+                            value=""
+                            setValue={(tag) => {
+                                includedTags.add(tag);
+                                setIncludedTags(new Set(includedTags));
+                            }}
+                            remove={(tag) => {
+                                includedTags.delete(tag);
+                                setIncludedTags(new Set(includedTags));
+                            }}
+                        />
+                    </div>
+                </Card>
+                <Card className="p-1">
+                    <div className="text-red-600 font-medium">Exclude:</div>
+                    <div className="flex flex-wrap gap-3">
+                        {Array.from(excludedTags).map((tag, index) => (
+                            <SimpleTag
+                                key={index}
+                                value={tag}
+                                remove={() => {
+                                    excludedTags.delete(tag);
+                                    setExcludedTags(new Set(excludedTags));
+                                }}
+                            />
+                        ))}
+                        <TagSelector
+                            tags={tagsQuery.data}
+                            index={-1}
+                            value=""
+                            setValue={(tag) => {
+                                excludedTags.add(tag);
+                                setExcludedTags(new Set(excludedTags));
+                            }}
+                            remove={(tag) => {
+                                excludedTags.delete(tag);
+                                setExcludedTags(new Set(excludedTags));
+                            }}
+                        />
+                    </div>
+                </Card>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }

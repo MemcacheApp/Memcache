@@ -18,16 +18,29 @@ export const itemRouter = router({
                 });
             }
         }),
-    getUserItems: protectedProcedure.query(async ({ ctx }) => {
-        try {
-            return await ItemController.getUserItems(ctx.userId);
-        } catch (e) {
-            console.error(e);
-            throw new TRPCError({
-                code: "INTERNAL_SERVER_ERROR",
-            });
-        }
-    }),
+    getUserItems: protectedProcedure
+        .input(
+            z
+                .object({
+                    includedTags: z.string().array().optional(),
+                    excludedTags: z.string().array().optional(),
+                })
+                .optional()
+        )
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ItemController.getUserItems(
+                    ctx.userId,
+                    input?.includedTags,
+                    input?.excludedTags
+                );
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }),
     createItem: protectedProcedure
         .input(
             z.object({

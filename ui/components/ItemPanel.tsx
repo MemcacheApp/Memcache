@@ -237,10 +237,13 @@ export function SingleItem({ itemId }: { itemId: string }) {
                                     tagName: newTag,
                                 });
                             }}
-                            remove={(index) => {
+                            remove={(tagName) => {
                                 removeTagFromItemMutation.mutate({
                                     itemId: data.id,
-                                    tagId: data.tags[index].id,
+                                    tagId:
+                                        data.tags.find(
+                                            (tag) => tag.name === tagName
+                                        )?.id || "",
                                 });
                             }}
                         />
