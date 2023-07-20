@@ -14,7 +14,7 @@ import {
     ItemCard,
     TagSelector,
 } from ".";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
     Archive,
     CheckCircle2,
@@ -54,8 +54,10 @@ export function ItemList(props: ItemListProps) {
     }));
 
     const itemsQuery = trpc.item.getUserItems.useQuery({
-        includedTags: Array.from(includedTags),
-        excludedTags: Array.from(excludedTags),
+        includedTags:
+            includedTags.size > 0 ? Array.from(includedTags) : undefined,
+        excludedTags:
+            excludedTags.size > 0 ? Array.from(excludedTags) : undefined,
     });
 
     const items = useMemo(() => {
@@ -297,14 +299,28 @@ function StatusToggle() {
 }
 
 function TagFilterSelector() {
-    const { includedTags, excludedTags, tagCount, setTagCount } =
-        useItemListStore((state) => ({
-            includedTags: state.includedTags,
-            excludedTags: state.excludedTags,
-            tagCount: state.tagCount,
-            setTagCount: state.setTagCount,
-        }));
     const tagsQuery = trpc.tag.getUserTags.useQuery();
+    const ctx = trpc.useContext();
+
+    const {
+        includedTags,
+        excludedTags,
+        addIncludedTag,
+        removeIncludedTag,
+        addExcludedTag,
+        removeExcludedTag,
+    } = useItemListStore((state) => ({
+        includedTags: state.includedTags,
+        excludedTags: state.excludedTags,
+        addIncludedTag: state.addIncludedTag,
+        removeIncludedTag: state.removeIncludedTag,
+        addExcludedTag: state.addExcludedTag,
+        removeExcludedTag: state.removeExcludedTag,
+    }));
+
+    useEffect(() => {
+        ctx.item.getUserItems.invalidate();
+    }, [includedTags, excludedTags]);
 
     return (
         <DropdownMenu>
@@ -323,8 +339,7 @@ function TagFilterSelector() {
                                 key={index}
                                 value={tag}
                                 remove={() => {
-                                    includedTags.delete(tag);
-                                    setTagCount(tagCount - 1);
+                                    removeIncludedTag(tag);
                                 }}
                             />
                         ))}
@@ -333,12 +348,10 @@ function TagFilterSelector() {
                             index={-1}
                             value=""
                             setValue={(tag) => {
-                                includedTags.add(tag);
-                                setTagCount(tagCount + 1);
+                                addIncludedTag(tag);
                             }}
                             remove={(tag) => {
-                                includedTags.delete(tag);
-                                setTagCount(tagCount - 1);
+                                removeIncludedTag(tag);
                             }}
                         />
                     </div>
@@ -351,8 +364,7 @@ function TagFilterSelector() {
                                 key={index}
                                 value={tag}
                                 remove={() => {
-                                    excludedTags.delete(tag);
-                                    setTagCount(tagCount - 1);
+                                    removeExcludedTag(tag);
                                 }}
                             />
                         ))}
@@ -361,12 +373,10 @@ function TagFilterSelector() {
                             index={-1}
                             value=""
                             setValue={(tag) => {
-                                excludedTags.add(tag);
-                                setTagCount(tagCount + 1);
+                                addExcludedTag(tag);
                             }}
                             remove={(tag) => {
-                                excludedTags.delete(tag);
-                                setTagCount(tagCount - 1);
+                                removeExcludedTag(tag);
                             }}
                         />
                     </div>

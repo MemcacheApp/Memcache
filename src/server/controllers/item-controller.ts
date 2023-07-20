@@ -118,21 +118,20 @@ export default class ItemController {
             where: {
                 userId,
                 tags: {
-                    some: {
-                        name:
-                            includedTags && includedTags.length
-                                ? {
-                                      in: includedTags,
-                                  }
-                                : {
-                                      notIn: [],
-                                  },
-                    },
-                    none: {
-                        name: {
-                            in: excludedTags,
-                        },
-                    },
+                    some: includedTags
+                        ? {
+                              name: {
+                                  in: includedTags,
+                              },
+                          }
+                        : undefined,
+                    none: excludedTags
+                        ? {
+                              name: {
+                                  in: excludedTags,
+                              },
+                          }
+                        : undefined,
                 },
             },
             include: {

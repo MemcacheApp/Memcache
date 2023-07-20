@@ -20,6 +20,10 @@ export interface ItemListActions {
     showPanel: () => void;
     dismissPanel: () => void;
     reset: () => void;
+    addIncludedTag: (tag: string) => void;
+    removeIncludedTag: (tag: string) => void;
+    addExcludedTag: (tag: string) => void;
+    removeExcludedTag: (tag: string) => void;
 }
 
 const initialState: ItemListState = {
@@ -64,6 +68,31 @@ export const useItemListStore = create<ItemListState & ItemListActions>(
 
         showPanel: () => set({ isShowPanel: true }),
         dismissPanel: () => set({ isShowPanel: false }),
+
+        addIncludedTag: (tag: string) =>
+            set((state) => {
+                const next = new Set(state.includedTags);
+                next.add(tag);
+                return { includedTags: next };
+            }),
+        removeIncludedTag: (tag: string) =>
+            set((state) => {
+                const next = new Set(state.includedTags);
+                next.delete(tag);
+                return { includedTags: next };
+            }),
+        addExcludedTag: (tag: string) =>
+            set((state) => {
+                const next = new Set(state.excludedTags);
+                next.add(tag);
+                return { excludedTags: next };
+            }),
+        removeExcludedTag: (tag: string) =>
+            set((state) => {
+                const next = new Set(state.excludedTags);
+                next.delete(tag);
+                return { excludedTags: next };
+            }),
 
         reset: () => set(initialState),
     })
