@@ -8,7 +8,7 @@ import { hostname } from "@/src/utils";
 import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
 import { FocusScope } from "@radix-ui/react-focus-scope";
 import { Slot } from "@radix-ui/react-slot";
-import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
+import { Package2, Plus, RefreshCw, TagIcon, X } from "lucide-react";
 import { RemoveScroll } from "react-remove-scroll";
 import {
     AddTag,
@@ -17,9 +17,9 @@ import {
     Input,
     Loader,
     SimpleItemCard,
+    Tag,
 } from ".";
 import { cn } from "../utils";
-import SimpleTag from "./SimpleTag";
 
 export function SaveInput() {
     const [isShowPopover, setIsShowPopover] = useState(false);
@@ -305,9 +305,9 @@ function SaveOptions({
                     />
                 </div>
                 <div className="flex gap-3 flex-wrap items-center">
-                    <Tag className="text-slate-500" size={18} />
+                    <TagIcon className="text-slate-500" size={18} />
                     {tags.map((tag) => (
-                        <SimpleTag key={tag} value={tag} remove={removeTag} />
+                        <Tag key={tag} value={tag} remove={removeTag} />
                     ))}
                     <AddTag
                         tags={tagsQuery.data}

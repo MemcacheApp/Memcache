@@ -4,16 +4,15 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import { DEBUG } from "@/src/app/utils/constants";
 import { trpc } from "@/src/app/utils/trpc";
-import { LucideIcon, Package2, Tag, X } from "lucide-react";
+import { LucideIcon, Package2, TagIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AddTag, CollectionSelector, ExternalLink } from ".";
+import { AddTag, CollectionSelector, ExternalLink, Tag } from ".";
 import { cn } from "../utils";
 import { Button } from "./Button";
 import { Card } from "./Card";
 import MultiToggle from "./MultiToggle";
 import { Separator } from "./Separator";
-import SimpleTag from "./SimpleTag";
 import { Table, TableBody, TableCell, TableRow } from "./Table";
 
 export function ItemPanel() {
@@ -212,11 +211,11 @@ export function SingleItem({ itemId }: { itemId: string }) {
                             size={"default"}
                         />
                     </div>
-                    <Subtitle Icon={Tag}>Tags</Subtitle>
+                    <Subtitle Icon={TagIcon}>Tags</Subtitle>
 
                     <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag, index) => (
-                            <SimpleTag
+                            <Tag
                                 key={tag.id}
                                 value={tag.name}
                                 remove={() => {

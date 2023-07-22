@@ -17,9 +17,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
     ItemCard,
+    Tag,
 } from ".";
 import { cn } from "../utils";
-import SimpleTag from "./SimpleTag";
 
 interface ItemListProps {
     collectionId?: string;
@@ -294,7 +294,7 @@ function TagFilterSelector() {
                     <div className="font-medium">Include:</div>
                     <div className="flex flex-wrap gap-3">
                         {Array.from(includedTags).map((tag, index) => (
-                            <SimpleTag
+                            <Tag
                                 key={index}
                                 value={tag}
                                 remove={() => {
@@ -316,7 +316,7 @@ function TagFilterSelector() {
                     <div className="text-red-600 font-medium">Exclude:</div>
                     <div className="flex flex-wrap gap-3">
                         {Array.from(excludedTags).map((tag, index) => (
-                            <SimpleTag
+                            <Tag
                                 key={index}
                                 value={tag}
                                 remove={() => {

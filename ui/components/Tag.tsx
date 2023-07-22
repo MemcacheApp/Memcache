@@ -2,10 +2,9 @@ import { Trash } from "lucide-react";
 import { Button } from ".";
 
 /**
- * Simple tag component to display tag and enable removal of tag by click.
+ * Tag component to display tag and enable removal of tag by click.
  */
-
-export default function SimpleTag({
+export function Tag({
     value,
     remove,
 }: {

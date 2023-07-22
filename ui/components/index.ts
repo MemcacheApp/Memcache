@@ -24,6 +24,7 @@ export * from "./SimpleItemCard";
 export * from "./Skeleton";
 export * from "./SummaryCard";
 export * from "./Tabs";
+export * from "./Tag";
 export * from "./Tooltip";
 export * from "./WithPanel";
 export * from "./typography";
