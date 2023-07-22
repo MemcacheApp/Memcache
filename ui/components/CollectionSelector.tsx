@@ -43,6 +43,13 @@ export function CollectionSelector({
         return names;
     }, [collections]);
 
+    const isAddable = useMemo(
+        () =>
+            searchValue &&
+            !includeCaseInsensitive(collectionNames, searchValue),
+        [collectionNames, searchValue],
+    );
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -68,11 +75,7 @@ export function CollectionSelector({
                     <CommandGroup>
                         {collectionNames ? (
                             <>
-                                {searchValue &&
-                                !includeCaseInsensitive(
-                                    collectionNames,
-                                    searchValue,
-                                ) ? (
+                                {isAddable ? (
                                     <CommandItem
                                         value={`create:${searchValue}:`}
                                         onSelect={() => {

@@ -42,6 +42,15 @@ export function AddTag({
         [tags, selectedTags],
     );
 
+    const isAddable = useMemo(
+        () =>
+            searchValue &&
+            !includeCaseInsensitive(tagNames, searchValue) &&
+            (!selectedTags ||
+                !includeCaseInsensitive(selectedTags, searchValue)),
+        [tagNames, searchValue, selectedTags],
+    );
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -66,11 +75,7 @@ export function AddTag({
                     <CommandGroup>
                         {tagNames ? (
                             <>
-                                {searchValue &&
-                                !includeCaseInsensitive(
-                                    tagNames,
-                                    searchValue,
-                                ) ? (
+                                {isAddable ? (
                                     <CommandItem
                                         value={`create:${searchValue}:`}
                                         onSelect={() => {
