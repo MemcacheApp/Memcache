@@ -52,7 +52,7 @@ export function AddTag(props: AddTagProps) {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
-                    className="px-3 bg-slate-50"
+                    className="px-3 bg-slate-50 border-dashed border-2"
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
