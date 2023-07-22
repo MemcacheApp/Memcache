@@ -3,23 +3,23 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
-import { includeCaseInsensitive } from "../../src/app/utils";
-import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
-import { cn } from "../utils";
-import { FocusScope } from "@radix-ui/react-focus-scope";
-import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
-import { RemoveScroll } from "react-remove-scroll";
-import {
-    CollectionSelector,
-    TagSelector,
-    Input,
-    Button,
-    SimpleItemCard,
-    Loader,
-} from ".";
 import { ItemMetadata } from "@/src/datatypes/item";
 import { hostname } from "@/src/utils";
+import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
+import { FocusScope } from "@radix-ui/react-focus-scope";
 import { Slot } from "@radix-ui/react-slot";
+import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
+import { RemoveScroll } from "react-remove-scroll";
+import {
+    Button,
+    CollectionSelector,
+    Input,
+    Loader,
+    SimpleItemCard,
+    TagSelector,
+} from ".";
+import { includeCaseInsensitive } from "../../src/app/utils";
+import { cn } from "../utils";
 
 export function SaveInput() {
     const [isShowPopover, setIsShowPopover] = useState(false);
@@ -314,7 +314,7 @@ function SaveOptions({
                     <CollectionSelector
                         collections={collectionsQuery.data}
                         value={collection}
-                        setValue={setCollection}
+                        onSelect={setCollection}
                         disabled={isCreating}
                     />
                 </div>

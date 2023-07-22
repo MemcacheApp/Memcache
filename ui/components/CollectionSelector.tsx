@@ -1,5 +1,8 @@
 "use client";
 
+import { Collection } from "@prisma/client";
+import { type VariantProps } from "class-variance-authority";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
     Button,
@@ -13,22 +16,19 @@ import {
     buttonVariants,
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
-import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { type VariantProps } from "class-variance-authority";
 import { cn } from "../utils";
-import { Collection } from "@prisma/client";
 
 interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
     collections: Collection[] | undefined;
     value: string;
-    setValue: (s: string) => void;
+    onSelect: (s: string) => void;
     disabled?: boolean;
 }
 
 export function CollectionSelector({
     collections,
     value,
-    setValue,
+    onSelect,
     size,
     disabled,
 }: CollectionSelectorProps) {
@@ -38,7 +38,7 @@ export function CollectionSelector({
     const collectionNames = useMemo(() => {
         const names = collections?.map((collection) => collection.name);
         if (names && !value) {
-            setValue(names[0]);
+            onSelect(names[0]);
         }
         return names;
     }, [collections]);
@@ -75,7 +75,7 @@ export function CollectionSelector({
                                 ) ? null : (
                                     <CommandItem
                                         onSelect={() => {
-                                            setValue(searchValue);
+                                            onSelect(searchValue);
                                             setOpen(false);
                                         }}
                                     >
@@ -87,7 +87,7 @@ export function CollectionSelector({
                                     <CommandItem
                                         key={collection}
                                         onSelect={() => {
-                                            setValue(collection);
+                                            onSelect(collection);
                                             setOpen(false);
                                         }}
                                     >

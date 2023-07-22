@@ -203,7 +203,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
                         <CollectionSelector
                             collections={collectionsQuery.data}
                             value={data.collection.name}
-                            setValue={(newCollection) => {
+                            onSelect={(newCollection) => {
                                 setCollectionOnItem.mutate({
                                     itemId: data.id,
                                     collectionName: newCollection,
