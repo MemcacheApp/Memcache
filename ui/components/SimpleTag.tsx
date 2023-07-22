@@ -13,11 +13,18 @@ interface SimpleTagProps extends ButtonProps {
  * Tag component to display tag and enable removal of tag by click.
  */
 export function SimpleTag(props: SimpleTagProps) {
-    const { value, remove, editMode, ...other } = props;
+    const { value, remove, editMode, onClick, ...other } = props;
 
-    const onClick = useCallback(() => {
-        if (remove) remove(value);
-    }, [value, remove]);
+    const _onClick = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            if (editMode && remove) {
+                remove(value);
+            } else if (onClick) {
+                onClick(e);
+            }
+        },
+        [editMode, value, remove],
+    );
 
     return (
         <Button
@@ -26,7 +33,7 @@ export function SimpleTag(props: SimpleTagProps) {
             })}
             variant="outline"
             role="button"
-            onClick={editMode ? onClick : undefined}
+            onClick={_onClick}
             {...other}
         >
             {value}

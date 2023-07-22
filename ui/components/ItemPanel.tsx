@@ -4,7 +4,7 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import { DEBUG } from "@/src/app/utils/constants";
 import { trpc } from "@/src/app/utils/trpc";
-import { LucideIcon, Package2, TagIcon, X } from "lucide-react";
+import { EditIcon, LucideIcon, Package2, TagIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AddTag, CollectionSelector, ExternalLink, SimpleTag } from ".";
@@ -95,6 +95,8 @@ export function SingleItem({ itemId }: { itemId: string }) {
 
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
     const tagsQuery = trpc.tag.getUserTags.useQuery();
+
+    const [isTagEditMode, setIsTagEditMode] = useState(false);
 
     DEBUG &&
         console.log(
@@ -214,29 +216,39 @@ export function SingleItem({ itemId }: { itemId: string }) {
                     <Subtitle Icon={TagIcon}>Tags</Subtitle>
 
                     <div className="flex flex-wrap gap-3">
+                        <Button
+                            variant="icon"
+                            size="none"
+                            onClick={() => setIsTagEditMode((state) => !state)}
+                        >
+                            <EditIcon size={18} />
+                        </Button>
                         {data.tags.map((tag, index) => (
                             <SimpleTag
                                 key={tag.id}
                                 value={tag.name}
+                                onClick={() => console.log(tag.id)}
                                 remove={() => {
                                     removeTagFromItemMutation.mutate({
                                         itemId: data.id,
                                         tagId: data.tags[index].id,
                                     });
                                 }}
-                                editMode
+                                editMode={isTagEditMode}
                             />
                         ))}
-                        <AddTag
-                            tags={tagsQuery.data}
-                            onSelect={(newTag) => {
-                                addTagToItemMutation.mutate({
-                                    itemId: data.id,
-                                    tagName: newTag,
-                                });
-                            }}
-                            selectedTags={data.tags.map((tag) => tag.name)}
-                        />
+                        {isTagEditMode ? (
+                            <AddTag
+                                tags={tagsQuery.data}
+                                onSelect={(newTag) => {
+                                    addTagToItemMutation.mutate({
+                                        itemId: data.id,
+                                        tagName: newTag,
+                                    });
+                                }}
+                                selectedTags={data.tags.map((tag) => tag.name)}
+                            />
+                        ) : null}
                     </div>
                     <Separator className="my-4" />
                     <Subtitle>Metadata</Subtitle>
