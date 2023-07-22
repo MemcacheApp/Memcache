@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
     Button,
+    ButtonProps,
     Command,
     CommandEmpty,
     CommandGroup,
@@ -16,19 +17,15 @@ import {
     PopoverTrigger,
 } from ".";
 
-interface AddTagProps {
+interface AddTagProps extends Omit<ButtonProps, "onSelect"> {
     tags: Tag[] | undefined;
     onSelect: (name: string) => void;
     disabled?: boolean;
     selectedTags?: string[];
 }
 
-export function AddTag({
-    tags,
-    onSelect,
-    disabled,
-    selectedTags,
-}: AddTagProps) {
+export function AddTag(props: AddTagProps) {
+    const { tags, onSelect, selectedTags, ...other } = props;
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
@@ -59,7 +56,7 @@ export function AddTag({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    disabled={disabled}
+                    {...other}
                 >
                     <Plus size={16} />
                 </Button>

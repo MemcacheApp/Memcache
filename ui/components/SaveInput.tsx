@@ -311,6 +311,7 @@ function SaveOptions({
                             key={tag}
                             value={tag}
                             remove={removeTag}
+                            disabled={isCreating}
                             editMode
                         />
                     ))}

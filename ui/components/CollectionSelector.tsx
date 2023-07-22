@@ -1,11 +1,11 @@
 "use client";
 
 import { Collection } from "@prisma/client";
-import { type VariantProps } from "class-variance-authority";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
     Button,
+    ButtonProps,
     Command,
     CommandGroup,
     CommandInput,
@@ -13,25 +13,18 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    buttonVariants,
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
 import { cn } from "../utils";
 
-interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
+interface CollectionSelectorProps extends Omit<ButtonProps, "onSelect"> {
     collections: Collection[] | undefined;
     value: string;
     onSelect: (s: string) => void;
-    disabled?: boolean;
 }
 
-export function CollectionSelector({
-    collections,
-    value,
-    onSelect,
-    size,
-    disabled,
-}: CollectionSelectorProps) {
+export function CollectionSelector(props: CollectionSelectorProps) {
+    const { collections, value, onSelect, ...other } = props;
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
@@ -58,8 +51,7 @@ export function CollectionSelector({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    size={size}
-                    disabled={disabled}
+                    {...other}
                 >
                     {value || "Loading..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />

@@ -1,10 +1,9 @@
-import { VariantProps } from "class-variance-authority";
 import { Trash } from "lucide-react";
 import { useCallback } from "react";
-import { Badge, Button, buttonVariants } from ".";
+import { Badge, Button, ButtonProps } from ".";
 import { cn } from "../utils";
 
-interface SimpleTagProps extends VariantProps<typeof buttonVariants> {
+interface SimpleTagProps extends ButtonProps {
     value: string;
     remove?: (name: string) => void;
     editMode?: boolean;
