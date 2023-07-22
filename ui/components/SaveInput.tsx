@@ -313,6 +313,7 @@ function SaveOptions({
                         tags={tagsQuery.data}
                         onSelect={addTag}
                         disabled={isCreating}
+                        selectedTags={tags}
                     />
                 </div>
             </div>

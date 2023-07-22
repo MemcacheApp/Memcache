@@ -234,6 +234,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
                                     tagName: newTag,
                                 });
                             }}
+                            selectedTags={data.tags.map((tag) => tag.name)}
                         />
                     </div>
                     <Separator className="my-4" />

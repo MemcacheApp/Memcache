@@ -309,6 +309,7 @@ function TagFilterSelector() {
                                 includedTags.add(tag);
                                 setIncludedTags(new Set(includedTags));
                             }}
+                            selectedTags={Array.from(includedTags)}
                         />
                     </div>
                 </Card>
@@ -331,6 +332,7 @@ function TagFilterSelector() {
                                 excludedTags.add(tag);
                                 setExcludedTags(new Set(excludedTags));
                             }}
+                            selectedTags={Array.from(excludedTags)}
                         />
                     </div>
                 </Card>

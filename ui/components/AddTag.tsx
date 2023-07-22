@@ -20,13 +20,27 @@ interface AddTagProps {
     tags: Tag[] | undefined;
     onSelect: (name: string) => void;
     disabled?: boolean;
+    selectedTags?: string[];
 }
 
-export function AddTag({ tags, onSelect, disabled }: AddTagProps) {
+export function AddTag({
+    tags,
+    onSelect,
+    disabled,
+    selectedTags,
+}: AddTagProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    const tagNames = useMemo(() => tags?.map((tag) => tag.name), [tags]);
+    const tagNames = useMemo(
+        () =>
+            tags
+                ?.map((tag) => tag.name)
+                .filter((tag) =>
+                    selectedTags ? !selectedTags.includes(tag) : true,
+                ),
+        [tags, selectedTags],
+    );
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
