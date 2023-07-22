@@ -1,7 +1,7 @@
 "use client";
 
 import { Tag } from "@prisma/client";
-import { Plus, TagIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
     Button,
@@ -32,9 +32,8 @@ export function AddTag({ tags, onSelect, disabled }: AddTagProps) {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
-                    className="px-2 bg-slate-50"
+                    className="px-3 bg-slate-50"
                     variant="outline"
-                    size="xs"
                     role="combobox"
                     aria-expanded={open}
                     disabled={disabled}
@@ -70,13 +69,13 @@ export function AddTag({ tags, onSelect, disabled }: AddTagProps) {
                                 )}
                                 {tagNames.map((tag) => (
                                     <CommandItem
+                                        className="pl-8"
                                         key={tag}
                                         onSelect={() => {
                                             onSelect(tag);
                                             setOpen(false);
                                         }}
                                     >
-                                        <TagIcon className="mr-2 h-4 w-4" />
                                         {tag}
                                     </CommandItem>
                                 ))}
