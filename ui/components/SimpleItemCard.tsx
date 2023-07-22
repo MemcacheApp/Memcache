@@ -8,8 +8,8 @@ import {
     ExternalLink,
     ItemCardFormat,
     Link,
+    SimpleTag,
     Skeleton,
-    Tag as TagComp,
 } from ".";
 import { cn } from "../utils";
 
@@ -138,11 +138,12 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                                 <TagIcon size={16} />
                                 {props.tags.map((tag) => (
                                     <Link
+                                        tabIndex={-1}
                                         key={tag.id}
                                         href={`/app/tag/${tag.id}`}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <TagComp size="sm" value={tag.name} />
+                                        <SimpleTag size="sm" value={tag.name} />
                                     </Link>
                                 ))}
                             </div>

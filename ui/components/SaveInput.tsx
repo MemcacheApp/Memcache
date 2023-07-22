@@ -17,7 +17,7 @@ import {
     Input,
     Loader,
     SimpleItemCard,
-    Tag,
+    SimpleTag,
 } from ".";
 import { cn } from "../utils";
 
@@ -307,7 +307,7 @@ function SaveOptions({
                 <div className="flex gap-3 flex-wrap items-center">
                     <TagIcon className="text-slate-500" size={18} />
                     {tags.map((tag) => (
-                        <Tag
+                        <SimpleTag
                             key={tag}
                             value={tag}
                             remove={removeTag}

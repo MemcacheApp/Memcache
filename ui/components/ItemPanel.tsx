@@ -7,7 +7,7 @@ import { trpc } from "@/src/app/utils/trpc";
 import { LucideIcon, Package2, TagIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AddTag, CollectionSelector, ExternalLink, Tag } from ".";
+import { AddTag, CollectionSelector, ExternalLink, SimpleTag } from ".";
 import { cn } from "../utils";
 import { Button } from "./Button";
 import { Card } from "./Card";
@@ -215,7 +215,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
 
                     <div className="flex flex-wrap gap-3">
                         {data.tags.map((tag, index) => (
-                            <Tag
+                            <SimpleTag
                                 key={tag.id}
                                 value={tag.name}
                                 remove={() => {

@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { Badge, Button, buttonVariants } from ".";
 import { cn } from "../utils";
 
-interface TagProps extends VariantProps<typeof buttonVariants> {
+interface SimpleTagProps extends VariantProps<typeof buttonVariants> {
     value: string;
     remove?: (name: string) => void;
     editMode?: boolean;
@@ -13,7 +13,7 @@ interface TagProps extends VariantProps<typeof buttonVariants> {
 /**
  * Tag component to display tag and enable removal of tag by click.
  */
-export function Tag(props: TagProps) {
+export function SimpleTag(props: SimpleTagProps) {
     const { value, remove, editMode, ...other } = props;
 
     const onClick = useCallback(() => {
