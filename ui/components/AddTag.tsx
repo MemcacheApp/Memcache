@@ -1,5 +1,6 @@
 "use client";
 
+import { includeCaseInsensitive } from "@/src/app/utils";
 import { Tag } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -14,7 +15,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from ".";
-import { includeCaseInsensitive } from "../../src/app/utils";
 
 interface AddTagProps {
     tags: Tag[] | undefined;
@@ -66,12 +66,13 @@ export function AddTag({
                     <CommandGroup>
                         {tagNames ? (
                             <>
-                                {!searchValue ||
-                                includeCaseInsensitive(
+                                {searchValue &&
+                                !includeCaseInsensitive(
                                     tagNames,
                                     searchValue,
-                                ) ? null : (
+                                ) ? (
                                     <CommandItem
+                                        value={`create:${searchValue}:`}
                                         onSelect={() => {
                                             onSelect(searchValue);
                                             setOpen(false);
@@ -80,11 +81,12 @@ export function AddTag({
                                         <Plus className="mr-2 h-4 w-4" />
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
-                                )}
+                                ) : null}
                                 {tagNames.map((tag) => (
                                     <CommandItem
                                         className="pl-8"
                                         key={tag}
+                                        value={tag}
                                         onSelect={() => {
                                             onSelect(tag);
                                             setOpen(false);

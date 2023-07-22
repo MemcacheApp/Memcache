@@ -68,12 +68,13 @@ export function CollectionSelector({
                     <CommandGroup>
                         {collectionNames ? (
                             <>
-                                {!searchValue ||
-                                includeCaseInsensitive(
+                                {searchValue &&
+                                !includeCaseInsensitive(
                                     collectionNames,
                                     searchValue,
-                                ) ? null : (
+                                ) ? (
                                     <CommandItem
+                                        value={`create:${searchValue}:`}
                                         onSelect={() => {
                                             onSelect(searchValue);
                                             setOpen(false);
@@ -82,10 +83,11 @@ export function CollectionSelector({
                                         <Plus className="mr-2 h-4 w-4" />
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
-                                )}
+                                ) : null}
                                 {collectionNames.map((collection) => (
                                     <CommandItem
                                         key={collection}
+                                        value={collection}
                                         onSelect={() => {
                                             onSelect(collection);
                                             setOpen(false);
