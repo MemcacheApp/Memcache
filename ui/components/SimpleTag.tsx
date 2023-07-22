@@ -1,5 +1,5 @@
-import { Button } from ".";
 import { Trash } from "lucide-react";
+import { Button } from ".";
 
 /**
  * Simple tag component to display tag and enable removal of tag by click.
@@ -10,7 +10,7 @@ export default function SimpleTag({
     remove,
 }: {
     value: string;
-    remove: () => void;
+    remove: (name: string) => void;
 }) {
     return (
         <Button
@@ -18,7 +18,9 @@ export default function SimpleTag({
             variant="secondary"
             size="xs"
             role="combobox"
-            onClick={remove}
+            onClick={() => {
+                remove(value);
+            }}
         >
             {value}
             <span className="absolute -right-3 -bottom-2 bg-background group-hover:text-red-500 p-1 border text-foreground opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 rounded-full z-10">

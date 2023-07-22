@@ -7,7 +7,7 @@ import { trpc } from "@/src/app/utils/trpc";
 import { LucideIcon, Package2, Tag, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CollectionSelector, ExternalLink, TagSelector } from ".";
+import { AddTag, CollectionSelector, ExternalLink } from ".";
 import { cn } from "../utils";
 import { Button } from "./Button";
 import { Card } from "./Card";
@@ -227,23 +227,12 @@ export function SingleItem({ itemId }: { itemId: string }) {
                                 }}
                             />
                         ))}
-                        <TagSelector
+                        <AddTag
                             tags={tagsQuery.data}
-                            value=""
-                            index={-1}
-                            setValue={(newTag) => {
+                            onSelect={(newTag) => {
                                 addTagToItemMutation.mutate({
                                     itemId: data.id,
                                     tagName: newTag,
-                                });
-                            }}
-                            remove={(tagName) => {
-                                removeTagFromItemMutation.mutate({
-                                    itemId: data.id,
-                                    tagId:
-                                        data.tags.find(
-                                            (tag) => tag.name === tagName,
-                                        )?.id || "",
                                 });
                             }}
                         />

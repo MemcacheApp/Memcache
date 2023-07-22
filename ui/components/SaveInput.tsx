@@ -11,15 +11,15 @@ import { Slot } from "@radix-ui/react-slot";
 import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
 import { RemoveScroll } from "react-remove-scroll";
 import {
+    AddTag,
     Button,
     CollectionSelector,
     Input,
     Loader,
     SimpleItemCard,
-    TagSelector,
 } from ".";
-import { includeCaseInsensitive } from "../../src/app/utils";
 import { cn } from "../utils";
+import SimpleTag from "./SimpleTag";
 
 export function SaveInput() {
     const [isShowPopover, setIsShowPopover] = useState(false);
@@ -256,22 +256,8 @@ function SaveOptions({
         }
     }, [fetchMetadataQuery.isFetched]);
 
-    const setTag = (name: string, index: number) => {
-        if (includeCaseInsensitive(tags, name)) {
-            if (index !== -1) {
-                const newTags = [...tags];
-                newTags.splice(index, 1);
-                setTags(newTags);
-            }
-        } else {
-            if (index === -1) {
-                setTags([...tags, name]);
-            } else {
-                const newTags = [...tags];
-                newTags[index] = name;
-                setTags(newTags);
-            }
-        }
+    const addTag = (name: string) => {
+        setTags([...tags, name]);
     };
 
     const removeTag = (name: string) => {
@@ -320,23 +306,12 @@ function SaveOptions({
                 </div>
                 <div className="flex gap-3 flex-wrap items-center">
                     <Tag className="text-slate-500" size={18} />
-                    {tags.map((tag, index) => (
-                        <TagSelector
-                            key={tag}
-                            index={index}
-                            tags={tagsQuery.data}
-                            value={tag}
-                            setValue={setTag}
-                            remove={removeTag}
-                            disabled={isCreating}
-                        />
+                    {tags.map((tag) => (
+                        <SimpleTag key={tag} value={tag} remove={removeTag} />
                     ))}
-                    <TagSelector
+                    <AddTag
                         tags={tagsQuery.data}
-                        value=""
-                        index={-1}
-                        setValue={setTag}
-                        remove={removeTag}
+                        onSelect={addTag}
                         disabled={isCreating}
                     />
                 </div>
