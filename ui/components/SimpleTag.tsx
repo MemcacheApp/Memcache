@@ -29,7 +29,8 @@ export function SimpleTag(props: SimpleTagProps) {
     return (
         <Button
             className={cn("px-4 group relative shadow-sm", {
-                "hover:bg-red-200 hover:border-red-500": editMode,
+                "hover:bg-red-200 hover:border-red-500 focus-visible:bg-red-200":
+                    editMode,
             })}
             variant="outline"
             role="button"
@@ -39,7 +40,7 @@ export function SimpleTag(props: SimpleTagProps) {
             {value}
             {editMode ? (
                 <Badge
-                    className="absolute -right-2 -bottom-2"
+                    className="absolute -right-2 -bottom-2 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
                     variant="destructive"
                 >
                     <Trash size={13} />
