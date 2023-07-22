@@ -301,6 +301,7 @@ function TagFilterSelector() {
                                     includedTags.delete(tag);
                                     setIncludedTags(new Set(includedTags));
                                 }}
+                                editMode
                             />
                         ))}
                         <AddTag
@@ -324,6 +325,7 @@ function TagFilterSelector() {
                                     excludedTags.delete(tag);
                                     setExcludedTags(new Set(excludedTags));
                                 }}
+                                editMode
                             />
                         ))}
                         <AddTag

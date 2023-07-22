@@ -224,6 +224,7 @@ export function SingleItem({ itemId }: { itemId: string }) {
                                         tagId: data.tags[index].id,
                                     });
                                 }}
+                                editMode
                             />
                         ))}
                         <AddTag

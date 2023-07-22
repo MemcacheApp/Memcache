@@ -307,7 +307,12 @@ function SaveOptions({
                 <div className="flex gap-3 flex-wrap items-center">
                     <TagIcon className="text-slate-500" size={18} />
                     {tags.map((tag) => (
-                        <Tag key={tag} value={tag} remove={removeTag} />
+                        <Tag
+                            key={tag}
+                            value={tag}
+                            remove={removeTag}
+                            editMode
+                        />
                     ))}
                     <AddTag
                         tags={tagsQuery.data}
