@@ -257,7 +257,9 @@ function SaveOptions({
     }, [fetchMetadataQuery.isFetched]);
 
     const addTag = (name: string) => {
-        setTags([...tags, name]);
+        if (!tags.includes(name)) {
+            setTags([...tags, name]);
+        }
     };
 
     const removeTag = (name: string) => {

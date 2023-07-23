@@ -2,7 +2,7 @@
 
 import { includeCaseInsensitive } from "@/src/app/utils";
 import { Tag } from "@prisma/client";
-import { Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
     Button,
@@ -16,6 +16,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from ".";
+import { cn } from "../utils";
 
 interface AddTagProps extends Omit<ButtonProps, "onSelect"> {
     tags: Tag[] | undefined;
@@ -31,12 +32,7 @@ export function AddTag(props: AddTagProps) {
     const [searchValue, setSearchValue] = useState("");
 
     const tagNames = useMemo(
-        () =>
-            tags
-                ?.map((tag) => tag.name)
-                .filter((tag) =>
-                    selectedTags ? !selectedTags.includes(tag) : true,
-                ),
+        () => tags?.map((tag) => tag.name),
         [tags, selectedTags],
     );
 
@@ -89,7 +85,6 @@ export function AddTag(props: AddTagProps) {
                                 ) : null}
                                 {tagNames.map((tag) => (
                                     <CommandItem
-                                        className="pl-8"
                                         key={tag}
                                         value={tag}
                                         onSelect={() => {
@@ -97,6 +92,14 @@ export function AddTag(props: AddTagProps) {
                                             setOpen(false);
                                         }}
                                     >
+                                        <Check
+                                            className={cn(
+                                                "mr-2 h-4 w-4",
+                                                selectedTags?.includes(tag)
+                                                    ? "opacity-100"
+                                                    : "opacity-0",
+                                            )}
+                                        />
                                         {tag}
                                     </CommandItem>
                                 ))}
