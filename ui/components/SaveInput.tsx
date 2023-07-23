@@ -3,23 +3,23 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
-import { includeCaseInsensitive } from "../../src/app/utils";
-import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
-import { cn } from "../utils";
-import { FocusScope } from "@radix-ui/react-focus-scope";
-import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
-import { RemoveScroll } from "react-remove-scroll";
-import {
-    CollectionSelector,
-    TagSelector,
-    Input,
-    Button,
-    SimpleItemCard,
-    Loader,
-} from ".";
 import { ItemMetadata } from "@/src/datatypes/item";
 import { hostname } from "@/src/utils";
+import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
+import { FocusScope } from "@radix-ui/react-focus-scope";
 import { Slot } from "@radix-ui/react-slot";
+import { Package2, Plus, RefreshCw, TagIcon, X } from "lucide-react";
+import { RemoveScroll } from "react-remove-scroll";
+import {
+    AddTag,
+    Button,
+    CollectionSelector,
+    Input,
+    Loader,
+    SimpleItemCard,
+    SimpleTag,
+} from ".";
+import { cn } from "../utils";
 
 export function SaveInput() {
     const [isShowPopover, setIsShowPopover] = useState(false);
@@ -256,21 +256,9 @@ function SaveOptions({
         }
     }, [fetchMetadataQuery.isFetched]);
 
-    const setTag = (name: string, index: number) => {
-        if (includeCaseInsensitive(tags, name)) {
-            if (index !== -1) {
-                const newTags = [...tags];
-                newTags.splice(index, 1);
-                setTags(newTags);
-            }
-        } else {
-            if (index === -1) {
-                setTags([...tags, name]);
-            } else {
-                const newTags = [...tags];
-                newTags[index] = name;
-                setTags(newTags);
-            }
+    const addTag = (name: string) => {
+        if (!tags.includes(name)) {
+            setTags([...tags, name]);
         }
     };
 
@@ -314,30 +302,26 @@ function SaveOptions({
                     <CollectionSelector
                         collections={collectionsQuery.data}
                         value={collection}
-                        setValue={setCollection}
+                        onSelect={setCollection}
                         disabled={isCreating}
                     />
                 </div>
                 <div className="flex gap-3 flex-wrap items-center">
-                    <Tag className="text-slate-500" size={18} />
-                    {tags.map((tag, index) => (
-                        <TagSelector
+                    <TagIcon className="text-slate-500" size={18} />
+                    {tags.map((tag) => (
+                        <SimpleTag
                             key={tag}
-                            index={index}
-                            tags={tagsQuery.data}
                             value={tag}
-                            setValue={setTag}
                             remove={removeTag}
                             disabled={isCreating}
+                            editMode
                         />
                     ))}
-                    <TagSelector
+                    <AddTag
                         tags={tagsQuery.data}
-                        value=""
-                        index={-1}
-                        setValue={setTag}
-                        remove={removeTag}
+                        onSelect={addTag}
                         disabled={isCreating}
+                        selectedTags={tags}
                     />
                 </div>
             </div>

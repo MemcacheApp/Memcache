@@ -1,12 +1,14 @@
 "use client";
 
-import { Collection } from "@prisma/client";
-import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import { includeCaseInsensitive } from "@/src/app/utils";
+import { Tag } from "@prisma/client";
+import { Check, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
     Button,
     ButtonProps,
     Command,
+    CommandEmpty,
     CommandGroup,
     CommandInput,
     CommandItem,
@@ -14,58 +16,60 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from ".";
-import { includeCaseInsensitive } from "../../src/app/utils";
 import { cn } from "../utils";
 
-interface CollectionSelectorProps extends Omit<ButtonProps, "onSelect"> {
-    collections: Collection[] | undefined;
-    value: string;
-    onSelect: (s: string) => void;
+interface AddTagProps extends Omit<ButtonProps, "onSelect"> {
+    tags: Tag[] | undefined;
+    onSelect: (name: string) => void;
+    disableCreation?: boolean;
+    disabled?: boolean;
+    selectedTags?: string[];
 }
 
-export function CollectionSelector(props: CollectionSelectorProps) {
-    const { collections, value, onSelect, ...other } = props;
+export function AddTag(props: AddTagProps) {
+    const { tags, onSelect, selectedTags, disableCreation, ...other } = props;
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    const collectionNames = useMemo(() => {
-        const names = collections?.map((collection) => collection.name);
-        if (names && !value) {
-            onSelect(names[0]);
-        }
-        return names;
-    }, [collections]);
-
-    const isCreatable = useMemo(
-        () =>
-            searchValue &&
-            !includeCaseInsensitive(collectionNames, searchValue),
-        [collectionNames, searchValue],
+    const tagNames = useMemo(
+        () => tags?.map((tag) => tag.name),
+        [tags, selectedTags],
     );
+
+    const isCreatable =
+        !disableCreation &&
+        useMemo(
+            () =>
+                searchValue &&
+                !includeCaseInsensitive(tagNames, searchValue) &&
+                (!selectedTags ||
+                    !includeCaseInsensitive(selectedTags, searchValue)),
+            [tagNames, searchValue, selectedTags],
+        );
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
-                    className="shadow-sm"
+                    className="px-3 bg-slate-50 border-dashed border-2"
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
                     {...other}
                 >
-                    {value || "Loading..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
+                    <Plus size={16} />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[250px] p-0">
                 <Command>
                     <CommandInput
-                        placeholder="Search or add collection..."
+                        placeholder="Search or add tag..."
                         value={searchValue}
                         onValueChange={setSearchValue}
                     />
+                    <CommandEmpty>No tag found.</CommandEmpty>
                     <CommandGroup>
-                        {collectionNames ? (
+                        {tagNames ? (
                             <>
                                 {isCreatable ? (
                                     <CommandItem
@@ -79,24 +83,24 @@ export function CollectionSelector(props: CollectionSelectorProps) {
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
                                 ) : null}
-                                {collectionNames.map((collection) => (
+                                {tagNames.map((tag) => (
                                     <CommandItem
-                                        key={collection}
-                                        value={collection}
+                                        key={tag}
+                                        value={tag}
                                         onSelect={() => {
-                                            onSelect(collection);
+                                            onSelect(tag);
                                             setOpen(false);
                                         }}
                                     >
                                         <Check
                                             className={cn(
                                                 "mr-2 h-4 w-4",
-                                                collection === value
+                                                selectedTags?.includes(tag)
                                                     ? "opacity-100"
                                                     : "opacity-0",
                                             )}
                                         />
-                                        {collection}
+                                        {tag}
                                     </CommandItem>
                                 ))}
                             </>

@@ -9,6 +9,7 @@ import { SquareStack, Tags, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
 import {
+    AddTag,
     Button,
     Card,
     DropdownMenu,
@@ -16,10 +17,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
     ItemCard,
-    TagSelector,
+    SimpleTag,
 } from ".";
 import { cn } from "../utils";
-import SimpleTag from "./SimpleTag";
 
 interface ItemListProps {
     collectionId?: string;
@@ -301,20 +301,17 @@ function TagFilterSelector() {
                                     includedTags.delete(tag);
                                     setIncludedTags(new Set(includedTags));
                                 }}
+                                editMode
                             />
                         ))}
-                        <TagSelector
+                        <AddTag
                             tags={tagsQuery.data}
-                            index={-1}
-                            value=""
-                            setValue={(tag) => {
+                            onSelect={(tag) => {
                                 includedTags.add(tag);
                                 setIncludedTags(new Set(includedTags));
                             }}
-                            remove={(tag) => {
-                                includedTags.delete(tag);
-                                setIncludedTags(new Set(includedTags));
-                            }}
+                            selectedTags={Array.from(includedTags)}
+                            disableCreation
                         />
                     </div>
                 </Card>
@@ -329,20 +326,17 @@ function TagFilterSelector() {
                                     excludedTags.delete(tag);
                                     setExcludedTags(new Set(excludedTags));
                                 }}
+                                editMode
                             />
                         ))}
-                        <TagSelector
+                        <AddTag
                             tags={tagsQuery.data}
-                            index={-1}
-                            value=""
-                            setValue={(tag) => {
+                            onSelect={(tag) => {
                                 excludedTags.add(tag);
                                 setExcludedTags(new Set(excludedTags));
                             }}
-                            remove={(tag) => {
-                                excludedTags.delete(tag);
-                                setExcludedTags(new Set(excludedTags));
-                            }}
+                            selectedTags={Array.from(excludedTags)}
+                            disableCreation
                         />
                     </div>
                 </Card>
