@@ -36,7 +36,7 @@ export function CollectionSelector(props: CollectionSelectorProps) {
         return names;
     }, [collections]);
 
-    const isAddable = useMemo(
+    const isCreatable = useMemo(
         () =>
             searchValue &&
             !includeCaseInsensitive(collectionNames, searchValue),
@@ -67,7 +67,7 @@ export function CollectionSelector(props: CollectionSelectorProps) {
                     <CommandGroup>
                         {collectionNames ? (
                             <>
-                                {isAddable ? (
+                                {isCreatable ? (
                                     <CommandItem
                                         value={`create:${searchValue}:`}
                                         onSelect={() => {

@@ -20,12 +20,13 @@ import {
 interface AddTagProps extends Omit<ButtonProps, "onSelect"> {
     tags: Tag[] | undefined;
     onSelect: (name: string) => void;
+    disableCreation?: boolean;
     disabled?: boolean;
     selectedTags?: string[];
 }
 
 export function AddTag(props: AddTagProps) {
-    const { tags, onSelect, selectedTags, ...other } = props;
+    const { tags, onSelect, selectedTags, disableCreation, ...other } = props;
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
@@ -39,14 +40,16 @@ export function AddTag(props: AddTagProps) {
         [tags, selectedTags],
     );
 
-    const isAddable = useMemo(
-        () =>
-            searchValue &&
-            !includeCaseInsensitive(tagNames, searchValue) &&
-            (!selectedTags ||
-                !includeCaseInsensitive(selectedTags, searchValue)),
-        [tagNames, searchValue, selectedTags],
-    );
+    const isCreatable =
+        !disableCreation &&
+        useMemo(
+            () =>
+                searchValue &&
+                !includeCaseInsensitive(tagNames, searchValue) &&
+                (!selectedTags ||
+                    !includeCaseInsensitive(selectedTags, searchValue)),
+            [tagNames, searchValue, selectedTags],
+        );
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -72,7 +75,7 @@ export function AddTag(props: AddTagProps) {
                     <CommandGroup>
                         {tagNames ? (
                             <>
-                                {isAddable ? (
+                                {isCreatable ? (
                                     <CommandItem
                                         value={`create:${searchValue}:`}
                                         onSelect={() => {

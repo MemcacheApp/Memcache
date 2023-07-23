@@ -311,6 +311,7 @@ function TagFilterSelector() {
                                 setIncludedTags(new Set(includedTags));
                             }}
                             selectedTags={Array.from(includedTags)}
+                            disableCreation
                         />
                     </div>
                 </Card>
@@ -335,6 +336,7 @@ function TagFilterSelector() {
                                 setExcludedTags(new Set(excludedTags));
                             }}
                             selectedTags={Array.from(excludedTags)}
+                            disableCreation
                         />
                     </div>
                 </Card>
