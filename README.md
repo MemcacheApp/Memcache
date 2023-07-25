@@ -17,16 +17,16 @@ Detailed documentation and instructions for the app can be found as follows:
 
 - [**Installation and Setup**](./docs/install_setup.md)
 - [**Objectives and Features**](./docs/hello)
-  - [Accounts and Authentication](./docs/hello)
-  - [Content Saver](./docs/hello)
-  - [Content Home](./docs/hello)
-  - [Tags and Collections](./docs/hello)
-  - [Content Summariser](./docs/hello)
-  - [Flash Card Generator and Interface](./docs/hello)
-  - [Spaced Repetition Review](./docs/hello)
-  - [Content Discovery](./docs/hello)
-- [**Troubleshooting and FAQs**](./docs/hello)
-- [**Code Map**](./docs/hello)
+  - [Accounts and Authentication](./docs/accounts_auth.md)
+  - [Content Saver](./docs/content_saver.md)
+  - [Content Home](./docs/content_home.md)
+  - [Tags and Collections](./docs/tags_collections.md)
+  - [Content Summariser](./docs/content_summariser.md)
+  - [Flash Card Generator and Interface](./docs/flashcard_generator.md)
+  - [Spaced Repetition Review](./docs/spaced_repetition.md)
+  - [Content Discovery](./docs/content_discovery.md)
+- [**Troubleshooting and FAQs**](./docs/troubleshooting.md)
+- [**Code Map**](./docs/codemap.md)
 
 ## :rocket: Quick Start
 
