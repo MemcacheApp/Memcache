@@ -1,8 +1,8 @@
+import { ItemStatus } from "@prisma/client";
 import { create } from "zustand";
-import { StatusEnum } from "../utils/Statuses";
 
 export interface ItemListState {
-    activeStatus: StatusEnum;
+    activeStatus: ItemStatus;
     isMultiselect: boolean;
     isShowPanel: boolean;
     selectedItems: Set<string>;
@@ -11,7 +11,7 @@ export interface ItemListState {
 }
 
 export interface ItemListActions {
-    setActiveStatus: (activeStatus: StatusEnum) => void;
+    setActiveStatus: (activeStatus: ItemStatus) => void;
     setIncludedTags: (includedTags: Set<string>) => void;
     setExcludedTags: (excludedTags: Set<string>) => void;
     enableMultiselect: () => void;
@@ -23,7 +23,7 @@ export interface ItemListActions {
 }
 
 const initialState: ItemListState = {
-    activeStatus: StatusEnum.Inbox,
+    activeStatus: ItemStatus.Inbox,
     isMultiselect: false,
     isShowPanel: false,
     selectedItems: new Set(),

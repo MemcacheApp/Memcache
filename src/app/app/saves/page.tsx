@@ -1,15 +1,16 @@
 "use client";
 
 import {
+    ItemList,
+    ItemListOptions,
+    ItemPanel,
     LogInRequired,
     PageTitle,
     SaveInput,
-    ItemPanel,
     WithPanel,
-    ItemList,
 } from "@/ui/components";
-import { useItemListStore } from "../../store/item-list";
 import { useEffect } from "react";
+import { useItemListStore } from "../../store/item-list";
 
 export default function SavesPage() {
     const resetStates = useItemListStore((state) => state.reset);
@@ -24,6 +25,7 @@ export default function SavesPage() {
                 <WithPanel>
                     <PageTitle>Saves</PageTitle>
                     <SaveInput />
+                    <ItemListOptions />
                     <ItemList />
                 </WithPanel>
                 <ItemPanel />

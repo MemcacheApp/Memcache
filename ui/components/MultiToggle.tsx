@@ -1,7 +1,7 @@
+import { ItemStatus } from "@prisma/client";
 import React, { useEffect } from "react";
 import { cn } from "../utils";
-import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
-import renderIcon from "@/src/app/utils/renderIcon";
+import { StatusIcon } from "./StatusIcon";
 
 // Tried using these constants to calculate dimensions for styling, but tailwind
 // didn't like it. Keep here for reference.
@@ -15,14 +15,14 @@ export default function MultiToggle({
     currentStatus,
     setStatus,
 }: {
-    currentStatus: StatusEnum;
-    setStatus: (status: StatusEnum) => void;
+    currentStatus: ItemStatus;
+    setStatus: (status: ItemStatus) => void;
 }) {
     console.log(`rendering multitoggle with status ${currentStatus}`);
     const [selectedPosition, setSelectedPosition] =
-        React.useState<StatusEnum>(currentStatus);
+        React.useState<ItemStatus>(currentStatus);
     const [spotlightPosition, setSpotlightPosition] =
-        React.useState<StatusEnum>(currentStatus);
+        React.useState<ItemStatus>(currentStatus);
 
     useEffect(() => {
         setSelectedPosition(currentStatus);
@@ -39,43 +39,40 @@ export default function MultiToggle({
                 className={cn(
                     "w-[2rem] h-[2rem] rounded-full bg-slate-300 absolute transition-left",
                     {
-                        "left-0": spotlightPosition === StatusEnum.Inbox,
+                        "left-0": spotlightPosition === ItemStatus.Inbox,
                         "left-[2.2rem]":
-                            spotlightPosition === StatusEnum.Underway,
+                            spotlightPosition === ItemStatus.Underway,
                         "left-[4.4rem]":
-                            spotlightPosition === StatusEnum.Complete,
+                            spotlightPosition === ItemStatus.Complete,
                         "left-[6.6rem]":
-                            spotlightPosition === StatusEnum.Archive,
+                            spotlightPosition === ItemStatus.Archive,
                     },
                 )}
             />
-            {Object.values(StatusEnum)
-                .filter((value) => typeof value === "number")
-                .map((value) => (
-                    <div
-                        key={value}
-                        className={cn(
-                            "rounded-full w-[2rem] h-[2rem] p-[0.4rem] flex justify-center items-center relative text-slate-450 transition-colors hover:cursor-pointer hover:text-black",
-                            {
-                                "text-black": value === selectedPosition,
-                            },
-                        )}
-                        onMouseEnter={() => {
-                            if (typeof value !== "number") return;
-                            setSpotlightPosition(value);
-                        }}
-                        onMouseLeave={() => {
-                            setSpotlightPosition(selectedPosition);
-                        }}
-                        onClick={(e) => {
-                            // e.stopPropagation();
-                            if (typeof value !== "number") return;
-                            setStatus(value);
-                        }}
-                    >
-                        {renderIcon(StatusIcons[value])}
-                    </div>
-                ))}
+            {Object.values(ItemStatus).map((value) => (
+                <div
+                    key={value}
+                    className={cn(
+                        "rounded-full w-[2rem] h-[2rem] p-[0.4rem] flex justify-center items-center relative text-slate-450 transition-colors hover:cursor-pointer hover:text-black",
+                        {
+                            "text-black": value === selectedPosition,
+                        },
+                    )}
+                    onMouseEnter={() => {
+                        if (typeof value !== "number") return;
+                        setSpotlightPosition(value);
+                    }}
+                    onMouseLeave={() => {
+                        setSpotlightPosition(selectedPosition);
+                    }}
+                    onClick={(e) => {
+                        // e.stopPropagation();
+                        setStatus(value);
+                    }}
+                >
+                    <StatusIcon status={value} size={18} />
+                </div>
+            ))}
         </div>
     );
 }

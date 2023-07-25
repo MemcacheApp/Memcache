@@ -1,16 +1,17 @@
 "use client";
 
+import { useItemListStore } from "@/src/app/store/item-list";
+import { trpc } from "@/src/app/utils/trpc";
 import {
+    ItemList,
+    ItemListOptions,
+    ItemPanel,
     LogInRequired,
     PageTitle,
     SaveInput,
-    ItemPanel,
     WithPanel,
-    ItemList,
 } from "@/ui/components";
-import { useItemListStore } from "@/src/app/store/item-list";
 import { useEffect } from "react";
-import { trpc } from "@/src/app/utils/trpc";
 
 interface CollectionPageProps {
     params: {
@@ -40,6 +41,7 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                 <WithPanel>
                     <PageTitle>Collection: {collection.name}</PageTitle>
                     <SaveInput />
+                    <ItemListOptions />
                     <ItemList collectionId={params.collectionId} />
                 </WithPanel>
                 <ItemPanel />

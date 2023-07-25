@@ -1,3 +1,4 @@
+import { ItemStatus } from "@prisma/client";
 import ogs from "open-graph-scraper";
 import { v4 as uuidv4 } from "uuid";
 import { ItemMetadata } from "../../datatypes/item";
@@ -66,7 +67,7 @@ export default class ItemController {
             data: {
                 id: uuidv4(),
                 type: metadata?.type || "website",
-                status: 0,
+                status: ItemStatus.Inbox,
                 collectionId: collection.id,
                 tags: {
                     connect: tags.map((tag) => ({ id: tag.id })),
@@ -177,7 +178,7 @@ export default class ItemController {
     static async updateItemStatus(
         userId: string,
         itemId: string,
-        status: number,
+        status: ItemStatus,
     ) {
         const item = await this.getItem(itemId);
 
