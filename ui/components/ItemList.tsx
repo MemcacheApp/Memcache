@@ -5,7 +5,7 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import renderIcon from "@/src/app/utils/renderIcon";
 import { trpc } from "@/src/app/utils/trpc";
-import { SquareStack, Tags, Trash2, X } from "lucide-react";
+import { Filter, SquareStack, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
 import {
@@ -308,8 +308,8 @@ function TagFilterSelector() {
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Button variant="outline">
-                    <Tags className="mr-2" size={18} />
-                    Tags
+                    <Filter className="mr-2" size={18} />
+                    Filter
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="flex flex-col gap-1 w-[250px]">
