@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    H3,
     H4,
     Link,
     Loader,
@@ -10,9 +9,9 @@ import {
     ScrollBar,
     SummaryCard,
 } from "@/ui/components";
+import { ArrowRightIcon } from "lucide-react";
 import NextLink from "next/link";
 import { trpc } from "../../utils/trpc";
-import { ArrowRightIcon } from "lucide-react";
 
 export default function SummariesPage() {
     const latestSummariesQuery = trpc.summary.getLatestSummaries.useQuery();
@@ -22,8 +21,6 @@ export default function SummariesPage() {
             <PageTitle>Summaries</PageTitle>
             <div className="flex flex-col gap-5">
                 <div className="bg-background mx-8 p-6 border rounded-lg">
-                    <H3>My Summaries</H3>
-                    <H4>Latest Generated</H4>
                     <div className="flex justify-between mb-5">
                         <h2 className="text-xl font-semibold">My Summaries</h2>
                         <Link
@@ -45,7 +42,7 @@ export default function SummariesPage() {
                                                 key={summary.id}
                                                 summary={summary}
                                             />
-                                        )
+                                        ),
                                     )}
                                     {latestSummariesQuery.data.hasMore ? (
                                         <NextLink

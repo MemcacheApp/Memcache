@@ -79,72 +79,71 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     loading={props.loading}
                     thumbnail={props.thumbnail}
                 />
-                <Footer {...props} className="flex @lg:hidden order-3" />
+                <SimpleItemCardFooter
+                    {...props}
+                    className="flex @lg:hidden order-3"
+                />
             </div>
-            <Footer {...props} className="hidden @lg:flex" />
+            <SimpleItemCardFooter {...props} className="hidden @lg:flex" />
         </Card>
     );
 }
 
-function Footer(props: SimpleItemCardProps) {
-    console.log(props.className);
-
+export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
-            <CardFooter className="flex items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end">
-                {props.loading ? (
-                    <Skeleton className="h-5 w-24 rounded-lg" />
-                ) : (
-                    <>
-                        <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
-                            {props.siteName ? (
-                                <ExternalLink
-                                    className="flex items-center gap-2 my-2"
-                                    href={props.url ? props.url : "#"}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                    }}
-                                >
-                                    {props.favicon ? (
-                                        <img
-                                            width={16}
-                                            height={16}
-                                            src={props.favicon}
-                                        />
-                                    ) : (
-                                        <Globe size={16} />
-                                    )}
-                                    {props.siteName}
-                                </ExternalLink>
-                            ) : null}
-                            {props.collection ? (
-                                <Link
-                                    className="flex items-center gap-2 my-2"
-                                    href={`/app/collections/${props.collection.id}`}
-                                >
-                                    <Package2 size={16} />
-                                    {props.collection.name}
-                                </Link>
-                            ) : null}
-                            {props.tags && props.tags.length > 0 ? (
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <TagIcon size={16} />
-                                    {props.tags.map((tag) => (
-                                        <Link
-                                            className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm"
-                                            key={tag.id}
-                                            href={`/app/tag/${tag.id}`}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            {tag.name}
-                                        </Link>
-                                    ))}
-                                </div>
-                            ) : null}
-                            {props.footerLeft}
-                        </div>
-                        {props.footerRight ? (
-                            <div className="flex gap-3">
-                                {props.footerRight}
+        <CardFooter
+            className={cn(
+                "items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end",
+                props.className,
+            )}
+        >
+            {props.loading ? (
+                <Skeleton className="h-5 w-24 rounded-lg" />
+            ) : (
+                <>
+                    <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
+                        {props.siteName ? (
+                            <ExternalLink
+                                className="flex items-center gap-2 my-2"
+                                href={props.url ? props.url : "#"}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
+                            >
+                                {props.favicon ? (
+                                    <img
+                                        width={16}
+                                        height={16}
+                                        src={props.favicon}
+                                    />
+                                ) : (
+                                    <Globe size={16} />
+                                )}
+                                {props.siteName}
+                            </ExternalLink>
+                        ) : null}
+                        {props.collection ? (
+                            <Link
+                                className="flex items-center gap-2 my-2"
+                                href={`/app/collection/${props.collection.id}`}
+                            >
+                                <Package2 size={16} />
+                                {props.collection.name}
+                            </Link>
+                        ) : null}
+                        {props.tags && props.tags.length > 0 ? (
+                            <div className="flex flex-wrap items-center gap-2">
+                                <TagIcon size={16} />
+                                {props.tags.map((tag) => (
+                                    <Link
+                                        className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm"
+                                        key={tag.id}
+                                        href={`/app/tag/${tag.id}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {tag.name}
+                                    </Link>
+                                ))}
                             </div>
                         ) : null}
                         {props.footerLeft}

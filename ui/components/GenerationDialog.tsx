@@ -1,9 +1,14 @@
 "use client";
 
-import { Range } from "@/src/datatypes/flashcard";
+import {
+    FlashcardExperience,
+    FlashcardExperienceNames,
+    FlashcardRange,
+} from "@/src/datatypes/flashcard";
 import { Experience, Finetuning } from "@/src/datatypes/summary";
 import { Collection, Item, Tag } from "@prisma/client";
-import { useState } from "react";
+import { PlusIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Button,
     Dialog,
@@ -13,6 +18,8 @@ import {
     DialogTitle,
     Input,
     Label,
+    Loader,
+    SummaryCard,
     Tabs,
     TabsList,
     TabsTrigger,
@@ -20,24 +27,106 @@ import {
 import { trpc } from "../../src/app/utils/trpc";
 
 interface SummariesDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    data: Item & { collection: Collection; tags: Tag[] };
+    newSummary: () => void;
 }
 
 export function SummariesDialog({
+    open,
+    onOpenChange,
+    data,
+    newSummary,
+}: SummariesDialogProps) {
+    const getItemSummariesQuery = trpc.summary.getItemSummaries.useQuery(
+        {
+            itemId: data.id,
+        },
+        { refetchOnWindowFocus: false, enabled: false }
+    );
+
+    const handleNewSummary = useCallback(() => {
+        onOpenChange(false);
+        newSummary();
+    }, []);
+
+    useEffect(() => {
+        if (open) {
+            if (getItemSummariesQuery.data === undefined) {
+                getItemSummariesQuery.refetch();
+            } else if (getItemSummariesQuery.data.length === 0) {
+                handleNewSummary();
+            }
+        }
+    }, [open]);
+
+    useEffect(() => {
+        if (
+            getItemSummariesQuery.data &&
+            getItemSummariesQuery.data.length === 0
+        ) {
+            handleNewSummary();
+        }
+    }, [getItemSummariesQuery.data]);
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Summaries</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-5">
+                    {getItemSummariesQuery.data !== undefined ? (
+                        <>
+                            {getItemSummariesQuery.data.map((summary) => (
+                                <SummaryCard
+                                    key={summary.id}
+                                    item={data}
+                                    summary={summary}
+                                />
+                            ))}
+                            <Button
+                                variant="outline"
+                                onClick={handleNewSummary}
+                            >
+                                <PlusIcon className="mr-2" size={16} /> Generate
+                                New Summary
+                            </Button>
+                        </>
+                    ) : (
+                        <Loader varient="ellipsis" />
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+interface GenerateSummaryDialogProps {
+    data: Item & { collection: Collection; tags: Tag[] };
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    viewSummaries: () => void;
+}
+
+export function GenerateSummaryDialog({
     data,
     open,
     onOpenChange,
-}: SummariesDialogProps) {
+    viewSummaries,
+}: GenerateSummaryDialogProps) {
+    const ctx = trpc.useContext();
+
     const [numOfWords, setNumOfWords] = useState(250);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
 
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
-        onSuccess(data) {
-            console.log("Successfully generated summary:");
-            console.log(data);
+        onSuccess() {
+            ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
+            onOpenChange(false);
+            viewSummaries();
         },
     });
 
@@ -48,15 +137,13 @@ export function SummariesDialog({
             experience,
             finetuning,
         });
-        // TODO: show toast notification: "Generating summary..."
-        onOpenChange(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Generate Flashcards</DialogTitle>
+                    <DialogTitle>Generate Summary</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
@@ -129,13 +216,17 @@ export function SummariesDialog({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={generateSummaryMutation.isLoading}
+                    >
+                        Generate
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
-
 interface FlashcardsDialogProps {
     data: Item & { collection: Collection; tags: Tag[] };
     open: boolean;
@@ -148,8 +239,10 @@ export function FlashcardsDialog({
     onOpenChange,
 }: FlashcardsDialogProps) {
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
-    const [experience, setExperience] = useState(Experience.Intermediate);
-    const [range, setRange] = useState(Range.Balanced);
+    const [experience, setExperience] = useState<FlashcardExperience>(
+        FlashcardExperience.Intermediate
+    );
+    const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
     const ctx = trpc.useContext();
 
@@ -201,26 +294,48 @@ export function FlashcardsDialog({
                         <Label htmlFor="experience">Experience</Label>
                         <Tabs
                             id="experience"
-                            value={experience.toString()}
+                            value={experience}
                             onValueChange={(value) =>
-                                setExperience(parseInt(value))
+                                (
+                                    Object.values(
+                                        FlashcardExperience
+                                    ) as string[]
+                                ).includes(value)
+                                    ? setExperience(
+                                          value as FlashcardExperience
+                                      )
+                                    : setExperience(
+                                          FlashcardExperience.Intermediate
+                                      )
                             }
                         >
                             <TabsList>
                                 <TabsTrigger
-                                    value={Experience.Beginner.toString()}
+                                    value={FlashcardExperience.Beginner.toString()}
                                 >
-                                    Beginner
+                                    {
+                                        FlashcardExperienceNames[
+                                            FlashcardExperience.Beginner
+                                        ]
+                                    }
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Experience.Intermediate.toString()}
+                                    value={FlashcardExperience.Intermediate.toString()}
                                 >
-                                    Intermediate
+                                    {
+                                        FlashcardExperienceNames[
+                                            FlashcardExperience.Intermediate
+                                        ]
+                                    }
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Experience.Advanced.toString()}
+                                    value={FlashcardExperience.Advanced.toString()}
                                 >
-                                    Advanced
+                                    {
+                                        FlashcardExperienceNames[
+                                            FlashcardExperience.Advanced
+                                        ]
+                                    }
                                 </TabsTrigger>
                             </TabsList>
                         </Tabs>
@@ -229,17 +344,23 @@ export function FlashcardsDialog({
                         <Label htmlFor="range">range</Label>
                         <Tabs
                             id="range"
-                            value={range.toString()}
-                            onValueChange={(value) => setRange(parseInt(value))}
+                            value={range}
+                            onValueChange={(value) =>
+                                (
+                                    Object.values(FlashcardRange) as string[]
+                                ).includes(value)
+                                    ? setRange(value as FlashcardRange)
+                                    : setRange(FlashcardRange.Balanced)
+                            }
                         >
                             <TabsList>
-                                <TabsTrigger value={Range.Depth.toString()}>
+                                <TabsTrigger value={FlashcardRange.Depth}>
                                     Depth
                                 </TabsTrigger>
-                                <TabsTrigger value={Range.Breadth.toString()}>
+                                <TabsTrigger value={FlashcardRange.Breadth}>
                                     Breadth
                                 </TabsTrigger>
-                                <TabsTrigger value={Range.Balanced.toString()}>
+                                <TabsTrigger value={FlashcardRange.Balanced}>
                                     Balanced
                                 </TabsTrigger>
                             </TabsList>

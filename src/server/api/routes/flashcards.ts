@@ -1,4 +1,4 @@
-import { Experience, Range } from "@/src/datatypes/flashcard";
+import { FlashcardExperience, FlashcardRange } from "@/src/datatypes/flashcard";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import FlashcardController from "../../controllers/flashcard-controller";
@@ -22,9 +22,9 @@ export const flashcardsRouter = router({
             z.object({
                 itemId: z.string(),
                 numOfFlashcards: z.number(),
-                experience: z.nativeEnum(Experience),
-                range: z.nativeEnum(Range),
-            })
+                experience: z.nativeEnum(FlashcardExperience),
+                range: z.nativeEnum(FlashcardRange),
+            }),
         )
         .mutation(async ({ ctx, input }) => {
             try {
@@ -34,7 +34,7 @@ export const flashcardsRouter = router({
                     itemId,
                     numOfFlashcards,
                     experience,
-                    range
+                    range,
                 );
             } catch (e) {
                 console.error(e);
@@ -47,7 +47,7 @@ export const flashcardsRouter = router({
     getUserFlashcards: protectedProcedure.query(async ({ ctx }) => {
         try {
             const flashcards = await FlashcardController.getUserFlashcards(
-                ctx.userId
+                ctx.userId,
             );
             return flashcards;
         } catch (e) {

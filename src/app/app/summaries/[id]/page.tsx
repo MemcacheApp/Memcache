@@ -1,7 +1,7 @@
 "use client";
 
-import { P, PageTitle } from "@/ui/components";
 import { trpc } from "@/src/app/utils/trpc";
+import { P, PageTitle } from "@/ui/components";
 
 interface SummaryDetailPageProps {
     params: {

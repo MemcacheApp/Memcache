@@ -47,7 +47,7 @@ export function SummaryCard(props: SummaryCardProps) {
             className={cn(
                 "group relative z-0 overflow-hidden pt-6 px-6 hover:border-slate-500 transition-colors cursor-pointer",
                 { "pb-6": summary.isFullText },
-                className
+                className,
             )}
             onClick={() => push(`/app/summaries/${summary.id}`)}
         >
