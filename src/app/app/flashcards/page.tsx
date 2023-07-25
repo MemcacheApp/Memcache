@@ -1,33 +1,19 @@
 "use client";
 
 import {
-    FlashcardExperienceNames,
-    FlashcardRangeNames,
-} from "@/src/datatypes/flashcard";
-import {
-    Button,
     Card,
-    CardHeader,
-    CardTitle,
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
     Input,
     ItemCard,
     Link,
     ScrollArea,
     ScrollBar,
-    SimpleItemCardFooter,
 } from "@/ui/components";
+import FlashcardDialog from "@/ui/components/FlashcardDialog";
+import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { ItemForFlashcards } from "@/ui/components/ItemForFlashcards";
-import { Progress } from "@/ui/components/Progress";
 import { H4 } from "@/ui/components/typography";
-import { cn } from "@/ui/utils";
 import { Collection, Flashcard, Item, Tag } from "@prisma/client";
-import { Dot } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
@@ -261,238 +247,6 @@ export default function FlashcardsPage() {
     );
 }
 
-function FlashcardPreviewCard({
-    data,
-    onClick,
-}: {
-    data: Flashcard & { item: Item & { collection: Collection; tags: Tag[] } };
-    onClick?: React.MouseEventHandler<HTMLDivElement>;
-}) {
-    return (
-        <Card
-            key={data.id}
-            className="w-[30rem] h-[26rem] max-h-[50vh] bg-transparent"
-        >
-            <div
-                className={cn(
-                    "group/flashcardpreview w-full relative border rounded-t-lg overflow-hidden aspect-[16/9] hover:",
-                    "transition-[transform,border-color,border-radius]",
-                    "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer",
-                )}
-                onClick={onClick}
-            >
-                <img
-                    src={
-                        data.item.thumbnail ??
-                        "https://www.maxpixel.net/static/photo/2x/Snow-Peaks-Ai-Generated-Artwork-Mountains-Forest-7903258.jpg"
-                    }
-                    alt="Image"
-                    className="absolute w-full h-full object-cover object-center blur group-hover/flashcardpreview:blur-[6px] transition"
-                />
-                <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 flex flex-col justify-between items-center shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset] group-hover/flashcardpreview:bg-black/40 transition">
-                    <div className="px-4 pt-4 pb-3 w-[75%] max-w-[24rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center">
-                        {data.question}
-                    </div>
-                    <div className="px-4 py-2">
-                        <button className="py-2 rounded-full bg-slate-200/20 px-7 hover:bg-slate-100/30">
-                            View
-                        </button>
-                    </div>
-                    <div className="flex gap-2 px-4 py-3 text-sm text-slate-400/90">
-                        <span>{FlashcardExperienceNames[data.experience]}</span>
-                        <span>&#183;</span>
-                        <span>{FlashcardRangeNames[data.range]}</span>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <CardHeader className="pt-2 overflow-y-hidden">
-                    <div className="flex items-center justify-between py-1 text-sm relative">
-                        <DueStatus dueDate={data.dueDate} />
-                        <div className="text-slate-500">
-                            Last revisited 3 days ago
-                        </div>
-                    </div>
-                    {data.item.title ? (
-                        <CardTitle>{data.item.title}</CardTitle>
-                    ) : null}
-                </CardHeader>
-                <SimpleItemCardFooter
-                    url={data.item.url}
-                    type={data.item.type}
-                    title={data.item.title}
-                    collection={data.item.collection}
-                    tags={data.item.tags}
-                    description={data.item.description}
-                    thumbnail={data.item.thumbnail}
-                    siteName={data.item.siteName}
-                    favicon={data.item.favicon}
-                />
-            </div>
-        </Card>
-    );
-}
-
-function FlashcardDialog({
-    flashcard,
-    item,
-    open,
-    onOpenChange,
-}: {
-    flashcard: Flashcard & {
-        item: Item & { collection: Collection; tags: Tag[] };
-    };
-    item: Item & { collection: Collection; tags: Tag[] };
-    open: boolean;
-    onOpenChange: (value: boolean) => void;
-}) {
-    const [showAnswer, setShowAnswer] = useState(false);
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="w-[85%] sm:max-w-[860px]">
-                <DialogHeader>
-                    <DialogTitle>Flashcard</DialogTitle>
-                </DialogHeader>
-                <div
-                    className={cn(
-                        "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]",
-                    )}
-                >
-                    <img
-                        src={
-                            flashcard.item.thumbnail ??
-                            "https://www.maxpixel.net/static/photo/2x/Snow-Peaks-Ai-Generated-Artwork-Mountains-Forest-7903258.jpg"
-                        }
-                        alt="Image"
-                        className="absolute object-cover object-center w-full h-full blur"
-                    />
-                    <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset]">
-                        <div className="flex flex-col items-center w-full h-full px-4 py-16 justify-evenly ">
-                            <div
-                                className={cn(
-                                    "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center",
-                                )}
-                            >
-                                {flashcard.question}
-                            </div>
-
-                            <div
-                                className={cn(
-                                    "px-4 py-2 h-full grow transition-[height,width,border-style,transform]",
-                                    {
-                                        "h-1 py-0 w-[45%] border-solid border-t-2":
-                                            showAnswer,
-                                    },
-                                )}
-                            >
-                                <button
-                                    className={cn(
-                                        "bg-slate-200/20 px-10 py-4 rounded-full hover:bg-slate-100/30",
-                                        { "hidden ": showAnswer },
-                                    )}
-                                    onClick={() => {
-                                        setShowAnswer(true);
-                                        console.log("clicked");
-                                    }}
-                                >
-                                    Answer
-                                </button>
-                            </div>
-                            <div
-                                className={cn(
-                                    "px-4 py-0 h-0 w-[90%] max-w-[56rem] opacity-0 text-center flex items-center transition-[height,opacity] overflow-y-hidden",
-                                    {
-                                        "h-full grow py-2 opacity-1":
-                                            showAnswer,
-                                    },
-                                )}
-                            >
-                                {flashcard.answer}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex w-full ">
-                    <div className="w-[70%] ">
-                        <div className="flex flex-col justify-between w-full">
-                            <div className="flex items-center justify-between py-1">
-                                <DueStatus dueDate={flashcard.dueDate} />
-                                <div className="text-slate-500">
-                                    Last revisited 3 days ago
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between py-1">
-                                <div className="px-1 mr-2 text-xl">{"65%"}</div>
-                                <Progress value={65} />
-                            </div>
-                            <div className="flex gap-2 py-1 text-sm text-slate-400/90">
-                                <span>
-                                    {
-                                        FlashcardExperienceNames[
-                                            flashcard.experience
-                                        ]
-                                    }
-                                </span>
-                                <span>&#183;</span>
-                                <span>
-                                    {FlashcardRangeNames[flashcard.range]}
-                                </span>
-                            </div>
-                        </div>
-                        <CardHeader className="px-0 overflow-y-hidden">
-                            {item.title ? (
-                                <CardTitle>{item.title}</CardTitle>
-                            ) : null}
-                        </CardHeader>
-                        <SimpleItemCardFooter
-                            url={item.url}
-                            type={item.type}
-                            title={item.title}
-                            collection={item.collection}
-                            tags={item.tags}
-                            description={item.description}
-                            thumbnail={item.thumbnail}
-                            siteName={item.siteName}
-                            favicon={item.favicon}
-                            className="px-0"
-                        />
-                    </div>
-                    <div className="ml-[2.5rem] flex flex-col gap-2">
-                        <div className="text-easy">
-                            <span className="font-mono text-3xl font-bold">
-                                1
-                            </span>
-                            <span className="ml-2">easy</span>
-                        </div>
-                        <div className="text-medium">
-                            <span className="font-mono text-3xl font-bold">
-                                4
-                            </span>
-                            <span className="ml-2">medium</span>
-                        </div>
-                        <div className="text-hard">
-                            <span className="font-mono text-3xl font-bold">
-                                3
-                            </span>
-                            <span className="ml-2">hard</span>
-                        </div>
-                        <div className="text-forgot">
-                            <span className="font-mono text-3xl font-bold">
-                                2
-                            </span>
-                            <span className="ml-2">forgot</span>
-                        </div>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={() => onOpenChange(false)}>Return</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
 // interface ThumbnailProps {
 //     type: string | undefined;
 //     loading: boolean | undefined;
@@ -525,16 +279,3 @@ function FlashcardDialog({
 //         return null;
 //     }
 // }
-
-function DueStatus({ dueDate }: { dueDate: Date }) {
-    return dueDate.valueOf() < Date.now().valueOf() ? (
-        <div className="flex items-center font-semibold text-orange-600 pl-5">
-            <Dot size={42} className="absolute -left-4 animate-pulse" />
-            {"Due now"}
-        </div>
-    ) : (
-        <div className="flex items-center font-medium text-[#1f52de]">
-            {"Due tomorrow"}
-        </div>
-    );
-}
