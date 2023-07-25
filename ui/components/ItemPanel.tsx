@@ -210,7 +210,6 @@ export function SingleItem({ itemId }: { itemId: string }) {
                                     collectionName: newCollection,
                                 });
                             }}
-                            size={"default"}
                         />
                     </div>
                     <Subtitle Icon={TagIcon}>Tags</Subtitle>
