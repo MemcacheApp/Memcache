@@ -45,10 +45,10 @@ export function ItemPanel() {
     }, [isShowPanel]);
 
     return (
-        <div>
+        <div className="z-50">
             <div
                 className={cn(
-                    "fixed top-0 bottom-0 left-0 right-0 bg-black/40 md:hidden transition-opacity",
+                    "fixed top-0 bottom-0 left-0 right-0 bg-white/40 md:hidden backdrop-blur-sm transition-opacity",
                     isCollapse ? "opacity-0" : "opacity-100",
                     {
                         hidden: isHidden,
