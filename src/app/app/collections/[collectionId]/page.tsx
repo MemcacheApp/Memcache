@@ -9,6 +9,8 @@ import {
     LogInRequired,
     PageTitle,
     SaveInput,
+    Topbar,
+    TopbarTitle,
     WithPanel,
 } from "@/ui/components";
 import { useEffect } from "react";
@@ -39,9 +41,16 @@ export default function CollectionPage({ params }: CollectionPageProps) {
         <div className="flex flex-col">
             <LogInRequired>
                 <WithPanel>
+                    <Topbar startPos={200}>
+                        <TopbarTitle>Collection: {collection.name}</TopbarTitle>
+                        <ItemListOptions
+                            showSave
+                            className="grow ml-5 overflow-hidden"
+                        />
+                    </Topbar>
                     <PageTitle>Collection: {collection.name}</PageTitle>
-                    <SaveInput />
-                    <ItemListOptions />
+                    <SaveInput className="flex flex-col mb-5 mx-8 max-md:mx-5" />
+                    <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
                     <ItemList collectionId={params.collectionId} />
                 </WithPanel>
                 <ItemPanel />

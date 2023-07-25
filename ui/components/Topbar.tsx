@@ -79,5 +79,10 @@ function TopbarInner({ children }: TopbarProps) {
 export function TopbarTitle(props: React.HTMLProps<HTMLHeadingElement>) {
     const { className, ...other } = props;
 
-    return <h1 className={cn("text-lg font-semibold", className)} {...other} />;
+    return (
+        <h1
+            className={cn("text-lg font-semibold whitespace-nowrap", className)}
+            {...other}
+        />
+    );
 }
