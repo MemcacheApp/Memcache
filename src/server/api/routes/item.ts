@@ -1,9 +1,9 @@
-import { protectedProcedure, router } from "../trpc";
-import { z } from "zod";
-import ItemController from "../../controllers/item-controller";
-import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { AuthError } from "../../controllers/errors/user";
+import ItemController from "../../controllers/item-controller";
+import { protectedProcedure, router } from "../trpc";
 
 export const itemRouter = router({
     getItem: protectedProcedure
@@ -41,6 +41,16 @@ export const itemRouter = router({
                 });
             }
         }),
+    getUserItemsWithFlashcards: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return await ItemController.getUserItemsWithFlashcards(ctx.userId);
+        } catch (e) {
+            console.error(e);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+            });
+        }
+    }),
     createItem: protectedProcedure
         .input(
             z.object({

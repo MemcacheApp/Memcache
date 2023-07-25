@@ -24,10 +24,12 @@ import {
     SimpleItemCardFooter,
 } from "@/ui/components";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
+import { ItemForFlashcards } from "@/ui/components/ItemForFlashcards";
 import { Progress } from "@/ui/components/Progress";
 import { H4 } from "@/ui/components/typography";
 import { cn } from "@/ui/utils";
 import { Collection, Flashcard, Item, Tag } from "@prisma/client";
+import { Dot } from "lucide-react";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
 import { ReviewRatingEnum } from "../../utils/ReviewRating";
@@ -212,7 +214,7 @@ function FlashcardSearchResult({
 
 export default function FlashcardsPage() {
     const [itemInput, setItemInput] = useState("");
-    const itemsQuery = trpc.item.getUserItems.useQuery();
+    const itemsQuery = trpc.item.getUserItemsWithFlashcards.useQuery();
     const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
 
     const revisionQueue =
@@ -330,10 +332,28 @@ export default function FlashcardsPage() {
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>
             </Card>
-            {/* <Card className="p-6 mx-8 rounded-lg">
+            <Card className="p-6 mx-8 rounded-lg">
                 <H3>Items with Flashcards</H3>
                 <H4>Recently Created</H4>
-            </Card> */}
+                <ScrollArea type="scroll">
+                    <div className="flex gap-3 p-1">
+                        {itemsQuery.data?.map((item) => (
+                            <ItemForFlashcards
+                                key={item.id}
+                                className="w-[25rem] h-[30rem] max-h-[50vh] bg-transparent"
+                                data={item}
+                                selected={false}
+                                onSelect={(id: string) => {
+                                    console.log(
+                                        `selected this item ${id} in flashcards items`,
+                                    );
+                                }}
+                            />
+                        ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+            </Card>
             {selectedItem && (
                 <FlashcardsDialog
                     data={selectedItem}
@@ -407,14 +427,8 @@ function FlashcardPreviewCard({
             </div>
             <div>
                 <CardHeader className="pt-2 overflow-y-hidden">
-                    <div className="flex items-center justify-between py-1 text-sm">
-                        {data.dueDate.valueOf() < Date.now().valueOf() ? (
-                            <div className="flex items-center gap-1 font-semibold text-orange-600">
-                                {"Due now"}
-                            </div>
-                        ) : (
-                            "Due tomorrow"
-                        )}
+                    <div className="flex items-center justify-between py-1 text-sm relative">
+                        <DueStatus dueDate={data.dueDate} />
                         <div className="text-slate-500">
                             Last revisited 3 days ago
                         </div>
@@ -523,14 +537,7 @@ function FlashcardDialog({
                     <div className="w-[70%] ">
                         <div className="flex flex-col justify-between w-full">
                             <div className="flex items-center justify-between py-1">
-                                {flashcard.dueDate.valueOf() <
-                                Date.now().valueOf() ? (
-                                    <div className="flex items-center gap-1 font-semibold text-orange-600">
-                                        {"Due now"}
-                                    </div>
-                                ) : (
-                                    "Due tomorrow"
-                                )}
+                                <DueStatus dueDate={flashcard.dueDate} />
                                 <div className="text-slate-500">
                                     Last revisited 3 days ago
                                 </div>
@@ -638,3 +645,16 @@ function FlashcardDialog({
 //         return null;
 //     }
 // }
+
+function DueStatus({ dueDate }: { dueDate: Date }) {
+    return dueDate.valueOf() < Date.now().valueOf() ? (
+        <div className="flex items-center font-semibold text-orange-600 pl-5">
+            <Dot size={42} className="absolute -left-4 animate-pulse" />
+            {"Due now"}
+        </div>
+    ) : (
+        <div className="flex items-center font-medium text-[#1f52de]">
+            {"Due tomorrow"}
+        </div>
+    );
+}

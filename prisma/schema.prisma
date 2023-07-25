@@ -49,7 +49,7 @@ model Item {
   author       String?
   favicon      String?
   summaries    Summary[]
-  Flashcard    Flashcard[]
+  flashcards   Flashcard[]
 }
 
 model Summary {

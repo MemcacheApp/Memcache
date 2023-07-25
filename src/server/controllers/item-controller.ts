@@ -143,6 +143,21 @@ export default class ItemController {
         return items;
     }
 
+    static async getUserItemsWithFlashcards(userId: string) {
+        const items = await prisma.item.findMany({
+            where: {
+                userId,
+            },
+            include: {
+                tags: true,
+                collection: true,
+                flashcards: true,
+            },
+        });
+
+        return items;
+    }
+
     /**
      * @throws {GetItemError}
      * @throws {AuthError}
