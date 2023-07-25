@@ -210,7 +210,7 @@ function StatusToggle() {
             value={activeStatus}
             onValueChange={(status) => setActiveStatus(status as ItemStatus)}
         >
-            <TabsList>
+            <TabsList className="p-0">
                 {Object.values(ItemStatus).map((value) => {
                     return (
                         <TabsTrigger
