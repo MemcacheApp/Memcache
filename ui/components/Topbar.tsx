@@ -57,7 +57,7 @@ function TopbarInner({ children }: TopbarProps) {
                 hidden: !isShow,
             })}
         >
-            <div className="flex h-full items-center bg-background/90 backdrop-blur-lg px-5 shadow-sm border md:rounded-md">
+            <div className="flex h-full items-center bg-background/95 backdrop-blur-lg px-5 shadow-sm border md:rounded-md">
                 <Button
                     className={cn(
                         "w-10 -ml-3 mr-1 shrink-0 rounded-full p-0 min-[1240px]:hidden",
