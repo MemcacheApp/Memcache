@@ -1,17 +1,20 @@
 "use client";
 
-import { Menu, User } from "lucide-react";
-import { Navigation } from "./Navigation";
-import { useEffect, useState } from "react";
 import { Button } from "@/ui/components";
-import { trpc } from "../../utils/trpc";
+import { cn } from "@/ui/utils";
+import classNames from "classnames";
+import { Menu, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import classNames from "classnames";
+import { useEffect, useState } from "react";
 import { useSidebarStore } from "../../store/sidebar";
+import { useTopbarStore } from "../../store/topbar";
+import { trpc } from "../../utils/trpc";
+import { Navigation } from "./Navigation";
 
 export function Sidebar() {
     const { isExpand, toggle, collapse } = useSidebarStore();
+    const isShowTopbar = useTopbarStore((state) => state.isShow);
 
     useEffect(() => {
         if (window.innerWidth <= 768) {
@@ -23,7 +26,9 @@ export function Sidebar() {
         <div className="z-50 relative">
             <Button
                 variant={isExpand ? "ghost" : "outline"}
-                className="fixed m-3 w-10 rounded-full p-0 z-10"
+                className={cn("fixed m-3 w-10 rounded-full p-0 z-10", {
+                    "max-[1240px]:hidden": isShowTopbar && !isExpand,
+                })}
                 onClick={toggle}
             >
                 <div className="h-4 w-4">
