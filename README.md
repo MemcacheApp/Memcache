@@ -16,7 +16,7 @@ A dedicated application designed to *organise your saved internet content* and *
 Detailed documentation and instructions for the app can be found as follows:
 
 - [**Installation and Setup**](./docs/install_setup.md)
-- [**Objectives and Features**](./docs/hello)
+- [**Objectives and Features**](./docs/features.md)
   - [Accounts and Authentication](./docs/accounts_auth.md)
   - [Content Saver](./docs/content_saver.md)
   - [Content Home](./docs/content_home.md)
