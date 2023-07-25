@@ -58,10 +58,21 @@ function NormalOptions({ showSave }: NormalOptionsProps) {
         <>
             <StatusToggle />
             <TagFilterSelector />
+            {showSave ? (
+                <SaveInput fixed asChild>
+                    <Button
+                        variant="shadow"
+                        size="sm"
+                        className="w-9 p-0 rounded-full shrink-0"
+                    >
+                        <PlusIcon size={18} />
+                    </Button>
+                </SaveInput>
+            ) : null}
             <Button
                 variant="shadow"
                 size="sm"
-                className="w-10 p-0 rounded-full shrink-0"
+                className="w-9 p-0 rounded-full shrink-0"
                 onClick={enableMultiselect}
             >
                 <div className="flex items-center justify-center w-4 h-4">
@@ -69,17 +80,6 @@ function NormalOptions({ showSave }: NormalOptionsProps) {
                 </div>
                 <span className="sr-only">Multiselect</span>
             </Button>
-            {showSave ? (
-                <SaveInput fixed asChild>
-                    <Button
-                        variant="shadow"
-                        size="sm"
-                        className="w-10 p-0 rounded-full shrink-0"
-                    >
-                        <PlusIcon size={18} />
-                    </Button>
-                </SaveInput>
-            ) : null}
         </>
     );
 }
@@ -211,7 +211,7 @@ function MultiselectOptions() {
             <Button
                 variant="shadow"
                 size="sm"
-                className="w-10 p-0 rounded-full shrink-0"
+                className="w-9 p-0 rounded-full shrink-0"
                 onClick={disableMultiselect}
             >
                 <div className="flex items-center justify-center w-4 h-4">
