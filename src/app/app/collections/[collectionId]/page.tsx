@@ -9,6 +9,7 @@ import {
     LogInRequired,
     PageTitle,
     SaveInput,
+    SaveInputTrigger,
     Topbar,
     TopbarTitle,
     WithPanel,
@@ -49,7 +50,9 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                         />
                     </Topbar>
                     <PageTitle>Collection: {collection.name}</PageTitle>
-                    <SaveInput className="flex flex-col mb-5 mx-8 max-md:mx-5" />
+                    <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
+                        <SaveInputTrigger />
+                    </SaveInput>
                     <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
                     <ItemList collectionId={params.collectionId} />
                 </WithPanel>

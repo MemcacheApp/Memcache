@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
 import { ItemMetadata } from "@/src/datatypes/item";
@@ -9,6 +9,7 @@ import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
 import { FocusScope } from "@radix-ui/react-focus-scope";
 import { Slot } from "@radix-ui/react-slot";
 import { Package2, Plus, RefreshCw, TagIcon, X } from "lucide-react";
+import React from "react";
 import { RemoveScroll } from "react-remove-scroll";
 import {
     AddTag,
@@ -21,76 +22,82 @@ import {
 } from ".";
 import { cn } from "../utils";
 
-interface SaveInputProps {
-    className?: string;
-    fixed?: boolean;
-    asChild?: boolean;
-    children?: React.ReactNode;
+interface SaveInputState {
+    isShow: boolean;
+    show: () => void;
+    dismiss: () => void;
 }
 
-export function SaveInput({
-    className,
-    fixed,
-    asChild,
-    children,
-}: SaveInputProps) {
-    const [isShowPopover, setIsShowPopover] = useState(false);
+const SaveInputContext = React.createContext<SaveInputState | null>(null);
+const SaveInputProvider = SaveInputContext.Provider;
+const useSaveInputStore = () => {
+    return useContext(SaveInputContext) as SaveInputState;
+};
 
-    const showPopover = () => {
-        setIsShowPopover(true);
-    };
+interface SaveInputProps {
+    children?: React.ReactNode;
+    className?: string;
+}
 
-    const dismissPopOver = () => {
-        setIsShowPopover(false);
-    };
+export function SaveInput({ className, children }: SaveInputProps) {
+    const [isShow, setIsShow] = useState(false);
 
-    const Trigger = asChild ? Slot : "button";
+    const show = useCallback(() => {
+        setIsShow(true);
+    }, []);
+
+    const dismiss = useCallback(() => {
+        setIsShow(false);
+    }, []);
 
     return (
-        <div
-            className={cn(
-                {
-                    relative: !fixed,
-                },
-                className,
-            )}
+        <SaveInputProvider
+            value={{
+                isShow,
+                show,
+                dismiss,
+            }}
         >
-            <Trigger
-                className={
-                    asChild
-                        ? undefined
-                        : cn(
-                              "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-sm",
-                              {
-                                  "opacity-0": isShowPopover,
-                              },
-                          )
-                }
-                onClick={showPopover}
-            >
-                {asChild ? (
-                    children
-                ) : (
-                    <>
-                        <Plus size={18} className="mr-2" />
-                        Save a URL...
-                    </>
-                )}
-            </Trigger>
-            <SaveInputPopover
-                isShow={isShowPopover}
-                onDismiss={dismissPopOver}
-            />
-        </div>
+            <div className={cn("relative z-10", className)}>
+                {children}
+                <SaveInputDialog />
+            </div>
+        </SaveInputProvider>
     );
 }
 
-interface SaveInputPopoverProps {
-    isShow: boolean;
-    onDismiss: () => void;
+interface SaveInputTriggerProps {
+    children?: React.ReactNode;
 }
 
-function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
+export function SaveInputTrigger(props: SaveInputTriggerProps) {
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const { isShow, show } = useSaveInputStore();
+
+    const children = props.children || (
+        <button
+            className={cn(
+                "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-sm",
+                {
+                    "opacity-0": isShow,
+                },
+            )}
+        >
+            <Plus size={18} className="mr-2" />
+            Save a URL...
+        </button>
+    );
+
+    return (
+        <Slot ref={buttonRef} onClick={show}>
+            {children}
+        </Slot>
+    );
+}
+
+function SaveInputDialog() {
+    const { isShow, dismiss } = useSaveInputStore();
+
     const ctx = trpc.useContext();
 
     const [url, setUrl] = useState("");
@@ -110,7 +117,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
         if (createItemMutation.isSuccess) {
             setUrl("");
             setTags([]);
-            onDismiss();
+            dismiss();
         }
     }, [createItemMutation.isSuccess]);
 
@@ -147,7 +154,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
     return (
         <RemoveScroll enabled={isShow} as={Slot} allowPinchZoom>
             <FocusScope asChild trapped={isShow} loop>
-                <DismissableLayer asChild onDismiss={onDismiss}>
+                <DismissableLayer asChild onDismiss={dismiss}>
                     <div
                         className={cn("z-50", {
                             hidden: isHidden,
@@ -160,11 +167,11 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                     "bg-white/80 backdrop-blur-sm": !isCollapse,
                                 },
                             )}
-                            onClick={onDismiss}
+                            onClick={dismiss}
                         ></div>
                         <form
                             className={cn(
-                                "@container flex flex-col absolute -left-1 top-0 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
+                                "@container flex flex-col -left-1 -right-1 top-0 absolute z-10 transition-[transform,opacity] pointer-events-none",
                                 isCollapse
                                     ? "opacity-0 scale-95"
                                     : "opacity-100 scale-100",

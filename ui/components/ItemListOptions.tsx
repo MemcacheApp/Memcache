@@ -18,7 +18,8 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-    SaveInput,
+    SaveInputTrigger,
+    // SaveInput,
     SimpleTag,
     Tabs,
     TabsList,
@@ -59,7 +60,7 @@ function NormalOptions({ showSave }: NormalOptionsProps) {
             <StatusToggle />
             <TagFilterSelector />
             {showSave ? (
-                <SaveInput fixed asChild>
+                <SaveInputTrigger>
                     <Button
                         variant="shadow"
                         size="sm"
@@ -67,7 +68,7 @@ function NormalOptions({ showSave }: NormalOptionsProps) {
                     >
                         <PlusIcon size={18} />
                     </Button>
-                </SaveInput>
+                </SaveInputTrigger>
             ) : null}
             <Button
                 variant="shadow"
