@@ -2,11 +2,11 @@
 
 ## Guide
 
-- [Accounts and Authentication](./docs/accounts_auth.md)
-- [Content Saver](./docs/content_saver.md)
-- [Content Home](./docs/content_home.md)
-- [Tags and Collections](./docs/tags_collections.md)
-- [Content Summariser](./docs/content_summariser.md)
-- [Flash Card Generator and Interface](./docs/flashcard_generator.md)
-- [Spaced Repetition Review](./docs/spaced_repetition.md)
-- [Content Discovery](./docs/content_discovery.md)
+- [Accounts and Authentication](./accounts_auth.md)
+- [Content Saver](./content_saver.md)
+- [Content Home](./content_home.md)
+- [Tags and Collections](./tags_collections.md)
+- [Content Summariser](./content_summariser.md)
+- [Flash Card Generator and Interface](./flashcard_generator.md)
+- [Spaced Repetition Review](./spaced_repetition.md)
+- [Content Discovery](./content_discovery.md)
