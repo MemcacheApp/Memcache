@@ -94,7 +94,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
         <CardFooter
             className={cn(
-                "items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end",
+                "w-full items-start flex-col gap-3 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end",
                 props.className,
             )}
         >
@@ -102,7 +102,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                 <Skeleton className="h-5 w-24 rounded-lg" />
             ) : (
                 <>
-                    <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
+                    <div className="w-full flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
                         {props.siteName ? (
                             <ExternalLink
                                 className="flex items-center gap-2 my-2"
@@ -150,7 +150,9 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                         {props.footerLeft}
                     </div>
                     {props.footerRight ? (
-                        <div className="flex gap-3">{props.footerRight}</div>
+                        <div className="flex gap-3 w-full @lg:w-auto">
+                            {props.footerRight}
+                        </div>
                     ) : null}
                 </>
             )}

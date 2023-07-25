@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTime } from "@/src/app/utils";
 import { Collection, Flashcard, Item, Tag } from "@prisma/client";
 import { SimpleItemCard } from ".";
 import { cn } from "../utils";
@@ -19,6 +20,8 @@ export function ItemForFlashcards({
     onSelect?: (id: string) => void;
     className?: string;
 }) {
+    const latestFlashcard = data.flashcards.at(-1);
+    if (!latestFlashcard) return null;
     return (
         <>
             <SimpleItemCard
@@ -41,14 +44,15 @@ export function ItemForFlashcards({
                 title={data.title}
                 collection={data.collection}
                 tags={data.tags}
-                description={data.description}
                 thumbnail={data.thumbnail}
                 siteName={data.siteName}
                 favicon={data.favicon}
                 footerRight={
-                    <div>
-                        <span>{`${3} flashcards`}</span>
-                        <span>{`Latest ${data.flashcards.at(-1)}`}</span>
+                    <div className="w-full flex justify-between text-slate-450">
+                        <div>{`${data.flashcards.length} flashcards`}</div>
+                        <div>{`Latest: ${formatDateTime(
+                            latestFlashcard.createdAt,
+                        )}`}</div>
                     </div>
                 }
             />

@@ -256,8 +256,8 @@ export default class SummaryController {
         await prisma.summary.create({
             data: {
                 id: uuidv4(),
-                content: summaryContent,
                 createdAt: new Date(),
+                content: summaryContent,
                 itemId,
                 wordCount: summaryContent.split(" ").length,
                 experience: experience,

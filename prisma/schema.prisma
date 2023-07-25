@@ -20,7 +20,7 @@ model User {
   items       Item[]
   collections Collection[]
   tags        Tag[]
-  Flashcard   Flashcard[]
+  flashcards  Flashcard[]
 }
 
 model Session {
@@ -54,8 +54,8 @@ model Item {
 
 model Summary {
   id         String   @id
-  content    String
   createdAt  DateTime
+  content    String
   item       Item     @relation(fields: [itemId], references: [id])
   itemId     String
   wordCount  Int
@@ -91,6 +91,7 @@ model ResetCode {
 
 model Flashcard {
   id         String              @id
+  createdAt  DateTime
   question   String
   answer     String
   dueDate    DateTime
