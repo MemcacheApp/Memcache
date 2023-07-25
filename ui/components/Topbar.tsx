@@ -60,7 +60,7 @@ function TopbarInner({ children }: TopbarProps) {
                 hidden: !isShow,
             })}
         >
-            <SaveInput>
+            <SaveInput className="h-full">
                 <div className="flex h-full items-center bg-background/95 backdrop-blur-lg px-5 shadow-sm border md:rounded-md">
                     <Button
                         className={cn(
