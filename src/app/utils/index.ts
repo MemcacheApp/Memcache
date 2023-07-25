@@ -1,3 +1,5 @@
+import { DAYS_OF_WEEK, MONTHS } from "./constants";
+
 export const includeCaseInsensitive = (
     arr: string[] | undefined,
     s: string,
@@ -42,4 +44,10 @@ export const removeTag = (tags: string[], index: number) => {
     const newTags = [...tags];
     newTags.splice(index, 1);
     return newTags;
+};
+
+export const formatDateTime = (date: Date) => {
+    return `${DAYS_OF_WEEK[date.getDay()]} ${date.getDate()} ${
+        MONTHS[date.getMonth()]
+    }, ${date.getFullYear()}`;
 };

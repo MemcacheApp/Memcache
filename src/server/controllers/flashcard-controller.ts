@@ -169,6 +169,7 @@ export default class FlashcardController {
                         }
                         const newFlashcard: Flashcard = {
                             id: functionCallResult.id,
+                            createdAt: new Date(),
                             question: functionCallResult.question,
                             answer: functionCallResult.answer,
                             itemId,
