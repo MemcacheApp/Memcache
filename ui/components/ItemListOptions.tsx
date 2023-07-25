@@ -1,7 +1,13 @@
 import { useItemListStore } from "@/src/app/store/item-list";
 import { trpc } from "@/src/app/utils/trpc";
 import { ItemStatus } from "@prisma/client";
-import { Filter, SquareStack, Trash2, X } from "lucide-react";
+import {
+    Filter,
+    PanelRightOpenIcon,
+    SquareStack,
+    Trash2,
+    X,
+} from "lucide-react";
 import {
     AddTag,
     Button,
@@ -12,6 +18,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
     SimpleTag,
+    Tabs,
+    TabsList,
+    TabsTrigger,
 } from ".";
 import { cn } from "../utils";
 import { StatusIcon } from "./StatusIcon";
@@ -20,7 +29,7 @@ export function ItemListOptions() {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
     return (
-        <div className="flex items-center gap-5 max-md:mx-5 mx-8 mb-3">
+        <div className="flex items-center gap-3 max-md:mx-5 mx-8 mb-3 h-11">
             {isMultiselect ? <MultiselectOptions /> : <NormalOptions />}
         </div>
     );
@@ -36,7 +45,8 @@ function NormalOptions() {
             <StatusToggle />
             <TagFilterSelector />
             <Button
-                variant="outline"
+                variant="shadow"
+                size="sm"
                 className="w-10 p-0 rounded-full shrink-0"
                 onClick={enableMultiselect}
             >
@@ -107,7 +117,7 @@ function MultiselectOptions() {
 
     return (
         <>
-            <div className="flex items-center h-12 gap-5 overflow-x-auto whitespace-nowrap grow">
+            <div className="flex items-center gap-5 overflow-x-auto h-full whitespace-nowrap grow">
                 <div className="flex items-center">
                     <SquareStack size={18} className="mr-2" />
                     <span className="font-medium">
@@ -122,7 +132,6 @@ function MultiselectOptions() {
                 >
                     <CollectionSelector
                         collections={collectionsQuery.data}
-                        value="Move to"
                         onSelect={(collectionName) => {
                             selectedItems.forEach((itemId) => {
                                 setCollectionOnItem.mutate({
@@ -131,10 +140,17 @@ function MultiselectOptions() {
                                 });
                             });
                         }}
+                        trigger={
+                            <Button variant="shadow" size="sm">
+                                Move to
+                            </Button>
+                        }
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">Set status</Button>
+                            <Button variant="shadow" size="sm">
+                                Set Status
+                            </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             {statusNames.map((value) => (
@@ -153,7 +169,8 @@ function MultiselectOptions() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button
-                        variant="outline"
+                        variant="shadow"
+                        size="sm"
                         className="text-red-600"
                         onClick={handleDeleteItems}
                     >
@@ -162,11 +179,13 @@ function MultiselectOptions() {
                     </Button>
                 </div>
             </div>
-            <Button variant="outline" onClick={showPanel}>
+            <Button variant="shadow" size="sm" onClick={showPanel}>
+                <PanelRightOpenIcon className="mr-2" size={18} />
                 More
             </Button>
             <Button
-                variant="outline"
+                variant="shadow"
+                size="sm"
                 className="w-10 p-0 rounded-full shrink-0"
                 onClick={disableMultiselect}
             >
@@ -186,20 +205,30 @@ function StatusToggle() {
     }));
 
     return (
-        <div className="flex items-center h-12 space-x-3 overflow-x-auto grow">
-            {Object.values(ItemStatus).map((value) => {
-                return (
-                    <Button
-                        key={value}
-                        variant={activeStatus === value ? "default" : "outline"}
-                        onClick={() => setActiveStatus(value)}
-                    >
-                        <StatusIcon className="mr-2" size={18} status={value} />
-                        {value}
-                    </Button>
-                );
-            })}
-        </div>
+        <Tabs
+            className="grow overflow-x-auto"
+            value={activeStatus}
+            onValueChange={(status) => setActiveStatus(status as ItemStatus)}
+        >
+            <TabsList>
+                {Object.values(ItemStatus).map((value) => {
+                    return (
+                        <TabsTrigger
+                            className="data-[state=active]:border px-3 py-2 rounded-md"
+                            key={value}
+                            value={value}
+                        >
+                            <StatusIcon
+                                className="mr-2"
+                                size={18}
+                                status={value}
+                            />
+                            {value}
+                        </TabsTrigger>
+                    );
+                })}
+            </TabsList>
+        </Tabs>
     );
 }
 
@@ -216,8 +245,8 @@ function TagFilterSelector() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger>
-                <Button variant="outline">
+            <DropdownMenuTrigger asChild>
+                <Button variant="shadow" size="sm">
                     <Filter className="mr-2" size={18} />
                     Filter
                 </Button>

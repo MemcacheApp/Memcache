@@ -19,12 +19,13 @@ import { cn } from "../utils";
 
 interface CollectionSelectorProps extends Omit<ButtonProps, "onSelect"> {
     collections: Collection[] | undefined;
-    value: string;
+    value?: string;
     onSelect: (s: string) => void;
+    trigger?: React.ReactNode;
 }
 
 export function CollectionSelector(props: CollectionSelectorProps) {
-    const { collections, value, onSelect, ...other } = props;
+    const { collections, value, onSelect, trigger, ...other } = props;
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
@@ -46,16 +47,20 @@ export function CollectionSelector(props: CollectionSelectorProps) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    className="shadow-sm"
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    {...other}
-                >
-                    {value || "Loading..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
-                </Button>
+                {trigger ? (
+                    trigger
+                ) : (
+                    <Button
+                        className="shadow-sm"
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        {...other}
+                    >
+                        {value || "Loading..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
+                    </Button>
+                )}
             </PopoverTrigger>
             <PopoverContent className="w-[250px] p-0">
                 <Command>
