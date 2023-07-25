@@ -28,6 +28,7 @@ interface SimpleItemCardProps {
     favicon?: string | null;
     footerLeft?: React.ReactNode;
     footerRight?: React.ReactNode;
+    thumbnailOverlay?: React.ReactNode;
     format?: SimpleItemCardFormat;
 }
 
@@ -79,6 +80,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     type={props.type}
                     loading={props.loading}
                     thumbnail={props.thumbnail}
+                    thumbnailOverlay={props.thumbnailOverlay}
                 />
                 <SimpleItemCardFooter
                     {...props}
@@ -164,6 +166,7 @@ interface ThumbnailProps {
     type: string | undefined;
     loading: boolean | undefined;
     thumbnail: string | undefined | null;
+    thumbnailOverlay?: React.ReactNode;
 }
 
 function Thumbnail(props: ThumbnailProps) {
@@ -175,7 +178,7 @@ function Thumbnail(props: ThumbnailProps) {
         return (
             <div
                 className={cn(
-                    "order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 @lg:m-6 shrink-0 border rounded-t-lg @lg:rounded-lg overflow-hidden",
+                    "order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 @lg:m-6 shrink-0 border rounded-t-lg @lg:rounded-lg overflow-hidden relative",
                     props.type?.startsWith("music")
                         ? "aspect-square"
                         : "aspect-[16/9]",
@@ -186,6 +189,9 @@ function Thumbnail(props: ThumbnailProps) {
                     alt="Image"
                     className="object-cover object-center relative w-full h-full"
                 />
+                <div className="absolute left-5 bottom-4">
+                    {props.thumbnailOverlay ?? null}
+                </div>
             </div>
         );
     } else {
