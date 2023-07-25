@@ -89,9 +89,8 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
         </Card>
     );
 }
-export function SimpleItemCardFooter(props: SimpleItemCardProps) {
-    console.log(props.className);
 
+export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
         <CardFooter
             className={cn(

@@ -25,11 +25,7 @@ import {
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { cn } from "../utils";
-import {
-    FlashcardsDialog,
-    GenerateSummaryDialog,
-    SummariesDialog,
-} from "./GenerationDialog";
+import { FlashcardsDialog, GenerateSummaryDialog, SummariesDialog } from "./GenerationDialog";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
