@@ -28,6 +28,7 @@ import { H4 } from "@/ui/components/typography";
 import { cn } from "@/ui/utils";
 import { Collection, Flashcard, Item, Tag } from "@prisma/client";
 import { Dot } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
 import { trpc } from "../../utils/trpc";
@@ -89,6 +90,8 @@ function FlashcardSearchResult({
 }
 
 export default function FlashcardsPage() {
+    const router = useRouter();
+
     const [itemInput, setItemInput] = useState("");
     const itemsQuery = trpc.item.getUserItemsWithFlashcards.useQuery();
     const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
@@ -223,9 +226,7 @@ export default function FlashcardsPage() {
                                 data={item}
                                 selected={false}
                                 onSelect={(id: string) => {
-                                    console.log(
-                                        `selected this item ${id} in flashcards items`,
-                                    );
+                                    router.push(`/app/flashcards/${id}`);
                                 }}
                             />
                         ))}
