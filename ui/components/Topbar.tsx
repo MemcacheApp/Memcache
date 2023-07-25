@@ -15,7 +15,10 @@ export function Topbar({ children, startPos = 65 }: TopbarProps) {
 
     useEffect(() => {
         window.addEventListener("scroll", scrollListener);
-        return () => window.removeEventListener("scroll", scrollListener);
+        return () => {
+            window.removeEventListener("scroll", scrollListener);
+            setIsShow(false);
+        };
     }, []);
 
     const scrollListener = useCallback(() => {
