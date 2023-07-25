@@ -27,7 +27,7 @@ export default function SavesPage() {
                 <WithPanel>
                     <Topbar startPos={200}>
                         <TopbarTitle>Saves</TopbarTitle>
-                        <ItemListOptions className="grow ml-5" />
+                        <ItemListOptions className="grow ml-5 overflow-hidden" />
                     </Topbar>
                     <PageTitle>Saves</PageTitle>
                     <SaveInput />
