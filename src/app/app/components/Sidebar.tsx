@@ -25,7 +25,7 @@ export function Sidebar() {
     return (
         <div className="z-50 relative">
             <Button
-                variant={isExpand ? "ghost" : "outline"}
+                variant={isExpand ? "ghost" : "shadow"}
                 className={cn("fixed m-3 w-10 rounded-full p-0 z-10", {
                     "max-[1240px]:hidden": isShowTopbar && !isExpand,
                 })}

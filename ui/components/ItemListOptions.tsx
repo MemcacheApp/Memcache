@@ -4,6 +4,7 @@ import { ItemStatus } from "@prisma/client";
 import {
     Filter,
     PanelRightOpenIcon,
+    PlusIcon,
     SquareStack,
     Trash2,
     X,
@@ -17,6 +18,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    SaveInput,
     SimpleTag,
     Tabs,
     TabsList,
@@ -25,21 +27,29 @@ import {
 import { cn } from "../utils";
 import { StatusIcon } from "./StatusIcon";
 
-interface ItemListOptionsProps {
+interface ItemListOptionsProps extends NormalOptionsProps {
     className?: string;
 }
 
-export function ItemListOptions({ className }: ItemListOptionsProps) {
+export function ItemListOptions({ className, showSave }: ItemListOptionsProps) {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
     return (
         <div className={cn("flex items-center gap-3 h-11", className)}>
-            {isMultiselect ? <MultiselectOptions /> : <NormalOptions />}
+            {isMultiselect ? (
+                <MultiselectOptions />
+            ) : (
+                <NormalOptions showSave={showSave} />
+            )}
         </div>
     );
 }
 
-function NormalOptions() {
+interface NormalOptionsProps {
+    showSave?: boolean;
+}
+
+function NormalOptions({ showSave }: NormalOptionsProps) {
     const enableMultiselect = useItemListStore(
         (state) => state.enableMultiselect,
     );
@@ -59,6 +69,17 @@ function NormalOptions() {
                 </div>
                 <span className="sr-only">Multiselect</span>
             </Button>
+            {showSave ? (
+                <SaveInput fixed asChild>
+                    <Button
+                        variant="shadow"
+                        size="sm"
+                        className="w-10 p-0 rounded-full shrink-0"
+                    >
+                        <PlusIcon size={18} />
+                    </Button>
+                </SaveInput>
+            ) : null}
         </>
     );
 }

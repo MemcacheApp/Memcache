@@ -21,7 +21,19 @@ import {
 } from ".";
 import { cn } from "../utils";
 
-export function SaveInput() {
+interface SaveInputProps {
+    className?: string;
+    fixed?: boolean;
+    asChild?: boolean;
+    children?: React.ReactNode;
+}
+
+export function SaveInput({
+    className,
+    fixed,
+    asChild,
+    children,
+}: SaveInputProps) {
     const [isShowPopover, setIsShowPopover] = useState(false);
 
     const showPopover = () => {
@@ -32,20 +44,39 @@ export function SaveInput() {
         setIsShowPopover(false);
     };
 
+    const Trigger = asChild ? Slot : "button";
+
     return (
-        <div className="flex flex-col relative mb-5 mx-8 max-md:mx-5">
-            <button
-                className={cn(
-                    "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-sm",
-                    {
-                        "opacity-0": isShowPopover,
-                    },
-                )}
+        <div
+            className={cn(
+                {
+                    relative: !fixed,
+                },
+                className,
+            )}
+        >
+            <Trigger
+                className={
+                    asChild
+                        ? undefined
+                        : cn(
+                              "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-sm",
+                              {
+                                  "opacity-0": isShowPopover,
+                              },
+                          )
+                }
                 onClick={showPopover}
             >
-                <Plus size={18} className="mr-2" />
-                Save a URL...
-            </button>
+                {asChild ? (
+                    children
+                ) : (
+                    <>
+                        <Plus size={18} className="mr-2" />
+                        Save a URL...
+                    </>
+                )}
+            </Trigger>
             <SaveInputPopover
                 isShow={isShowPopover}
                 onDismiss={dismissPopOver}
@@ -133,7 +164,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                         ></div>
                         <form
                             className={cn(
-                                "@container flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
+                                "@container flex flex-col absolute -left-1 top-0 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
                                 isCollapse
                                     ? "opacity-0 scale-95"
                                     : "opacity-100 scale-100",
