@@ -33,6 +33,7 @@ interface SimpleItemCardProps {
     };
     footerLeft?: React.ReactNode;
     footerRight?: React.ReactNode;
+    thumbnailOverlay?: React.ReactNode;
     format?: SimpleItemCardFormat;
     titleOpenLink?: boolean;
 }
@@ -103,7 +104,15 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     type={props.type}
                     loading={props.loading}
                     thumbnail={props.thumbnail}
+<<<<<<< HEAD
                     format={props.format}
+=======
+                    thumbnailOverlay={props.thumbnailOverlay}
+                />
+                <SimpleItemCardFooter
+                    {...props}
+                    className="flex @lg:hidden order-3"
+>>>>>>> f1bc200 (show item with flashcard num flashcards)
                 />
             </div>
             <SimpleItemCardFooter {...props} />
@@ -195,6 +204,7 @@ interface ThumbnailProps {
     loading?: boolean;
     thumbnail?: string | null;
     format?: ItemCardFormat;
+    thumbnailOverlay?: React.ReactNode;
 }
 
 function Thumbnail(props: ThumbnailProps) {
@@ -220,6 +230,9 @@ function Thumbnail(props: ThumbnailProps) {
                     alt="Image"
                     className="object-cover object-center relative w-full h-full"
                 />
+                <div className="absolute left-5 bottom-4">
+                    {props.thumbnailOverlay ?? null}
+                </div>
             </div>
         );
     } else {
