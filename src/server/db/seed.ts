@@ -91,6 +91,21 @@ const ITEMS = [
         collectionName: "AI",
         tagNames: ["Google", "LLM"],
     },
+    {
+        url: "https://developer.chrome.com/blog/whats-new-css-ui-2023/",
+        collectionName: "Web",
+        tagNames: ["Google", "CSS"],
+    },
+    {
+        url: "https://exoplanets.nasa.gov/news/1761/beginnings-life-on-our-world-and-others/",
+        collectionName: "Space",
+        tagNames: ["NASA", "exoplanets"],
+    },
+    {
+        url: "https://www.nasa.gov/feature/goddard/2022/nasa-s-webb-takes-star-filled-portrait-of-pillars-of-creation",
+        collectionName: "Space",
+        tagNames: ["NASA", "JWT"],
+    },
 ];
 
 async function main() {
