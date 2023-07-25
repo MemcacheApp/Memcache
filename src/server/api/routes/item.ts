@@ -42,6 +42,25 @@ export const itemRouter = router({
                 });
             }
         }),
+    getFlashcards: protectedProcedure
+        .input(
+            z.object({
+                itemId: z.string(),
+            }),
+        )
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ItemController.getItemFlashcardSet(
+                    ctx.userId,
+                    input.itemId,
+                );
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }),
     getUserItemsWithFlashcards: protectedProcedure.query(async ({ ctx }) => {
         try {
             return await ItemController.getUserItemsWithFlashcards(ctx.userId);
