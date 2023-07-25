@@ -28,6 +28,7 @@ export * from "./Skeleton";
 export * from "./SummaryCard";
 export * from "./Tabs";
 export * from "./Tooltip";
+export * from "./Topbar";
 export * from "./WithPanel";
 export * from "./typography";
 

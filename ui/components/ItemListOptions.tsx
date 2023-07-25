@@ -25,11 +25,15 @@ import {
 import { cn } from "../utils";
 import { StatusIcon } from "./StatusIcon";
 
-export function ItemListOptions() {
+interface ItemListOptionsProps {
+    className?: string;
+}
+
+export function ItemListOptions({ className }: ItemListOptionsProps) {
     const isMultiselect = useItemListStore((state) => state.isMultiselect);
 
     return (
-        <div className="flex items-center gap-3 max-md:mx-5 mx-8 mb-3 h-11">
+        <div className={cn("flex items-center gap-3 h-11", className)}>
             {isMultiselect ? <MultiselectOptions /> : <NormalOptions />}
         </div>
     );

@@ -7,6 +7,8 @@ import {
     LogInRequired,
     PageTitle,
     SaveInput,
+    Topbar,
+    TopbarTitle,
     WithPanel,
 } from "@/ui/components";
 import { useEffect } from "react";
@@ -23,9 +25,13 @@ export default function SavesPage() {
         <div className="flex flex-col">
             <LogInRequired>
                 <WithPanel>
+                    <Topbar startPos={200}>
+                        <TopbarTitle>Saves</TopbarTitle>
+                        <ItemListOptions className="grow ml-5" />
+                    </Topbar>
                     <PageTitle>Saves</PageTitle>
                     <SaveInput />
-                    <ItemListOptions />
+                    <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
                     <ItemList />
                 </WithPanel>
                 <ItemPanel />
