@@ -63,6 +63,7 @@ export function SummariesDialog({
 
     useEffect(() => {
         if (
+            open &&
             getItemSummariesQuery.data &&
             getItemSummariesQuery.data.length === 0
         ) {
