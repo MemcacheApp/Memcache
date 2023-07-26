@@ -1,10 +1,11 @@
-import { router } from "./trpc";
-import { itemRouter } from "./routes/item";
-import { userRouter } from "./routes/user";
 import { collectionRouter } from "./routes/collection";
-import { tagRouter } from "./routes/tag";
+import { discoveryRouter } from "./routes/discovery";
 import { flashcardsRouter } from "./routes/flashcards";
+import { itemRouter } from "./routes/item";
 import { summaryRouter } from "./routes/summary";
+import { tagRouter } from "./routes/tag";
+import { userRouter } from "./routes/user";
+import { router } from "./trpc";
 
 export const appRouter = router({
     item: itemRouter,
@@ -13,6 +14,7 @@ export const appRouter = router({
     tag: tagRouter,
     flashcards: flashcardsRouter,
     summary: summaryRouter,
+    discovery: discoveryRouter,
 });
 
 export type AppRouter = typeof appRouter;
