@@ -105,10 +105,10 @@ export function SummariesDialog({
 }
 
 interface GenerateSummaryDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
+    data: (Item & { collection: Collection; tags: Tag[] }) | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    viewSummaries: () => void;
+    viewSummaries?: () => void;
 }
 
 export function GenerateSummaryDialog({
@@ -125,19 +125,24 @@ export function GenerateSummaryDialog({
 
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
         onSuccess() {
-            ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
+            if (data) {
+                ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
+                ctx.summary.getLatestSummaries.invalidate();
+            }
             onOpenChange(false);
-            viewSummaries();
+            if (viewSummaries) viewSummaries();
         },
     });
 
     const handleSubmit = () => {
-        generateSummaryMutation.mutate({
-            itemId: data.id,
-            numOfWords,
-            experience,
-            finetuning,
-        });
+        if (data) {
+            generateSummaryMutation.mutate({
+                itemId: data.id,
+                numOfWords,
+                experience,
+                finetuning,
+            });
+        }
     };
 
     return (

@@ -14,12 +14,14 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from ".";
+import { cn } from "../utils";
 
 interface ItemSelectorProps {
     onSelect: (item: Item & { tags: Tag[]; collection: Collection }) => void;
+    className?: string;
 }
 
-export function ItemSelector({ onSelect }: ItemSelectorProps) {
+export function ItemSelector({ onSelect, className }: ItemSelectorProps) {
     const [open, setOpen] = useState(false);
 
     const itemsQuery = trpc.item.getUserItems.useQuery();
@@ -31,7 +33,7 @@ export function ItemSelector({ onSelect }: ItemSelectorProps) {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className={cn("w-[200px] justify-between", className)}
                 >
                     Select item...
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
