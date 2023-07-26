@@ -13,6 +13,7 @@ export * from "./ItemCard";
 export * from "./ItemList";
 export * from "./ItemListOptions";
 export * from "./ItemPanel";
+export * from "./ItemSelector";
 export * from "./Label";
 export * from "./Link";
 export * from "./Loader";

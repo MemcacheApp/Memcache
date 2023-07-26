@@ -1,7 +1,8 @@
 "use client";
 
 import {
-    H4,
+    H3,
+    ItemSelector,
     Link,
     Loader,
     PageTitle,
@@ -21,11 +22,11 @@ export default function SummariesPage() {
             <PageTitle>Summaries</PageTitle>
             <div className="flex flex-col gap-5">
                 <div className="bg-background mx-8 p-6 border rounded-lg">
-                    <div className="flex justify-between mb-5">
-                        <h2 className="text-xl font-semibold">My Summaries</h2>
+                    <div className="flex items-center">
+                        <H3>My Summaries</H3>
                         <Link
                             href="/app/summaries/all"
-                            className="flex items-center gap-2"
+                            className="ml-auto mb-5 font-medium flex items-center gap-2"
                         >
                             See All
                             <ArrowRightIcon size={20} />
@@ -66,10 +67,17 @@ export default function SummariesPage() {
                         <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                 </div>
-                <div className="bg-background mx-8 p-6 border rounded-lg">
-                    <H4>Generate Summary</H4>
-                </div>
+                <GenerateSummary />
             </div>
+        </div>
+    );
+}
+
+function GenerateSummary() {
+    return (
+        <div className="bg-background mx-8 p-6 border rounded-lg">
+            <H3>Generate Summary</H3>
+            <ItemSelector onSelect={(item) => console.log(item)} />
         </div>
     );
 }
