@@ -2,7 +2,7 @@
 
 import { Collection } from "@prisma/client";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Button,
     ButtonProps,
@@ -29,13 +29,16 @@ export function CollectionSelector(props: CollectionSelectorProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    const collectionNames = useMemo(() => {
-        const names = collections?.map((collection) => collection.name);
-        if (names && !value) {
-            onSelect(names[0]);
+    const collectionNames = useMemo(
+        () => collections?.map((collection) => collection.name),
+        [collections],
+    );
+
+    useEffect(() => {
+        if (collectionNames && collectionNames.length > 0 && !value) {
+            onSelect(collectionNames[0]);
         }
-        return names;
-    }, [collections]);
+    }, [collectionNames]);
 
     const isCreatable = useMemo(
         () =>
