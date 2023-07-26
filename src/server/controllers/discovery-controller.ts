@@ -88,15 +88,20 @@ export default class DiscoveryController {
         });
 
         const existingItems: { [key: string]: boolean } = {};
-        const res = [];
+        const uniqueSuggestedItems: {
+            url: string;
+            thumbnail: string | null;
+            title: string;
+            description: string;
+        }[] = [];
         suggestedItems.forEach((item) => {
             if (existingItems[item.url] === undefined) {
                 existingItems[item.url] = true;
-                res.push(item);
+                uniqueSuggestedItems.push(item);
             }
         });
 
-        return shuffle(suggestedItems);
+        return shuffle(uniqueSuggestedItems);
     }
 }
 
