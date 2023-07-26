@@ -39,19 +39,17 @@ function TopbarInner({ children }: TopbarProps) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (containerRef.current?.parentElement) {
-            new ResizeObserver(updateDimensions).observe(
+        if (containerRef.current && containerRef.current.parentElement) {
+            const elem = containerRef.current;
+            new ResizeObserver(() => updateDimensions(elem)).observe(
                 containerRef.current.parentElement,
             );
         }
     }, [containerRef.current]);
 
-    const updateDimensions = useCallback(() => {
-        if (containerRef.current) {
-            containerRef.current.style.width =
-                containerRef.current.parentElement?.offsetWidth + "px";
-        }
-    }, [containerRef.current]);
+    const updateDimensions = useCallback((elem: HTMLDivElement) => {
+        elem.style.width = elem.parentElement?.offsetWidth + "px";
+    }, []);
 
     return (
         <div
