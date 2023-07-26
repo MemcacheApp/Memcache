@@ -31,7 +31,6 @@ export default function SummariesPage() {
                             <ArrowRightIcon size={20} />
                         </Link>
                     </div>
-
                     <ScrollArea type="scroll">
                         <div className="flex gap-3 p-1">
                             {latestSummariesQuery.data ? (
