@@ -32,7 +32,7 @@ model Session {
 model Item {
   id           String      @id
   type         String
-  status       Int
+  status       ItemStatus
   collection   Collection  @relation(fields: [collectionId], references: [id])
   collectionId String
   tags         Tag[]
@@ -109,6 +109,13 @@ model FlashcardReview {
   rating      FlashcardReviewRating
   Flashcard   Flashcard             @relation(fields: [flashcardId], references: [id])
   flashcardId String
+}
+
+enum ItemStatus {
+  Inbox
+  Underway
+  Complete
+  Archive
 }
 
 enum FlashcardReviewRating {

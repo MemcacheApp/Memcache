@@ -2,7 +2,7 @@
 
 import { Collection } from "@prisma/client";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Button,
     ButtonProps,
@@ -19,22 +19,26 @@ import { cn } from "../utils";
 
 interface CollectionSelectorProps extends Omit<ButtonProps, "onSelect"> {
     collections: Collection[] | undefined;
-    value: string;
+    value?: string;
     onSelect: (s: string) => void;
+    trigger?: React.ReactNode;
 }
 
 export function CollectionSelector(props: CollectionSelectorProps) {
-    const { collections, value, onSelect, ...other } = props;
+    const { collections, value, onSelect, trigger, ...other } = props;
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    const collectionNames = useMemo(() => {
-        const names = collections?.map((collection) => collection.name);
-        if (names && !value) {
-            onSelect(names[0]);
+    const collectionNames = useMemo(
+        () => collections?.map((collection) => collection.name),
+        [collections],
+    );
+
+    useEffect(() => {
+        if (collectionNames && collectionNames.length > 0 && !value) {
+            onSelect(collectionNames[0]);
         }
-        return names;
-    }, [collections]);
+    }, [collectionNames]);
 
     const isCreatable = useMemo(
         () =>
@@ -46,16 +50,20 @@ export function CollectionSelector(props: CollectionSelectorProps) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    className="shadow-sm"
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    {...other}
-                >
-                    {value || "Loading..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
-                </Button>
+                {trigger ? (
+                    trigger
+                ) : (
+                    <Button
+                        className="shadow-sm"
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        {...other}
+                    >
+                        {value || "Loading..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
+                    </Button>
+                )}
             </PopoverTrigger>
             <PopoverContent className="w-[250px] p-0">
                 <Command>

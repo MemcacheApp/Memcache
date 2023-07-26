@@ -1,9 +1,10 @@
-import { protectedProcedure, router } from "../trpc";
-import { z } from "zod";
-import ItemController from "../../controllers/item-controller";
-import { FetchURLError, GetItemError } from "../../controllers/errors/item";
+import { ItemStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { AuthError } from "../../controllers/errors/user";
+import ItemController from "../../controllers/item-controller";
+import { protectedProcedure, router } from "../trpc";
 
 export const itemRouter = router({
     getItem: protectedProcedure
@@ -119,7 +120,9 @@ export const itemRouter = router({
             }
         }),
     setItemStatus: protectedProcedure
-        .input(z.object({ itemId: z.string(), status: z.number() }))
+        .input(
+            z.object({ itemId: z.string(), status: z.nativeEnum(ItemStatus) }),
+        )
         .mutation(async ({ ctx, input }) => {
             try {
                 await ItemController.updateItemStatus(
@@ -234,14 +237,5 @@ export const itemRouter = router({
         .input(z.object({ itemId: z.string() }))
         .query(async ({ input }) => {
             return await ItemController.getItemStatus(input.itemId);
-        }),
-    updateItemStatus: protectedProcedure
-        .input(z.object({ itemId: z.string(), status: z.number() }))
-        .mutation(async ({ ctx, input }) => {
-            return ItemController.updateItemStatus(
-                ctx.userId,
-                input.itemId,
-                input.status,
-            );
         }),
 });
