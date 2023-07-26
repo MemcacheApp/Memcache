@@ -80,18 +80,18 @@ export function SummariesDialog({
                 <div className="flex flex-col gap-5">
                     {getItemSummariesQuery.data !== undefined ? (
                         <>
-                            {getItemSummariesQuery.data.map((summary) => (
-                                <SummaryCard
-                                    key={summary.id}
-                                    item={data}
-                                    summary={summary}
-                                />
-                            ))}
-                            <Button
-                                variant="outline"
-                                onClick={handleNewSummary}
-                            >
-                                <PlusIcon className="mr-2" size={16} /> Generate
+                            <div className="flex flex-col gap-5 max-h-[60vh] overflow-auto">
+                                {getItemSummariesQuery.data.map((summary) => (
+                                    <SummaryCard
+                                        className="shrink-0"
+                                        key={summary.id}
+                                        item={data}
+                                        summary={summary}
+                                    />
+                                ))}
+                            </div>
+                            <Button onClick={handleNewSummary}>
+                                <PlusIcon className="mr-2" size={18} /> Generate
                                 New Summary
                             </Button>
                         </>
