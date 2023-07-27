@@ -58,7 +58,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     },
                 )}
             >
-                <CardHeader className="order-2 overflow-hidden">
+                <CardHeader className="grow order-2 overflow-hidden">
                     {props.loading ? (
                         <>
                             <Skeleton className="h-8 rounded-lg" />
