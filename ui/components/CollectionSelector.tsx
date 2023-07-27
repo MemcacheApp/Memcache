@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Collection } from "@prisma/client";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Button,
+    ButtonProps,
     Command,
     CommandGroup,
     CommandInput,
@@ -10,53 +13,57 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    buttonVariants,
 } from ".";
 import { includeCaseInsensitive } from "../../src/app/utils";
-import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { type VariantProps } from "class-variance-authority";
 import { cn } from "../utils";
-import { Collection } from "@prisma/client";
 
-interface CollectionSelectorProps extends VariantProps<typeof buttonVariants> {
+interface CollectionSelectorProps extends Omit<ButtonProps, "onSelect"> {
     collections: Collection[] | undefined;
-    value: string;
-    setValue: (s: string) => void;
-    disabled?: boolean;
+    value?: string;
+    onSelect: (s: string) => void;
+    trigger?: React.ReactNode;
 }
 
-export function CollectionSelector({
-    collections,
-    value,
-    setValue,
-    size,
-    disabled,
-}: CollectionSelectorProps) {
+export function CollectionSelector(props: CollectionSelectorProps) {
+    const { collections, value, onSelect, trigger, ...other } = props;
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    const collectionNames = useMemo(() => {
-        const names = collections?.map((collection) => collection.name);
-        if (names && !value) {
-            setValue(names[0]);
+    const collectionNames = useMemo(
+        () => collections?.map((collection) => collection.name),
+        [collections],
+    );
+
+    useEffect(() => {
+        if (collectionNames && collectionNames.length > 0 && !value) {
+            onSelect(collectionNames[0]);
         }
-        return names;
-    }, [collections]);
+    }, [collectionNames]);
+
+    const isCreatable = useMemo(
+        () =>
+            searchValue &&
+            !includeCaseInsensitive(collectionNames, searchValue),
+        [collectionNames, searchValue],
+    );
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    className="shadow-sm"
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    size={size}
-                    disabled={disabled}
-                >
-                    {value || "Loading..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
-                </Button>
+                {trigger ? (
+                    trigger
+                ) : (
+                    <Button
+                        className="shadow-sm"
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        {...other}
+                    >
+                        {value || "Loading..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex justify-end" />
+                    </Button>
+                )}
             </PopoverTrigger>
             <PopoverContent className="w-[250px] p-0">
                 <Command>
@@ -68,26 +75,24 @@ export function CollectionSelector({
                     <CommandGroup>
                         {collectionNames ? (
                             <>
-                                {!searchValue ||
-                                includeCaseInsensitive(
-                                    collectionNames,
-                                    searchValue
-                                ) ? null : (
+                                {isCreatable ? (
                                     <CommandItem
+                                        value={`create:${searchValue}:`}
                                         onSelect={() => {
-                                            setValue(searchValue);
+                                            onSelect(searchValue);
                                             setOpen(false);
                                         }}
                                     >
                                         <Plus className="mr-2 h-4 w-4" />
                                         {`Add "${searchValue}"`}
                                     </CommandItem>
-                                )}
+                                ) : null}
                                 {collectionNames.map((collection) => (
                                     <CommandItem
                                         key={collection}
+                                        value={collection}
                                         onSelect={() => {
-                                            setValue(collection);
+                                            onSelect(collection);
                                             setOpen(false);
                                         }}
                                     >
@@ -96,7 +101,7 @@ export function CollectionSelector({
                                                 "mr-2 h-4 w-4",
                                                 collection === value
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                             )}
                                         />
                                         {collection}

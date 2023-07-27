@@ -28,14 +28,14 @@ export default function VerificationCodePage() {
             email,
             code: otp,
         },
-        { refetchOnWindowFocus: false, enabled: false }
+        { refetchOnWindowFocus: false, enabled: false },
     );
 
     useEffect(() => {
         if (verifyResetCodeQuery.data) {
             setError(null);
             push(
-                `/auth/reset-password/new-password?email=${email}&code=${otp}`
+                `/auth/reset-password/new-password?email=${email}&code=${otp}`,
             );
         } else if (verifyResetCodeQuery.data === false) {
             setError("invalid-code");

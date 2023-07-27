@@ -73,7 +73,6 @@
     display: flex;
 }
 
-
 .submit-button {
     all: unset;
     cursor: pointer;
@@ -98,7 +97,7 @@
 }
 
 .submit-button:hover {
-    background-color: #F1F5F9;
+    background-color: #f1f5f9;
 }
 
 .link-nav {
@@ -107,10 +106,7 @@
     margin-right: 10px;
 }
 
-
-
 .otp-group {
-
     display: flex;
     width: 100%;
     max-width: 360px;

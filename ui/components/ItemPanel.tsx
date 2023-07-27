@@ -1,19 +1,19 @@
 "use client";
 
 import { useItemListStore } from "@/src/app/store/item-list";
-import { StatusEnum, StatusIcons, StatusNames } from "@/src/app/utils/Statuses";
 import { DEBUG } from "@/src/app/utils/constants";
 import { trpc } from "@/src/app/utils/trpc";
-import { LucideIcon, Package2, Tag, X } from "lucide-react";
+import { ItemStatus } from "@prisma/client";
+import { EditIcon, Package2, TagIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CollectionSelector, ExternalLink, TagSelector } from ".";
+import { AddTag, CollectionSelector, ExternalLink, SimpleTag } from ".";
 import { cn } from "../utils";
 import { Button } from "./Button";
 import { Card } from "./Card";
 import MultiToggle from "./MultiToggle";
 import { Separator } from "./Separator";
-import SimpleTag from "./SimpleTag";
+import { StatusIcon } from "./StatusIcon";
 import { Table, TableBody, TableCell, TableRow } from "./Table";
 
 export function ItemPanel() {
@@ -45,10 +45,10 @@ export function ItemPanel() {
     }, [isShowPanel]);
 
     return (
-        <div>
+        <div className="z-50">
             <div
                 className={cn(
-                    "fixed top-0 bottom-0 left-0 right-0 bg-black/40 md:hidden transition-opacity",
+                    "fixed top-0 bottom-0 left-0 right-0 bg-white/40 md:hidden backdrop-blur-sm transition-opacity",
                     isCollapse ? "opacity-0" : "opacity-100",
                     {
                         hidden: isHidden,
@@ -97,6 +97,8 @@ export function SingleItem({ itemId }: { itemId: string }) {
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
     const tagsQuery = trpc.tag.getUserTags.useQuery();
 
+    const [isTagEditMode, setIsTagEditMode] = useState(false);
+
     DEBUG &&
         console.log(
             `Rendering single item ${data?.title}, status is ${data?.status}}`,
@@ -125,14 +127,14 @@ export function SingleItem({ itemId }: { itemId: string }) {
         },
     });
 
-    const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
+    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
         onSuccess: async () => {
             ctx.item.getItem.invalidate({ itemId });
             ctx.item.getUserItems.invalidate();
         },
     });
 
-    const handleUpdateItemStatus = async (newStatus: StatusEnum) => {
+    const handleUpdateItemStatus = async (newStatus: ItemStatus) => {
         if (!data) {
             return;
         }
@@ -176,13 +178,17 @@ export function SingleItem({ itemId }: { itemId: string }) {
 
                     <Separator className="my-4" />
 
-                    <Subtitle Icon={StatusIcons[data.status]}>Status</Subtitle>
+                    <Subtitle
+                        Icon={<StatusIcon status={data.status} size={18} />}
+                    >
+                        Status
+                    </Subtitle>
                     <div className="flex justify-between items-center">
                         <Link
                             href={`/app/saves`}
                             className="text-slate-600 font-medium underline"
                         >
-                            {StatusNames[data.status as StatusEnum]}
+                            {ItemStatus[data.status]}
                         </Link>
                         <MultiToggle
                             currentStatus={data.status}
@@ -192,7 +198,9 @@ export function SingleItem({ itemId }: { itemId: string }) {
                         />
                     </div>
 
-                    <Subtitle Icon={Package2}>Collection</Subtitle>
+                    <Subtitle Icon={<Package2 size={18} />}>
+                        Collection
+                    </Subtitle>
                     <div className="flex justify-between items-center">
                         <Link
                             href={`/app/collections/${data.collection.id}`}
@@ -203,47 +211,50 @@ export function SingleItem({ itemId }: { itemId: string }) {
                         <CollectionSelector
                             collections={collectionsQuery.data}
                             value={data.collection.name}
-                            setValue={(newCollection) => {
+                            onSelect={(newCollection) => {
                                 setCollectionOnItem.mutate({
                                     itemId: data.id,
                                     collectionName: newCollection,
                                 });
                             }}
-                            size={"default"}
                         />
                     </div>
-                    <Subtitle Icon={Tag}>Tags</Subtitle>
+                    <Subtitle Icon={<TagIcon size={18} />}>Tags</Subtitle>
 
                     <div className="flex flex-wrap gap-3">
+                        <Button
+                            variant="icon"
+                            size="none"
+                            onClick={() => setIsTagEditMode((state) => !state)}
+                        >
+                            <EditIcon size={18} />
+                        </Button>
                         {data.tags.map((tag, index) => (
                             <SimpleTag
                                 key={tag.id}
                                 value={tag.name}
+                                onClick={() => console.log(tag.id)}
                                 remove={() => {
                                     removeTagFromItemMutation.mutate({
                                         itemId: data.id,
                                         tagId: data.tags[index].id,
                                     });
                                 }}
+                                editMode={isTagEditMode}
                             />
                         ))}
-                        <TagSelector
-                            tags={tagsQuery.data}
-                            value=""
-                            index={-1}
-                            setValue={(newTag) => {
-                                addTagToItemMutation.mutate({
-                                    itemId: data.id,
-                                    tagName: newTag,
-                                });
-                            }}
-                            remove={(index) => {
-                                removeTagFromItemMutation.mutate({
-                                    itemId: data.id,
-                                    tagId: data.tags[index].id,
-                                });
-                            }}
-                        />
+                        {isTagEditMode ? (
+                            <AddTag
+                                tags={tagsQuery.data}
+                                onSelect={(newTag) => {
+                                    addTagToItemMutation.mutate({
+                                        itemId: data.id,
+                                        tagName: newTag,
+                                    });
+                                }}
+                                selectedTags={data.tags.map((tag) => tag.name)}
+                            />
+                        ) : null}
                     </div>
                     <Separator className="my-4" />
                     <Subtitle>Metadata</Subtitle>
@@ -314,12 +325,12 @@ function Subtitle({
     Icon,
     children,
 }: {
-    Icon?: LucideIcon;
+    Icon?: React.ReactNode;
     children: React.ReactNode;
 }) {
     return (
         <div className="mt-4 mb-1 text-slate-450 text-sm tracking-wide uppercase flex items-center">
-            {Icon ? <Icon size={16} className="inline mr-2" /> : null}
+            {Icon ? <div className="inline mr-2">{Icon}</div> : null}
             {children}
         </div>
     );

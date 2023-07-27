@@ -27,7 +27,7 @@ export default class UserController {
         firstName: string,
         lastName: string,
         email: string,
-        password: string
+        password: string,
     ) {
         const salt = bcrypt.genSaltSync(10);
         const hashPassword = bcrypt.hashSync(password, salt);
@@ -288,7 +288,7 @@ export default class UserController {
     static async updatePassword(
         email: string,
         code: string,
-        newPassword: string
+        newPassword: string,
     ) {
         await this.verifyResetCode(email, code);
 

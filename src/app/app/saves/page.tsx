@@ -1,15 +1,19 @@
 "use client";
 
 import {
+    ItemList,
+    ItemListOptions,
+    ItemPanel,
     LogInRequired,
     PageTitle,
     SaveInput,
-    ItemPanel,
+    SaveInputTrigger,
+    Topbar,
+    TopbarTitle,
     WithPanel,
-    ItemList,
 } from "@/ui/components";
-import { useItemListStore } from "../../store/item-list";
 import { useEffect } from "react";
+import { useItemListStore } from "../../store/item-list";
 
 export default function SavesPage() {
     const resetStates = useItemListStore((state) => state.reset);
@@ -22,8 +26,18 @@ export default function SavesPage() {
         <div className="flex flex-col">
             <LogInRequired>
                 <WithPanel>
+                    <Topbar startPos={200}>
+                        <TopbarTitle>Saves</TopbarTitle>
+                        <ItemListOptions
+                            showSave
+                            className="grow ml-5 overflow-hidden"
+                        />
+                    </Topbar>
                     <PageTitle>Saves</PageTitle>
-                    <SaveInput />
+                    <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
+                        <SaveInputTrigger />
+                    </SaveInput>
+                    <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
                     <ItemList />
                 </WithPanel>
                 <ItemPanel />

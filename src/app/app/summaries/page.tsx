@@ -7,7 +7,7 @@ import {
     PageTitle,
     ScrollArea,
     ScrollBar,
-    SummaryCard
+    SummaryCard,
 } from "@/ui/components";
 import { ArrowRightIcon } from "lucide-react";
 import NextLink from "next/link";
@@ -31,7 +31,6 @@ export default function SummariesPage() {
                             <ArrowRightIcon size={20} />
                         </Link>
                     </div>
-
                     <ScrollArea type="scroll">
                         <div className="flex gap-3 p-1">
                             {latestSummariesQuery.data ? (

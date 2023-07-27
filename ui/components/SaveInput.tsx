@@ -1,65 +1,103 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
-import { includeCaseInsensitive } from "../../src/app/utils";
-import { Package2, Plus, RefreshCw, Tag, X } from "lucide-react";
-import { cn } from "../utils";
-import { FocusScope } from "@radix-ui/react-focus-scope";
-import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
-import { RemoveScroll } from "react-remove-scroll";
-import {
-    CollectionSelector,
-    TagSelector,
-    Input,
-    Button,
-    SimpleItemCard,
-    Loader,
-} from ".";
 import { ItemMetadata } from "@/src/datatypes/item";
 import { hostname } from "@/src/utils";
+import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
+import { FocusScope } from "@radix-ui/react-focus-scope";
 import { Slot } from "@radix-ui/react-slot";
+import { Package2, Plus, RefreshCw, TagIcon, X } from "lucide-react";
+import React from "react";
+import { RemoveScroll } from "react-remove-scroll";
+import {
+    AddTag,
+    Button,
+    CollectionSelector,
+    Input,
+    Loader,
+    SimpleItemCard,
+    SimpleTag,
+} from ".";
+import { cn } from "../utils";
 
-export function SaveInput() {
-    const [isShowPopover, setIsShowPopover] = useState(false);
+interface SaveInputState {
+    isShow: boolean;
+    show: () => void;
+    dismiss: () => void;
+}
 
-    const showPopover = () => {
-        setIsShowPopover(true);
-    };
+const SaveInputContext = React.createContext<SaveInputState | null>(null);
+const SaveInputProvider = SaveInputContext.Provider;
+const useSaveInputStore = () => {
+    return useContext(SaveInputContext) as SaveInputState;
+};
 
-    const dismissPopOver = () => {
-        setIsShowPopover(false);
-    };
+interface SaveInputProps {
+    children?: React.ReactNode;
+    className?: string;
+}
+
+export function SaveInput({ className, children }: SaveInputProps) {
+    const [isShow, setIsShow] = useState(false);
+
+    const show = useCallback(() => {
+        setIsShow(true);
+    }, []);
+
+    const dismiss = useCallback(() => {
+        setIsShow(false);
+    }, []);
 
     return (
-        <div className="flex flex-col relative mb-5 mx-8 max-md:mx-5">
-            <button
-                className={cn(
-                    "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                    {
-                        "opacity-0": isShowPopover,
-                    }
-                )}
-                onClick={showPopover}
-            >
-                <Plus size={18} className="mr-2" />
-                Save a URL...
-            </button>
-            <SaveInputPopover
-                isShow={isShowPopover}
-                onDismiss={dismissPopOver}
-            />
-        </div>
+        <SaveInputProvider
+            value={{
+                isShow,
+                show,
+                dismiss,
+            }}
+        >
+            <div className={cn("relative z-10", className)}>
+                {children}
+                <SaveInputDialog />
+            </div>
+        </SaveInputProvider>
     );
 }
 
-interface SaveInputPopoverProps {
-    isShow: boolean;
-    onDismiss: () => void;
+interface SaveInputTriggerProps {
+    children?: React.ReactNode;
 }
 
-function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
+export function SaveInputTrigger(props: SaveInputTriggerProps) {
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const { isShow, show } = useSaveInputStore();
+
+    const children = props.children || (
+        <button
+            className={cn(
+                "flex items-center text-left text-base box-border bg-background hover:border-slate-500 transition-colors py-3 px-4 rounded-lg border border-input cursor-text text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-sm",
+                {
+                    "opacity-0": isShow,
+                },
+            )}
+        >
+            <Plus size={18} className="mr-2" />
+            Save a URL...
+        </button>
+    );
+
+    return (
+        <Slot ref={buttonRef} onClick={show}>
+            {children}
+        </Slot>
+    );
+}
+
+function SaveInputDialog() {
+    const { isShow, dismiss } = useSaveInputStore();
+
     const ctx = trpc.useContext();
 
     const [url, setUrl] = useState("");
@@ -79,7 +117,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
         if (createItemMutation.isSuccess) {
             setUrl("");
             setTags([]);
-            onDismiss();
+            dismiss();
         }
     }, [createItemMutation.isSuccess]);
 
@@ -116,7 +154,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
     return (
         <RemoveScroll enabled={isShow} as={Slot} allowPinchZoom>
             <FocusScope asChild trapped={isShow} loop>
-                <DismissableLayer asChild onDismiss={onDismiss}>
+                <DismissableLayer asChild onDismiss={dismiss}>
                     <div
                         className={cn("z-50", {
                             hidden: isHidden,
@@ -127,16 +165,16 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                 "fixed top-0 bottom-0 left-0 right-0 transition-[background-color,backdrop-filter]",
                                 {
                                     "bg-white/80 backdrop-blur-sm": !isCollapse,
-                                }
+                                },
                             )}
-                            onClick={onDismiss}
+                            onClick={dismiss}
                         ></div>
                         <form
                             className={cn(
-                                "@container flex flex-col absolute -left-1 -top-1 -right-1 z-10 transition-[transform,opacity] pointer-events-none",
+                                "@container flex flex-col -left-1 -right-1 top-0 absolute z-10 transition-[transform,opacity] pointer-events-none",
                                 isCollapse
                                     ? "opacity-0 scale-95"
-                                    : "opacity-100 scale-100"
+                                    : "opacity-100 scale-100",
                             )}
                             action=""
                             onSubmit={handleSubmit}
@@ -146,7 +184,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                     "relative h-12 bg-background shadow-lg rounded-t-lg border pointer-events-auto",
                                     url
                                         ? "@xl:rounded-br-md"
-                                        : "rounded-br-md rounded-bl-md"
+                                        : "rounded-br-md rounded-bl-md",
                                 )}
                             >
                                 <Input
@@ -159,7 +197,7 @@ function SaveInputPopover({ isShow, onDismiss }: SaveInputPopoverProps) {
                                 <Button
                                     className={cn(
                                         "absolute right-2 top-1/2 -translate-y-1/2 z-10 text-slate-500 rounded-full p-1",
-                                        { hidden: !url }
+                                        { hidden: !url },
                                     )}
                                     onClick={clearInput}
                                     type="button"
@@ -215,7 +253,7 @@ function SaveOptions({
         {
             url,
         },
-        { refetchOnWindowFocus: false, enabled: false }
+        { refetchOnWindowFocus: false, enabled: false },
     );
 
     const refresh = useCallback(() => {
@@ -256,35 +294,21 @@ function SaveOptions({
         }
     }, [fetchMetadataQuery.isFetched]);
 
-    const setTag = (name: string, index: number) => {
-        if (includeCaseInsensitive(tags, name)) {
-            if (index !== -1) {
-                const newTags = [...tags];
-                newTags.splice(index, 1);
-                setTags(newTags);
-            }
-        } else {
-            if (index === -1) {
-                setTags([...tags, name]);
-            } else {
-                const newTags = [...tags];
-                newTags[index] = name;
-                setTags(newTags);
-            }
+    const addTag = (name: string) => {
+        if (!tags.includes(name)) {
+            setTags([...tags, name]);
         }
     };
 
-    const removeTag = (index: number) => {
-        const newTags = [...tags];
-        newTags.splice(index, 1);
-        setTags(newTags);
+    const removeTag = (name: string) => {
+        setTags(tags.filter((tagName) => tagName != name));
     };
 
     return (
         <div
             className={cn(
                 "relative flex flex-col max-h-[75vh] overflow-auto gap-3 bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
-                { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse }
+                { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse },
             )}
         >
             <SimpleItemCard
@@ -316,30 +340,26 @@ function SaveOptions({
                     <CollectionSelector
                         collections={collectionsQuery.data}
                         value={collection}
-                        setValue={setCollection}
+                        onSelect={setCollection}
                         disabled={isCreating}
                     />
                 </div>
                 <div className="flex gap-3 flex-wrap items-center">
-                    <Tag className="text-slate-500" size={18} />
-                    {tags.map((tag, index) => (
-                        <TagSelector
+                    <TagIcon className="text-slate-500" size={18} />
+                    {tags.map((tag) => (
+                        <SimpleTag
                             key={tag}
-                            index={index}
-                            tags={tagsQuery.data}
                             value={tag}
-                            setValue={setTag}
                             remove={removeTag}
                             disabled={isCreating}
+                            editMode
                         />
                     ))}
-                    <TagSelector
+                    <AddTag
                         tags={tagsQuery.data}
-                        value=""
-                        index={-1}
-                        setValue={setTag}
-                        remove={removeTag}
+                        onSelect={addTag}
                         disabled={isCreating}
+                        selectedTags={tags}
                     />
                 </div>
             </div>

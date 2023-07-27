@@ -1,15 +1,19 @@
+import { ItemStatus } from "@prisma/client";
 import { create } from "zustand";
-import { StatusEnum } from "../utils/Statuses";
 
 export interface ItemListState {
-    activeStatus: StatusEnum;
+    activeStatus: ItemStatus;
     isMultiselect: boolean;
-    selectedItems: Set<string>;
     isShowPanel: boolean;
+    selectedItems: Set<string>;
+    includedTags: Set<string>;
+    excludedTags: Set<string>;
 }
 
 export interface ItemListActions {
-    setActiveStatus: (activeStatus: StatusEnum) => void;
+    setActiveStatus: (activeStatus: ItemStatus) => void;
+    setIncludedTags: (includedTags: Set<string>) => void;
+    setExcludedTags: (excludedTags: Set<string>) => void;
     enableMultiselect: () => void;
     disableMultiselect: () => void;
     selectItem: (id: string) => void;
@@ -19,10 +23,12 @@ export interface ItemListActions {
 }
 
 const initialState: ItemListState = {
-    activeStatus: StatusEnum.Inbox,
+    activeStatus: ItemStatus.Inbox,
     isMultiselect: false,
-    selectedItems: new Set(),
     isShowPanel: false,
+    selectedItems: new Set(),
+    includedTags: new Set(),
+    excludedTags: new Set(),
 };
 
 export const useItemListStore = create<ItemListState & ItemListActions>(
@@ -30,6 +36,8 @@ export const useItemListStore = create<ItemListState & ItemListActions>(
         ...initialState,
 
         setActiveStatus: (activeStatus) => set({ activeStatus }),
+        setIncludedTags: (includedTags) => set({ includedTags }),
+        setExcludedTags: (excludedTags) => set({ excludedTags }),
 
         enableMultiselect: () => set({ isMultiselect: true }),
         disableMultiselect: () =>
@@ -58,5 +66,5 @@ export const useItemListStore = create<ItemListState & ItemListActions>(
         dismissPanel: () => set({ isShowPanel: false }),
 
         reset: () => set(initialState),
-    })
+    }),
 );

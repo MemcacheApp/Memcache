@@ -1,9 +1,10 @@
-import { protectedProcedure, router } from "../trpc";
-import { z } from "zod";
-import ItemController from "../../controllers/item-controller";
-import { FetchURLError, GetItemError } from "../../controllers/errors/item";
+import { ItemStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { AuthError } from "../../controllers/errors/user";
+import ItemController from "../../controllers/item-controller";
+import { protectedProcedure, router } from "../trpc";
 
 export const itemRouter = router({
     getItem: protectedProcedure
@@ -18,23 +19,36 @@ export const itemRouter = router({
                 });
             }
         }),
-    getUserItems: protectedProcedure.query(async ({ ctx }) => {
-        try {
-            return await ItemController.getUserItems(ctx.userId);
-        } catch (e) {
-            console.error(e);
-            throw new TRPCError({
-                code: "INTERNAL_SERVER_ERROR",
-            });
-        }
-    }),
+    getUserItems: protectedProcedure
+        .input(
+            z
+                .object({
+                    includedTags: z.string().array().optional(),
+                    excludedTags: z.string().array().optional(),
+                })
+                .optional(),
+        )
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ItemController.getUserItems(
+                    ctx.userId,
+                    input?.includedTags,
+                    input?.excludedTags,
+                );
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }),
     createItem: protectedProcedure
         .input(
             z.object({
                 url: z.string(),
                 collectionName: z.string(),
                 tagNames: z.string().array(),
-            })
+            }),
         )
         .mutation(async ({ ctx, input }) => {
             try {
@@ -42,7 +56,7 @@ export const itemRouter = router({
                     ctx.userId,
                     input.url,
                     input.collectionName,
-                    input.tagNames
+                    input.tagNames,
                 );
             } catch (e) {
                 if (e instanceof FetchURLError) {
@@ -62,7 +76,7 @@ export const itemRouter = router({
         .input(
             z.object({
                 url: z.string(),
-            })
+            }),
         )
         .query(async ({ input }) => {
             try {
@@ -106,13 +120,15 @@ export const itemRouter = router({
             }
         }),
     setItemStatus: protectedProcedure
-        .input(z.object({ itemId: z.string(), status: z.number() }))
+        .input(
+            z.object({ itemId: z.string(), status: z.nativeEnum(ItemStatus) }),
+        )
         .mutation(async ({ ctx, input }) => {
             try {
                 await ItemController.updateItemStatus(
                     ctx.userId,
                     input.itemId,
-                    input.status
+                    input.status,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -140,7 +156,7 @@ export const itemRouter = router({
                 await ItemController.setItemCollection(
                     ctx.userId,
                     input.itemId,
-                    input.collectionName
+                    input.collectionName,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -168,7 +184,7 @@ export const itemRouter = router({
                 await ItemController.addTag(
                     ctx.userId,
                     input.itemId,
-                    input.tagName
+                    input.tagName,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -196,7 +212,7 @@ export const itemRouter = router({
                 await ItemController.removeTag(
                     ctx.userId,
                     input.itemId,
-                    input.tagId
+                    input.tagId,
                 );
             } catch (e) {
                 if (e instanceof AuthError) {
@@ -221,14 +237,5 @@ export const itemRouter = router({
         .input(z.object({ itemId: z.string() }))
         .query(async ({ input }) => {
             return await ItemController.getItemStatus(input.itemId);
-        }),
-    updateItemStatus: protectedProcedure
-        .input(z.object({ itemId: z.string(), status: z.number() }))
-        .mutation(async ({ ctx, input }) => {
-            return ItemController.updateItemStatus(
-                ctx.userId,
-                input.itemId,
-                input.status
-            );
         }),
 });

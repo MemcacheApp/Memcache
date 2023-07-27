@@ -1,16 +1,20 @@
 "use client";
 
+import { useItemListStore } from "@/src/app/store/item-list";
+import { trpc } from "@/src/app/utils/trpc";
 import {
+    ItemList,
+    ItemListOptions,
+    ItemPanel,
     LogInRequired,
     PageTitle,
     SaveInput,
-    ItemPanel,
+    SaveInputTrigger,
+    Topbar,
+    TopbarTitle,
     WithPanel,
-    ItemList,
 } from "@/ui/components";
-import { useItemListStore } from "@/src/app/store/item-list";
 import { useEffect } from "react";
-import { trpc } from "@/src/app/utils/trpc";
 
 interface CollectionPageProps {
     params: {
@@ -38,8 +42,18 @@ export default function CollectionPage({ params }: CollectionPageProps) {
         <div className="flex flex-col">
             <LogInRequired>
                 <WithPanel>
+                    <Topbar startPos={200}>
+                        <TopbarTitle>Collection: {collection.name}</TopbarTitle>
+                        <ItemListOptions
+                            showSave
+                            className="grow ml-5 overflow-hidden"
+                        />
+                    </Topbar>
                     <PageTitle>Collection: {collection.name}</PageTitle>
-                    <SaveInput />
+                    <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
+                        <SaveInputTrigger />
+                    </SaveInput>
+                    <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
                     <ItemList collectionId={params.collectionId} />
                 </WithPanel>
                 <ItemPanel />

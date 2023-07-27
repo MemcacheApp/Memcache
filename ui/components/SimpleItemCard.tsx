@@ -8,6 +8,7 @@ import {
     ExternalLink,
     ItemCardFormat,
     Link,
+    SimpleTag,
     Skeleton,
 } from ".";
 import { cn } from "../utils";
@@ -88,9 +89,8 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
         </Card>
     );
 }
-export function SimpleItemCardFooter(props: SimpleItemCardProps) {
-    console.log(props.className);
 
+export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
         <CardFooter
             className={cn(
@@ -137,12 +137,12 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                                 <TagIcon size={16} />
                                 {props.tags.map((tag) => (
                                     <Link
-                                        className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm"
+                                        tabIndex={-1}
                                         key={tag.id}
                                         href={`/app/tag/${tag.id}`}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        {tag.name}
+                                        <SimpleTag size="sm" value={tag.name} />
                                     </Link>
                                 ))}
                             </div>

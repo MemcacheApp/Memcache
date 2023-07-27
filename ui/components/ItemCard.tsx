@@ -1,8 +1,6 @@
 "use client";
 
-import { StatusEnum, StatusIcons } from "@/src/app/utils/Statuses";
-import renderIcon from "@/src/app/utils/renderIcon";
-import { Collection, Item, Tag } from "@prisma/client";
+import { Collection, Item, ItemStatus, Tag } from "@prisma/client";
 import {
     ExternalLink as ExternalLinkIcon,
     LayoutDashboard,
@@ -25,7 +23,12 @@ import {
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { cn } from "../utils";
-import { FlashcardsDialog, GenerateSummaryDialog } from "./GenerationDialog";
+import {
+    FlashcardsDialog,
+    GenerateSummaryDialog,
+    SummariesDialog,
+} from "./GenerationDialog";
+import { StatusIcon } from "./StatusIcon";
 
 interface ItemCardProps {
     data: Item & { collection: Collection; tags: Tag[] };
@@ -49,15 +52,16 @@ export function ItemCard({
     format,
 }: ItemCardProps) {
     const [isOpenSummaries, setIsOpenSummaries] = useState(false);
+    const [isOpenGenrateSummary, setIsOpenGenerateSummary] = useState(false);
     const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
 
     const ctx = trpc.useContext();
 
-    const updateItemStatusMutation = trpc.item.updateItemStatus.useMutation({
+    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
 
-    const handleUpdateItemStatus = async (newStatus: StatusEnum) => {
+    const handleUpdateItemStatus = async (newStatus: ItemStatus) => {
         if (newStatus === data.status) {
             // Same status, no need to change
             return;
@@ -80,9 +84,7 @@ export function ItemCard({
         setIsOpenFlashcards(true);
     };
 
-    const statusNums = Object.values(StatusEnum).filter(
-        (value): value is number => typeof value === "number"
-    );
+    const statusNums = Object.values(ItemStatus);
 
     return (
         <>
@@ -92,7 +94,7 @@ export function ItemCard({
                     selected
                         ? "scale-[101%] shadow-md border-slate-500"
                         : "scale-100",
-                    className
+                    className,
                 )}
                 onClick={
                     onSelect
@@ -129,17 +131,23 @@ export function ItemCard({
                                         handleUpdateItemStatus(value);
                                     }}
                                 >
-                                    {renderIcon(StatusIcons[value])}
+                                    <StatusIcon status={value} size={18} />
                                 </Button>
                             ))}
                         </>
                     )
                 }
             />
-            <GenerateSummaryDialog
+            <SummariesDialog
                 data={data}
                 open={isOpenSummaries}
                 onOpenChange={setIsOpenSummaries}
+                newSummary={() => setIsOpenGenerateSummary(true)}
+            />
+            <GenerateSummaryDialog
+                data={data}
+                open={isOpenGenrateSummary}
+                onOpenChange={setIsOpenGenerateSummary}
                 viewSummaries={() => setIsOpenSummaries(true)}
             />
             <FlashcardsDialog
