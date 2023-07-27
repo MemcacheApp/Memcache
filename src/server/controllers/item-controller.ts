@@ -117,22 +117,24 @@ export default class ItemController {
     ) {
         const items = await prisma.item.findMany({
             where: {
-                userId,
-                tags: {
-                    some: includedTags
-                        ? {
-                              name: {
-                                  in: includedTags,
-                              },
-                          }
-                        : undefined,
-                    none: excludedTags
-                        ? {
-                              name: {
-                                  in: excludedTags,
-                              },
-                          }
-                        : undefined,
+                AND: {
+                    userId,
+                    tags: {
+                        some: includedTags
+                            ? {
+                                  name: {
+                                      in: includedTags,
+                                  },
+                              }
+                            : undefined,
+                        none: excludedTags
+                            ? {
+                                  name: {
+                                      in: excludedTags,
+                                  },
+                              }
+                            : undefined,
+                    },
                 },
             },
             include: {
