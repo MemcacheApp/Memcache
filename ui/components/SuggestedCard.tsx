@@ -33,10 +33,12 @@ export function SuggestedCard({ data }: SuggestedCardProps) {
     return (
         <>
             <SimpleItemCard
+                type={data.type}
                 title={data.title}
                 description={data.description}
                 thumbnail={data.thumbnail}
                 url={data.url}
+                siteName={data.siteName}
                 format={{
                     growHeight: true,
                 }}
@@ -124,10 +126,12 @@ function CreateItemDialog({
                     <DialogTitle>Create Item</DialogTitle>
                 </DialogHeader>
                 <SimpleItemCard
+                    type={data.type}
                     title={data.title}
                     description={data.description}
                     thumbnail={data.thumbnail}
                     url={data.url}
+                    siteName={data.siteName}
                     className="max-h-48"
                     format={{
                         forceList: true,

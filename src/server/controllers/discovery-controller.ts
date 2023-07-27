@@ -81,10 +81,12 @@ export default class DiscoveryController {
                 url: { notIn: userItemUrls },
             },
             select: {
+                type: true,
                 url: true,
                 thumbnail: true,
                 title: true,
                 description: true,
+                siteName: true,
             },
         });
 
