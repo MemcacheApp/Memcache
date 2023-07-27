@@ -267,4 +267,38 @@ export default class SummaryController {
             },
         });
     }
+
+    static async getSuggestedItems(userId: string) {
+        let result = await prisma.item.findMany({
+            where: {
+                userId,
+                summaries: {
+                    none: {},
+                },
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: 6,
+        });
+
+        if (result.length < 3) {
+            result = await prisma.item.findMany({
+                include: {
+                    tags: true,
+                    collection: true,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+                take: 6,
+            });
+        }
+
+        return result;
+    }
 }

@@ -63,6 +63,7 @@ export function SummariesDialog({
 
     useEffect(() => {
         if (
+            open &&
             getItemSummariesQuery.data &&
             getItemSummariesQuery.data.length === 0
         ) {
@@ -79,18 +80,18 @@ export function SummariesDialog({
                 <div className="flex flex-col gap-5">
                     {getItemSummariesQuery.data !== undefined ? (
                         <>
-                            {getItemSummariesQuery.data.map((summary) => (
-                                <SummaryCard
-                                    key={summary.id}
-                                    item={data}
-                                    summary={summary}
-                                />
-                            ))}
-                            <Button
-                                variant="outline"
-                                onClick={handleNewSummary}
-                            >
-                                <PlusIcon className="mr-2" size={16} /> Generate
+                            <div className="flex flex-col gap-5 max-h-[60vh] overflow-auto">
+                                {getItemSummariesQuery.data.map((summary) => (
+                                    <SummaryCard
+                                        className="shrink-0"
+                                        key={summary.id}
+                                        item={data}
+                                        summary={summary}
+                                    />
+                                ))}
+                            </div>
+                            <Button onClick={handleNewSummary}>
+                                <PlusIcon className="mr-2" size={18} /> Generate
                                 New Summary
                             </Button>
                         </>
@@ -104,10 +105,10 @@ export function SummariesDialog({
 }
 
 interface GenerateSummaryDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
+    data: (Item & { collection: Collection; tags: Tag[] }) | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    viewSummaries: () => void;
+    viewSummaries?: () => void;
 }
 
 export function GenerateSummaryDialog({
@@ -124,19 +125,24 @@ export function GenerateSummaryDialog({
 
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
         onSuccess() {
-            ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
+            if (data) {
+                ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
+                ctx.summary.getLatestSummaries.invalidate();
+            }
             onOpenChange(false);
-            viewSummaries();
+            if (viewSummaries) viewSummaries();
         },
     });
 
     const handleSubmit = () => {
-        generateSummaryMutation.mutate({
-            itemId: data.id,
-            numOfWords,
-            experience,
-            finetuning,
-        });
+        if (data) {
+            generateSummaryMutation.mutate({
+                itemId: data.id,
+                numOfWords,
+                experience,
+                finetuning,
+            });
+        }
     };
 
     return (

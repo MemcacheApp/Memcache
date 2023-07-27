@@ -1,8 +1,8 @@
-import { protectedProcedure, router } from "../trpc";
-import SummaryController from "../../controllers/summary-controller";
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { GetSummaryError } from "../../controllers/errors/summary";
+import SummaryController from "../../controllers/summary-controller";
+import { protectedProcedure, router } from "../trpc";
 
 export const summaryRouter = router({
     getSummary: protectedProcedure
@@ -81,4 +81,14 @@ export const summaryRouter = router({
                 });
             }
         }),
+    getSuggestedItems: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return await SummaryController.getSuggestedItems(ctx.userId);
+        } catch (e) {
+            console.error(e);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+            });
+        }
+    }),
 });
