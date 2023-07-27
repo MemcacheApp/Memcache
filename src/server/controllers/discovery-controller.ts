@@ -1,8 +1,9 @@
+import { SuggestedItem } from "@/src/datatypes/item";
 import { prisma } from "../db/prisma";
 
 // Randomize (shuffle) a JavaScript array
 // Source: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-function shuffle(array: any[]) {
+function shuffle<T>(array: T[]) {
     let currentIndex = array.length,
         randomIndex;
 
@@ -23,7 +24,7 @@ function shuffle(array: any[]) {
 }
 
 export default class DiscoveryController {
-    static async getSuggestedDiscoveryItems(userId: string) {
+    static async getSuggestedItems(userId: string) {
         const userTagNamesRes = await prisma.tag.findMany({
             where: {
                 userId,
@@ -88,12 +89,7 @@ export default class DiscoveryController {
         });
 
         const existingItems: { [key: string]: boolean } = {};
-        const uniqueSuggestedItems: {
-            url: string;
-            thumbnail: string | null;
-            title: string;
-            description: string;
-        }[] = [];
+        const uniqueSuggestedItems: SuggestedItem[] = [];
         suggestedItems.forEach((item) => {
             if (existingItems[item.url] === undefined) {
                 existingItems[item.url] = true;

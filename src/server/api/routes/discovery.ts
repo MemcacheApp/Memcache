@@ -3,9 +3,9 @@ import DiscoveryController from "../../controllers/discovery-controller";
 import { protectedProcedure, router } from "../trpc";
 
 export const discoveryRouter = router({
-    getSuggestedDiscoveryItems: protectedProcedure.query(async ({ ctx }) => {
+    getSuggestedItems: protectedProcedure.query(async ({ ctx }) => {
         try {
-            return DiscoveryController.getSuggestedDiscoveryItems(ctx.userId);
+            return DiscoveryController.getSuggestedItems(ctx.userId);
         } catch (e) {
             console.error(e);
             throw new TRPCError({
