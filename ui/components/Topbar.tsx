@@ -54,12 +54,12 @@ function TopbarInner({ children }: TopbarProps) {
     return (
         <div
             ref={containerRef}
-            className={cn("fixed h-12 z-10 items-center md:top-3 md:px-8", {
+            className={cn("fixed h-16 z-10 items-center md:top-3 md:px-8", {
                 hidden: !isShow,
             })}
         >
             <SaveInput className="h-full">
-                <div className="flex h-full items-center bg-background/95 backdrop-blur-lg px-5 shadow-sm border md:rounded-md">
+                <div className="flex h-full items-center bg-background/[0.85] backdrop-blur-lg scale-[1.04] px-5 shadow-md border border-slate-300 md:rounded-md">
                     <Button
                         className={cn(
                             "w-10 -ml-3 mr-1 shrink-0 rounded-full p-0 min-[1240px]:hidden",
