@@ -7,7 +7,12 @@ import { useMemo } from "react";
 import { trpc } from "../../utils/trpc";
 
 export default function DiscoverPage() {
-    const getSuggestedItemsQuery = trpc.discovery.getSuggestedItems.useQuery();
+    const getSuggestedItemsQuery = trpc.discovery.getSuggestedItems.useQuery(
+        undefined,
+        {
+            refetchOnWindowFocus: false,
+        },
+    );
 
     const columns = useMemo(() => {
         if (getSuggestedItemsQuery.data) {
