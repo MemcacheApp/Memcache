@@ -1,7 +1,7 @@
 "use client";
 
 import { SuggestedItem } from "@/src/datatypes/item";
-import { Loader, SimpleItemCard } from "@/ui/components";
+import { Loader, SuggestedCard } from "@/ui/components";
 import { PageTitle } from "@/ui/components/typography";
 import { useMemo } from "react";
 import { trpc } from "../../utils/trpc";
@@ -40,12 +40,7 @@ export default function DiscoverPage() {
                     columns.map((column, i) => (
                         <div className="grid gap-3" key={i}>
                             {column.map((item) => (
-                                <SimpleItemCard
-                                    key={item.url}
-                                    thumbnail={item.thumbnail}
-                                    title={item.title}
-                                    description={item.description}
-                                />
+                                <SuggestedCard key={item.url} data={item} />
                             ))}
                         </div>
                     ))
