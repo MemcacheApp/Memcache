@@ -271,9 +271,11 @@ export default class SummaryController {
     static async getSuggestedItems(userId: string) {
         let result = await prisma.item.findMany({
             where: {
-                userId,
-                summaries: {
-                    none: {},
+                AND: {
+                    userId,
+                    summaries: {
+                        none: {},
+                    },
                 },
             },
             include: {
@@ -288,6 +290,9 @@ export default class SummaryController {
 
         if (result.length < 3) {
             result = await prisma.item.findMany({
+                where: {
+                    userId,
+                },
                 include: {
                     tags: true,
                     collection: true,
