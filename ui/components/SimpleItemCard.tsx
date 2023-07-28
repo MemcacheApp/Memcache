@@ -95,10 +95,6 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     thumbnail={props.thumbnail}
                     format={props.format}
                 />
-                {/* <SimpleItemCardFooter
-                    {...props}
-                    className={cn("flex @lg:hidden order-3")}
-                /> */}
             </div>
             <SimpleItemCardFooter {...props} />
         </Card>
@@ -112,11 +108,11 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                 "items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end",
             )}
         >
-            {props.loading ? (
-                <Skeleton className="h-5 w-24 rounded-lg" />
-            ) : (
-                <>
-                    <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
+            <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
+                {props.loading ? (
+                    <Skeleton className="h-5 w-24 rounded-lg" />
+                ) : (
+                    <>
                         {props.siteName ? (
                             <ExternalLink
                                 className="flex items-center gap-2 my-2"
@@ -161,13 +157,13 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                                 ))}
                             </div>
                         ) : null}
-                        {props.footerLeft}
-                    </div>
-                    {props.footerRight ? (
-                        <div className="flex gap-3">{props.footerRight}</div>
-                    ) : null}
-                </>
-            )}
+                    </>
+                )}
+                {props.footerLeft}
+            </div>
+            {props.footerRight ? (
+                <div className="flex gap-3">{props.footerRight}</div>
+            ) : null}
         </CardFooter>
     );
 }

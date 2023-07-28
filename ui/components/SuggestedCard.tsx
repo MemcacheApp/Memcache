@@ -18,8 +18,10 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    Label,
     SimpleItemCard,
     SimpleTag,
+    Switch,
 } from ".";
 
 interface SuggestedCardProps {
@@ -108,6 +110,7 @@ function CreateItemDialog({
 
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [isPublic, setIsPublic] = useState(true);
 
     const addTag = (name: string) => {
         if (!tags.includes(name)) {
@@ -117,6 +120,15 @@ function CreateItemDialog({
 
     const removeTag = (name: string) => {
         setTags(tags.filter((tagName) => tagName != name));
+    };
+
+    const handleSubmit = () => {
+        createItemMutation.mutate({
+            url: data.url,
+            collectionName: collection,
+            tagNames: tags,
+            public: isPublic,
+        });
     };
 
     return (
@@ -132,10 +144,20 @@ function CreateItemDialog({
                     thumbnail={data.thumbnail}
                     url={data.url}
                     siteName={data.siteName}
-                    className="max-h-48"
+                    className="max-h-64"
                     format={{
                         forceList: true,
                     }}
+                    footerLeft={
+                        <div className="flex items-center gap-3 ml-auto">
+                            <Label htmlFor="airplane-mode">Public</Label>
+                            <Switch
+                                id="is-public"
+                                checked={isPublic}
+                                onCheckedChange={setIsPublic}
+                            />
+                        </div>
+                    }
                 />
                 <div className="flex gap-3 flex-wrap items-center">
                     <Package2 className="text-slate-500" size={18} />
@@ -167,14 +189,7 @@ function CreateItemDialog({
                 <DialogFooter>
                     <Button
                         disabled={createItemMutation.isLoading}
-                        onClick={() =>
-                            createItemMutation.mutate({
-                                url: data.url,
-                                collectionName: collection,
-                                tagNames: tags,
-                                public: true,
-                            })
-                        }
+                        onClick={handleSubmit}
                     >
                         Save
                     </Button>

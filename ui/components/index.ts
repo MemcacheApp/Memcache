@@ -28,6 +28,7 @@ export * from "./SimpleTag";
 export * from "./Skeleton";
 export * from "./SuggestedCard";
 export * from "./SummaryCard";
+export * from "./Switch";
 export * from "./Tabs";
 export * from "./Tooltip";
 export * from "./Topbar";
