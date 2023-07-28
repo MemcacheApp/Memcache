@@ -37,7 +37,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
     return (
         <Card
             className={cn(
-                "@container outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0 overflow-hidden h-full",
+                "@container flex flex-col outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shrink-0 overflow-hidden h-full",
                 {
                     "cursor-pointer hover:border-slate-500": props.onClick,
                     "h-full flex flex-col": props.format?.growHeight,
@@ -49,13 +49,16 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
         >
             <div
                 className={cn(
-                    "flex flex-col @lg:flex-row @lg:items-start max-h-full",
+                    "flex flex-col overflow-hidden",
+                    props.format?.forceList
+                        ? "flex-row items-start"
+                        : "@lg:flex-row @lg:items-start",
                     {
-                        "grow ": props.format?.growHeight,
+                        grow: props.format?.growHeight,
                     },
                 )}
             >
-                <CardHeader className="grow order-2 overflow-y-hidden">
+                <CardHeader className="grow order-2 overflow-hidden">
                     {props.loading ? (
                         <>
                             <Skeleton className="h-8 rounded-lg" />
@@ -79,13 +82,14 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     type={props.type}
                     loading={props.loading}
                     thumbnail={props.thumbnail}
+                    format={props.format}
                 />
-                <SimpleItemCardFooter
+                {/* <SimpleItemCardFooter
                     {...props}
-                    className="flex @lg:hidden order-3"
-                />
+                    className={cn("flex @lg:hidden order-3")}
+                /> */}
             </div>
-            <SimpleItemCardFooter {...props} className="hidden @lg:flex" />
+            <SimpleItemCardFooter {...props} />
         </Card>
     );
 }
@@ -95,7 +99,6 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
         <CardFooter
             className={cn(
                 "items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end",
-                props.className,
             )}
         >
             {props.loading ? (
@@ -159,21 +162,25 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
 }
 
 interface ThumbnailProps {
-    type: string | undefined;
-    loading: boolean | undefined;
-    thumbnail: string | undefined | null;
+    type?: string;
+    loading?: boolean;
+    thumbnail?: string | null;
+    format?: ItemCardFormat;
 }
 
 function Thumbnail(props: ThumbnailProps) {
     if (props.loading) {
         return (
-            <Skeleton className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 aspect-[16/9] @lg:m-6 shrink-0 @lg:border rounded-t-lg overflow-hidden" />
+            <Skeleton className="order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 aspect-[16/9] @lg:m-6 shrink-0 rounded-t-lg overflow-hidden" />
         );
     } else if (props.thumbnail) {
         return (
             <div
                 className={cn(
-                    "order-1 @lg:order-2 @lg:max-w-[32%] max-h-64 @lg:max-h-48 @lg:m-6 shrink-0 border rounded-t-lg @lg:rounded-lg overflow-hidden",
+                    "order-1 max-h-64 shrink-0 rounded-t-lg overflow-hidden",
+                    props.format?.forceList
+                        ? "order-2 max-w-[32%] max-h-48 m-6 border rounded-lg"
+                        : "@lg:order-2 @lg:max-w-[32%] @lg:max-h-48 @lg:m-6 @lg:border @lg:rounded-lg",
                     props.type?.startsWith("music")
                         ? "aspect-square"
                         : "aspect-[16/9]",
