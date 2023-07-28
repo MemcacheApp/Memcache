@@ -1,7 +1,5 @@
-import { protectedProcedure, publicProcedure, router } from "../trpc";
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import UserController from "../../controllers/user-controller";
+import { z } from "zod";
 import {
     CreateUserError,
     GetUserError,
@@ -9,6 +7,8 @@ import {
     SendEmailError,
     VerifyCodeError,
 } from "../../controllers/errors/user";
+import UserController from "../../controllers/user-controller";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
     createUser: publicProcedure
@@ -163,70 +163,19 @@ export const userRouter = router({
                 }
             }
         }),
-    updateEmail: protectedProcedure
+    updateProfile: protectedProcedure
         .input(
-            z.object({
-                newEmail: z.string(),
-            }),
+            z
+                .object({
+                    firstName: z.string(),
+                    lastName: z.string(),
+                    email: z.string(),
+                })
+                .partial(),
         )
-        .mutation(async ({ input, ctx }) => {
+        .mutation(async ({ ctx, input }) => {
             try {
-                return await UserController.updateEmail(
-                    ctx.userId,
-                    input.newEmail,
-                );
-            } catch (e) {
-                if (e instanceof GetUserError) {
-                    throw new TRPCError({
-                        message: e.message,
-                        code: "BAD_REQUEST",
-                    });
-                } else {
-                    console.error(e);
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                    });
-                }
-            }
-        }),
-    updateFirstName: protectedProcedure
-        .input(
-            z.object({
-                newFirstName: z.string(),
-            }),
-        )
-        .mutation(async ({ input, ctx }) => {
-            try {
-                return await UserController.updateFirstName(
-                    ctx.userId,
-                    input.newFirstName,
-                );
-            } catch (e) {
-                if (e instanceof GetUserError) {
-                    throw new TRPCError({
-                        message: e.message,
-                        code: "BAD_REQUEST",
-                    });
-                } else {
-                    console.error(e);
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                    });
-                }
-            }
-        }),
-    updateLastName: protectedProcedure
-        .input(
-            z.object({
-                newLastName: z.string(),
-            }),
-        )
-        .mutation(async ({ input, ctx }) => {
-            try {
-                return await UserController.updateLastName(
-                    ctx.userId,
-                    input.newLastName,
-                );
+                return await UserController.updateProfile(ctx.userId, input);
             } catch (e) {
                 if (e instanceof GetUserError) {
                     throw new TRPCError({

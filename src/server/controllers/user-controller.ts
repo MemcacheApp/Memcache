@@ -316,6 +316,36 @@ export default class UserController {
     /**
      * @throws {GetUserError}
      */
+    static async updateProfile(
+        userId: string,
+        profile: {
+            email?: string;
+            firstName?: string;
+            lastName?: string;
+        },
+    ) {
+        await prisma.user
+            .update({
+                where: {
+                    id: userId,
+                },
+                data: profile,
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
+    }
+
+    /**
+     * @throws {GetUserError}
+     */
     static async updateEmail(id: string, newEmail: string) {
         await prisma.user
             .update({
