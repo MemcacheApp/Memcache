@@ -139,6 +139,7 @@ async function main() {
             item.url,
             "Default",
             [],
+            true,
             // item.collectionName,
             // item.tagNames,
         );

@@ -172,6 +172,7 @@ function CreateItemDialog({
                                 url: data.url,
                                 collectionName: collection,
                                 tagNames: tags,
+                                public: true,
                             })
                         }
                     >

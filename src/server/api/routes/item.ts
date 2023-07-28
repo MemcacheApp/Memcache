@@ -48,6 +48,7 @@ export const itemRouter = router({
                 url: z.string(),
                 collectionName: z.string(),
                 tagNames: z.string().array(),
+                public: z.boolean(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -57,6 +58,7 @@ export const itemRouter = router({
                     input.url,
                     input.collectionName,
                     input.tagNames,
+                    input.public,
                 );
             } catch (e) {
                 if (e instanceof FetchURLError) {

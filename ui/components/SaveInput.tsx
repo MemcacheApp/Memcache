@@ -143,6 +143,7 @@ function SaveInputDialog() {
             url,
             collectionName: collection,
             tagNames: tags,
+            public: true,
         });
     };
 

@@ -1,20 +1,20 @@
-import bcrypt from "bcryptjs";
 import { Prisma, Session } from "@prisma/client";
-import { prisma } from "../db/prisma";
-import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import cookie from "cookie";
+import jwt from "jsonwebtoken";
+import { createElement } from "react";
+import { Resend } from "resend";
+import { v4 as uuidv4 } from "uuid";
+import { prisma } from "../db/prisma";
 import CollectionController from "./collection-controller";
 import {
-    CreateUserError,
-    LoginError,
     AuthError,
+    CreateUserError,
     GetUserError,
+    LoginError,
     SendEmailError,
     VerifyCodeError,
 } from "./errors/user";
-import { Resend } from "resend";
-import { createElement } from "react";
 
 const SECRET_KEY = "superSecretTestKey"; // TODO: move to .env
 const resend = new Resend("re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c");
@@ -40,6 +40,12 @@ export default class UserController {
                     lastName: lastName,
                     password: hashPassword,
                     email: email,
+                    UserPreferences: {
+                        create: {
+                            publicNewItem: true,
+                            publicProfile: true,
+                        },
+                    },
                 },
             })
             .catch((err) => {

@@ -49,6 +49,7 @@ export default class ItemController {
         url: string,
         collectionName: string,
         tagNames: string[],
+        isPublic: boolean,
     ) {
         const collection = await CollectionController.getOrCreateCollection(
             userId,
@@ -67,6 +68,7 @@ export default class ItemController {
             data: {
                 id: uuidv4(),
                 type: metadata?.type || "website",
+                public: isPublic,
                 status: ItemStatus.Inbox,
                 collectionId: collection.id,
                 tags: {
