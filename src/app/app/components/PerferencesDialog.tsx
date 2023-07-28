@@ -8,12 +8,14 @@ import {
     Input,
     Label,
     Separator,
+    Switch,
     Tabs,
     TabsContent,
 } from "@/ui/components";
 import { cn } from "@/ui/utils";
 import { ArrowDownToLineIcon, UserIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { usePreferences } from "../../utils/procedures";
 import { trpc } from "../../utils/trpc";
 
 interface PerferencesDialogProps {
@@ -41,7 +43,7 @@ export default function PerferencesDialog({
                             <Profile />
                         </TabsContent>
                         <TabsContent tabIndex={-1} value="save">
-                            Save
+                            <Save />
                         </TabsContent>
                     </Tabs>
                 </div>
@@ -110,14 +112,20 @@ function Profile() {
     const updateUserProfileMutation = trpc.user.updateProfile.useMutation({
         onSuccess: () => ctx.user.getUserInfo.invalidate(),
     });
+    const updatePreferenceMutation = trpc.user.updatePerferences.useMutation({
+        onSuccess: () => ctx.user.getPerferences.invalidate(),
+    });
+    const preferences = usePreferences();
 
     const [email, setEmail] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [isPublic, setIsPublic] = useState(true);
 
     const updateEmail = useRef(false);
     const updateFirstName = useRef(false);
     const updateLastName = useRef(false);
+    const updatePublicProfile = useRef(false);
 
     useEffect(() => {
         if (getUserInfoQuery.data) {
@@ -128,6 +136,12 @@ function Profile() {
         }
     }, [getUserInfoQuery.data]);
 
+    useEffect(() => {
+        if (preferences) {
+            setIsPublic(preferences.publicProfile);
+        }
+    }, [preferences]);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         updateUserProfileMutation.mutate({
@@ -135,6 +149,11 @@ function Profile() {
             firstName: updateFirstName.current ? firstName : undefined,
             lastName: updateLastName ? lastName : undefined,
         });
+        if (updatePublicProfile.current) {
+            updatePreferenceMutation.mutate({
+                publicProfile: isPublic,
+            });
+        }
     };
 
     return (
@@ -172,10 +191,75 @@ function Profile() {
                     }}
                 />
             </div>
+            <div className="flex flex-col gap-2">
+                <Label htmlFor="update-public-profile">Public Profile</Label>
+                <Switch
+                    id="update-public-profile"
+                    checked={isPublic}
+                    onCheckedChange={(checked) => {
+                        updatePublicProfile.current = true;
+                        setIsPublic(checked);
+                    }}
+                />
+            </div>
             <Button
                 type="submit"
                 className="self-end"
-                disabled={updateUserProfileMutation.isLoading}
+                disabled={
+                    updateUserProfileMutation.isLoading ||
+                    updatePreferenceMutation.isLoading
+                }
+            >
+                Save
+            </Button>
+        </form>
+    );
+}
+
+function Save() {
+    const ctx = trpc.useContext();
+
+    const updatePreferenceMutation = trpc.user.updatePerferences.useMutation({
+        onSuccess: () => ctx.user.getPerferences.invalidate(),
+    });
+    const preferences = usePreferences();
+
+    const [publicNewItem, setPublicNewItem] = useState(true);
+
+    const updatePublicNewItem = useRef(false);
+
+    useEffect(() => {
+        if (preferences) {
+            setPublicNewItem(preferences.publicNewItem);
+        }
+    }, [preferences]);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        updatePreferenceMutation.mutate({
+            publicNewItem: updatePublicNewItem.current
+                ? publicNewItem
+                : undefined,
+        });
+    };
+
+    return (
+        <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-2">
+                <Label htmlFor="update-public-profile">Public New Item</Label>
+                <Switch
+                    id="update-public-new-item"
+                    checked={publicNewItem}
+                    onCheckedChange={(checked) => {
+                        updatePublicNewItem.current = true;
+                        setPublicNewItem(checked);
+                    }}
+                />
+            </div>
+            <Button
+                type="submit"
+                className="self-end"
+                disabled={updatePreferenceMutation.isLoading}
             >
                 Save
             </Button>
