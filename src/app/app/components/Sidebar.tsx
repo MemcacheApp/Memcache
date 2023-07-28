@@ -24,6 +24,7 @@ import { useSidebarStore } from "../../store/sidebar";
 import { useTopbarStore } from "../../store/topbar";
 import { trpc } from "../../utils/trpc";
 import { Navigation } from "./Navigation";
+import PerferencesDialog from "./PerferencesDialog";
 
 export function Sidebar() {
     const { isExpand, toggle, collapse } = useSidebarStore();
@@ -65,6 +66,8 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
     const [isHidden, setIsHidden] = useState(false);
     const [isCollapse, setIsCollapse] = useState(false);
 
+    const [isOpenPerferences, setIsOpenPerferences] = useState(false);
+
     useEffect(() => {
         if (isExpand) {
             setIsHidden(false);
@@ -90,7 +93,6 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
             )}
         >
             <Navigation />
-
             <div className="absolute flex flex-col bottom-0 left-0 right-0 w-full gap-3 p-3 bg-background/50">
                 {username ? (
                     <div className="flex gap-1">
@@ -109,7 +111,11 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() =>
+                                            setIsOpenPerferences(true)
+                                        }
+                                    >
                                         <SettingsIcon className="mr-2 h-4 w-4" />
                                         <span>Preferences</span>
                                     </DropdownMenuItem>
@@ -125,6 +131,10 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                     <SidebarItem href="/auth/login">Log in</SidebarItem>
                 )}
             </div>
+            <PerferencesDialog
+                open={isOpenPerferences}
+                onOpenChange={setIsOpenPerferences}
+            />
         </div>
     );
 }

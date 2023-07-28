@@ -23,6 +23,7 @@ export * from "./Popover";
 export * from "./SaveInput";
 export * from "./ScrollArea";
 export * from "./Select";
+export * from "./Separator";
 export * from "./SimpleItemCard";
 export * from "./SimpleTag";
 export * from "./Skeleton";
