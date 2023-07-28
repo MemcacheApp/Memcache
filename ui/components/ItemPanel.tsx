@@ -4,7 +4,14 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { DEBUG } from "@/src/app/utils/constants";
 import { trpc } from "@/src/app/utils/trpc";
 import { ItemStatus } from "@prisma/client";
-import { EditIcon, Package2, TagIcon, X } from "lucide-react";
+import {
+    ArrowLeftRightIcon,
+    EditIcon,
+    Eye,
+    Package2,
+    TagIcon,
+    X,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AddTag, CollectionSelector, ExternalLink, SimpleTag } from ".";
@@ -177,6 +184,16 @@ export function SingleItem({ itemId }: { itemId: string }) {
                     <div className="mt-3">{data.description}</div>
 
                     <Separator className="my-4" />
+
+                    <Subtitle Icon={<Eye size={18} />}>Visibility</Subtitle>
+                    <div className="flex justify-between items-center my-1">
+                        <p className="text-slate-600 font-medium">
+                            {data.public ? "Public" : "Private"}
+                        </p>
+                        <Button variant="icon" size="none">
+                            <ArrowLeftRightIcon size={18} />
+                        </Button>
+                    </div>
 
                     <Subtitle
                         Icon={<StatusIcon status={data.status} size={18} />}
