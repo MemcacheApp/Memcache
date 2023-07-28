@@ -343,14 +343,12 @@ export default class UserController {
             });
     }
 
-    /**
-     * @throws {GetUserError}
-     */
-    static async updateEmail(id: string, newEmail: string) {
-        await prisma.user
-            .update({
-                where: { id },
-                data: { email: newEmail },
+    static async getPreferences(userId: string) {
+        return await prisma.userPreferences
+            .findUnique({
+                where: {
+                    userId,
+                },
             })
             .catch((err) => {
                 if (
@@ -364,35 +362,19 @@ export default class UserController {
             });
     }
 
-    /**
-     * @throws {GetUserError}
-     */
-    static async updateFirstName(id: string, newFirstName: string) {
-        await prisma.user
+    static async updatePreferences(
+        userId: string,
+        preferences: {
+            publicProfile?: boolean;
+            publicNewItem?: boolean;
+        },
+    ) {
+        await prisma.userPreferences
             .update({
-                where: { id },
-                data: { firstName: newFirstName },
-            })
-            .catch((err) => {
-                if (
-                    err instanceof Prisma.PrismaClientKnownRequestError &&
-                    err.code === "P2025"
-                ) {
-                    throw new GetUserError("UserNotExist");
-                } else {
-                    throw err;
-                }
-            });
-    }
-
-    /**
-     * @throws {GetUserError}
-     */
-    static async updateLastName(id: string, newlastName: string) {
-        await prisma.user
-            .update({
-                where: { id },
-                data: { lastName: newlastName },
+                where: {
+                    userId,
+                },
+                data: preferences,
             })
             .catch((err) => {
                 if (

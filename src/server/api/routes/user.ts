@@ -207,4 +207,50 @@ export const userRouter = router({
             }
         }
     }),
+    getPerferences: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return await UserController.getPreferences(ctx.userId);
+        } catch (e) {
+            if (e instanceof GetUserError) {
+                throw new TRPCError({
+                    message: e.message,
+                    code: "BAD_REQUEST",
+                });
+            } else {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }
+    }),
+    updatePerferences: protectedProcedure
+        .input(
+            z
+                .object({
+                    publicProfile: z.boolean(),
+                    publicNewItem: z.boolean(),
+                })
+                .partial(),
+        )
+        .mutation(async ({ ctx, input }) => {
+            try {
+                return await UserController.updatePreferences(
+                    ctx.userId,
+                    input,
+                );
+            } catch (e) {
+                if (e instanceof GetUserError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
 });
