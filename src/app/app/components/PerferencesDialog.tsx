@@ -15,7 +15,7 @@ import {
 import { cn } from "@/ui/utils";
 import { ArrowDownToLineIcon, UserIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { usePreferences } from "../../utils/procedures";
+import { usePerferences } from "../../utils/procedures";
 import { trpc } from "../../utils/trpc";
 
 interface PerferencesDialogProps {
@@ -115,7 +115,7 @@ function Profile() {
     const updatePreferenceMutation = trpc.user.updatePerferences.useMutation({
         onSuccess: () => ctx.user.getPerferences.invalidate(),
     });
-    const preferences = usePreferences();
+    const preferences = usePerferences();
 
     const [email, setEmail] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -222,7 +222,7 @@ function Save() {
     const updatePreferenceMutation = trpc.user.updatePerferences.useMutation({
         onSuccess: () => ctx.user.getPerferences.invalidate(),
     });
-    const preferences = usePreferences();
+    const preferences = usePerferences();
 
     const [publicNewItem, setPublicNewItem] = useState(true);
 

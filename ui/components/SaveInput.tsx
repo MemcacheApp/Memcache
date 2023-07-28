@@ -3,6 +3,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
+import { usePerferences } from "@/src/app/utils/procedures";
 import { ItemMetadata } from "@/src/datatypes/item";
 import { hostname } from "@/src/utils";
 import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
@@ -115,6 +116,7 @@ function SaveInputDialog() {
     const createItemMutation = trpc.item.createItem.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
+    const perferences = usePerferences();
 
     useEffect(() => {
         if (createItemMutation.isSuccess) {
@@ -138,6 +140,12 @@ function SaveInputDialog() {
             }, 200);
         }
     }, [isShow]);
+
+    useEffect(() => {
+        if (perferences) {
+            setIsPublic(perferences.publicNewItem);
+        }
+    }, [perferences]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

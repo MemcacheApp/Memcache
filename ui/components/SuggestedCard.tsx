@@ -1,3 +1,4 @@
+import { usePerferences } from "@/src/app/utils/procedures";
 import { trpc } from "@/src/app/utils/trpc";
 import { SuggestedItem } from "@/src/datatypes/item";
 import {
@@ -8,7 +9,7 @@ import {
     TagIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     AddTag,
     Button,
@@ -104,6 +105,7 @@ function CreateItemDialog({
             setIsAdded(true);
         },
     });
+    const perferences = usePerferences();
 
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
     const tagsQuery = trpc.tag.getUserTags.useQuery();
@@ -111,6 +113,12 @@ function CreateItemDialog({
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
     const [isPublic, setIsPublic] = useState(true);
+
+    useEffect(() => {
+        if (perferences) {
+            setIsPublic(perferences.publicNewItem);
+        }
+    }, [perferences]);
 
     const addTag = (name: string) => {
         if (!tags.includes(name)) {
