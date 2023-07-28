@@ -166,15 +166,6 @@ export default class ItemController {
         });
     }
 
-    static async getItemStatus(itemId: string) {
-        const item = await prisma.item.findUnique({
-            where: {
-                id: itemId,
-            },
-        });
-        return item?.status;
-    }
-
     /**
      * @throws {GetItemError}
      * @throws {AuthError}
@@ -225,14 +216,7 @@ export default class ItemController {
                 id: itemId,
             },
             data: {
-                // collection: {
-                //     connect: { id: collection.id },
-                // },
                 collectionId: collection.id,
-            },
-            include: {
-                tags: true,
-                collection: true,
             },
         });
     }
@@ -259,10 +243,6 @@ export default class ItemController {
                     connect: [{ id: tag.id }],
                 },
             },
-            include: {
-                tags: true,
-                collection: true,
-            },
         });
     }
 
@@ -286,9 +266,30 @@ export default class ItemController {
                     disconnect: [{ id: tagId }],
                 },
             },
-            include: {
-                tags: true,
-                collection: true,
+        });
+    }
+
+    /**
+     * @throws {GetItemError}
+     * @throws {AuthError}
+     */
+    static async setItemVibility(
+        userId: string,
+        itemId: string,
+        isPublic: boolean,
+    ) {
+        const item = await this.getItem(itemId);
+
+        if (item.userId !== userId) {
+            throw new AuthError("NoPermission");
+        }
+
+        await prisma.item.update({
+            where: {
+                id: itemId,
+            },
+            data: {
+                public: isPublic,
             },
         });
     }

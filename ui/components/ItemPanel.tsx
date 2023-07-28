@@ -141,6 +141,12 @@ export function SingleItem({ itemId }: { itemId: string }) {
         },
     });
 
+    const setItemVisibilityMutation = trpc.item.setItemVisibility.useMutation({
+        onSuccess: async () => {
+            ctx.item.getItem.invalidate({ itemId });
+        },
+    });
+
     const handleUpdateItemStatus = async (newStatus: ItemStatus) => {
         if (!data) {
             return;
@@ -190,7 +196,16 @@ export function SingleItem({ itemId }: { itemId: string }) {
                         <p className="text-slate-600 font-medium">
                             {data.public ? "Public" : "Private"}
                         </p>
-                        <Button variant="icon" size="none">
+                        <Button
+                            variant="icon"
+                            size="none"
+                            onClick={() => {
+                                setItemVisibilityMutation.mutate({
+                                    itemId: data.id,
+                                    isPublic: !data.public,
+                                });
+                            }}
+                        >
                             <ArrowLeftRightIcon size={18} />
                         </Button>
                     </div>
