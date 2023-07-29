@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    Button,
     Card,
     Input,
     ItemCard,
@@ -174,6 +175,13 @@ export default function FlashcardsPage() {
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>My Flashcards</H3>
                 <H4>Revision Queue</H4>
+                <div className="w-full h-18 flex justify-center items-center">
+                    <Button
+                        onClick={() => router.push("/app/flashcards/review")}
+                    >
+                        Start Review
+                    </Button>
+                </div>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
                         {revisionQueue?.map((flashcard) => (

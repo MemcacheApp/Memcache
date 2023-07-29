@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
-import { ExternalLink, P, PageTitle } from "@/ui/components";
+import { ExternalLink, PageTitle } from "@/ui/components";
 import FlashcardDialog from "@/ui/components/FlashcardDialog";
 import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
 import { Collection, Flashcard, Item, Tag } from "@prisma/client";
@@ -27,9 +27,9 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
     >(null);
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col @container/flashcards-set">
             <PageTitle>Flashcards</PageTitle>
-            <div className="mx-8">
+            <div className="mx-8 pt-6 flex flex-col gap-5">
                 {data ? (
                     <>
                         <div className="text-xl">{data.title}</div>
@@ -67,12 +67,10 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
                     </>
                 ) : null}
             </div>
-            <div className="mx-8 pt-6">
-                <P>ID: {params.id}</P>
-                <P className="whitespace-pre-line">
-                    {data?.flashcards.map((flashcard) => (
+            <div className="mx-8 pt-6 grid grid-cols-1 @3xl/flashcards-set:grid-cols-2 @6xl/flashcards-set:grid-cols-2 gap-4">
+                {data?.flashcards.map((flashcard) => (
+                    <div key={flashcard.id} className="  ">
                         <FlashcardPreviewCard
-                            key={flashcard.id}
                             data={{ ...flashcard, item: data }}
                             onClick={() =>
                                 setSelectedFlashcard({
@@ -80,9 +78,13 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
                                     item: data,
                                 })
                             }
+                            format={{
+                                fixedDimensions: false,
+                                showItemData: false,
+                            }}
                         />
-                    ))}
-                </P>
+                    </div>
+                ))}
             </div>
             {selectedFlashcard && (
                 <FlashcardDialog
