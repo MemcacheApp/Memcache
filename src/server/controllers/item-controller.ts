@@ -293,4 +293,21 @@ export default class ItemController {
             },
         });
     }
+
+    static async getPublicItems(userId: string) {
+        return await prisma.item.findMany({
+            where: {
+                userId,
+                public: true,
+            },
+            select: {
+                type: true,
+                url: true,
+                thumbnail: true,
+                title: true,
+                description: true,
+                siteName: true,
+            },
+        });
+    }
 }

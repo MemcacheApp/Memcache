@@ -1,14 +1,7 @@
 import { usePerferences } from "@/src/app/utils/procedures";
 import { trpc } from "@/src/app/utils/trpc";
 import { SuggestedItem } from "@/src/datatypes/item";
-import {
-    CheckIcon,
-    ExternalLinkIcon,
-    Package2,
-    PlusIcon,
-    TagIcon,
-} from "lucide-react";
-import Link from "next/link";
+import { CheckIcon, Package2, PlusIcon, TagIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
     AddTag,
@@ -46,14 +39,9 @@ export function SuggestedCard({ data }: SuggestedCardProps) {
                 format={{
                     growHeight: true,
                 }}
+                titleOpenLink
                 footerRight={
                     <>
-                        <Link href={data.url} tabIndex={-1}>
-                            <Button variant="icon" size="none">
-                                <ExternalLinkIcon size={18} />
-                            </Button>
-                        </Link>
-
                         {isAdded ? (
                             <Button variant="icon" size="none">
                                 <CheckIcon

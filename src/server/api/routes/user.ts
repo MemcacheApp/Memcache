@@ -207,6 +207,33 @@ export const userRouter = router({
             }
         }
     }),
+    getUserInfoById: publicProcedure
+        .input(
+            z.object({
+                userId: z.string(),
+            }),
+        )
+        .query(async ({ input }) => {
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const { email, ...other } = await UserController.userInfo(
+                    input.userId,
+                );
+                return other;
+            } catch (e) {
+                if (e instanceof GetUserError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
     getPerferences: protectedProcedure.query(async ({ ctx }) => {
         try {
             return await UserController.getPreferences(ctx.userId);

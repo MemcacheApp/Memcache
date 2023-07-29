@@ -34,6 +34,7 @@ interface SimpleItemCardProps {
     footerLeft?: React.ReactNode;
     footerRight?: React.ReactNode;
     format?: SimpleItemCardFormat;
+    titleOpenLink?: boolean;
 }
 
 type SimpleItemCardFormat = ItemCardFormat;
@@ -72,9 +73,13 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     ) : (
                         <>
                             {props.title ? (
-                                props.onClick ? (
+                                props.url && props.titleOpenLink ? (
+                                    <Link href={props.url}>
+                                        <CardTitle>{props.title}</CardTitle>
+                                    </Link>
+                                ) : props.onClick ? (
                                     <Link
-                                        href="#"
+                                        href={"#"}
                                         onClick={(e) => {
                                             e.preventDefault();
                                             props.onClick?.(e);

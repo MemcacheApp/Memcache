@@ -4,7 +4,7 @@ import { z } from "zod";
 import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { AuthError } from "../../controllers/errors/user";
 import ItemController from "../../controllers/item-controller";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const itemRouter = router({
     getItem: protectedProcedure
@@ -266,6 +266,22 @@ export const itemRouter = router({
                         code: "INTERNAL_SERVER_ERROR",
                     });
                 }
+            }
+        }),
+    getPublicItems: publicProcedure
+        .input(
+            z.object({
+                userId: z.string(),
+            }),
+        )
+        .query(async ({ input }) => {
+            try {
+                return await ItemController.getPublicItems(input.userId);
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
             }
         }),
 });
