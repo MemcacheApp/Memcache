@@ -182,6 +182,9 @@ export default class ItemController {
                 collection: true,
                 flashcards: true,
             },
+            orderBy: {
+                createdAt: "desc",
+            },
         });
 
         return items;
