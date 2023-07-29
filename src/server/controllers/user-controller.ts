@@ -40,7 +40,7 @@ export default class UserController {
                     lastName: lastName,
                     password: hashPassword,
                     email: email,
-                    UserPreferences: {
+                    preferences: {
                         create: {
                             publicNewItem: true,
                             publicProfile: true,

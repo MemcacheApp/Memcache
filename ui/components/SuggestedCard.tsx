@@ -42,6 +42,7 @@ export function SuggestedCard({ data }: SuggestedCardProps) {
                 thumbnail={data.thumbnail}
                 url={data.url}
                 siteName={data.siteName}
+                user={data.user}
                 format={{
                     growHeight: true,
                 }}
@@ -156,7 +157,7 @@ function CreateItemDialog({
                     format={{
                         forceList: true,
                     }}
-                    footerLeft={
+                    footerRight={
                         <div className="flex items-center gap-3 ml-auto">
                             <Label htmlFor="airplane-mode">Public</Label>
                             <Switch

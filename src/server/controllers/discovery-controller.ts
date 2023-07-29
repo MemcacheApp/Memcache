@@ -96,19 +96,39 @@ export default class DiscoveryController {
                 title: true,
                 description: true,
                 siteName: true,
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        preferences: {
+                            select: {
+                                publicProfile: true,
+                            },
+                        },
+                    },
+                },
             },
         });
 
-        const existingItems: { [key: string]: boolean } = {};
-        const uniqueSuggestedItems: SuggestedItem[] = [];
+        const trimmedItems: Record<string, SuggestedItem> = {};
         suggestedItems.forEach((item) => {
-            if (existingItems[item.url] === undefined) {
-                existingItems[item.url] = true;
-                uniqueSuggestedItems.push(item);
+            if (!(item.url in trimmedItems)) {
+                const { user, ...other } = item;
+                trimmedItems[item.url] = {
+                    ...other,
+                    user: user.preferences?.publicProfile
+                        ? {
+                              id: user.id,
+                              firstName: user.firstName,
+                              lastName: user.lastName,
+                          }
+                        : undefined,
+                };
             }
         });
 
-        return shuffle(uniqueSuggestedItems);
+        return shuffle(Object.values(trimmedItems));
     }
 }
 

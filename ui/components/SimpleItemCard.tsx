@@ -1,5 +1,5 @@
 import { Collection, Tag } from "@prisma/client";
-import { Globe, Package2, TagIcon } from "lucide-react";
+import { Globe, Package2, TagIcon, UserIcon } from "lucide-react";
 import {
     Card,
     CardFooter,
@@ -26,6 +26,11 @@ interface SimpleItemCardProps {
     loading?: boolean;
     siteName?: string;
     favicon?: string | null;
+    user?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+    };
     footerLeft?: React.ReactNode;
     footerRight?: React.ReactNode;
     format?: SimpleItemCardFormat;
@@ -105,7 +110,10 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
         <CardFooter
             className={cn(
-                "items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end",
+                "items-start flex-col gap-5 mt-3 mb-1",
+                props.format?.forceList
+                    ? "flex-row justify-between items-end"
+                    : "@lg:flex-row @lg:justify-between @lg:items-end",
             )}
         >
             <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
@@ -113,6 +121,15 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                     <Skeleton className="h-5 w-24 rounded-lg" />
                 ) : (
                     <>
+                        {props.user ? (
+                            <Link
+                                className="flex items-center gap-2 my-2"
+                                href={`/app/profile/${props.user.id}`}
+                            >
+                                <UserIcon size={16} />
+                                {`${props.user.firstName} ${props.user.lastName}`}
+                            </Link>
+                        ) : null}
                         {props.siteName ? (
                             <ExternalLink
                                 className="flex items-center gap-2 my-2"
