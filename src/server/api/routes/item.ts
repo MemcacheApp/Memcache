@@ -4,7 +4,7 @@ import { z } from "zod";
 import { FetchURLError, GetItemError } from "../../controllers/errors/item";
 import { AuthError } from "../../controllers/errors/user";
 import ItemController from "../../controllers/item-controller";
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 export const itemRouter = router({
     getItem: protectedProcedure
@@ -268,20 +268,30 @@ export const itemRouter = router({
                 }
             }
         }),
-    getPublicItems: publicProcedure
+    getPublicItems: protectedProcedure
         .input(
             z.object({
                 userId: z.string(),
             }),
         )
-        .query(async ({ input }) => {
+        .query(async ({ ctx, input }) => {
             try {
-                return await ItemController.getPublicItems(input.userId);
+                return await ItemController.getPublicItems(
+                    ctx.userId,
+                    input.userId,
+                );
             } catch (e) {
-                console.error(e);
-                throw new TRPCError({
-                    code: "INTERNAL_SERVER_ERROR",
-                });
+                if (e instanceof GetItemError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
             }
         }),
 });

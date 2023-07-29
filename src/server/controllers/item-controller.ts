@@ -8,6 +8,7 @@ import CollectionController from "./collection-controller";
 import { FetchURLError, GetItemError } from "./errors/item";
 import { AuthError } from "./errors/user";
 import TagController from "./tag-controller";
+import UserController from "./user-controller";
 
 export default class ItemController {
     /**
@@ -294,7 +295,17 @@ export default class ItemController {
         });
     }
 
-    static async getPublicItems(userId: string) {
+    /**
+     * @throws {GetItemError}
+     */
+    static async getPublicItems(userId: string, targetId: string) {
+        if (userId !== targetId) {
+            const userInfo = await UserController.userInfo(targetId);
+            if (!userInfo.publicProfile) {
+                throw new GetItemError("PrivateProfile");
+            }
+        }
+
         return await prisma.item.findMany({
             where: {
                 userId,

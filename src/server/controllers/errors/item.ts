@@ -7,4 +7,5 @@ export const FetchURLError = createError("FetchURLError", {
 
 export const GetItemError = createError("GetItemError", {
     ItemNotExist: "The item does not exist",
+    PrivateProfile: "The profile of the user is private",
 });
