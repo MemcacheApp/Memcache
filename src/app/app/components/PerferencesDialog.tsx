@@ -31,13 +31,13 @@ export default function PerferencesDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="flex flex-col min-h-[30rem]">
                 <DialogHeader>
                     <DialogTitle>Perferences</DialogTitle>
                 </DialogHeader>
-                <div className="flex">
+                <div className="flex grow">
                     <PerferencesNav currTab={currTab} setCurrTab={setCurrTab} />
-                    <Separator orientation="vertical" />
+                    <Separator className="h-auto" orientation="vertical" />
                     <Tabs className="ml-5 grow" value={currTab}>
                         <TabsContent tabIndex={-1} value="profile">
                             <Profile />
@@ -230,15 +230,24 @@ function Save() {
     return (
         <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-2">
-                <Label htmlFor="update-public-profile">Public New Item</Label>
-                <Switch
-                    id="update-public-new-item"
-                    checked={publicNewItem}
-                    onCheckedChange={(checked) => {
-                        updatePublicNewItem.current = true;
-                        setPublicNewItem(checked);
-                    }}
-                />
+                <Label htmlFor="update-public-profile">
+                    Default Item Visibility
+                </Label>
+                <div className="flex justify-between gap-5">
+                    <p className="text-sm text-foreground/60">
+                        {publicNewItem
+                            ? "Public: New saves will show on your profile by default"
+                            : "Private: New saves will not show on your profile by default"}
+                    </p>
+                    <Switch
+                        id="update-public-new-item"
+                        checked={publicNewItem}
+                        onCheckedChange={(checked) => {
+                            updatePublicNewItem.current = true;
+                            setPublicNewItem(checked);
+                        }}
+                    />
+                </div>
             </div>
             <Button
                 type="submit"

@@ -80,7 +80,7 @@ export default function UserProfilePage(props: UserProfilePageProps) {
                     </PageTitle>
                     {userInfoQuery.data?.id === props.params.id ? (
                         <Button
-                            className="mt-16 mr-8 ml-auto"
+                            className="mt-16 mr-5 md:mr-8 ml-auto"
                             variant="shadow"
                             size="sm"
                             onClick={() => setIsOpenPerferences(true)}
