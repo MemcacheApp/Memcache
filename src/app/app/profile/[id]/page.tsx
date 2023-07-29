@@ -2,14 +2,16 @@
 
 import { trpc } from "@/src/app/utils/trpc";
 import {
+    Button,
     Loader,
     PageTitle,
     SuggestedCard,
     Topbar,
     TopbarTitle,
 } from "@/ui/components";
-import { LockIcon } from "lucide-react";
+import { EditIcon, LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import PerferencesDialog from "../../components/PerferencesDialog";
 
 interface UserProfilePageProps {
     params: {
@@ -19,6 +21,7 @@ interface UserProfilePageProps {
 
 export default function UserProfilePage(props: UserProfilePageProps) {
     const [isVisible, setIsVisible] = useState(true);
+    const [isOpenPerferences, setIsOpenPerferences] = useState(false);
 
     const userInfoQuery = trpc.user.getUserInfo.useQuery();
     const userInfoByIdQuery = trpc.user.getUserInfoById.useQuery({
@@ -54,16 +57,38 @@ export default function UserProfilePage(props: UserProfilePageProps) {
                         {"'s Profile"}
                     </TopbarTitle>
                 ) : null}
+                {userInfoQuery.data?.id === props.params.id ? (
+                    <Button
+                        className="ml-auto"
+                        variant="shadow"
+                        size="sm"
+                        onClick={() => setIsOpenPerferences(true)}
+                    >
+                        <EditIcon size={18} />
+                    </Button>
+                ) : null}
             </Topbar>
             {userInfoByIdQuery.data ? (
-                <PageTitle>
-                    {userInfoByIdQuery.data.firstName}{" "}
-                    {userInfoByIdQuery.data.lastName}
-                    {"'s Profile"}
-                    {userInfoByIdQuery.data.publicProfile ? null : (
-                        <LockIcon className="inline-block ml-3" />
-                    )}
-                </PageTitle>
+                <div className="flex">
+                    <PageTitle>
+                        {userInfoByIdQuery.data.firstName}{" "}
+                        {userInfoByIdQuery.data.lastName}
+                        {"'s Profile"}
+                        {userInfoByIdQuery.data.publicProfile ? null : (
+                            <LockIcon className="inline-block ml-3" />
+                        )}
+                    </PageTitle>
+                    {userInfoQuery.data?.id === props.params.id ? (
+                        <Button
+                            className="mt-16 mr-8 ml-auto"
+                            variant="shadow"
+                            size="sm"
+                            onClick={() => setIsOpenPerferences(true)}
+                        >
+                            <EditIcon size={18} />
+                        </Button>
+                    ) : null}
+                </div>
             ) : null}
             {isVisible ? (
                 <div className="flex flex-col gap-3 mb-8 md:mx-8">
@@ -80,6 +105,10 @@ export default function UserProfilePage(props: UserProfilePageProps) {
                     <p>This user&apos;s profile is private.</p>
                 </div>
             )}
+            <PerferencesDialog
+                open={isOpenPerferences}
+                onOpenChange={setIsOpenPerferences}
+            />
         </div>
     );
 }
