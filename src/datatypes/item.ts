@@ -10,3 +10,12 @@ export interface ItemMetadata {
     author?: string;
     favicon?: string;
 }
+
+export interface SuggestedItem {
+    type: string;
+    url: string;
+    thumbnail: string | null;
+    title: string;
+    description: string;
+    siteName: string;
+}

@@ -22,7 +22,7 @@ interface SimpleItemCardProps {
     collection?: Collection;
     tags?: Tag[];
     thumbnail?: string | null;
-    onClick?: React.MouseEventHandler<HTMLDivElement>;
+    onClick?: React.MouseEventHandler<HTMLElement>;
     loading?: boolean;
     siteName?: string;
     favicon?: string | null;
@@ -44,7 +44,6 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                 },
                 props.className,
             )}
-            tabIndex={props.onClick ? 0 : undefined}
             onClick={props.onClick}
         >
             <div
@@ -68,7 +67,19 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     ) : (
                         <>
                             {props.title ? (
-                                <CardTitle>{props.title}</CardTitle>
+                                props.onClick ? (
+                                    <Link
+                                        href="#"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            props.onClick?.(e);
+                                        }}
+                                    >
+                                        <CardTitle>{props.title}</CardTitle>
+                                    </Link>
+                                ) : (
+                                    <CardTitle>{props.title}</CardTitle>
+                                )
                             ) : null}
                             {props.description ? (
                                 <p className="mt-3 overflow-hidden">
