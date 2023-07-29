@@ -111,6 +111,22 @@ export default class UserController {
         };
     }
 
+    static async logout(cookieString: string | null) {
+        if (!cookieString) {
+            throw new AuthError("NoJWT");
+        }
+
+        const cookieEntries = cookie.parse(cookieString);
+        if (!cookieEntries.jwt) throw new AuthError("NoJWT");
+
+        const session = jwt.verify(cookieEntries.jwt, SECRET_KEY) as Session;
+        await prisma.session.delete({
+            where: {
+                id: session.id,
+            },
+        });
+    }
+
     /**
      * @throws {AuthError}
      */

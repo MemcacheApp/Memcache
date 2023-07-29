@@ -1,8 +1,8 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
-import { prisma } from "../db/prisma";
+import superjson from "superjson";
 import UserController from "../controllers/user-controller";
+import { prisma } from "../db/prisma";
 
 export const createContext = (opts: FetchCreateContextFnOptions) => {
     const { req, resHeaders } = opts;
@@ -30,9 +30,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
         return next({
             ctx: result,
         });
-
-        // TODO: fix this typescript
-    } catch (err: unknown) {
+    } catch (err) {
         console.log(err);
         throw new TRPCError({ code: "UNAUTHORIZED" });
     }

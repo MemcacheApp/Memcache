@@ -78,6 +78,21 @@ export const userRouter = router({
                 }
             }
         }),
+    logout: protectedProcedure.mutation(async ({ ctx }) => {
+        try {
+            const cookieString = ctx.req.headers.get("cookie");
+            await UserController.logout(cookieString);
+            ctx.resHeaders.set(
+                "set-cookie",
+                `jwt=deleted;HttpOnly;Secure;expires=Thu, 01 Jan 1970 00:00:00 GMT;`,
+            );
+        } catch (e) {
+            console.error(e);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+            });
+        }
+    }),
     isLoggedIn: publicProcedure.query(async ({ ctx }) => {
         try {
             await UserController.validate(ctx.req.headers.get("cookie"));

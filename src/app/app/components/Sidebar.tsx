@@ -18,7 +18,7 @@ import {
     User,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSidebarStore } from "../../store/sidebar";
 import { useTopbarStore } from "../../store/topbar";
@@ -56,9 +56,18 @@ export function Sidebar() {
 }
 
 function SidebarInner({ isExpand }: { isExpand: boolean }) {
-    const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
+    const ctx = trpc.useContext();
+    const { push } = useRouter();
 
+    const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
     const userInfoQuery = trpc.user.getUserInfo.useQuery();
+    const logoutMutation = trpc.user.logout.useMutation({
+        onSuccess: () => {
+            ctx.user.getUserInfo.invalidate();
+            push("/");
+        },
+    });
+
     const username = isLoggedInQuery.data
         ? `${userInfoQuery.data?.firstName} ${userInfoQuery.data?.lastName}`
         : null;
@@ -119,7 +128,10 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                                         <SettingsIcon className="mr-2 h-4 w-4" />
                                         <span>Preferences</span>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-700">
+                                    <DropdownMenuItem
+                                        className="text-red-700"
+                                        onClick={() => logoutMutation.mutate()}
+                                    >
                                         <LogOutIcon className="mr-2 h-4 w-4" />
                                         <span>Log out</span>
                                     </DropdownMenuItem>
