@@ -101,11 +101,7 @@ export default class DiscoveryController {
                         id: true,
                         firstName: true,
                         lastName: true,
-                        preferences: {
-                            select: {
-                                publicProfile: true,
-                            },
-                        },
+                        publicProfile: true,
                     },
                 },
             },
@@ -117,7 +113,7 @@ export default class DiscoveryController {
                 const { user, ...other } = item;
                 trimmedItems[item.url] = {
                     ...other,
-                    user: user.preferences?.publicProfile
+                    user: user.publicProfile
                         ? {
                               id: user.id,
                               firstName: user.firstName,

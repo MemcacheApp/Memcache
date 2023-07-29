@@ -170,6 +170,7 @@ export const userRouter = router({
                     firstName: z.string(),
                     lastName: z.string(),
                     email: z.string(),
+                    publicProfile: z.boolean(),
                 })
                 .partial(),
         )
@@ -255,7 +256,6 @@ export const userRouter = router({
         .input(
             z
                 .object({
-                    publicProfile: z.boolean(),
                     publicNewItem: z.boolean(),
                 })
                 .partial(),

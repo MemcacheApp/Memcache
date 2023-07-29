@@ -112,10 +112,6 @@ function Profile() {
     const updateUserProfileMutation = trpc.user.updateProfile.useMutation({
         onSuccess: () => ctx.user.getUserInfo.invalidate(),
     });
-    const updatePreferenceMutation = trpc.user.updatePerferences.useMutation({
-        onSuccess: () => ctx.user.getPerferences.invalidate(),
-    });
-    const preferences = usePerferences();
 
     const [email, setEmail] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -133,27 +129,18 @@ function Profile() {
             setEmail(data.email);
             setFirstName(data.firstName);
             setLastName(data.lastName);
+            setIsPublic(data.publicProfile);
         }
     }, [getUserInfoQuery.data]);
-
-    useEffect(() => {
-        if (preferences) {
-            setIsPublic(preferences.publicProfile);
-        }
-    }, [preferences]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         updateUserProfileMutation.mutate({
             email: updateEmail.current ? email : undefined,
             firstName: updateFirstName.current ? firstName : undefined,
-            lastName: updateLastName ? lastName : undefined,
+            lastName: updateLastName.current ? lastName : undefined,
+            publicProfile: updatePublicProfile.current ? isPublic : undefined,
         });
-        if (updatePublicProfile.current) {
-            updatePreferenceMutation.mutate({
-                publicProfile: isPublic,
-            });
-        }
     };
 
     return (
@@ -205,10 +192,7 @@ function Profile() {
             <Button
                 type="submit"
                 className="self-end"
-                disabled={
-                    updateUserProfileMutation.isLoading ||
-                    updatePreferenceMutation.isLoading
-                }
+                disabled={updateUserProfileMutation.isLoading}
             >
                 Save
             </Button>

@@ -40,10 +40,10 @@ export default class UserController {
                     lastName: lastName,
                     password: hashPassword,
                     email: email,
+                    publicProfile: true,
                     preferences: {
                         create: {
                             publicNewItem: true,
-                            publicProfile: true,
                         },
                     },
                 },
@@ -155,45 +155,58 @@ export default class UserController {
      * @throws {GetUserError}
      */
     static async userInfo(userId: string) {
-        const user = await prisma.user.findUnique({
-            where: {
-                id: userId,
-            },
-        });
-
-        if (user === null) {
-            throw new GetUserError("UserNotExist");
-        }
-
-        // Do not return the user object directly, as it contains the hashed password
-        return {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-        };
+        return await prisma.user
+            .findUniqueOrThrow({
+                where: {
+                    id: userId,
+                },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    publicProfile: true,
+                },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
     }
 
     /**
      * @throws {GetUserError}
      */
     static async userInfoByEmail(email: string) {
-        const user = await prisma.user.findUnique({
-            where: {
-                email,
-            },
-        });
-
-        if (user === null) {
-            throw new GetUserError("UserNotExist");
-        }
-
-        return {
-            id: user.id,
-            firstName: user.firstName,
-            lastname: user.lastName,
-            email: user.email,
-        };
+        return await prisma.user
+            .findUniqueOrThrow({
+                where: {
+                    email,
+                },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    publicProfile: true,
+                },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
     }
 
     /**
@@ -322,6 +335,7 @@ export default class UserController {
             email?: string;
             firstName?: string;
             lastName?: string;
+            publicProfile?: boolean;
         },
     ) {
         await prisma.user
@@ -365,7 +379,6 @@ export default class UserController {
     static async updatePreferences(
         userId: string,
         preferences: {
-            publicProfile?: boolean;
             publicNewItem?: boolean;
         },
     ) {

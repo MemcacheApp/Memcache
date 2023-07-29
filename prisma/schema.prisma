@@ -11,23 +11,23 @@ datasource db {
 }
 
 model User {
-  id          String           @id
-  firstName   String
-  lastName    String
-  password    String
-  email       String           @unique
-  sessions    Session[]
-  items       Item[]
-  collections Collection[]
-  tags        Tag[]
-  Flashcard   Flashcard[]
-  preferences UserPreferences?
+  id            String           @id
+  firstName     String
+  lastName      String
+  password      String
+  email         String           @unique
+  sessions      Session[]
+  items         Item[]
+  collections   Collection[]
+  tags          Tag[]
+  Flashcard     Flashcard[]
+  publicProfile Boolean
+  preferences   UserPreferences?
 }
 
 model UserPreferences {
   userId        String  @id
   user          User?   @relation(fields: [userId], references: [id])
-  publicProfile Boolean
   publicNewItem Boolean
 }
 
