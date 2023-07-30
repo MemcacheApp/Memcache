@@ -174,14 +174,19 @@ export default function FlashcardsPage() {
             </Card>
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>My Flashcards</H3>
-                <H4>Revision Queue</H4>
-                <div className="w-full h-18 flex justify-center items-center">
+                <div className="w-full h-24 flex flex-col justify-center items-center gap-3">
+                    <div>
+                        <span className="font-bold text-lg">{`${revisionQueue.length}`}</span>
+                        &nbsp;{"flashcards due for review"}
+                    </div>
                     <Button
                         onClick={() => router.push("/app/flashcards/review")}
+                        size="lg"
                     >
                         Start Review
                     </Button>
                 </div>
+                <H4>Revision Queue</H4>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
                         {revisionQueue?.map((flashcard) => (
@@ -242,7 +247,6 @@ export default function FlashcardsPage() {
             {selectedFlashcard && (
                 <FlashcardDialog
                     flashcard={selectedFlashcard}
-                    item={selectedFlashcard.item}
                     open={selectedFlashcard !== null}
                     onOpenChange={(value) => {
                         if (!value) {
