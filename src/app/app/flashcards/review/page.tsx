@@ -1,32 +1,18 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
-import { Button, PageTitle } from "@/ui/components";
-import FlashcardQA from "@/ui/components/FlashcardQA";
+import { PageTitle } from "@/ui/components";
+import FlashcardReview from "@/ui/components/FlashcardReview";
 import { useState } from "react";
 
 export default function Review() {
-    const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
-
-    const revisionQueue =
-        flashcardsQuery.data?.sort(
-            (a, b) => a.dueDate.valueOf() - b.dueDate.valueOf(),
-        ) ?? [];
+    const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
+    const revisionQueue = revisionQueueQuery.data ?? [];
 
     const [currentFlashcard, setCurrentFlashcard] = useState<number>(0);
 
-    // Evaluating flashcard review as easy, medium, hard, forgot
-    const [evaluating, setEvaluating] = useState(false);
-
-    const handleEvaluate = () => {
-        setEvaluating(true);
-    };
-
     const handleNextFlashcard = () => {
-        setCurrentFlashcard((prev) =>
-            Math.min(prev + 1, revisionQueue.length - 1),
-        );
-        setEvaluating(false);
+        setCurrentFlashcard((prev) => Math.min(prev + 1, revisionQueue.length));
         if (currentFlashcard >= revisionQueue.length) {
             return <div>No flashcards to review</div>;
         }
@@ -41,25 +27,10 @@ export default function Review() {
             <PageTitle>Review Session</PageTitle>
             <div className="flex flex-col gap-5">
                 <div className="bg-background mx-8 p-6 border rounded-lg flex flex-col gap-3">
-                    <FlashcardQA
+                    <FlashcardReview
                         flashcard={revisionQueue[currentFlashcard]}
-                        showAnswer={evaluating}
-                        setShowAnswer={setEvaluating}
+                        onNext={handleNextFlashcard}
                     />
-                    {evaluating ? (
-                        <div className="flex justify-between">
-                            <Button
-                                onClick={() =>
-                                    setCurrentFlashcard((prev) =>
-                                        Math.max(prev - 1, 0),
-                                    )
-                                }
-                            >
-                                Previous
-                            </Button>
-                            <Button onClick={handleNextFlashcard}>Next</Button>
-                        </div>
-                    ) : null}
                 </div>
             </div>
         </div>

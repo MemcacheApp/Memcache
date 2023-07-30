@@ -1,5 +1,5 @@
-import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
+import { prisma } from "../db/prisma";
 import { CreateTagError, GetTagError } from "./errors/tag";
 
 export default class TagController {

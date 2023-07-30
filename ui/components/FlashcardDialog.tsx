@@ -8,7 +8,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/ui/components";
-import FlashcardQA from "@/ui/components/FlashcardQA";
+import FlashcardQA from "@/ui/components/FlashcardReview";
 import { Collection, Flashcard, Item, Tag } from "@prisma/client";
 import { useState } from "react";
 
