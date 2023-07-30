@@ -89,7 +89,6 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
             {selectedFlashcard && (
                 <FlashcardDialog
                     flashcard={selectedFlashcard}
-                    item={selectedFlashcard.item}
                     open={selectedFlashcard !== null}
                     onOpenChange={(value) => {
                         if (!value) {
