@@ -1,5 +1,5 @@
 import { Collection, Tag } from "@prisma/client";
-import { Globe, Package2, TagIcon } from "lucide-react";
+import { Globe, Package2, TagIcon, UserIcon } from "lucide-react";
 import {
     Card,
     CardFooter,
@@ -26,9 +26,15 @@ interface SimpleItemCardProps {
     loading?: boolean;
     siteName?: string;
     favicon?: string | null;
+    user?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+    };
     footerLeft?: React.ReactNode;
     footerRight?: React.ReactNode;
     format?: SimpleItemCardFormat;
+    titleOpenLink?: boolean;
 }
 
 type SimpleItemCardFormat = ItemCardFormat;
@@ -67,9 +73,13 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     ) : (
                         <>
                             {props.title ? (
-                                props.onClick ? (
+                                props.url && props.titleOpenLink ? (
+                                    <Link href={props.url}>
+                                        <CardTitle>{props.title}</CardTitle>
+                                    </Link>
+                                ) : props.onClick ? (
                                     <Link
-                                        href="#"
+                                        href={"#"}
                                         onClick={(e) => {
                                             e.preventDefault();
                                             props.onClick?.(e);
@@ -95,10 +105,6 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     thumbnail={props.thumbnail}
                     format={props.format}
                 />
-                {/* <SimpleItemCardFooter
-                    {...props}
-                    className={cn("flex @lg:hidden order-3")}
-                /> */}
             </div>
             <SimpleItemCardFooter {...props} />
         </Card>
@@ -109,14 +115,26 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
         <CardFooter
             className={cn(
-                "items-start flex-col gap-5 mt-3 mb-1 @lg:flex-row @lg:justify-between @lg:items-end",
+                "items-start flex-col gap-5 mt-3 mb-1",
+                props.format?.forceList
+                    ? "flex-row justify-between items-end"
+                    : "@lg:flex-row @lg:justify-between @lg:items-end",
             )}
         >
-            {props.loading ? (
-                <Skeleton className="h-5 w-24 rounded-lg" />
-            ) : (
-                <>
-                    <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
+            <div className="flex flex-wrap-reverse gap-x-5 gap-y-1 text-slate-450 text-sm">
+                {props.loading ? (
+                    <Skeleton className="h-5 w-24 rounded-lg" />
+                ) : (
+                    <>
+                        {props.user ? (
+                            <Link
+                                className="flex items-center gap-2 my-2"
+                                href={`/app/profile/${props.user.id}`}
+                            >
+                                <UserIcon size={16} />
+                                {`${props.user.firstName} ${props.user.lastName}`}
+                            </Link>
+                        ) : null}
                         {props.siteName ? (
                             <ExternalLink
                                 className="flex items-center gap-2 my-2"
@@ -161,13 +179,13 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                                 ))}
                             </div>
                         ) : null}
-                        {props.footerLeft}
-                    </div>
-                    {props.footerRight ? (
-                        <div className="flex gap-3">{props.footerRight}</div>
-                    ) : null}
-                </>
-            )}
+                    </>
+                )}
+                {props.footerLeft}
+            </div>
+            {props.footerRight ? (
+                <div className="flex gap-3">{props.footerRight}</div>
+            ) : null}
         </CardFooter>
     );
 }
