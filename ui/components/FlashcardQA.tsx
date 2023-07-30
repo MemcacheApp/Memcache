@@ -2,12 +2,19 @@ import {
     FlashcardExperienceNames,
     FlashcardRangeNames,
 } from "@/src/datatypes/flashcard";
+import { ReviewRatingButton } from "@/ui/components/Button";
+import DueStatus from "@/ui/components/DueStatus";
+import { SimpleItemCardFooter } from "@/ui/components/SimpleItemCard";
 import { cn } from "@/ui/utils";
-import { Collection, Flashcard, Item, Tag } from "@prisma/client";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReviewRating,
+    Item,
+    Tag,
+} from "@prisma/client";
 import { Progress } from "@radix-ui/react-progress";
 import { CardHeader, CardTitle } from "./Card";
-import DueStatus from "./DueStatus";
-import { SimpleItemCardFooter } from "./SimpleItemCard";
 
 interface FlashcardQAProps {
     flashcard: Flashcard & {
@@ -80,52 +87,23 @@ export default function FlashcardQA({
                         </div>
                         <div
                             className={cn(
-                                "px-4 py-0 h-0 w-[60%] min-w-[510px] max-w-[860px] opacity-0 flex justify-between items-center transition-[height,opacity]",
+                                "px-4 py-0 h-0 min-w-[510px] w-[80%] max-w-[860px] opacity-0 flex justify-between items-center transition-[height,opacity]",
                                 {
                                     "h-fit py-2 opacity-1": showAnswer,
                                 },
                             )}
                         >
-                            <button
-                                className={cn(
-                                    "bg-easy/50 shadow-[0_0_24px_-8px_rgba(0,0,0,0.53)] px-8 py-2 rounded-full hover:bg-easy/60 hover:shadow-[0_0_32px_-4px_rgba(0,0,0,0.53)] shadow-easy hover:shadow-easy",
-                                )}
-                                onClick={() => {
-                                    console.log("clicked easy");
-                                }}
-                            >
-                                Easy
-                            </button>
-                            <button
-                                className={cn(
-                                    "bg-medium/50 shadow-[0_0_24px_-8px_rgba(0,0,0,0.53)] px-8 py-2 rounded-full hover:bg-medium/60 hover:shadow-[0_0_32px_-4px_rgba(0,0,0,0.53)] shadow-medium hover:shadow-medium",
-                                )}
-                                onClick={() => {
-                                    console.log("clicked medium");
-                                }}
-                            >
-                                Medium
-                            </button>
-                            <button
-                                className={cn(
-                                    "bg-hard/50 shadow-[0_0_24px_-8px_rgba(0,0,0,0.53)] px-8 py-2 rounded-full hover:bg-hard/60 hover:shadow-[0_0_32px_-4px_rgba(0,0,0,0.53)] shadow-hard hover:shadow-hard",
-                                )}
-                                onClick={() => {
-                                    console.log("clicked hard");
-                                }}
-                            >
-                                Hard
-                            </button>
-                            <button
-                                className={cn(
-                                    "bg-forgot/50 shadow-[0_0_24px_-8px_rgba(0,0,0,0.53)] px-8 py-2 rounded-full hover:bg-forgot/60 hover:shadow-[0_0_32px_-4px_rgba(0,0,0,0.53)] shadow-forgot hover:shadow-forgot",
-                                )}
-                                onClick={() => {
-                                    console.log("clicked forgot");
-                                }}
-                            >
-                                Forgot
-                            </button>
+                            {(
+                                Object.keys(FlashcardReviewRating) as Array<
+                                    keyof typeof FlashcardReviewRating
+                                >
+                            ).map((rating) => (
+                                <ReviewRatingButton
+                                    key={rating}
+                                    rating={rating}
+                                    size="pillmd"
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
