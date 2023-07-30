@@ -1,3 +1,5 @@
+"use client";
+
 import { trpc } from "@/src/app/utils/trpc";
 import { Collection, Item, Tag } from "@prisma/client";
 import { ChevronsUpDown } from "lucide-react";
