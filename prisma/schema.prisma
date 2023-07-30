@@ -113,10 +113,10 @@ model FlashcardReview {
 }
 
 enum FlashcardReviewRating {
-  EASY
-  MEDIUM
-  HARD
-  FORGOT
+  Easy
+  Medium
+  Hard
+  Forgot
 }
 
 enum FlashcardExperience {
