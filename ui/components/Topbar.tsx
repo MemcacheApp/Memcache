@@ -1,3 +1,5 @@
+"use client";
+
 import { useSidebarStore } from "@/src/app/store/sidebar";
 import { useTopbarStore } from "@/src/app/store/topbar";
 import { MenuIcon } from "lucide-react";
