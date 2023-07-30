@@ -3,6 +3,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
+import { usePerferences } from "@/src/app/utils/procedures";
 import { ItemMetadata } from "@/src/datatypes/item";
 import { hostname } from "@/src/utils";
 import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
@@ -16,9 +17,11 @@ import {
     Button,
     CollectionSelector,
     Input,
+    Label,
     Loader,
     SimpleItemCard,
     SimpleTag,
+    Switch,
 } from ".";
 import { cn } from "../utils";
 
@@ -103,6 +106,7 @@ function SaveInputDialog() {
     const [url, setUrl] = useState("");
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [isPublic, setIsPublic] = useState(true);
 
     const [isHidden, setIsHidden] = useState(true);
     const [isCollapse, setIsCollapse] = useState(true);
@@ -112,6 +116,7 @@ function SaveInputDialog() {
     const createItemMutation = trpc.item.createItem.useMutation({
         onSuccess: () => ctx.item.getUserItems.invalidate(),
     });
+    const perferences = usePerferences();
 
     useEffect(() => {
         if (createItemMutation.isSuccess) {
@@ -136,6 +141,12 @@ function SaveInputDialog() {
         }
     }, [isShow]);
 
+    useEffect(() => {
+        if (perferences) {
+            setIsPublic(perferences.publicNewItem);
+        }
+    }, [perferences]);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (url === "") return;
@@ -143,6 +154,7 @@ function SaveInputDialog() {
             url,
             collectionName: collection,
             tagNames: tags,
+            public: isPublic,
         });
     };
 
@@ -214,6 +226,8 @@ function SaveInputDialog() {
                                 setCollection={setCollection}
                                 tags={tags}
                                 setTags={setTags}
+                                isPublic={isPublic}
+                                setIsPublic={setIsPublic}
                             />
                         </form>
                     </div>
@@ -230,6 +244,8 @@ interface SaveOptionsProps {
     setCollection: (collection: string) => void;
     tags: string[];
     setTags: (tags: string[]) => void;
+    isPublic: boolean;
+    setIsPublic: (isPublic: boolean) => void;
 }
 
 function SaveOptions({
@@ -239,6 +255,8 @@ function SaveOptions({
     setCollection,
     tags,
     setTags,
+    isPublic,
+    setIsPublic,
 }: SaveOptionsProps) {
     const [isHidden, setIsHidden] = useState(true);
     const [isCollapse, setIsCollapse] = useState(true);
@@ -320,18 +338,28 @@ function SaveOptions({
                 siteName={metadata?.siteName}
                 favicon={metadata?.favicon}
                 footerRight={
-                    fetchMetadataQuery.isLoading ? undefined : (
-                        <Button
-                            className="shrink-0"
-                            type="button"
-                            variant="icon"
-                            size="none"
-                            onClick={refresh}
-                            disabled={isCreating}
-                        >
-                            <RefreshCw size={18} />
-                        </Button>
-                    )
+                    <>
+                        <div className="flex items-center gap-3">
+                            <Label htmlFor="airplane-mode">Public</Label>
+                            <Switch
+                                id="is-public"
+                                checked={isPublic}
+                                onCheckedChange={setIsPublic}
+                            />
+                        </div>
+                        {fetchMetadataQuery.isLoading ? undefined : (
+                            <Button
+                                className="shrink-0"
+                                type="button"
+                                variant="icon"
+                                size="none"
+                                onClick={refresh}
+                                disabled={isCreating}
+                            >
+                                <RefreshCw size={18} />
+                            </Button>
+                        )}
+                    </>
                 }
             />
             <div className="flex flex-col rounded-lg bg-slate-50 gap-3 py-4 px-5">

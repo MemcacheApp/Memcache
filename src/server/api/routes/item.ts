@@ -48,6 +48,7 @@ export const itemRouter = router({
                 url: z.string(),
                 collectionName: z.string(),
                 tagNames: z.string().array(),
+                public: z.boolean(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -57,6 +58,7 @@ export const itemRouter = router({
                     input.url,
                     input.collectionName,
                     input.tagNames,
+                    input.public,
                 );
             } catch (e) {
                 if (e instanceof FetchURLError) {
@@ -233,9 +235,63 @@ export const itemRouter = router({
                 }
             }
         }),
-    getItemStatus: protectedProcedure
-        .input(z.object({ itemId: z.string() }))
-        .query(async ({ input }) => {
-            return await ItemController.getItemStatus(input.itemId);
+    setItemVisibility: protectedProcedure
+        .input(
+            z.object({
+                itemId: z.string(),
+                isPublic: z.boolean(),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ItemController.setItemVibility(
+                    ctx.userId,
+                    input.itemId,
+                    input.isPublic,
+                );
+            } catch (e) {
+                if (e instanceof AuthError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "UNAUTHORIZED",
+                    });
+                } else if (e instanceof GetItemError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
+    getPublicItems: protectedProcedure
+        .input(
+            z.object({
+                userId: z.string(),
+            }),
+        )
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ItemController.getPublicItems(
+                    ctx.userId,
+                    input.userId,
+                );
+            } catch (e) {
+                if (e instanceof GetItemError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
         }),
 });

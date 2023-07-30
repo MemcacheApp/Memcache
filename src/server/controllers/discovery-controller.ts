@@ -25,42 +25,38 @@ function shuffle<T>(array: T[]) {
 
 export default class DiscoveryController {
     static async getSuggestedItems(userId: string) {
-        const userTagNamesRes = await prisma.tag.findMany({
-            where: {
-                userId,
-            },
-            select: {
-                name: true,
-            },
-        });
-        const userCollectionNamesRes = await prisma.collection.findMany({
-            where: {
-                userId,
-            },
-            select: {
-                name: true,
-            },
-        });
+        const userTagNames = (
+            await prisma.tag.findMany({
+                where: {
+                    userId,
+                },
+                select: {
+                    name: true,
+                },
+            })
+        ).map((tag) => tag.name);
 
-        const userTagNames: string[] = userTagNamesRes.map((t) => {
-            return t.name;
-        });
-        const userCollectionNames: string[] = userCollectionNamesRes.map(
-            (c) => {
-                return c.name;
-            },
-        );
-        const userItemUrlsRes = await prisma.item.findMany({
-            where: {
-                userId,
-            },
-            select: {
-                url: true,
-            },
-        });
-        const userItemUrls: string[] = userItemUrlsRes.map((i) => {
-            return i.url;
-        });
+        const userCollectionNames = (
+            await prisma.collection.findMany({
+                where: {
+                    userId,
+                },
+                select: {
+                    name: true,
+                },
+            })
+        ).map((collection) => collection.name);
+
+        const userItemUrls = (
+            await prisma.item.findMany({
+                where: {
+                    userId,
+                },
+                select: {
+                    url: true,
+                },
+            })
+        ).map((item) => item.url);
 
         const suggestedItems = await prisma.item.findMany({
             where: {
@@ -78,7 +74,20 @@ export default class DiscoveryController {
                         },
                     },
                 ],
-                url: { notIn: userItemUrls },
+                NOT: {
+                    OR: [
+                        {
+                            url: {
+                                in: userItemUrls,
+                            },
+                        },
+                        {
+                            public: {
+                                equals: false,
+                            },
+                        },
+                    ],
+                },
             },
             select: {
                 type: true,
@@ -87,19 +96,35 @@ export default class DiscoveryController {
                 title: true,
                 description: true,
                 siteName: true,
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        publicProfile: true,
+                    },
+                },
             },
         });
 
-        const existingItems: { [key: string]: boolean } = {};
-        const uniqueSuggestedItems: SuggestedItem[] = [];
+        const trimmedItems: Record<string, SuggestedItem> = {};
         suggestedItems.forEach((item) => {
-            if (existingItems[item.url] === undefined) {
-                existingItems[item.url] = true;
-                uniqueSuggestedItems.push(item);
+            if (!(item.url in trimmedItems)) {
+                const { user, ...other } = item;
+                trimmedItems[item.url] = {
+                    ...other,
+                    user: user.publicProfile
+                        ? {
+                              id: user.id,
+                              firstName: user.firstName,
+                              lastName: user.lastName,
+                          }
+                        : undefined,
+                };
             }
         });
 
-        return shuffle(uniqueSuggestedItems);
+        return shuffle(Object.values(trimmedItems));
     }
 }
 

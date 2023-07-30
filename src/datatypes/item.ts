@@ -18,4 +18,9 @@ export interface SuggestedItem {
     title: string;
     description: string;
     siteName: string;
+    user?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+    };
 }

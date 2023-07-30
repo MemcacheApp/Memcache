@@ -1,20 +1,20 @@
-import bcrypt from "bcryptjs";
 import { Prisma, Session } from "@prisma/client";
-import { prisma } from "../db/prisma";
-import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import cookie from "cookie";
+import jwt from "jsonwebtoken";
+import { createElement } from "react";
+import { Resend } from "resend";
+import { v4 as uuidv4 } from "uuid";
+import { prisma } from "../db/prisma";
 import CollectionController from "./collection-controller";
 import {
-    CreateUserError,
-    LoginError,
     AuthError,
+    CreateUserError,
     GetUserError,
+    LoginError,
     SendEmailError,
     VerifyCodeError,
 } from "./errors/user";
-import { Resend } from "resend";
-import { createElement } from "react";
 
 const SECRET_KEY = "superSecretTestKey"; // TODO: move to .env
 const resend = new Resend("re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c");
@@ -40,6 +40,12 @@ export default class UserController {
                     lastName: lastName,
                     password: hashPassword,
                     email: email,
+                    publicProfile: true,
+                    preferences: {
+                        create: {
+                            publicNewItem: true,
+                        },
+                    },
                 },
             })
             .catch((err) => {
@@ -105,6 +111,22 @@ export default class UserController {
         };
     }
 
+    static async logout(cookieString: string | null) {
+        if (!cookieString) {
+            throw new AuthError("NoJWT");
+        }
+
+        const cookieEntries = cookie.parse(cookieString);
+        if (!cookieEntries.jwt) throw new AuthError("NoJWT");
+
+        const session = jwt.verify(cookieEntries.jwt, SECRET_KEY) as Session;
+        await prisma.session.delete({
+            where: {
+                id: session.id,
+            },
+        });
+    }
+
     /**
      * @throws {AuthError}
      */
@@ -149,45 +171,58 @@ export default class UserController {
      * @throws {GetUserError}
      */
     static async userInfo(userId: string) {
-        const user = await prisma.user.findUnique({
-            where: {
-                id: userId,
-            },
-        });
-
-        if (user === null) {
-            throw new GetUserError("UserNotExist");
-        }
-
-        // Do not return the user object directly, as it contains the hashed password
-        return {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-        };
+        return await prisma.user
+            .findUniqueOrThrow({
+                where: {
+                    id: userId,
+                },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    publicProfile: true,
+                },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
     }
 
     /**
      * @throws {GetUserError}
      */
     static async userInfoByEmail(email: string) {
-        const user = await prisma.user.findUnique({
-            where: {
-                email,
-            },
-        });
-
-        if (user === null) {
-            throw new GetUserError("UserNotExist");
-        }
-
-        return {
-            id: user.id,
-            firstName: user.firstName,
-            lastname: user.lastName,
-            email: user.email,
-        };
+        return await prisma.user
+            .findUniqueOrThrow({
+                where: {
+                    email,
+                },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    publicProfile: true,
+                },
+            })
+            .catch((err) => {
+                if (
+                    err instanceof Prisma.PrismaClientKnownRequestError &&
+                    err.code === "P2025"
+                ) {
+                    throw new GetUserError("UserNotExist");
+                } else {
+                    throw err;
+                }
+            });
     }
 
     /**
@@ -310,11 +345,21 @@ export default class UserController {
     /**
      * @throws {GetUserError}
      */
-    static async updateEmail(id: string, newEmail: string) {
+    static async updateProfile(
+        userId: string,
+        profile: {
+            email?: string;
+            firstName?: string;
+            lastName?: string;
+            publicProfile?: boolean;
+        },
+    ) {
         await prisma.user
             .update({
-                where: { id },
-                data: { email: newEmail },
+                where: {
+                    id: userId,
+                },
+                data: profile,
             })
             .catch((err) => {
                 if (
@@ -328,14 +373,12 @@ export default class UserController {
             });
     }
 
-    /**
-     * @throws {GetUserError}
-     */
-    static async updateFirstName(id: string, newFirstName: string) {
-        await prisma.user
-            .update({
-                where: { id },
-                data: { firstName: newFirstName },
+    static async getPreferences(userId: string) {
+        return await prisma.userPreferences
+            .findUnique({
+                where: {
+                    userId,
+                },
             })
             .catch((err) => {
                 if (
@@ -349,14 +392,18 @@ export default class UserController {
             });
     }
 
-    /**
-     * @throws {GetUserError}
-     */
-    static async updateLastName(id: string, newlastName: string) {
-        await prisma.user
+    static async updatePreferences(
+        userId: string,
+        preferences: {
+            publicNewItem?: boolean;
+        },
+    ) {
+        await prisma.userPreferences
             .update({
-                where: { id },
-                data: { lastName: newlastName },
+                where: {
+                    userId,
+                },
+                data: preferences,
             })
             .catch((err) => {
                 if (
