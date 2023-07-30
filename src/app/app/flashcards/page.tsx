@@ -27,7 +27,7 @@ import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { Progress } from "@/ui/components/Progress";
 import { H4 } from "@/ui/components/typography";
 import { cn } from "@/ui/utils";
-import { Collection, Flashcard, Item, Tag } from "@prisma/client";
+import { Collection, Flashcard, Item, ItemStatus, Tag } from "@prisma/client";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
 import { ReviewRatingEnum } from "../../utils/ReviewRating";
@@ -84,7 +84,7 @@ const dummyFlashcardsData: DummyFlashcard[] = [
         item: {
             id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
             type: "article",
-            status: 0,
+            status: ItemStatus.Inbox,
             collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
             title: "Writing WebSocket client applications - Web APIs | MDN",
             url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",
@@ -129,7 +129,7 @@ const dummyFlashcardsData: DummyFlashcard[] = [
         item: {
             id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
             type: "article",
-            status: 0,
+            status: ItemStatus.Inbox,
             collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
             title: "Writing WebSocket client applications - Web APIs | MDN",
             url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",

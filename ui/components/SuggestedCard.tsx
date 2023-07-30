@@ -1,3 +1,5 @@
+"use client";
+
 import { trpc } from "@/src/app/utils/trpc";
 import { SuggestedItem } from "@/src/datatypes/item";
 import {
