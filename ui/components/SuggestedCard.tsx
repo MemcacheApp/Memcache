@@ -1,3 +1,5 @@
+"use client";
+
 import { usePerferences } from "@/src/app/utils/procedures";
 import { trpc } from "@/src/app/utils/trpc";
 import { SuggestedItem } from "@/src/datatypes/item";

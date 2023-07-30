@@ -32,6 +32,10 @@ Detailed documentation and instructions for the app can be found as follows:
 
 Getting started with Memcache is easy if you follow these steps:
 
+### PostgreSQL Database
+
+Start a local PostgreSQL server and note the port and database name, you will need these for setting environment variables and Prisma
+
 ### Application Setup (Node.js)
 
 First, here's how to install Memcache locally (make sure you have **Node.js** installed)
@@ -42,29 +46,43 @@ First, here's how to install Memcache locally (make sure you have **Node.js** in
     $ git clone https://github.com/unsw-cse-comp3900-9900-23T2/capstone-project-3900w16bendermen.git
     ```
 
-2. Navigate to the Memcache folder:
+1. Navigate to the Memcache folder:
 
     ```bash
     $ cd capstone-project-3900w16bendermen
     ```
 
-3. Install all the required dependencies:
+1. Environment variables
+
+    In `.env`:
+
+    - set `DATABASE_URL` to the url of your local postgresql server.
+    - set `NODE_ENV` to either:
+      - `"development"` if you are developing the application. `OPENAI_API_KEY` is not required, placeholder text will be used in place of AI-generated content
+      - `"production"` or `"test"` if you are deploying or testing the application. `OPENAI_API_KEY` is required, app will use OpenAI API to assist in generating summaries and flashcards.
+    - set `OPENAI_API_KEY` to your OpenAI API key
+
+1. Install all the required dependencies:
 
     ```bash
     $ npm install
     ```
 
-4. Begin the server:
+1. Begin the server:
 
     ```bash
     $ npm run start
     ```
 
-And with all of that completed, the app should now be running on `http://localhost:3000`. 
+And with all of that completed, the app should now be running on `http://localhost:3000`.
 
-### Database Setup (Prisma)
+Note that you will need to setup Prisma ORM by following the next section before starting the server.
 
-Second, set up prisma with the following commands
+### Prisma ORM Setup
+
+Prisma is a tool for converting between tables in a relational database (such as PostgreSQL) and objects in languages such as TypeScript.  
+
+Set up Prisma with the following commands
 
 ```bash
 $ npx prisma generate
