@@ -6,6 +6,8 @@ import openai from "../utils/openai";
 import { GetSummaryError } from "./errors/summary";
 import ItemController from "./item-controller";
 
+const TEST_OPENAI_API = true;
+
 export default class SummaryController {
     static async getSummary(summaryId: string) {
         const summary = await prisma.summary.findUnique({
@@ -232,7 +234,7 @@ export default class SummaryController {
 
         let summaryContent;
 
-        if (process.env.NODE_ENV === "development") {
+        if (process.env.NODE_ENV === "development" && !TEST_OPENAI_API) {
             summaryContent = PLACEHOLDER_SUMMARY;
         } else {
             // TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't

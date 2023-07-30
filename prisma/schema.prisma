@@ -106,9 +106,10 @@ model Flashcard {
 
 model FlashcardReview {
   id          String                @id
-  timestamp   DateTime
+  start       DateTime
+  end         DateTime
   rating      FlashcardReviewRating
-  Flashcard   Flashcard             @relation(fields: [flashcardId], references: [id])
+  flashcard   Flashcard             @relation(fields: [flashcardId], references: [id])
   flashcardId String
 }
 

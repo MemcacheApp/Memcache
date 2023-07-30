@@ -1,3 +1,4 @@
+import { trpc } from "@/src/app/utils/trpc";
 import {
     FlashcardExperienceNames,
     FlashcardRangeNames,
@@ -14,21 +15,35 @@ import {
     Tag,
 } from "@prisma/client";
 import { Progress } from "@radix-ui/react-progress";
+import { useState } from "react";
 import { CardHeader, CardTitle } from "./Card";
 
 interface FlashcardQAProps {
     flashcard: Flashcard & {
         item: Item & { collection: Collection; tags: Tag[] };
     };
-    showAnswer: boolean;
-    setShowAnswer: (value: boolean) => void;
+    onNext: () => void;
 }
 
-export default function FlashcardQA({
+export default function FlashcardReview({
     flashcard,
-    showAnswer,
-    setShowAnswer,
+    onNext,
 }: FlashcardQAProps) {
+    const [showAnswer, setShowAnswer] = useState(false);
+
+    const startTime = new Date();
+    const addReviewMutation = trpc.flashcards.addReview.useMutation();
+
+    const handleRateReview = async (rating: FlashcardReviewRating) => {
+        await addReviewMutation.mutateAsync({
+            flashcardId: flashcard.id,
+            reviewStart: startTime,
+            reviewEnd: new Date(),
+            reviewRating: rating,
+        });
+        onNext();
+    };
+
     return (
         <div className="flex flex-col gap-2">
             <div
@@ -102,6 +117,7 @@ export default function FlashcardQA({
                                     key={rating}
                                     rating={rating}
                                     size="pillmd"
+                                    onClick={() => handleRateReview(rating)}
                                 />
                             ))}
                         </div>
