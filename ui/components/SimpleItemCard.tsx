@@ -119,7 +119,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
         <CardFooter
             className={cn(
-                "items-start flex-col gap-5 mt-3 mb-1",
+                "w-full items-start flex-col gap-5 mt-3 mb-1",
                 props.format?.forceList
                     ? "flex-row justify-between items-end"
                     : "@lg:flex-row @lg:justify-between @lg:items-end",
@@ -188,7 +188,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                 {props.footerLeft}
             </div>
             {props.footerRight ? (
-                <div className="flex gap-3">{props.footerRight}</div>
+                <div className="flex gap-3 @lg:w-auto">{props.footerRight}</div>
             ) : null}
         </CardFooter>
     );
