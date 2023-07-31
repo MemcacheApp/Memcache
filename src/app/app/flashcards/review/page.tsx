@@ -13,10 +13,11 @@ export default function Review() {
 
     const handleNextFlashcard = () => {
         setCurrentFlashcard((prev) => Math.min(prev + 1, revisionQueue.length));
-        if (currentFlashcard >= revisionQueue.length) {
-            return <div>No flashcards to review</div>;
-        }
     };
+
+    if (currentFlashcard >= revisionQueue.length) {
+        return <div>No flashcards to review</div>;
+    }
 
     if (revisionQueue.length === 0) {
         return <div>No flashcards to review</div>;

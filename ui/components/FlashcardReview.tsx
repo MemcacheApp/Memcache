@@ -1,3 +1,5 @@
+"use client";
+
 import { trpc } from "@/src/app/utils/trpc";
 import {
     FlashcardExperienceNames,
@@ -10,19 +12,24 @@ import { cn } from "@/ui/utils";
 import {
     Collection,
     Flashcard,
+    FlashcardReview,
     FlashcardReviewRating,
     Item,
     Tag,
 } from "@prisma/client";
 import { Progress } from "@radix-ui/react-progress";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CardHeader, CardTitle } from "./Card";
 
 interface FlashcardQAProps {
     flashcard: Flashcard & {
-        item: Item & { collection: Collection; tags: Tag[] };
+        item: Item & {
+            collection: Collection;
+            tags: Tag[];
+        };
+        reviews: FlashcardReview[];
     };
-    onNext: () => void;
+    onNext?: () => void;
 }
 
 export default function FlashcardReview({
@@ -41,8 +48,26 @@ export default function FlashcardReview({
             reviewEnd: new Date(),
             reviewRating: rating,
         });
-        onNext();
+        setShowAnswer(false);
+        onNext?.();
     };
+
+    const reviewRatingsCount = useMemo(
+        () =>
+            flashcard.reviews.reduce(
+                (acc, review) => {
+                    acc[review.rating] += 1;
+                    return acc;
+                },
+                {
+                    [FlashcardReviewRating.Easy]: 0,
+                    [FlashcardReviewRating.Medium]: 0,
+                    [FlashcardReviewRating.Hard]: 0,
+                    [FlashcardReviewRating.Forgot]: 0,
+                } as Record<FlashcardReviewRating, number>,
+            ),
+        [flashcard.reviews],
+    );
 
     return (
         <div className="flex flex-col gap-2">
@@ -165,19 +190,27 @@ export default function FlashcardReview({
                 </div>
                 <div className="ml-[2.5rem] flex flex-col gap-2">
                     <div className="text-easy">
-                        <span className="font-mono text-3xl font-bold">1</span>
+                        <span className="font-mono text-3xl font-bold">
+                            {reviewRatingsCount[FlashcardReviewRating.Easy]}
+                        </span>
                         <span className="ml-2">easy</span>
                     </div>
                     <div className="text-medium">
-                        <span className="font-mono text-3xl font-bold">4</span>
+                        <span className="font-mono text-3xl font-bold">
+                            {reviewRatingsCount[FlashcardReviewRating.Medium]}
+                        </span>
                         <span className="ml-2">medium</span>
                     </div>
                     <div className="text-hard">
-                        <span className="font-mono text-3xl font-bold">3</span>
+                        <span className="font-mono text-3xl font-bold">
+                            {reviewRatingsCount[FlashcardReviewRating.Hard]}
+                        </span>
                         <span className="ml-2">hard</span>
                     </div>
                     <div className="text-forgot">
-                        <span className="font-mono text-3xl font-bold">2</span>
+                        <span className="font-mono text-3xl font-bold">
+                            {reviewRatingsCount[FlashcardReviewRating.Forgot]}
+                        </span>
                         <span className="ml-2">forgot</span>
                     </div>
                 </div>

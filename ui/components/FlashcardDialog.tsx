@@ -8,7 +8,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/ui/components";
-import FlashcardQA from "@/ui/components/FlashcardReview";
+import FlashcardReview from "@/ui/components/FlashcardReview";
 import { Collection, Flashcard, Item, Tag } from "@prisma/client";
 import { useState } from "react";
 
@@ -33,11 +33,7 @@ export default function FlashcardDialog({
                 <DialogHeader>
                     <DialogTitle>Flashcard</DialogTitle>
                 </DialogHeader>
-                <FlashcardQA
-                    flashcard={flashcard}
-                    showAnswer={showAnswer}
-                    setShowAnswer={setShowAnswer}
-                />
+                <FlashcardReview flashcard={flashcard} />
                 <DialogFooter>
                     <Button onClick={() => onOpenChange(false)}>Return</Button>
                 </DialogFooter>
