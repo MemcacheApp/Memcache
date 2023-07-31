@@ -20,6 +20,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
     SimpleItemCard,
+    SimpleItemCardFormat,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { cn } from "../utils";
@@ -36,7 +37,7 @@ interface ItemCardProps {
     onSelect?: (id: string) => void;
     className?: string;
     hideOptions?: boolean;
-    format?: ItemCardFormat;
+    format?: SimpleItemCardFormat;
 }
 
 export interface ItemCardFormat {
