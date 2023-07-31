@@ -82,16 +82,13 @@ export default function FlashcardsPage() {
     const [itemInput, setItemInput] = useState("");
     const itemsQuery = trpc.item.getUserItemsWithFlashcards.useQuery();
     const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
-
-    const revisionQueue =
-        flashcardsQuery.data?.sort(
-            (a, b) => a.dueDate.valueOf() - b.dueDate.valueOf(),
-        ) ?? [];
+    const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
+    const revisionQueue = revisionQueueQuery.data ?? [];
 
     const recentlyViewed = flashcardsQuery.data?.sort((a, b) =>
         a.reviews.length > 0 && b.reviews.length > 0
-            ? b.reviews.slice(-1)[0].timestamp.valueOf() -
-              a.reviews.slice(-1)[0].timestamp.valueOf()
+            ? b.reviews.slice(-1)[0].end.valueOf() -
+              a.reviews.slice(-1)[0].end.valueOf()
             : 0,
     );
 
