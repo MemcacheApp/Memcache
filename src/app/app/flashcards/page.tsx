@@ -14,7 +14,13 @@ import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { ItemForFlashcards } from "@/ui/components/ItemForFlashcards";
 import { H4 } from "@/ui/components/typography";
-import { Collection, Flashcard, Item, Tag } from "@prisma/client";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReview,
+    Item,
+    Tag,
+} from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
@@ -108,7 +114,10 @@ export default function FlashcardsPage() {
     >(null);
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
-        | (Flashcard & { item: Item & { collection: Collection; tags: Tag[] } })
+        | (Flashcard & {
+              item: Item & { collection: Collection; tags: Tag[] };
+              reviews: FlashcardReview[];
+          })
         | null
     >(null);
 
