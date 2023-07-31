@@ -2,24 +2,28 @@
 
 ## Guide
 
-- [Introduction](#introduction)
-- [Section 1](#section-1)
-- [Section 2](#section-2)
+-   [Introduction](#introduction)
+-   [Signing up](#signing-up)
+-   [Logging in](#logging-in)
+-   [Profile](#profile)
 
 ## Introduction
 
-Section intro 
+Authentication is central to all functionality in Memcache, as one must be registered and logged in as a user
+in order to use the app. Saves, collections, tags, summaries, and flashcards are all associated with a specific
+user.
 
-## Section 1
+Each user has an email, password, first name, and last name. The former two are used for authentication, while
+the latter two are used for identifying users in the app.
 
-Section
+## Signing up
 
-```bash
-$ blah
-$ foo
-```
+![Signing up](assets/signup.png)
 
-## Section 2
+## Logging in
 
-Section
+![Logging in](assets/login.png)
 
+## Profile
+
+![Profile](assets/profile.png)
