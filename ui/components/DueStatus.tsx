@@ -1,3 +1,4 @@
+import dayjs from "@/src/app/utils/dayjs";
 import { Dot } from "lucide-react";
 
 export default function DueStatus({ dueDate }: { dueDate: Date }) {
@@ -7,8 +8,9 @@ export default function DueStatus({ dueDate }: { dueDate: Date }) {
             {"Due now"}
         </div>
     ) : (
-        <div className="flex items-center font-medium text-[#1f52de]">
-            {"Due tomorrow"}
+        <div className="flex items-center font-medium text-[#1f52de]  pl-5">
+            <Dot size={42} className="absolute -left-4" />
+            {`Due ${dayjs().to(dayjs(dueDate))}`}
         </div>
     );
 }

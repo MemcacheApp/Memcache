@@ -8,13 +8,19 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/ui/components";
-import FlashcardReview from "@/ui/components/FlashcardReview";
-import { Collection, Flashcard, Item, Tag } from "@prisma/client";
-import { useState } from "react";
+import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReview,
+    Item,
+    Tag,
+} from "@prisma/client";
 
 interface FlashcardDialogProps {
     flashcard: Flashcard & {
         item: Item & { collection: Collection; tags: Tag[] };
+        reviews: FlashcardReview[];
     };
     open: boolean;
     onOpenChange: (value: boolean) => void;
@@ -25,15 +31,13 @@ export default function FlashcardDialog({
     open,
     onOpenChange,
 }: FlashcardDialogProps) {
-    const [showAnswer, setShowAnswer] = useState(false);
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="w-[85%] sm:max-w-[860px]">
                 <DialogHeader>
                     <DialogTitle>Flashcard</DialogTitle>
                 </DialogHeader>
-                <FlashcardReview flashcard={flashcard} />
+                <FlashcardReviewCard flashcard={flashcard} viewOnly />
                 <DialogFooter>
                     <Button onClick={() => onOpenChange(false)}>Return</Button>
                 </DialogFooter>

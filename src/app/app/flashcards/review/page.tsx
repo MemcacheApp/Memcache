@@ -2,7 +2,7 @@
 
 import { trpc } from "@/src/app/utils/trpc";
 import { PageTitle } from "@/ui/components";
-import FlashcardReview from "@/ui/components/FlashcardReview";
+import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
 import { useState } from "react";
 
 export default function Review() {
@@ -28,7 +28,7 @@ export default function Review() {
             <PageTitle>Review Session</PageTitle>
             <div className="flex flex-col gap-5">
                 <div className="bg-background mx-8 p-6 border rounded-lg flex flex-col gap-3">
-                    <FlashcardReview
+                    <FlashcardReviewCard
                         flashcard={revisionQueue[currentFlashcard]}
                         onNext={handleNextFlashcard}
                     />

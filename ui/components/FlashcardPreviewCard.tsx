@@ -11,11 +11,21 @@ import {
     SimpleItemCardFooter,
 } from "@/ui/components";
 import { cn } from "@/ui/utils";
-import { Collection, Flashcard, Item, Tag } from "@prisma/client";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReview,
+    Item,
+    Tag,
+} from "@prisma/client";
 import DueStatus from "./DueStatus";
+import LastReview from "./LastReview";
 
 interface FlashcardPreviewCardProps {
-    data: Flashcard & { item: Item & { collection: Collection; tags: Tag[] } };
+    data: Flashcard & {
+        item: Item & { collection: Collection; tags: Tag[] };
+        reviews: FlashcardReview[];
+    };
     onClick?: React.MouseEventHandler<HTMLDivElement>;
     className?: string;
     format?: FlashcardPreviewCardFormat;
@@ -96,9 +106,7 @@ export default function FlashcardPreviewCard({
                 >
                     <div className="flex items-center justify-between py-1 text-sm relative">
                         <DueStatus dueDate={data.dueDate} />
-                        <div className="text-slate-500">
-                            Last revisited 3 days ago
-                        </div>
+                        <LastReview reviewTime={data.reviews.at(-1)} />
                     </div>
                     {data.item.title && format.showItemData ? (
                         <CardTitle>{data.item.title}</CardTitle>

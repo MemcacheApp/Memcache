@@ -8,7 +8,7 @@ export * from "./Command";
 export * from "./Dialog";
 export * from "./DropdownMenu";
 export * from "./ExternalLink";
-export * from "./FlashcardReview";
+export * from "./FlashcardReviewCard";
 export * from "./Input";
 export * from "./ItemCard";
 export * from "./ItemList";
