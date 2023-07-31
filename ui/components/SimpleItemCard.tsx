@@ -14,7 +14,9 @@ import { cn } from "../utils";
 
 export interface SimpleItemCardFormat {
     growHeight?: boolean; // Height of SimpleItemCard grows to fit container
+    forceList?: boolean;
 }
+
 interface SimpleItemCardProps {
     className?: string;
     url?: string;
@@ -104,15 +106,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     type={props.type}
                     loading={props.loading}
                     thumbnail={props.thumbnail}
-<<<<<<< HEAD
                     format={props.format}
-=======
-                    thumbnailOverlay={props.thumbnailOverlay}
-                />
-                <SimpleItemCardFooter
-                    {...props}
-                    className="flex @lg:hidden order-3"
->>>>>>> f1bc200 (show item with flashcard num flashcards)
                 />
             </div>
             <SimpleItemCardFooter {...props} />
@@ -203,7 +197,7 @@ interface ThumbnailProps {
     type?: string;
     loading?: boolean;
     thumbnail?: string | null;
-    format?: ItemCardFormat;
+    format?: SimpleItemCardFormat;
     thumbnailOverlay?: React.ReactNode;
 }
 

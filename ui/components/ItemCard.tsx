@@ -40,11 +40,6 @@ interface ItemCardProps {
     format?: SimpleItemCardFormat;
 }
 
-export interface ItemCardFormat {
-    growHeight?: boolean; // Height of SimpleItemCardFormat grows to fit container of the SimpleItemCard
-    forceList?: boolean;
-}
-
 export function ItemCard({
     data,
     selected,

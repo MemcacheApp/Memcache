@@ -4,6 +4,7 @@ import {
     FlashcardRange,
     FlashcardReviewRating,
     Item,
+    ItemStatus,
     Tag,
 } from "@prisma/client";
 
@@ -58,7 +59,7 @@ export const dummyFlashcardsData: DummyFlashcard[] = [
         item: {
             id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
             type: "article",
-            status: 0,
+            status: ItemStatus.Inbox,
             collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
             title: "Writing WebSocket client applications - Web APIs | MDN",
             url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",
@@ -79,6 +80,7 @@ export const dummyFlashcardsData: DummyFlashcard[] = [
                 name: "Default",
                 userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
             },
+            public: true,
         },
     },
     {
@@ -103,7 +105,7 @@ export const dummyFlashcardsData: DummyFlashcard[] = [
         item: {
             id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
             type: "article",
-            status: 0,
+            status: ItemStatus.Inbox,
             collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
             title: "Writing WebSocket client applications - Web APIs | MDN",
             url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",
@@ -124,6 +126,7 @@ export const dummyFlashcardsData: DummyFlashcard[] = [
                 name: "Default",
                 userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
             },
+            public: true,
         },
     },
 ];
