@@ -1,32 +1,33 @@
-# Memcache 
-#### *COMP3900 | W16Bendermen | 23T2*
+# Memcache
 
-A dedicated application designed to *organise your saved internet content* and *generate revision materials* to enhance online learning.
+#### _COMP3900 | W16Bendermen | 23T2_
+
+A dedicated application designed to _organise your saved internet content_ and _generate revision materials_ to enhance online learning.
 
 ## :busts_in_silhouette: Contributors
 
-- **Gordon Huang [(diary)](./diaries/z5359836.md)**
-- **Haopeng Luo [(diary)](./diaries/z5339246.md)**
-- **Max Xue [(diary)](./diaries/z5267325.md)**
-- **Oscar Halford [(diary)](./diaries/z5157090.md)**
-- **William Zhang (Scrum Master) [(diary)](./diaries/z5367957.md)**
+-   **Gordon Huang [(diary)](./diaries/z5359836.md)**
+-   **Haopeng Luo [(diary)](./diaries/z5339246.md)**
+-   **Max Xue [(diary)](./diaries/z5267325.md)**
+-   **Oscar Halford [(diary)](./diaries/z5157090.md)**
+-   **William Zhang (Scrum Master) [(diary)](./diaries/z5367957.md)**
 
 ## :book: Documentation
 
 Detailed documentation and instructions for the app can be found as follows:
 
-- [**Installation and Setup**](./docs/install_setup.md)
-- [**Objectives and Features**](./docs/features.md)
-  - [Accounts and Authentication](./docs/accounts_auth.md)
-  - [Content Saver](./docs/content_saver.md)
-  - [Content Home](./docs/content_home.md)
-  - [Tags and Collections](./docs/tags_collections.md)
-  - [Content Summariser](./docs/content_summariser.md)
-  - [Flash Card Generator and Interface](./docs/flashcard_generator.md)
-  - [Spaced Repetition Review](./docs/spaced_repetition.md)
-  - [Content Discovery](./docs/content_discovery.md)
-- [**Troubleshooting and FAQs**](./docs/troubleshooting.md)
-- [**Code Map**](./docs/codemap.md)
+-   [**Installation and Setup**](./docs/install_setup.md)
+-   [**Objectives and Features**](./docs/features.md)
+    -   [Accounts and Authentication](./docs/accounts_auth.md)
+    -   [Content Saver](./docs/content_saver.md)
+    -   [Content Home](./docs/content_home.md)
+    -   [Tags and Collections](./docs/tags_collections.md)
+    -   [Content Summariser](./docs/content_summariser.md)
+    -   [Flash Card Generator and Interface](./docs/flashcard_generator.md)
+    -   [Spaced Repetition Review](./docs/spaced_repetition.md)
+    -   [Content Discovery](./docs/content_discovery.md)
+-   [**Troubleshooting and FAQs**](./docs/troubleshooting.md)
+-   [**Code Map**](./docs/codemap.md)
 
 ## :rocket: Quick Start
 
@@ -58,14 +59,20 @@ First, here's how to install Memcache locally (make sure you have **Node.js** in
 
     - set `DATABASE_URL` to the url of your local postgresql server.
     - set `NODE_ENV` to either:
-      - `"development"` if you are developing the application. `OPENAI_API_KEY` is not required, placeholder text will be used in place of AI-generated content
-      - `"production"` or `"test"` if you are deploying or testing the application. `OPENAI_API_KEY` is required, app will use OpenAI API to assist in generating summaries and flashcards.
+        - `"development"` if you are developing the application. `OPENAI_API_KEY` is not required, placeholder text will be used in place of AI-generated content
+        - `"production"` or `"test"` if you are deploying or testing the application. `OPENAI_API_KEY` is required, app will use OpenAI API to assist in generating summaries and flashcards.
     - set `OPENAI_API_KEY` to your OpenAI API key
 
 1. Install all the required dependencies:
 
     ```bash
     $ npm install
+    ```
+
+1. Build the project:
+
+    ```bash
+    $ npm run build
     ```
 
 1. Begin the server:
@@ -80,7 +87,7 @@ Note that you will need to setup Prisma ORM by following the next section before
 
 ### Prisma ORM Setup
 
-Prisma is a tool for converting between tables in a relational database (such as PostgreSQL) and objects in languages such as TypeScript.  
+Prisma is a tool for converting between tables in a relational database (such as PostgreSQL) and objects in languages such as TypeScript.
 
 Set up Prisma with the following commands
 
@@ -95,14 +102,14 @@ Optionally, you can seed the database
 $ npx prisma db seed
 ```
 
-The seed command initialises the database with data located at /src/server/db/seed.ts. Modify this seed data as required. 
+The seed command initialises the database with data located at /src/server/db/seed.ts. Modify this seed data as required.
 
 The seeded data also has the following default user:
 
 ```json
 {
     "email": "admin@endermen.com",
-    "password": "123456" 
+    "password": "123456"
 }
 ```
 
@@ -124,7 +131,7 @@ The `npx prisma db seed` command will manually run the seed in `/src/server/db/s
     // ...
     "prisma": {
         "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/server/db/seed.ts"
-    },
+    }
     //...
 }
 ```
