@@ -59,7 +59,7 @@ export default function page() {
                 </div>
                 <div>
                     <Input
-                        type="email"
+                        type="text"
                         title="Email"
                         placeholder="Email"
                         id="login-email-input"
