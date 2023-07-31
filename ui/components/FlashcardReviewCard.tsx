@@ -20,6 +20,7 @@ import {
 import { Progress } from "@radix-ui/react-progress";
 import { useMemo, useState } from "react";
 import { CardHeader, CardTitle } from "./Card";
+import LastReview from "./LastReview";
 
 interface FlashcardQAProps {
     flashcard: Flashcard & {
@@ -30,11 +31,13 @@ interface FlashcardQAProps {
         reviews: FlashcardReview[];
     };
     onNext?: () => void;
+    viewOnly?: boolean;
 }
 
-export default function FlashcardReview({
+export default function FlashcardReviewCard({
     flashcard,
     onNext,
+    viewOnly = false,
 }: FlashcardQAProps) {
     const [showAnswer, setShowAnswer] = useState(false);
 
@@ -129,7 +132,8 @@ export default function FlashcardReview({
                             className={cn(
                                 "px-4 py-0 h-0 min-w-[510px] w-[80%] max-w-[860px] opacity-0 flex justify-between items-center transition-[height,opacity]",
                                 {
-                                    "h-fit py-2 opacity-1": showAnswer,
+                                    "h-fit py-2 opacity-1":
+                                        showAnswer && !viewOnly,
                                 },
                             )}
                         >
@@ -154,9 +158,9 @@ export default function FlashcardReview({
                     <div className="flex flex-col justify-between w-full">
                         <div className="flex items-center justify-between py-1 relative">
                             <DueStatus dueDate={flashcard.dueDate} />
-                            <div className="text-slate-500">
-                                Last revisited 3 days ago
-                            </div>
+                            <LastReview
+                                reviewTime={flashcard.reviews.at(-1)?.end}
+                            />
                         </div>
                         <div className="flex items-center justify-between py-1">
                             <div className="px-1 mr-2 text-xl">{"65%"}</div>

@@ -90,7 +90,7 @@ export default class FlashcardController {
                 where: {
                     userId,
                     dueDate: {
-                        gte: new Date(),
+                        lte: new Date(),
                     },
                 },
                 orderBy: {
