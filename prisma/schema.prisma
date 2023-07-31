@@ -131,3 +131,15 @@ enum FlashcardRange {
   Breadth
   Balanced
 }
+
+enum SummaryExperience {
+  Beginner
+  Intermediate
+  Advanced
+}
+
+enum SummaryFinetuning {
+  Qualitative
+  Quantitative
+  Balanced
+}
