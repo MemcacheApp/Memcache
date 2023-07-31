@@ -17,6 +17,7 @@ import {
     Input,
     Label,
     Loader,
+    SimpleItemCard,
     SummaryCard,
     Tabs,
     TabsList,
@@ -276,9 +277,21 @@ export function FlashcardsDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
-                    <DialogTitle>Generate Flashcards</DialogTitle>
+                    <DialogTitle className="text-xl">
+                        Generate Flashcards
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-6">
+                    <SimpleItemCard
+                        url={data.url}
+                        title={data.title}
+                        description={data.description}
+                        type={data.type}
+                        thumbnail={data.thumbnail}
+                        siteName={data.siteName}
+                        favicon={data.favicon}
+                        className="bg-slate-100 border-none h-auto"
+                    />
                     <div className="flex justify-between items-end gap-6">
                         <div className="flex flex-col gap-1">
                             <Label

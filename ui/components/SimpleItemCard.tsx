@@ -6,19 +6,21 @@ import {
     CardHeader,
     CardTitle,
     ExternalLink,
-    ItemCardFormat,
     Link,
     SimpleTag,
     Skeleton,
 } from ".";
 import { cn } from "../utils";
 
+export interface SimpleItemCardFormat {
+    growHeight?: boolean; // Height of SimpleItemCard grows to fit container
+}
 interface SimpleItemCardProps {
-    type?: string;
-    title?: string;
-    url?: string;
     className?: string;
+    url?: string;
+    title?: string;
     description?: string;
+    type?: string;
     collection?: Collection;
     tags?: Tag[];
     thumbnail?: string | null;
@@ -31,8 +33,6 @@ interface SimpleItemCardProps {
     thumbnailOverlay?: React.ReactNode;
     format?: SimpleItemCardFormat;
 }
-
-type SimpleItemCardFormat = ItemCardFormat;
 
 export function SimpleItemCard(props: SimpleItemCardProps) {
     return (
@@ -69,7 +69,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                 <CardTitle>{props.title}</CardTitle>
                             ) : null}
                             {props.description ? (
-                                <p className="mt-3 overflow-hidden">
+                                <p className="mt-3 overflow-hidden text-slate-500">
                                     {props.description}
                                 </p>
                             ) : null}
