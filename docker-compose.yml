@@ -1,21 +1,22 @@
 version: '3'
 services:
   app:
-    container_name: react-app
-    restart: always
     build: .
     ports:
       - '3000:3000'
-    links:
+    depends_on:
       - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/3900DB
+    command: >
+      sh -c "npx prisma generate &&
+             npx prisma migrate dev &&
+             npx prisma db seed &&
+             npm run start"
   db:
     image: postgres:latest
-    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: 3900DB
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-volumes:
-  postgres_data:
+
