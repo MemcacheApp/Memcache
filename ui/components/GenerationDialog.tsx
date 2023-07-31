@@ -121,7 +121,7 @@ export function GenerateSummaryDialog({
 }: GenerateSummaryDialogProps) {
     const ctx = trpc.useContext();
 
-    const [numOfWords, setNumOfWords] = useState(250);
+    const [numOfWords, setNumOfWords] = useState(150);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
 
@@ -149,14 +149,32 @@ export function GenerateSummaryDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
-                    <DialogTitle>Generate Summary</DialogTitle>
+                    <DialogTitle className="text-xl">
+                        Generate Summaries
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="numofwords">Number of words</Label>
-
+                <div className="flex flex-col gap-6">
+                    <SimpleItemCard
+                        url={data.url}
+                        title={data.title}
+                        description={data.description}
+                        type={data.type}
+                        thumbnail={data.thumbnail}
+                        siteName={data.siteName}
+                        favicon={data.favicon}
+                        className="bg-slate-100 border-none h-auto"
+                    />
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="numofwords">
+                                Number of words
+                            </Label>
+                            <DialogDescription>
+                                {"Specify the length of your summary in words."}
+                            </DialogDescription>
+                        </div>
                         <Input
                             className="w-32"
                             id="numofwords"
@@ -167,8 +185,17 @@ export function GenerateSummaryDialog({
                             }
                         />
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="experience">Experience</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="experience">
+                                Experience
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Level of expertise that the content in the summary will assume of the reader."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="experience"
                             value={experience.toString()}
@@ -195,8 +222,17 @@ export function GenerateSummaryDialog({
                             </TabsList>
                         </Tabs>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="finetuning">Finetuning</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="finetuning">
+                                Finetuning
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Qualitative summaries emphasise the literary form and meaning of the content, whereas quantitative summaries emphasise hard facts and data."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="finetuning"
                             value={finetuning.toString()}
@@ -417,7 +453,6 @@ export function FlashcardsDialog({
                         </Tabs>
                     </div>
                 </div>
-
                 <DialogFooter>
                     <Button onClick={handleSubmit}>Generate</Button>
                 </DialogFooter>
