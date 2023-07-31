@@ -107,6 +107,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     loading={props.loading}
                     thumbnail={props.thumbnail}
                     format={props.format}
+                    thumbnailOverlay={props.thumbnailOverlay}
                 />
             </div>
             <SimpleItemCardFooter {...props} />
@@ -210,7 +211,7 @@ function Thumbnail(props: ThumbnailProps) {
         return (
             <div
                 className={cn(
-                    "order-1 max-h-64 shrink-0 rounded-t-lg overflow-hidden",
+                    "order-1 max-h-64 shrink-0 rounded-t-lg overflow-hidden relative",
                     props.format?.forceList
                         ? "order-2 max-w-[32%] max-h-48 m-6 border rounded-lg"
                         : "@lg:order-2 @lg:max-w-[32%] @lg:max-h-48 @lg:m-6 @lg:border @lg:rounded-lg",

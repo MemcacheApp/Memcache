@@ -112,18 +112,19 @@ export default function FlashcardPreviewCard({
                         <CardTitle>{data.item.title}</CardTitle>
                     ) : null}
                 </CardHeader>
-                <SimpleItemCardFooter
-                    className={cn({ "hidden ": !format.showItemData })}
-                    url={data.item.url}
-                    type={data.item.type}
-                    title={data.item.title}
-                    collection={data.item.collection}
-                    tags={data.item.tags}
-                    description={data.item.description}
-                    thumbnail={data.item.thumbnail}
-                    siteName={data.item.siteName}
-                    favicon={data.item.favicon}
-                />
+                {format.showItemData && (
+                    <SimpleItemCardFooter
+                        url={data.item.url}
+                        type={data.item.type}
+                        title={data.item.title}
+                        collection={data.item.collection}
+                        tags={data.item.tags}
+                        description={data.item.description}
+                        thumbnail={data.item.thumbnail}
+                        siteName={data.item.siteName}
+                        favicon={data.item.favicon}
+                    />
+                )}
             </div>
         </Card>
     );
