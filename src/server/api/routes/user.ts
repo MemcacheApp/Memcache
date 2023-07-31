@@ -1,7 +1,5 @@
-import { protectedProcedure, publicProcedure, router } from "../trpc";
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import UserController from "../../controllers/user-controller";
+import { z } from "zod";
 import {
     CreateUserError,
     GetUserError,
@@ -9,6 +7,8 @@ import {
     SendEmailError,
     VerifyCodeError,
 } from "../../controllers/errors/user";
+import UserController from "../../controllers/user-controller";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
     createUser: publicProcedure
@@ -78,6 +78,21 @@ export const userRouter = router({
                 }
             }
         }),
+    logout: protectedProcedure.mutation(async ({ ctx }) => {
+        try {
+            const cookieString = ctx.req.headers.get("cookie");
+            await UserController.logout(cookieString);
+            ctx.resHeaders.set(
+                "set-cookie",
+                `jwt=deleted;HttpOnly;Secure;expires=Thu, 01 Jan 1970 00:00:00 GMT;`,
+            );
+        } catch (e) {
+            console.error(e);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+            });
+        }
+    }),
     isLoggedIn: publicProcedure.query(async ({ ctx }) => {
         try {
             await UserController.validate(ctx.req.headers.get("cookie"));
@@ -163,70 +178,20 @@ export const userRouter = router({
                 }
             }
         }),
-    updateEmail: protectedProcedure
+    updateProfile: protectedProcedure
         .input(
-            z.object({
-                newEmail: z.string(),
-            }),
+            z
+                .object({
+                    firstName: z.string(),
+                    lastName: z.string(),
+                    email: z.string(),
+                    publicProfile: z.boolean(),
+                })
+                .partial(),
         )
-        .mutation(async ({ input, ctx }) => {
+        .mutation(async ({ ctx, input }) => {
             try {
-                return await UserController.updateEmail(
-                    ctx.userId,
-                    input.newEmail,
-                );
-            } catch (e) {
-                if (e instanceof GetUserError) {
-                    throw new TRPCError({
-                        message: e.message,
-                        code: "BAD_REQUEST",
-                    });
-                } else {
-                    console.error(e);
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                    });
-                }
-            }
-        }),
-    updateFirstName: protectedProcedure
-        .input(
-            z.object({
-                newFirstName: z.string(),
-            }),
-        )
-        .mutation(async ({ input, ctx }) => {
-            try {
-                return await UserController.updateFirstName(
-                    ctx.userId,
-                    input.newFirstName,
-                );
-            } catch (e) {
-                if (e instanceof GetUserError) {
-                    throw new TRPCError({
-                        message: e.message,
-                        code: "BAD_REQUEST",
-                    });
-                } else {
-                    console.error(e);
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                    });
-                }
-            }
-        }),
-    updateLastName: protectedProcedure
-        .input(
-            z.object({
-                newLastName: z.string(),
-            }),
-        )
-        .mutation(async ({ input, ctx }) => {
-            try {
-                return await UserController.updateLastName(
-                    ctx.userId,
-                    input.newLastName,
-                );
+                return await UserController.updateProfile(ctx.userId, input);
             } catch (e) {
                 if (e instanceof GetUserError) {
                     throw new TRPCError({
@@ -258,4 +223,76 @@ export const userRouter = router({
             }
         }
     }),
+    getUserInfoById: publicProcedure
+        .input(
+            z.object({
+                userId: z.string(),
+            }),
+        )
+        .query(async ({ input }) => {
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const { email, ...other } = await UserController.userInfo(
+                    input.userId,
+                );
+                return other;
+            } catch (e) {
+                if (e instanceof GetUserError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
+    getPerferences: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return await UserController.getPreferences(ctx.userId);
+        } catch (e) {
+            if (e instanceof GetUserError) {
+                throw new TRPCError({
+                    message: e.message,
+                    code: "BAD_REQUEST",
+                });
+            } else {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }
+    }),
+    updatePerferences: protectedProcedure
+        .input(
+            z
+                .object({
+                    publicNewItem: z.boolean(),
+                })
+                .partial(),
+        )
+        .mutation(async ({ ctx, input }) => {
+            try {
+                return await UserController.updatePreferences(
+                    ctx.userId,
+                    input,
+                );
+            } catch (e) {
+                if (e instanceof GetUserError) {
+                    throw new TRPCError({
+                        message: e.message,
+                        code: "BAD_REQUEST",
+                    });
+                } else {
+                    console.error(e);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                    });
+                }
+            }
+        }),
 });

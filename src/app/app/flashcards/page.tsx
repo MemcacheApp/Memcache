@@ -84,6 +84,7 @@ const dummyFlashcardsData: DummyFlashcard[] = [
         item: {
             id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
             type: "article",
+            public: true,
             status: ItemStatus.Inbox,
             collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
             title: "Writing WebSocket client applications - Web APIs | MDN",
@@ -129,6 +130,7 @@ const dummyFlashcardsData: DummyFlashcard[] = [
         item: {
             id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
             type: "article",
+            public: true,
             status: ItemStatus.Inbox,
             collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
             title: "Writing WebSocket client applications - Web APIs | MDN",

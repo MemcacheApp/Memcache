@@ -1,16 +1,10 @@
 "use client";
 
+import { usePerferences } from "@/src/app/utils/procedures";
 import { trpc } from "@/src/app/utils/trpc";
 import { SuggestedItem } from "@/src/datatypes/item";
-import {
-    CheckIcon,
-    ExternalLinkIcon,
-    Package2,
-    PlusIcon,
-    TagIcon,
-} from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { CheckIcon, Package2, PlusIcon, TagIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
     AddTag,
     Button,
@@ -20,8 +14,10 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    Label,
     SimpleItemCard,
     SimpleTag,
+    Switch,
 } from ".";
 
 interface SuggestedCardProps {
@@ -41,17 +37,13 @@ export function SuggestedCard({ data }: SuggestedCardProps) {
                 thumbnail={data.thumbnail}
                 url={data.url}
                 siteName={data.siteName}
+                user={data.user}
                 format={{
                     growHeight: true,
                 }}
+                titleOpenLink
                 footerRight={
                     <>
-                        <Link href={data.url} tabIndex={-1}>
-                            <Button variant="icon" size="none">
-                                <ExternalLinkIcon size={18} />
-                            </Button>
-                        </Link>
-
                         {isAdded ? (
                             <Button variant="icon" size="none">
                                 <CheckIcon
@@ -104,12 +96,20 @@ function CreateItemDialog({
             setIsAdded(true);
         },
     });
+    const perferences = usePerferences();
 
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
     const tagsQuery = trpc.tag.getUserTags.useQuery();
 
     const [collection, setCollection] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [isPublic, setIsPublic] = useState(true);
+
+    useEffect(() => {
+        if (perferences) {
+            setIsPublic(perferences.publicNewItem);
+        }
+    }, [perferences]);
 
     const addTag = (name: string) => {
         if (!tags.includes(name)) {
@@ -119,6 +119,15 @@ function CreateItemDialog({
 
     const removeTag = (name: string) => {
         setTags(tags.filter((tagName) => tagName != name));
+    };
+
+    const handleSubmit = () => {
+        createItemMutation.mutate({
+            url: data.url,
+            collectionName: collection,
+            tagNames: tags,
+            public: isPublic,
+        });
     };
 
     return (
@@ -134,10 +143,20 @@ function CreateItemDialog({
                     thumbnail={data.thumbnail}
                     url={data.url}
                     siteName={data.siteName}
-                    className="max-h-48"
+                    className="max-h-64"
                     format={{
                         forceList: true,
                     }}
+                    footerRight={
+                        <div className="flex items-center gap-3 ml-auto">
+                            <Label htmlFor="airplane-mode">Public</Label>
+                            <Switch
+                                id="is-public"
+                                checked={isPublic}
+                                onCheckedChange={setIsPublic}
+                            />
+                        </div>
+                    }
                 />
                 <div className="flex gap-3 flex-wrap items-center">
                     <Package2 className="text-slate-500" size={18} />
@@ -169,13 +188,7 @@ function CreateItemDialog({
                 <DialogFooter>
                     <Button
                         disabled={createItemMutation.isLoading}
-                        onClick={() =>
-                            createItemMutation.mutate({
-                                url: data.url,
-                                collectionName: collection,
-                                tagNames: tags,
-                            })
-                        }
+                        onClick={handleSubmit}
                     >
                         Save
                     </Button>
