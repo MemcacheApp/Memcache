@@ -308,7 +308,7 @@ export default class ItemController {
 
         return await prisma.item.findMany({
             where: {
-                userId,
+                userId: targetId,
                 public: true,
             },
             select: {
