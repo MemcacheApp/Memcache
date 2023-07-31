@@ -2,10 +2,10 @@ import {
     Collection,
     FlashcardExperience,
     FlashcardRange,
+    FlashcardReviewRating,
     Item,
     Tag,
 } from "@prisma/client";
-import { ReviewRatingEnum } from "./ReviewRating";
 
 interface DummyFlashcard {
     id: number;
@@ -21,7 +21,7 @@ interface DummyFlashcard {
 interface DummyFlashcardReview {
     id: number;
     timestamp: string;
-    rating: ReviewRatingEnum;
+    rating: FlashcardReviewRating;
 }
 
 export const dummyFlashcardsData: DummyFlashcard[] = [
@@ -37,22 +37,22 @@ export const dummyFlashcardsData: DummyFlashcard[] = [
             {
                 id: 1,
                 timestamp: "2023-07-13T18:20:36.970+10:00",
-                rating: ReviewRatingEnum.Forgot,
+                rating: FlashcardReviewRating.Forgot,
             },
             {
                 id: 2,
                 timestamp: "2023-07-14T18:20:36.970+10:00",
-                rating: ReviewRatingEnum.Hard,
+                rating: FlashcardReviewRating.Hard,
             },
             {
                 id: 3,
                 timestamp: "2023-07-15T18:20:36.970+10:00",
-                rating: ReviewRatingEnum.Medium,
+                rating: FlashcardReviewRating.Medium,
             },
             {
                 id: 4,
                 timestamp: "2023-07-17T16:20:36.970+10:00",
-                rating: ReviewRatingEnum.Easy,
+                rating: FlashcardReviewRating.Easy,
             },
         ],
         item: {
@@ -92,12 +92,12 @@ export const dummyFlashcardsData: DummyFlashcard[] = [
             {
                 id: 1,
                 timestamp: "2023-07-05T14:38:36.970+10:00",
-                rating: ReviewRatingEnum.Medium,
+                rating: FlashcardReviewRating.Medium,
             },
             {
                 id: 2,
                 timestamp: "2023-07-10T13:20:28.520+10:00",
-                rating: ReviewRatingEnum.Easy,
+                rating: FlashcardReviewRating.Easy,
             },
         ],
         item: {

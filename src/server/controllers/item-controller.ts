@@ -149,7 +149,7 @@ export default class ItemController {
         return items;
     }
 
-    static async getItemFlashcardSet(userId: string, itemId: string) {
+    static async getItemFlashcards(userId: string, itemId: string) {
         const item = await prisma.item.findUnique({
             where: {
                 id: itemId,
@@ -157,7 +157,7 @@ export default class ItemController {
             include: {
                 tags: true,
                 collection: true,
-                flashcards: true,
+                flashcards: { include: { reviews: true } },
             },
         });
 

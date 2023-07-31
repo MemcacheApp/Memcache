@@ -106,7 +106,7 @@ export default function FlashcardPreviewCard({
                 >
                     <div className="flex items-center justify-between py-1 text-sm relative">
                         <DueStatus dueDate={data.dueDate} />
-                        <LastReview reviewTime={data.reviews.at(-1)} />
+                        <LastReview reviewTime={data.reviews.at(-1)?.end} />
                     </div>
                     {data.item.title && format.showItemData ? (
                         <CardTitle>{data.item.title}</CardTitle>

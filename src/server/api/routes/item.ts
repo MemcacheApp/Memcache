@@ -42,7 +42,7 @@ export const itemRouter = router({
                 });
             }
         }),
-    getFlashcards: protectedProcedure
+    getItemFlashcards: protectedProcedure
         .input(
             z.object({
                 itemId: z.string(),
@@ -50,7 +50,7 @@ export const itemRouter = router({
         )
         .query(async ({ ctx, input }) => {
             try {
-                return await ItemController.getItemFlashcardSet(
+                return await ItemController.getItemFlashcards(
                     ctx.userId,
                     input.itemId,
                 );

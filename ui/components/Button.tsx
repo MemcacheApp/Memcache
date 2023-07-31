@@ -59,26 +59,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-// interface ReviewRatingButtonProps {
-//     rating: FlashcardReviewRating;
-// }
-
-// const ReviewRatingButton = ({ rating }: ReviewRatingButtonProps) => {
-//     const colorName = reviewRatingToColor(rating);
-//     console.log(colorName);
-//     return (
-//         <Button
-//             className={cn(
-//                 `bg-${colorName}/50 shadow-[0_0_24px_-16px_rgba(0,0,0,0.53)] hover:bg-${colorName}/60 hover:shadow-[0_0_28px_-12px_rgba(0,0,0,0.53)] shadow-${colorName} hover:shadow-${colorName}`,
-//                 "text-slate-100/80 hover:text-slate-50/90",
-//             )}
-//             size="pillmd"
-//         >
-//             {rating.toString()}
-//         </Button>
-//     );
-// };
-
 interface ReviewRatingButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement>,
         ButtonProps {
@@ -91,7 +71,6 @@ const ReviewRatingButton = React.forwardRef<
 >(({ className, rating, ...props }, ref) => {
     const colorName = reviewRatingToColor(rating);
     const colorClasses = `bg-${colorName}/50 shadow-[0_0_24px_-16px_rgba(0,0,0,0.53)] hover:bg-${colorName}/60 hover:shadow-[0_0_28px_-12px_rgba(0,0,0,0.53)] shadow-${colorName} hover:shadow-${colorName} text-slate-100/80 hover:text-slate-50/90`;
-    console.log(colorName);
     return (
         <Button className={cn(colorClasses, className)} ref={ref} {...props}>
             {rating.toString()}
