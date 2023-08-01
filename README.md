@@ -16,7 +16,7 @@ A dedicated application designed to _organise your saved internet content_ and _
 
 Detailed documentation and instructions for the app can be found as follows:
 
--   [**Installation and Setup**](./docs/install_setup.md)
+-   [**Code Map**](./docs/codemap.md)
 -   [**Objectives and Features**](./docs/features.md)
     -   [Accounts and Authentication](./docs/accounts_auth.md)
     -   [Content Saver](./docs/content_saver.md)
@@ -27,7 +27,6 @@ Detailed documentation and instructions for the app can be found as follows:
     -   [Spaced Repetition Review](./docs/spaced_repetition.md)
     -   [Content Discovery](./docs/content_discovery.md)
 -   [**Troubleshooting and FAQs**](./docs/troubleshooting.md)
--   [**Code Map**](./docs/codemap.md)
 
 ## :rocket: Quick Start
 

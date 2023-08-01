@@ -9,7 +9,9 @@
 
 ## Introduction
 
-The content home is where all items (saves) are located. It is accessible by clicking the 'Saves' tab on the sidebar, or navigating to `/app/saves`.
+The content home is where all items (saves) are located.
+
+It is accessible by clicking the 'Saves' tab on the sidebar, or navigating to `/app/saves`.
 
 ## Content Home with Panel
 
