@@ -38,6 +38,8 @@
     "classnames": "^2.3.2",
     "cmdk": "^0.2.0",
     "cookie": "^0.5.0",
+    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.9",
     "eslint-config-next": "13.4.4",
     "jsonwebtoken": "^9.0.0",
     "lucide-react": "^0.252.0",

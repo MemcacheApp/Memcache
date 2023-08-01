@@ -20,7 +20,7 @@ model User {
   items         Item[]
   collections   Collection[]
   tags          Tag[]
-  Flashcard     Flashcard[]
+  flashcards    Flashcard[]
   publicProfile Boolean
   preferences   UserPreferences?
 }
@@ -57,14 +57,14 @@ model Item {
   author       String?
   favicon      String?
   summaries    Summary[]
-  Flashcard    Flashcard[]
+  flashcards   Flashcard[]
   public       Boolean
 }
 
 model Summary {
   id         String   @id
-  content    String
   createdAt  DateTime
+  content    String
   item       Item     @relation(fields: [itemId], references: [id])
   itemId     String
   wordCount  Int
@@ -100,6 +100,7 @@ model ResetCode {
 
 model Flashcard {
   id         String              @id
+  createdAt  DateTime
   question   String
   answer     String
   dueDate    DateTime
@@ -114,9 +115,10 @@ model Flashcard {
 
 model FlashcardReview {
   id          String                @id
-  timestamp   DateTime
+  start       DateTime
+  end         DateTime
   rating      FlashcardReviewRating
-  Flashcard   Flashcard             @relation(fields: [flashcardId], references: [id])
+  flashcard   Flashcard             @relation(fields: [flashcardId], references: [id])
   flashcardId String
 }
 
@@ -128,10 +130,10 @@ enum ItemStatus {
 }
 
 enum FlashcardReviewRating {
-  EASY
-  MEDIUM
-  HARD
-  FORGOT
+  Easy
+  Medium
+  Hard
+  Forgot
 }
 
 enum FlashcardExperience {
@@ -143,5 +145,17 @@ enum FlashcardExperience {
 enum FlashcardRange {
   Depth
   Breadth
+  Balanced
+}
+
+enum SummaryExperience {
+  Beginner
+  Intermediate
+  Advanced
+}
+
+enum SummaryFinetuning {
+  Qualitative
+  Quantitative
   Balanced
 }
