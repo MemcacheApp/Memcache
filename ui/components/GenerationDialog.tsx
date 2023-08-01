@@ -141,7 +141,6 @@ export function GenerateSummaryDialog({
                 ctx.summary.getLatestSummaries.invalidate();
             }
             onOpenChange(false);
-            if (viewSummaries) viewSummaries();
         },
     });
 
