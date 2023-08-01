@@ -1,26 +1,36 @@
 "use client";
 
-import { trpc } from "@/src/app/utils/trpc";
 import {
     Button,
     Card,
     CardFooter,
     CardHeader,
-    Loader,
     PageTitle,
     Separator,
 } from "@/ui/components";
 import { Duration } from "@/ui/components/Duration";
 import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
 import { HorizontalBarSingle } from "@/ui/components/ReviewRatingsHorizontalBarSingle";
-import { FlashcardReviewRating } from "@prisma/client";
-import Link from "next/link";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReview,
+    FlashcardReviewRating,
+    Item,
+    Tag,
+} from "@prisma/client";
 import { useEffect, useState } from "react";
 
-export default function RevisionSession() {
-    const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
-    const revisionQueue = revisionQueueQuery.data ?? [];
-
+export default function RevisionSession({
+    queue,
+    onComplete,
+}: {
+    queue: (Flashcard & {
+        item: Item & { collection: Collection; tags: Tag[] };
+        reviews: FlashcardReview[];
+    })[];
+    onComplete: () => void;
+}) {
     const [currentFlashcard, setCurrentFlashcard] = useState<number>(0);
     const [ratingsCount, setRatingsCount] = useState<{
         [key in FlashcardReviewRating]: number;
@@ -55,42 +65,41 @@ export default function RevisionSession() {
     };
 
     const handleNextFlashcard = () => {
-        setCurrentFlashcard((prev) => Math.min(prev + 1, revisionQueue.length));
+        setCurrentFlashcard((prev) => Math.min(prev + 1, queue.length));
     };
 
-    if (revisionQueueQuery.isLoading) {
+    // if (revisionQueueQuery.isLoading) {
+    //     return (
+    //         <div className="flex flex-col h-full">
+    //             <PageTitle>Revision Session</PageTitle>
+    //             <div className="h-full flex flex-col gap-11 justify-center items-center">
+    //                 <Loader varient="ellipsis" />
+    //                 <div>Loading revision session...</div>
+    //             </div>
+    //         </div>
+    //     );
+    // }
+
+    if (queue.length === 0) {
         return (
             <div className="flex flex-col h-full">
                 <PageTitle>Revision Session</PageTitle>
                 <div className="h-full flex flex-col gap-11 justify-center items-center">
-                    <Loader varient="ellipsis" />
-                    <div>Loading revision session...</div>
+                    <div>
+                        You are all up to date! Check back later to continue
+                        reviewing more flashcards.
+                    </div>
+                    <Button onClick={onComplete}>Back to flashcards</Button>
                 </div>
             </div>
         );
     }
 
-    if (revisionQueue.length === 0) {
-        return (
-            <div className="flex flex-col h-full">
-                <PageTitle>Revision Session</PageTitle>
-                <div className="h-full flex flex-col gap-11 justify-center items-center">
-                    <div>No flashcards to review</div>
-                    <Button>
-                        <Link href={"/app/review"}>Back to review</Link>
-                    </Button>
-                </div>
-            </div>
-        );
-    }
-
-    if (currentFlashcard >= revisionQueue.length) {
+    if (currentFlashcard >= queue.length) {
         return (
             <div className="h-full flex flex-col gap-11 justify-center items-center">
-                <div>Revision Session Completed</div>
-                <Button>
-                    <Link href={"/app/review"}>Back to review</Link>
-                </Button>
+                <div>Revision session completed!</div>
+                <Button onClick={onComplete}>Back to flashcards</Button>
             </div>
         );
     }
@@ -111,7 +120,7 @@ export default function RevisionSession() {
                                     Session
                                 </span>
                             </div>
-                            <div className="text-4xl font-extrabold tracking-widest">{`${currentFlashcard}/${revisionQueue.length}`}</div>
+                            <div className="text-4xl font-extrabold tracking-widest">{`${currentFlashcard}/${queue.length}`}</div>
                             <HorizontalBarSingle ratingsCount={ratingsCount} />
                             <Duration time={time} className="ml-auto" />
                         </div>
@@ -119,7 +128,7 @@ export default function RevisionSession() {
                     <Separator className="my-6" />
                     <CardFooter>
                         <FlashcardReviewCard
-                            flashcard={revisionQueue[currentFlashcard]}
+                            flashcard={queue[currentFlashcard]}
                             onSubmit={handleSubmitReview}
                             onNext={handleNextFlashcard}
                         />

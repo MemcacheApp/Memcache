@@ -13,6 +13,7 @@ import FlashcardDialog from "@/ui/components/FlashcardDialog";
 import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
 import { ItemForFlashcards } from "@/ui/components/ItemForFlashcards";
 import { LoadingMessage } from "@/ui/components/LoadingMessage";
+import RevisionSession from "@/ui/components/RevisionSession";
 import {
     Collection,
     Flashcard,
@@ -32,7 +33,6 @@ export default function Revise() {
         itemsQuery.data?.filter((item) => item.flashcards.length > 0) ?? [];
 
     const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
-    const revisionQueue = revisionQueueQuery.data ?? [];
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
@@ -42,6 +42,17 @@ export default function Revise() {
         | null
     >(null);
 
+    const [isRevising, setIsRevising] = useState(false);
+
+    if (isRevising && revisionQueueQuery.data) {
+        return (
+            <RevisionSession
+                queue={revisionQueueQuery.data}
+                onComplete={() => setIsRevising(false)}
+            />
+        );
+    }
+
     return (
         <div className="flex flex-col">
             <PageTitle>Revise</PageTitle>
@@ -50,13 +61,14 @@ export default function Revise() {
                     <H4>Revision Queue</H4>
                     <div>
                         <Button
-                            onClick={() =>
-                                router.push("/app/flashcards/revise")
-                            }
+                            className="group/startRevSess"
+                            onClick={() => {
+                                setIsRevising(true);
+                            }}
                             size="lg"
                         >
                             Start Revision Session&nbsp;
-                            <ChevronRight className="relative left-0 group-hover/revise:left-2 transition-left" />
+                            <ChevronRight className="relative left-0 group-hover/startRevSess:left-2 transition-left" />
                         </Button>
                     </div>
                 </div>
@@ -68,8 +80,9 @@ export default function Revise() {
                         className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                     >
                         <div className="flex gap-3 p-1">
-                            {revisionQueue?.length > 0 ? (
-                                revisionQueue.map((flashcard) => (
+                            {revisionQueueQuery.data &&
+                            revisionQueueQuery.data.length > 0 ? (
+                                revisionQueueQuery.data.map((flashcard) => (
                                     <FlashcardPreviewCard
                                         key={flashcard.id}
                                         data={flashcard}

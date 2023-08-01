@@ -38,7 +38,6 @@ export default function FlashcardsPage() {
     const recentlyReviewed = recentlyReviewedQuery.data ?? [];
 
     const suggestedItemsQuery = trpc.flashcards.getSuggestedItems.useQuery();
-    const suggestedItems = suggestedItemsQuery.data ?? [];
 
     const [selectedItem, setSelectedItem] = useState<
         (Item & { collection: Collection; tags: Tag[] }) | null

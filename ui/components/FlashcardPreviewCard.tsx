@@ -49,7 +49,7 @@ export default function FlashcardPreviewCard({
                 "bg-transparent",
                 className,
                 format?.fixedDimensions
-                    ? "w-[28rem] h-[26rem] max-h-[50vh]"
+                    ? "w-[28rem] h-[28rem] max-h-[50vh]"
                     : "w-full",
             )}
         >
