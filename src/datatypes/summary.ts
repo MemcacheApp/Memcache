@@ -1,11 +1,11 @@
-export enum Experience {
-    Beginner,
-    Intermediate,
-    Advanced,
-}
+// export enum Experience {
+//     Beginner,
+//     Intermediate,
+//     Advanced,
+// }
 
-export enum Finetuning {
-    Qualitative,
-    Quantitative,
-    Mixed,
-}
+// export enum Finetuning {
+//     Qualitative,
+//     Quantitative,
+//     Mixed,
+// }
