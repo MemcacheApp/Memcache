@@ -105,7 +105,14 @@ export default function page() {
                         loginMutation.error?.message ===
                             "The password is incorrect" && (
                             <span className="text-sm text-red-600/60">
-                                {loginMutation.error.message}
+                                {loginMutation.error.message}.
+                                {" Forgot password? "}
+                                <Link
+                                    className="underline"
+                                    href={"/auth/reset-password"}
+                                >
+                                    {"Reset here"}
+                                </Link>
                             </span>
                         )
                     )}
