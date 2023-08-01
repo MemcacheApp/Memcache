@@ -130,6 +130,8 @@ export function GenerateSummaryDialog({
             if (data) {
                 ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
                 ctx.summary.getLatestSummaries.invalidate();
+                ctx.summary.getUserSummaries.invalidate();
+                ctx.summary.getSuggestedItems.invalidate();
             }
             onOpenChange(false);
             if (viewSummaries) viewSummaries();
@@ -156,7 +158,7 @@ export function GenerateSummaryDialog({
             <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl">
-                        Generate Summaries
+                        Generate Summary
                     </DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-6">
@@ -266,43 +268,48 @@ export function GenerateSummaryDialog({
                 </div>
                 <DialogFooter>
                     <Button
+                        size="lg"
                         onClick={handleSubmit}
                         disabled={generateSummaryMutation.isLoading}
                     >
-                        Generate
+                        {generateSummaryMutation.isLoading ? (
+                            <Loader varient="ring" colorWhite />
+                        ) : (
+                            "Generate"
+                        )}
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
-interface FlashcardsDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
+interface GenerateFlashcardsDialogProps {
+    data: (Item & { collection: Collection; tags: Tag[] }) | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export function FlashcardsDialog({
+export function GenerateFlashcardsDialog({
     data,
     open,
     onOpenChange,
-}: FlashcardsDialogProps) {
+}: GenerateFlashcardsDialogProps) {
+    const ctx = trpc.useContext();
+
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
     const [experience, setExperience] = useState<FlashcardExperience>(
         FlashcardExperience.Intermediate,
     );
     const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
-    const ctx = trpc.useContext();
-
     const generateFlashcardsMutation =
         trpc.flashcards.generateFlashcards.useMutation({
-            onSuccess(data) {
-                console.log("Successfully generated flashcards:");
-                console.log(data);
+            onSuccess: () => {
                 ctx.flashcards.getUserFlashcards.invalidate();
                 ctx.item.getUserItemsIncludeFlashcards.invalidate();
                 ctx.flashcards.getUserRevisionQueue.invalidate();
+                ctx.flashcards.getUserRecentlyCreated.invalidate();
+                ctx.flashcards.getSuggestedItems.invalidate();
             },
             onError: (err) => {
                 console.error(err);
@@ -310,15 +317,20 @@ export function FlashcardsDialog({
         });
 
     const handleSubmit = () => {
-        generateFlashcardsMutation.mutate({
-            itemId: data.id,
-            numOfFlashcards,
-            experience,
-            range,
-        });
-        // TODO: show toast notification: "Generating flashcards..."
-        onOpenChange(false);
+        if (data) {
+            generateFlashcardsMutation.mutate({
+                itemId: data.id,
+                numOfFlashcards,
+                experience,
+                range,
+            });
+            // TODO: show toast notification: "Generating flashcards..."
+        }
     };
+
+    if (!data) {
+        return null;
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -459,7 +471,17 @@ export function FlashcardsDialog({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
+                    <Button
+                        size="lg"
+                        onClick={handleSubmit}
+                        disabled={generateFlashcardsMutation.isLoading}
+                    >
+                        {generateFlashcardsMutation.isLoading ? (
+                            <Loader varient="ring" colorWhite />
+                        ) : (
+                            "Generate"
+                        )}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

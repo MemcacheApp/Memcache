@@ -88,6 +88,17 @@ export const flashcardsRouter = router({
         }
     }),
 
+    getSuggestedItems: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return await FlashcardController.getSuggestedItems(ctx.userId);
+        } catch (e) {
+            console.error(e);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+            });
+        }
+    }),
+
     addReview: protectedProcedure
         .input(
             z.object({

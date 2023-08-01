@@ -3,16 +3,14 @@
 import {
     Button,
     Card,
-    Input,
     ItemCard,
-    Link,
+    ItemSelector,
     ScrollArea,
     ScrollBar,
 } from "@/ui/components";
 import FlashcardDialog from "@/ui/components/FlashcardDialog";
 import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
-import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
-import { ItemForFlashcards } from "@/ui/components/ItemForFlashcards";
+import { GenerateFlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { LoadingMessage } from "@/ui/components/LoadingMessage";
 import { H4 } from "@/ui/components/typography";
 import {
@@ -28,62 +26,6 @@ import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
 import { trpc } from "../../utils/trpc";
 
-function FlashcardSearchResult({
-    item,
-}: {
-    item: Item & { tags: Tag[]; collection: Collection };
-}) {
-    const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
-
-    return (
-        <>
-            <div
-                key={item.id}
-                onClick={() => setIsOpenFlashcards(true)}
-                className="flex justify-between h-24 px-2 py-3 rounded-md hover:bg-slate-100"
-            >
-                <div className="flex flex-col justify-between">
-                    <div className="flex">
-                        <h3 className="mr-2 text-lg font-semibold leading-6 tracking-tight">
-                            {item.title}
-                        </h3>
-                        {/* <ExternalLink /> */}
-                    </div>
-                    <div>
-                        {item.tags.map((tag: Tag) => {
-                            return (
-                                <div key={tag.id}>
-                                    <Link
-                                        className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm w-fit"
-                                        href={`/app/tag/${tag.id}`}
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        {tag.name}
-                                    </Link>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-                {item.thumbnail ? (
-                    <img
-                        src={item.thumbnail}
-                        alt="Image"
-                        className="rounded-sm w-36"
-                    />
-                ) : (
-                    ""
-                )}
-            </div>
-            <FlashcardsDialog
-                data={item}
-                open={isOpenFlashcards}
-                onOpenChange={setIsOpenFlashcards}
-            />
-        </>
-    );
-}
-
 export default function FlashcardsPage() {
     const router = useRouter();
 
@@ -95,24 +37,18 @@ export default function FlashcardsPage() {
         trpc.flashcards.getUserRecentlyReviewed.useQuery();
     const recentlyReviewed = recentlyReviewedQuery.data ?? [];
 
-    const [itemInput, setItemInput] = useState("");
-    const itemsQuery = trpc.item.getUserItemsIncludeFlashcards.useQuery();
-
-    // Suggest items to generate flashcards for
-    const suggestedItems =
-        itemsQuery.data
-            // sort in reverse chronological order of creation date
-            // Could sort by more complex combinations of factors to suggest items
-            // to generate flashcards for e.g. articles rather than social media posts
-            ?.sort((a, b) => b.createdAt.valueOf() - a.createdAt.valueOf())
-            .slice(0, 8) ?? [];
-
-    const itemsWithFlashcards =
-        itemsQuery.data?.filter((item) => item.flashcards.length > 0) ?? [];
+    const suggestedItemsQuery = trpc.flashcards.getSuggestedItems.useQuery();
+    const suggestedItems = suggestedItemsQuery.data ?? [];
 
     const [selectedItem, setSelectedItem] = useState<
         (Item & { collection: Collection; tags: Tag[] }) | null
     >(null);
+
+    const onSelectItem = (
+        item: Item & { collection: Collection; tags: Tag[] },
+    ) => {
+        setSelectedItem(item);
+    };
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
@@ -126,66 +62,6 @@ export default function FlashcardsPage() {
         <div className="flex flex-col gap-5">
             <PageTitle>Flashcards</PageTitle>
 
-            <Card className="p-6 mx-8 rounded-lg">
-                <H3>Generate Flashards</H3>
-                <div className="relative mt-3 mb-4">
-                    <Input
-                        className="text-base border-solid rounded-md"
-                        placeholder="Article title..."
-                        value={itemInput}
-                        onChange={(e) => setItemInput(e.target.value)}
-                    />
-
-                    {itemInput &&
-                        itemsQuery.data &&
-                        itemsQuery.data.filter((item) => {
-                            return item.title
-                                .toLowerCase()
-                                .includes(itemInput.toLowerCase());
-                        }).length > 0 && (
-                            <div className="absolute z-10 w-full px-1 py-1 bg-white border border-solid rounded-md top-12 border-input">
-                                {itemsQuery.data
-                                    ?.filter((item) => {
-                                        return item.title
-                                            .toLowerCase()
-                                            .includes(itemInput.toLowerCase());
-                                    })
-                                    .map((item) => {
-                                        return (
-                                            <FlashcardSearchResult
-                                                key={item.id}
-                                                item={item}
-                                            />
-                                        );
-                                    })}
-                            </div>
-                        )}
-                </div>
-                <H4>Suggested</H4>
-                {itemsQuery.isLoading ? (
-                    <LoadingMessage message={"Loading suggested items..."} />
-                ) : (
-                    <ScrollArea
-                        type="scroll"
-                        className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
-                    >
-                        <div className="flex gap-3 p-1">
-                            {suggestedItems.map((item) => (
-                                <ItemCard
-                                    key={item.id}
-                                    className="w-[25rem] h-[30rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
-                                    data={item}
-                                    selected={selectedItem?.id === item.id}
-                                    onSelect={() => setSelectedItem(item)}
-                                    hideOptions
-                                    format={{ growHeight: true }}
-                                />
-                            ))}
-                        </div>
-                        <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
-                )}
-            </Card>
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>My Flashcards</H3>
                 <div className="w-full h-24 flex flex-col justify-center items-center gap-3">
@@ -230,6 +106,7 @@ export default function FlashcardsPage() {
                         <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                 )}
+
                 <H4 className="mt-3">Recently Reviewed</H4>
                 {recentlyReviewedQuery.isLoading ? (
                     <LoadingMessage message="Loading recently reviewed flashcards..." />
@@ -261,50 +138,72 @@ export default function FlashcardsPage() {
                 )}
             </Card>
             <Card className="p-6 mx-8 rounded-lg">
-                <H3>Items with Flashcards</H3>
-                <H4>Recently Created</H4>
-                <ScrollArea
-                    type="scroll"
-                    className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
-                >
-                    <div className="flex gap-3 p-1">
-                        {itemsWithFlashcards.map((item) => (
-                            <ItemForFlashcards
-                                key={item.id}
-                                className="w-[25rem] h-[26.5rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
-                                data={item}
-                                selected={false}
-                                onSelect={(id: string) => {
-                                    router.push(`/app/flashcards/${id}`);
-                                }}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
+                <H3>Generate Flashards</H3>
+
+                <ItemSelector
+                    className="w-full text-base font-normal text-slate-500"
+                    onSelect={onSelectItem}
+                />
+                <div className="flex flex-col mt-5">
+                    <H4 className="mb-2">Suggested Items</H4>
+                    <p className="text-sm text-slate-500 mb-4">
+                        Items suggested for generating flashcards based on
+                        recently added items, number of existing flashcards,
+                        item type and other factors.
+                    </p>
+                    {suggestedItemsQuery.isLoading ? (
+                        <LoadingMessage
+                            message={"Loading suggested items..."}
+                        />
+                    ) : (
+                        <ScrollArea
+                            type="scroll"
+                            className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                        >
+                            <div className="flex gap-3 p-1">
+                                {(suggestedItemsQuery.data ?? []).map(
+                                    (item) => (
+                                        <ItemCard
+                                            key={item.id}
+                                            className="w-[25rem] h-[30rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                            data={item}
+                                            selected={
+                                                selectedItem?.id === item.id
+                                            }
+                                            onSelect={() =>
+                                                setSelectedItem(item)
+                                            }
+                                            hideOptions
+                                            format={{
+                                                growHeight: true,
+                                            }}
+                                        />
+                                    ),
+                                )}
+                            </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
+                    )}
+                </div>
             </Card>
-            {selectedItem && (
-                <FlashcardsDialog
-                    data={selectedItem}
-                    open={selectedItem !== null}
-                    onOpenChange={(value: boolean) => {
-                        if (!value) {
-                            setSelectedItem(null);
-                        }
-                    }}
-                />
-            )}
-            {selectedFlashcard && (
-                <FlashcardDialog
-                    flashcard={selectedFlashcard}
-                    open={selectedFlashcard !== null}
-                    onOpenChange={(value) => {
-                        if (!value) {
-                            setSelectedFlashcard(null);
-                        }
-                    }}
-                />
-            )}
+            <FlashcardDialog
+                flashcard={selectedFlashcard}
+                open={selectedFlashcard !== null}
+                onOpenChange={(value) => {
+                    if (!value) {
+                        setSelectedFlashcard(null);
+                    }
+                }}
+            />
+            <GenerateFlashcardsDialog
+                data={selectedItem}
+                open={selectedItem !== null}
+                onOpenChange={(value: boolean) => {
+                    if (!value) {
+                        setSelectedItem(null);
+                    }
+                }}
+            />
         </div>
     );
 }
