@@ -8,7 +8,7 @@ import {
     PageTitle,
     Separator,
 } from "@/ui/components";
-import Duration from "@/ui/components/Duration";
+import { Duration } from "@/ui/components/Duration";
 import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
 import { HorizontalBarSingle } from "@/ui/components/ReviewRatingsHorizontalBarSingle";
 import { FlashcardReviewRating } from "@prisma/client";
@@ -81,7 +81,7 @@ export default function Review() {
                             </div>
                             <div className="text-4xl font-extrabold tracking-widest">{`${currentFlashcard}/${revisionQueue.length}`}</div>
                             <HorizontalBarSingle ratingsCount={ratingsCount} />
-                            <Duration time={time} />
+                            <Duration time={time} className="ml-auto" />
                         </div>
                     </CardHeader>
                     <Separator className="my-6" />
