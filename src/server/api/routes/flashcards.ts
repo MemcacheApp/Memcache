@@ -1,4 +1,5 @@
 import { FlashcardExperience, FlashcardRange } from "@/src/datatypes/flashcard";
+import { FlashcardReviewRating } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import FlashcardController from "../../controllers/flashcard-controller";
@@ -54,4 +55,38 @@ export const flashcardsRouter = router({
             console.log(e);
         }
     }),
+
+    getUserRevisionQueue: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            const flashcards = await FlashcardController.getUserRevisionQueue(
+                ctx.userId,
+            );
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }),
+
+    addReview: protectedProcedure
+        .input(
+            z.object({
+                flashcardId: z.string(),
+                reviewStart: z.date(),
+                reviewEnd: z.date(),
+                reviewRating: z.nativeEnum(FlashcardReviewRating),
+            }),
+        )
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await FlashcardController.addReview(
+                    ctx.userId,
+                    input.flashcardId,
+                    input.reviewStart,
+                    input.reviewEnd,
+                    input.reviewRating,
+                );
+            } catch (e) {
+                console.log(e);
+            }
+        }),
 });

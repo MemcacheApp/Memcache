@@ -1,6 +1,6 @@
 import { FlashcardExperience, FlashcardRange } from "@/src/datatypes/flashcard";
 import ContentScraper from "@/src/utils/content-scraper";
-import { Flashcard } from "@prisma/client";
+import { Flashcard, FlashcardReviewRating } from "@prisma/client";
 import {
     ChatCompletionFunctions,
     ChatCompletionRequestMessage,
@@ -79,6 +79,56 @@ export default class FlashcardController {
                 },
             });
             return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    static async getUserRevisionQueue(userId: string) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                    dueDate: {
+                        lte: new Date(),
+                    },
+                },
+                orderBy: {
+                    dueDate: "desc",
+                },
+                include: {
+                    reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
+                },
+            });
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    static async addReview(
+        userId: string,
+        flashcardId: string,
+        start: Date,
+        end: Date,
+        rating: FlashcardReviewRating,
+    ) {
+        try {
+            await prisma.flashcardReview.create({
+                data: {
+                    id: uuidv4(),
+                    start,
+                    end,
+                    rating,
+                    flashcardId,
+                },
+            });
         } catch (e) {
             console.log(e);
         }
@@ -169,6 +219,7 @@ export default class FlashcardController {
                         }
                         const newFlashcard: Flashcard = {
                             id: functionCallResult.id,
+                            createdAt: new Date(),
                             question: functionCallResult.question,
                             answer: functionCallResult.answer,
                             itemId,

@@ -6,24 +6,26 @@ import {
     FlashcardRange,
 } from "@/src/datatypes/flashcard";
 import { Experience, Finetuning } from "@/src/datatypes/summary";
-import { Collection, Item, Tag } from "@prisma/client";
-import { PlusIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 import {
     Button,
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
     Input,
     Label,
     Loader,
+    SimpleItemCard,
     SummaryCard,
     Tabs,
     TabsList,
     TabsTrigger,
-} from ".";
+} from "@/ui/components";
+import { Collection, Item, Tag } from "@prisma/client";
+import { PlusIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
 interface SummariesDialogProps {
@@ -119,7 +121,7 @@ export function GenerateSummaryDialog({
 }: GenerateSummaryDialogProps) {
     const ctx = trpc.useContext();
 
-    const [numOfWords, setNumOfWords] = useState(250);
+    const [numOfWords, setNumOfWords] = useState(150);
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
 
@@ -145,15 +147,38 @@ export function GenerateSummaryDialog({
         }
     };
 
+    if (!data) {
+        return null;
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
-                    <DialogTitle>Generate Summary</DialogTitle>
+                    <DialogTitle className="text-xl">
+                        Generate Summaries
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="numofwords">Number of words</Label>
+                <div className="flex flex-col gap-6">
+                    <SimpleItemCard
+                        url={data.url}
+                        title={data.title}
+                        description={data.description}
+                        type={data.type}
+                        thumbnail={data.thumbnail}
+                        siteName={data.siteName}
+                        favicon={data.favicon}
+                        className="bg-slate-100 border-none h-auto"
+                    />
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="numofwords">
+                                Number of words
+                            </Label>
+                            <DialogDescription>
+                                {"Specify the length of your summary in words."}
+                            </DialogDescription>
+                        </div>
                         <Input
                             className="w-32"
                             id="numofwords"
@@ -164,8 +189,17 @@ export function GenerateSummaryDialog({
                             }
                         />
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="experience">Experience</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="experience">
+                                Experience
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Level of expertise that the content in the summary will assume of the reader."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="experience"
                             value={experience.toString()}
@@ -192,8 +226,17 @@ export function GenerateSummaryDialog({
                             </TabsList>
                         </Tabs>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="finetuning">Finetuning</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="finetuning">
+                                Finetuning
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Qualitative summaries emphasise the literary form and meaning of the content, whereas quantitative summaries emphasise hard facts and data."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="finetuning"
                             value={finetuning.toString()}
@@ -258,6 +301,7 @@ export function FlashcardsDialog({
                 console.log("Successfully generated flashcards:");
                 console.log(data);
                 ctx.flashcards.getUserFlashcards.invalidate();
+                ctx.item.getUserItemsWithFlashcards.invalidate();
             },
             onError: (err) => {
                 console.error(err);
@@ -277,15 +321,37 @@ export function FlashcardsDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
-                    <DialogTitle>Generate Flashcards</DialogTitle>
+                    <DialogTitle className="text-xl">
+                        Generate Flashcards
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="numofflashcards">
-                            Number of flashcards
-                        </Label>
+                <div className="flex flex-col gap-6">
+                    <SimpleItemCard
+                        url={data.url}
+                        title={data.title}
+                        description={data.description}
+                        type={data.type}
+                        thumbnail={data.thumbnail}
+                        siteName={data.siteName}
+                        favicon={data.favicon}
+                        className="bg-slate-100 border-none h-auto"
+                    />
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label
+                                className="text-base"
+                                htmlFor="numofflashcards"
+                            >
+                                Number of flashcards
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "All flashcards generated in this batch will use the options below."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Input
                             className="w-32"
                             id="numofflashcards"
@@ -296,8 +362,17 @@ export function FlashcardsDialog({
                             }
                         />
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="experience">Experience</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="experience">
+                                Experience
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Level of expertise that the questions and answers in the generated flashcards will assume."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="experience"
                             value={experience}
@@ -346,8 +421,17 @@ export function FlashcardsDialog({
                             </TabsList>
                         </Tabs>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="range">range</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="range">
+                                Range
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Depth flashcards focus narrowly on the subject matter, whereas breadth flashcards explore a wider range of related topics."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="range"
                             value={range}

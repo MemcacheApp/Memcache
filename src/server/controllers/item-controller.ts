@@ -149,6 +149,47 @@ export default class ItemController {
         return items;
     }
 
+    static async getItemFlashcards(userId: string, itemId: string) {
+        const item = await prisma.item.findUnique({
+            where: {
+                id: itemId,
+            },
+            include: {
+                tags: true,
+                collection: true,
+                flashcards: { include: { reviews: true } },
+            },
+        });
+
+        if (item === null) {
+            throw new GetItemError("ItemNotExist");
+        }
+
+        if (item.userId !== userId) {
+            throw new AuthError("NoPermission");
+        }
+
+        return item;
+    }
+
+    static async getUserItemsWithFlashcards(userId: string) {
+        const items = await prisma.item.findMany({
+            where: {
+                userId,
+            },
+            include: {
+                tags: true,
+                collection: true,
+                flashcards: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        return items;
+    }
+
     /**
      * @throws {GetItemError}
      * @throws {AuthError}
@@ -308,7 +349,7 @@ export default class ItemController {
 
         return await prisma.item.findMany({
             where: {
-                userId,
+                userId: targetId,
                 public: true,
             },
             select: {
