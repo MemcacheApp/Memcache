@@ -1,11 +1,11 @@
-import dayjs from "@/src/app/utils/dayjs";
+import formatDistanceToNow from '@/src/app/utils/dateFns';
 
 export default function LastReview({ reviewTime }: { reviewTime?: Date }) {
-    return (
-        <div className="text-slate-500">
-            {reviewTime
-                ? `Last reviewed ${dayjs().to(dayjs(reviewTime))}`
-                : "First review"}
-        </div>
-    );
+  return (
+    <div className="text-slate-500">
+      {reviewTime
+        ? `Last reviewed ${formatDistanceToNow(reviewTime)}`
+        : "First review"}
+    </div>
+  );
 }
