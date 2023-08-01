@@ -85,8 +85,38 @@ export default class FlashcardController {
     }
 
     /**
-     * Gets all flashcards that have been reviewed at least once. This query
-     * doesn't sort by last review date so you need to sort it yourself in BE/FE.
+     * Gets flashcards sorted by the most recently created, most recent 8.
+     * @param userId
+     * @returns
+     */
+    static async getUserRecentlyCreated(userId: string) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+                include: {
+                    reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
+                },
+            });
+
+            return flashcards.slice(0, 8);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    /**
+     * Gets all flashcards that have been reviewed at least once, sorted by the most recently reviewed, most recent 8.
      * @param userId
      * @returns
      */
@@ -109,7 +139,15 @@ export default class FlashcardController {
                     },
                 },
             });
-            return flashcards;
+
+            return flashcards
+                .sort((a, b) =>
+                    a.reviews.length > 0 && b.reviews.length > 0
+                        ? b.reviews.slice(-1)[0].end.valueOf() -
+                          a.reviews.slice(-1)[0].end.valueOf()
+                        : 0,
+                )
+                .slice(0, 8);
         } catch (e) {
             console.log(e);
         }

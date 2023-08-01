@@ -13,6 +13,7 @@ import FlashcardDialog from "@/ui/components/FlashcardDialog";
 import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
 import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { ItemForFlashcards } from "@/ui/components/ItemForFlashcards";
+import { LoadingMessage } from "@/ui/components/LoadingMessage";
 import { H4 } from "@/ui/components/typography";
 import {
     Collection,
@@ -21,6 +22,7 @@ import {
     Item,
     Tag,
 } from "@prisma/client";
+import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
@@ -85,20 +87,13 @@ function FlashcardSearchResult({
 export default function FlashcardsPage() {
     const router = useRouter();
 
-    const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
-    const revisionQueue = revisionQueueQuery.data ?? [];
+    const recentlyCreatedQuery =
+        trpc.flashcards.getUserRecentlyCreated.useQuery();
+    const recentlyCreated = recentlyCreatedQuery.data ?? [];
 
     const recentlyReviewedQuery =
         trpc.flashcards.getUserRecentlyReviewed.useQuery();
-    const recentlyReviewed =
-        recentlyReviewedQuery.data
-            ?.sort((a, b) =>
-                a.reviews.length > 0 && b.reviews.length > 0
-                    ? b.reviews.slice(-1)[0].end.valueOf() -
-                      a.reviews.slice(-1)[0].end.valueOf()
-                    : 0,
-            )
-            .slice(0, 8) ?? [];
+    const recentlyReviewed = recentlyReviewedQuery.data ?? [];
 
     const [itemInput, setItemInput] = useState("");
     const itemsQuery = trpc.item.getUserItemsIncludeFlashcards.useQuery();
@@ -167,90 +162,116 @@ export default function FlashcardsPage() {
                         )}
                 </div>
                 <H4>Suggested</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {suggestedItems.map((item) => (
-                            <ItemCard
-                                key={item.id}
-                                className="w-[25rem] h-[30rem] max-h-[50vh] bg-transparent"
-                                data={item}
-                                selected={selectedItem?.id === item.id}
-                                onSelect={() => setSelectedItem(item)}
-                                hideOptions
-                                format={{ growHeight: true }}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
+                {itemsQuery.isLoading ? (
+                    <LoadingMessage message={"Loading suggested items..."} />
+                ) : (
+                    <ScrollArea
+                        type="scroll"
+                        className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                    >
+                        <div className="flex gap-3 p-1">
+                            {suggestedItems.map((item) => (
+                                <ItemCard
+                                    key={item.id}
+                                    className="w-[25rem] h-[30rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                    data={item}
+                                    selected={selectedItem?.id === item.id}
+                                    onSelect={() => setSelectedItem(item)}
+                                    hideOptions
+                                    format={{ growHeight: true }}
+                                />
+                            ))}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                )}
             </Card>
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>My Flashcards</H3>
                 <div className="w-full h-24 flex flex-col justify-center items-center gap-3">
-                    <div>
-                        <span className="font-bold text-lg">{`${revisionQueue.length}`}</span>
-                        &nbsp;{"flashcards due for review"}
-                    </div>
                     <Button
-                        onClick={() => router.push("/app/flashcards/review")}
+                        className="group/revise"
+                        onClick={() => router.push("/app/flashcards/revise")}
                         size="lg"
                     >
-                        Start Review
+                        Revise Flashcards&nbsp;
+                        <ChevronRight className="relative left-0 group-hover/revise:left-2 transition-left" />
                     </Button>
                 </div>
 
-                <H4>Revision Queue</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {revisionQueue?.length > 0 ? (
-                            revisionQueue.map((flashcard) => (
-                                <FlashcardPreviewCard
-                                    key={flashcard.id}
-                                    data={flashcard}
-                                    onClick={() =>
-                                        setSelectedFlashcard(flashcard)
-                                    }
-                                />
-                            ))
-                        ) : (
-                            <div className="flex justify-center items-center w-full h-[180px]">
-                                No flashcards due for review
-                            </div>
-                        )}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-                <H4 className="mt-3">Recently Viewed</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {recentlyReviewed?.length > 0 ? (
-                            recentlyReviewed?.map((flashcard) => (
-                                <FlashcardPreviewCard
-                                    key={flashcard.id}
-                                    data={flashcard}
-                                    onClick={() =>
-                                        setSelectedFlashcard(flashcard)
-                                    }
-                                />
-                            ))
-                        ) : (
-                            <div className="flex justify-center items-center w-full h-[180px]">
-                                No recently reviewed flashcards
-                            </div>
-                        )}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
+                <H4 className="mt-3">Recently Created</H4>
+                {recentlyCreatedQuery.isLoading ? (
+                    <LoadingMessage
+                        message={"Loading recently created flashcards..."}
+                    />
+                ) : (
+                    <ScrollArea
+                        type="scroll"
+                        className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                    >
+                        <div className="flex gap-3 p-1">
+                            {recentlyCreated?.length > 0 ? (
+                                recentlyCreated?.map((flashcard) => (
+                                    <FlashcardPreviewCard
+                                        key={flashcard.id}
+                                        data={flashcard}
+                                        onClick={() =>
+                                            setSelectedFlashcard(flashcard)
+                                        }
+                                        className="shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                    />
+                                ))
+                            ) : (
+                                <div className="flex justify-center items-center w-full h-[180px]">
+                                    No recently created flashcards
+                                </div>
+                            )}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                )}
+                <H4 className="mt-3">Recently Reviewed</H4>
+                {recentlyReviewedQuery.isLoading ? (
+                    <LoadingMessage message="Loading recently reviewed flashcards..." />
+                ) : (
+                    <ScrollArea
+                        type="scroll"
+                        className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                    >
+                        <div className="flex gap-3 p-1">
+                            {recentlyReviewed?.length > 0 ? (
+                                recentlyReviewed?.map((flashcard) => (
+                                    <FlashcardPreviewCard
+                                        key={flashcard.id}
+                                        data={flashcard}
+                                        onClick={() =>
+                                            setSelectedFlashcard(flashcard)
+                                        }
+                                        className="shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                    />
+                                ))
+                            ) : (
+                                <div className="flex justify-center items-center w-full h-[180px]">
+                                    No recently reviewed flashcards
+                                </div>
+                            )}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                )}
             </Card>
             <Card className="p-6 mx-8 rounded-lg">
                 <H3>Items with Flashcards</H3>
                 <H4>Recently Created</H4>
-                <ScrollArea type="scroll">
+                <ScrollArea
+                    type="scroll"
+                    className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                >
                     <div className="flex gap-3 p-1">
                         {itemsWithFlashcards.map((item) => (
                             <ItemForFlashcards
                                 key={item.id}
-                                className="w-[25rem] h-[26.5rem] max-h-[50vh] bg-transparent"
+                                className="w-[25rem] h-[26.5rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
                                 data={item}
                                 selected={false}
                                 onSelect={(id: string) => {

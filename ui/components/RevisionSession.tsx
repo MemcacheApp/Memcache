@@ -2,9 +2,11 @@
 
 import { trpc } from "@/src/app/utils/trpc";
 import {
+    Button,
     Card,
     CardFooter,
     CardHeader,
+    Loader,
     PageTitle,
     Separator,
 } from "@/ui/components";
@@ -12,9 +14,10 @@ import { Duration } from "@/ui/components/Duration";
 import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
 import { HorizontalBarSingle } from "@/ui/components/ReviewRatingsHorizontalBarSingle";
 import { FlashcardReviewRating } from "@prisma/client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function Review() {
+export default function RevisionSession() {
     const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
     const revisionQueue = revisionQueueQuery.data ?? [];
 
@@ -55,12 +58,41 @@ export default function Review() {
         setCurrentFlashcard((prev) => Math.min(prev + 1, revisionQueue.length));
     };
 
-    if (currentFlashcard >= revisionQueue.length) {
-        return <div>No flashcards to review</div>;
+    if (revisionQueueQuery.isLoading) {
+        return (
+            <div className="flex flex-col h-full">
+                <PageTitle>Revision Session</PageTitle>
+                <div className="h-full flex flex-col gap-11 justify-center items-center">
+                    <Loader varient="ellipsis" />
+                    <div>Loading revision session...</div>
+                </div>
+            </div>
+        );
     }
 
     if (revisionQueue.length === 0) {
-        return <div>No flashcards to review</div>;
+        return (
+            <div className="flex flex-col h-full">
+                <PageTitle>Revision Session</PageTitle>
+                <div className="h-full flex flex-col gap-11 justify-center items-center">
+                    <div>No flashcards to review</div>
+                    <Button>
+                        <Link href={"/app/review"}>Back to review</Link>
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    if (currentFlashcard >= revisionQueue.length) {
+        return (
+            <div className="h-full flex flex-col gap-11 justify-center items-center">
+                <div>Revision Session Completed</div>
+                <Button>
+                    <Link href={"/app/review"}>Back to review</Link>
+                </Button>
+            </div>
+        );
     }
 
     return (

@@ -56,6 +56,27 @@ export const flashcardsRouter = router({
         }
     }),
 
+    getUserRecentlyCreated: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            const flashcards = await FlashcardController.getUserRecentlyCreated(
+                ctx.userId,
+            );
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }),
+
+    getUserRecentlyReviewed: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            const flashcards =
+                await FlashcardController.getUserRecentlyReviewed(ctx.userId);
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }),
+
     getUserRevisionQueue: protectedProcedure.query(async ({ ctx }) => {
         try {
             const flashcards = await FlashcardController.getUserRevisionQueue(

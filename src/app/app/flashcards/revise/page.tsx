@@ -1,0 +1,125 @@
+"use client";
+
+import { trpc } from "@/src/app/utils/trpc";
+import {
+    Button,
+    Card,
+    H4,
+    PageTitle,
+    ScrollArea,
+    ScrollBar,
+} from "@/ui/components";
+import FlashcardDialog from "@/ui/components/FlashcardDialog";
+import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
+import { ItemForFlashcards } from "@/ui/components/ItemForFlashcards";
+import { LoadingMessage } from "@/ui/components/LoadingMessage";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReview,
+    Item,
+    Tag,
+} from "@prisma/client";
+import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+export default function Revise() {
+    const router = useRouter();
+
+    const itemsQuery = trpc.item.getUserItemsIncludeFlashcards.useQuery();
+    const itemsWithFlashcards =
+        itemsQuery.data?.filter((item) => item.flashcards.length > 0) ?? [];
+
+    const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
+    const revisionQueue = revisionQueueQuery.data ?? [];
+
+    const [selectedFlashcard, setSelectedFlashcard] = useState<
+        | (Flashcard & {
+              item: Item & { collection: Collection; tags: Tag[] };
+              reviews: FlashcardReview[];
+          })
+        | null
+    >(null);
+
+    return (
+        <div className="flex flex-col">
+            <PageTitle>Revise</PageTitle>
+            <Card className="p-6 mx-8 rounded-lg">
+                <div className="flex justify-between mb-2">
+                    <H4>Revision Queue</H4>
+                    <div>
+                        <Button
+                            onClick={() =>
+                                router.push("/app/flashcards/revise")
+                            }
+                            size="lg"
+                        >
+                            Start Revision Session&nbsp;
+                            <ChevronRight className="relative left-0 group-hover/revise:left-2 transition-left" />
+                        </Button>
+                    </div>
+                </div>
+                {revisionQueueQuery.isLoading ? (
+                    <LoadingMessage message={"Loading revision queue..."} />
+                ) : (
+                    <ScrollArea
+                        type="scroll"
+                        className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                    >
+                        <div className="flex gap-3 p-1">
+                            {revisionQueue?.length > 0 ? (
+                                revisionQueue.map((flashcard) => (
+                                    <FlashcardPreviewCard
+                                        key={flashcard.id}
+                                        data={flashcard}
+                                        onClick={() =>
+                                            setSelectedFlashcard(flashcard)
+                                        }
+                                        className="shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                    />
+                                ))
+                            ) : (
+                                <div className="flex justify-center items-center w-full h-[180px]">
+                                    No flashcards due for review
+                                </div>
+                            )}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                )}
+                <H4 className="mt-3">Items with Flashcards</H4>
+                <ScrollArea
+                    type="scroll"
+                    className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                >
+                    <div className="flex gap-3 p-1">
+                        {itemsWithFlashcards.map((item) => (
+                            <ItemForFlashcards
+                                key={item.id}
+                                className="w-[25rem] h-[40rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                data={item}
+                                selected={false}
+                                onSelect={(id: string) => {
+                                    router.push(`/app/flashcards/${id}`);
+                                }}
+                            />
+                        ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+            </Card>
+            {selectedFlashcard && (
+                <FlashcardDialog
+                    flashcard={selectedFlashcard}
+                    open={selectedFlashcard !== null}
+                    onOpenChange={(value) => {
+                        if (!value) {
+                            setSelectedFlashcard(null);
+                        }
+                    }}
+                />
+            )}
+        </div>
+    );
+}
