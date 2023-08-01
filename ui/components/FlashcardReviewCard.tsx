@@ -17,7 +17,6 @@ import {
     Item,
     Tag,
 } from "@prisma/client";
-import { Progress } from "@radix-ui/react-progress";
 import { useMemo, useState } from "react";
 import { CardHeader, CardTitle } from "./Card";
 import LastReview from "./LastReview";
@@ -174,10 +173,10 @@ export default function FlashcardReviewCard({
                                 reviewTime={flashcard.reviews.at(-1)?.end}
                             />
                         </div>
-                        <div className="flex items-center justify-between py-1">
+                        {/* <div className="flex items-center justify-between py-1">
                             <div className="px-1 mr-2 text-xl">{"65%"}</div>
                             <Progress value={65} />
-                        </div>
+                        </div> */}
                         <div className="flex gap-2 py-1 text-sm text-slate-400/90">
                             <span>
                                 {FlashcardExperienceNames[flashcard.experience]}

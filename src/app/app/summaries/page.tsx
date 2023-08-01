@@ -46,8 +46,11 @@ function MySummaries() {
                     <ArrowRightIcon size={20} />
                 </Link>
             </div>
-            <ScrollArea type="scroll">
-                <div className="flex gap-3 p-1">
+            <ScrollArea
+                type="scroll"
+                className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+            >
+                <div className="flex gap-3 p-3">
                     {latestSummariesQuery.data ? (
                         <>
                             {latestSummariesQuery.data.summaries.map(
@@ -110,7 +113,7 @@ function GenerateSummary() {
                     type="scroll"
                     className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                 >
-                    <div className="flex gap-3 p-1">
+                    <div className="flex gap-3 p-3">
                         {suggestedItemsQuery.data ? (
                             <>
                                 {suggestedItemsQuery.data?.map((item) => (

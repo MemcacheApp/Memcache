@@ -84,7 +84,7 @@ export default function FlashcardsPage() {
                         type="scroll"
                         className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                     >
-                        <div className="flex gap-3 p-1">
+                        <div className="flex gap-3 p-3">
                             {recentlyCreated?.length > 0 ? (
                                 recentlyCreated?.map((flashcard) => (
                                     <FlashcardPreviewCard
@@ -114,7 +114,7 @@ export default function FlashcardsPage() {
                         type="scroll"
                         className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                     >
-                        <div className="flex gap-3 p-1">
+                        <div className="flex gap-3 p-3">
                             {recentlyReviewed?.length > 0 ? (
                                 recentlyReviewed?.map((flashcard) => (
                                     <FlashcardPreviewCard
@@ -159,7 +159,7 @@ export default function FlashcardsPage() {
                             type="scroll"
                             className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                         >
-                            <div className="flex gap-3 p-1">
+                            <div className="flex gap-3 p-3">
                                 {(suggestedItemsQuery.data ?? []).map(
                                     (item) => (
                                         <ItemCard

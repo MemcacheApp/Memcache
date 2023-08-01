@@ -79,7 +79,7 @@ export default function Revise() {
                         type="scroll"
                         className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                     >
-                        <div className="flex gap-3 p-1">
+                        <div className="flex gap-3 p-3">
                             {revisionQueueQuery.data &&
                             revisionQueueQuery.data.length > 0 ? (
                                 revisionQueueQuery.data.map((flashcard) => (
@@ -101,23 +101,37 @@ export default function Revise() {
                         <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                 )}
-                <H4 className="mt-3">Items with Flashcards</H4>
+                <H4 className="mt-5">Items with Flashcards</H4>
                 <ScrollArea
                     type="scroll"
                     className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                 >
-                    <div className="flex gap-3 p-1">
-                        {itemsWithFlashcards.map((item) => (
-                            <ItemForFlashcards
-                                key={item.id}
-                                className="w-[25rem] h-[40rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
-                                data={item}
-                                selected={false}
-                                onSelect={(id: string) => {
-                                    router.push(`/app/flashcards/${id}`);
-                                }}
-                            />
-                        ))}
+                    <div className="flex gap-3 p-3">
+                        {itemsWithFlashcards.length > 0 ? (
+                            itemsWithFlashcards.map((item) => (
+                                <ItemForFlashcards
+                                    key={item.id}
+                                    className="w-[25rem] h-[38rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                    data={item}
+                                    selected={false}
+                                    onSelect={(id: string) => {
+                                        router.push(`/app/flashcards/${id}`);
+                                    }}
+                                />
+                            ))
+                        ) : (
+                            <div className="flex flex-col gap-4 justify-center items-center w-full h-[180px]">
+                                No items with flashcards. Create some flashcards
+                                to get started!
+                                <Button
+                                    onClick={() =>
+                                        router.push("/app/flashcards")
+                                    }
+                                >
+                                    Generate Flashcards
+                                </Button>
+                            </div>
+                        )}
                     </div>
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>

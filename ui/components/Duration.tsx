@@ -5,6 +5,9 @@ import { cn } from "../utils";
 
 interface DurationProps extends React.HTMLAttributes<HTMLDivElement> {
     time: number;
+    iconSize?: number;
+    textNumSize?: string;
+    textUnitsSize?: string;
 }
 
 /**
@@ -14,7 +17,17 @@ interface DurationProps extends React.HTMLAttributes<HTMLDivElement> {
  * Limitation: only works for up to 24 hrs
  */
 const Duration = React.forwardRef<HTMLDivElement, DurationProps>(
-    ({ className, time, ...props }, ref) => {
+    (
+        {
+            className,
+            time,
+            iconSize = 24,
+            textNumSize = "text-xl",
+            textUnitsSize = "text-base",
+            ...props
+        },
+        ref,
+    ) => {
         // Count seconds since start
         const [hrs, setHrs] = useState<string | undefined>(undefined);
         const [min, setMin] = useState<string | undefined>(undefined);
@@ -40,22 +53,28 @@ const Duration = React.forwardRef<HTMLDivElement, DurationProps>(
                 className={cn("flex items-end gap-1", className)}
                 {...props}
             >
-                <Timer className="self-start" />
+                <Timer className="self-start" size={iconSize} />
                 {hrs && (
                     <div>
-                        <span className="text-xl font-semibold">{hrs}</span>
-                        <span className="text-base">h</span>
+                        <span className={cn("font-semibold", textNumSize)}>
+                            {hrs}
+                        </span>
+                        <span className={textUnitsSize}>h</span>
                     </div>
                 )}
                 {min && (
                     <div>
-                        <span className="text-xl font-semibold">{min}</span>
-                        <span className="text-base">m</span>
+                        <span className={cn("font-semibold", textNumSize)}>
+                            {min}
+                        </span>
+                        <span className={cn(textUnitsSize)}>m</span>
                     </div>
                 )}
                 <div>
-                    <span className="text-xl font-semibold">{sec}</span>
-                    <span className="text-base">s</span>
+                    <span className={cn("font-semibold", textNumSize)}>
+                        {sec}
+                    </span>
+                    <span className={cn(textUnitsSize)}>s</span>
                 </div>
             </div>
         );

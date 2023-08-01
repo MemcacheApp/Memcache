@@ -57,7 +57,7 @@ export const options = {
     },
 };
 
-export function HorizontalBarSingle({
+export function ReviewRatingsHorizontalBarSingle({
     ratingsCount,
 }: {
     ratingsCount: Record<FlashcardReviewRating, number>;
