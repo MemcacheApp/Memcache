@@ -7,6 +7,6 @@ chrome.contextMenus.create({
 
 chrome.contextMenus.onClicked.addListener((info) => {
     chrome.tabs.create({
-        url: `http://localhost:3000/browser?url=${info.pageUrl}`,
+        url: `http://localhost:3000/browser-extension?url=${info.pageUrl}`,
     });
 });
