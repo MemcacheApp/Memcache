@@ -84,6 +84,37 @@ export default class FlashcardController {
         }
     }
 
+    /**
+     * Gets all flashcards that have been reviewed at least once. This query
+     * doesn't sort by last review date so you need to sort it yourself in BE/FE.
+     * @param userId
+     * @returns
+     */
+    static async getUserRecentlyReviewed(userId: string) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                    reviews: {
+                        some: {}, // returns true if there is at least one review
+                    },
+                },
+                include: {
+                    reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
+                },
+            });
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     static async getUserRevisionQueue(userId: string) {
         try {
             const flashcards = await prisma.flashcard.findMany({

@@ -61,9 +61,11 @@ export const itemRouter = router({
                 });
             }
         }),
-    getUserItemsWithFlashcards: protectedProcedure.query(async ({ ctx }) => {
+    getUserItemsIncludeFlashcards: protectedProcedure.query(async ({ ctx }) => {
         try {
-            return await ItemController.getUserItemsWithFlashcards(ctx.userId);
+            return await ItemController.getUserItemsIncludeFlashcards(
+                ctx.userId,
+            );
         } catch (e) {
             console.error(e);
             throw new TRPCError({

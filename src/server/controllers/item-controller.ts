@@ -172,7 +172,7 @@ export default class ItemController {
         return item;
     }
 
-    static async getUserItemsWithFlashcards(userId: string) {
+    static async getUserItemsIncludeFlashcards(userId: string) {
         const items = await prisma.item.findMany({
             where: {
                 userId,

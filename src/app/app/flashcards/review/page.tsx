@@ -9,6 +9,7 @@ import {
     Separator,
 } from "@/ui/components";
 import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
+import { HorizontalBarSingle } from "@/ui/components/ReviewRatingsHorizontalBarSingle";
 import { FlashcardReviewRating } from "@prisma/client";
 import { useState } from "react";
 
@@ -55,13 +56,7 @@ export default function Review() {
                                 <span className="leading-4">Session</span>
                             </div>
                             <div className="text-4xl font-extrabold tracking-widest">{`${currentFlashcard}/${revisionQueue.length}`}</div>
-                            <div>{`${
-                                ratingsCount[FlashcardReviewRating.Easy]
-                            },${ratingsCount[FlashcardReviewRating.Medium]},${
-                                ratingsCount[FlashcardReviewRating.Hard]
-                            },${
-                                ratingsCount[FlashcardReviewRating.Forgot]
-                            }`}</div>
+                            <HorizontalBarSingle ratingsCount={ratingsCount} />
                         </div>
                     </CardHeader>
                     <Separator className="my-6" />
