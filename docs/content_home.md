@@ -5,6 +5,7 @@
 -   [Introduction](#introduction)
 -   [Content Home with Panel](#content-home-with-panel)
 -   [Item Status](#item-status)
+-   [Multi-select and Item Operations](#multi-select-and-item-operations)
 
 ## Introduction
 
@@ -17,15 +18,15 @@ This is what the content home's UI looks like.
 ![Content Home UI](../assets/content-home-w-panel.png)
 
 It features the content saver, a status filter, a tag filter, a multi-select toggler, and a list of items.
-Each card shows the title, description, URL, collection, tags, options, and status selector for its respective save.
+Each card shows the title, description, URL, collection, tags, options, and status selector for its respective item.
 
-It also features the item panel on the right, which provides more details and options for the selected save. The item panel can be closed by clicking the X button at the top-left, and re-opened by clicking on a save.
+It also features the item panel on the right, which provides more details and options for the selected item. The item panel can be closed by clicking the X button at the top-left, and re-opened by clicking on a item.
 
 ## Item Status
 
 The content home is divided into four parts, each for a different status - 'Inbox', 'Underway', 'Complete', and 'Archive'. New items are given the 'Inbox' status.
 
-An item can only have one status at a time, and the user can set the status of an item by clicking on the status selector for its save, which is located both on the save card and on the item panel. The purpose of giving a status to an item is to indicate its progress as a bookmark.
+An item can only have one status at a time, and the user can set the status of an item by clicking on the status selector for its item, which is located both on the item card and on the item panel. The purpose of giving a status to an item is to indicate its progress as a bookmark.
 
 This is what the item panel status selector looks like.
 
