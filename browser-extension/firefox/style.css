@@ -1,0 +1,15 @@
+html
+{
+    width: 500px;
+    height: 800px;
+}
+
+body {
+    display: flex;
+    height: 100%;
+    margin: 0;
+}
+
+iframe {
+    flex-grow: 1;
+}
