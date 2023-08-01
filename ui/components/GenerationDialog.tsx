@@ -125,6 +125,9 @@ export function GenerateSummaryDialog({
     const [experience, setExperience] = useState(Experience.Intermediate);
     const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
 
+    // Unlock to allow generate next summary after 1.2s, even if the generateSummaryMutation is still loading
+    const [generationLock, setGenerationLock] = useState(false);
+
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
         onSuccess() {
             if (data) {
@@ -140,12 +143,16 @@ export function GenerateSummaryDialog({
 
     const handleSubmit = () => {
         if (data) {
+            setGenerationLock(true);
             generateSummaryMutation.mutate({
                 itemId: data.id,
                 numOfWords,
                 experience,
                 finetuning,
             });
+            setTimeout(() => {
+                setGenerationLock(false);
+            }, 1200);
         }
     };
 
@@ -270,9 +277,11 @@ export function GenerateSummaryDialog({
                     <Button
                         size="lg"
                         onClick={handleSubmit}
-                        disabled={generateSummaryMutation.isLoading}
+                        disabled={
+                            generateSummaryMutation.isLoading && generationLock
+                        }
                     >
-                        {generateSummaryMutation.isLoading ? (
+                        {generateSummaryMutation.isLoading && generationLock ? (
                             <Loader varient="ring" colorWhite />
                         ) : (
                             "Generate"
@@ -302,6 +311,9 @@ export function GenerateFlashcardsDialog({
     );
     const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
+    // Unlock to allow generate next summary after 1.2s, even if the generateSummaryMutation is still loading
+    const [generationLock, setGenerationLock] = useState(false);
+
     const generateFlashcardsMutation =
         trpc.flashcards.generateFlashcards.useMutation({
             onSuccess: () => {
@@ -318,6 +330,7 @@ export function GenerateFlashcardsDialog({
 
     const handleSubmit = () => {
         if (data) {
+            setGenerationLock(true);
             generateFlashcardsMutation.mutate({
                 itemId: data.id,
                 numOfFlashcards,
@@ -325,6 +338,9 @@ export function GenerateFlashcardsDialog({
                 range,
             });
             // TODO: show toast notification: "Generating flashcards..."
+            setTimeout(() => {
+                setGenerationLock(false);
+            }, 1200);
         }
     };
 
@@ -474,9 +490,13 @@ export function GenerateFlashcardsDialog({
                     <Button
                         size="lg"
                         onClick={handleSubmit}
-                        disabled={generateFlashcardsMutation.isLoading}
+                        disabled={
+                            generateFlashcardsMutation.isLoading &&
+                            generationLock
+                        }
                     >
-                        {generateFlashcardsMutation.isLoading ? (
+                        {generateFlashcardsMutation.isLoading &&
+                        generationLock ? (
                             <Loader varient="ring" colorWhite />
                         ) : (
                             "Generate"

@@ -4,7 +4,6 @@ import {
     ItemList,
     ItemListOptions,
     ItemPanel,
-    LogInRequired,
     PageTitle,
     SaveInput,
     SaveInputTrigger,
@@ -24,24 +23,22 @@ export default function SavesPage() {
 
     return (
         <div className="flex flex-col">
-            <LogInRequired>
-                <WithPanel>
-                    <Topbar startPos={200}>
-                        <TopbarTitle>Saves</TopbarTitle>
-                        <ItemListOptions
-                            showSave
-                            className="grow ml-5 overflow-hidden"
-                        />
-                    </Topbar>
-                    <PageTitle>Saves</PageTitle>
-                    <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
-                        <SaveInputTrigger />
-                    </SaveInput>
-                    <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
-                    <ItemList />
-                </WithPanel>
-                <ItemPanel />
-            </LogInRequired>
+            <WithPanel>
+                <Topbar startPos={200}>
+                    <TopbarTitle>Saves</TopbarTitle>
+                    <ItemListOptions
+                        showSave
+                        className="grow ml-5 overflow-hidden"
+                    />
+                </Topbar>
+                <PageTitle>Saves</PageTitle>
+                <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
+                    <SaveInputTrigger />
+                </SaveInput>
+                <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
+                <ItemList />
+            </WithPanel>
+            <ItemPanel />
         </div>
     );
 }

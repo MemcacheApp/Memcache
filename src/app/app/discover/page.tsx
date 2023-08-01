@@ -33,9 +33,9 @@ export default function DiscoverPage() {
     }, [getSuggestedItemsQuery.data]);
 
     return (
-        <div className="@container">
+        <div className="@container/discover">
             <PageTitle>Discover</PageTitle>
-            <div className="md:mx-8 mb-8 grid grid-cols-1 @xl:grid-cols-2 @3xl:grid-cols-3 gap-3">
+            <div className="md:mx-8 mb-8 grid grid-cols-1 @3xl/discover:grid-cols-2 @6xl/discover:grid-cols-3 gap-3">
                 {columns !== undefined ? (
                     columns.map((column, i) => (
                         <div className="grid gap-3" key={i}>
