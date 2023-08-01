@@ -12,15 +12,24 @@ import {
     TopbarTitle,
     WithPanel,
 } from "@/ui/components";
+import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useItemListStore } from "../../store/item-list";
 
 export default function SavesPage() {
-    const resetStates = useItemListStore((state) => state.reset);
+    const { reset, setIncludedTags } = useItemListStore((state) => ({
+        reset: state.reset,
+        setIncludedTags: state.setIncludedTags,
+    }));
+    const searchParams = useSearchParams();
 
     useEffect(() => {
-        resetStates();
-    }, []);
+        reset();
+        const tag = searchParams.get("tag");
+        if (tag) {
+            setIncludedTags(new Set([tag]));
+        }
+    }, [searchParams]);
 
     return (
         <div className="flex flex-col">
