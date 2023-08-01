@@ -13,6 +13,7 @@ import {
     X,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { AddTag, CollectionSelector, ExternalLink, Loader, SimpleTag } from ".";
 import { cn } from "../utils";
@@ -147,6 +148,7 @@ export function ItemPanel() {
 
 export function SingleItem({ itemId }: { itemId: string }) {
     const ctx = trpc.useContext();
+    const { push } = useRouter();
 
     const itemQuery = trpc.item.getItem.useQuery({ itemId });
     const data = itemQuery.data;
@@ -299,7 +301,9 @@ export function SingleItem({ itemId }: { itemId: string }) {
                             <SimpleTag
                                 key={tag.id}
                                 value={tag.name}
-                                onClick={() => console.log(tag.id)}
+                                onClick={() =>
+                                    push(`/app/saves?tag=${tag.name}`)
+                                }
                                 remove={() => {
                                     removeTagFromItemMutation.mutate({
                                         itemId: data.id,
