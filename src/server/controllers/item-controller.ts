@@ -113,6 +113,20 @@ export default class ItemController {
         return item;
     }
 
+    static async getItems(itemIds: string[]) {
+        return await prisma.item.findMany({
+            where: {
+                id: {
+                    in: itemIds,
+                },
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+        });
+    }
+
     static async getUserItems(
         userId: string,
         includedTags?: string[],

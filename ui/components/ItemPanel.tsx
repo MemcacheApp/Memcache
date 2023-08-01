@@ -13,8 +13,8 @@ import {
     X,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { AddTag, CollectionSelector, ExternalLink, SimpleTag } from ".";
+import { useEffect, useMemo, useState } from "react";
+import { AddTag, CollectionSelector, ExternalLink, Loader, SimpleTag } from ".";
 import { cn } from "../utils";
 import { Button } from "./Button";
 import { Card } from "./Card";
@@ -32,7 +32,11 @@ export function ItemPanel() {
         }),
     );
 
-    const ids = Array.from(selectedItems);
+    const itemIds = useMemo(() => Array.from(selectedItems), [selectedItems]);
+    const getItemsQuery = trpc.item.getItems.useQuery({
+        itemIds,
+    });
+    const items = getItemsQuery.data;
 
     const [isCollapse, setIsCollapse] = useState(true);
     const [isHidden, setIsHidden] = useState(true);
@@ -72,24 +76,70 @@ export function ItemPanel() {
                     },
                 )}
             >
-                <div className="flex">
-                    <Button
-                        variant="ghost"
-                        className="w-10 rounded-full p-0"
-                        onClick={dismissPanel}
-                    >
-                        <div className="h-4 w-4">
-                            <X size={16} />
-                        </div>
-                        <span className="sr-only">Toggle sidebar</span>
-                    </Button>
+                <div className="max-h-64 min-h-[3.5rem] shrink-0 overflow-hidden -mt-4 -mx-4 mb-4">
+                    <div className="flex absolute top-0 w-full h-14 p-2 gap-2 items-center bg-gradient-to-b z-10 from-black/50 to-black/0 text-white">
+                        <Button
+                            variant="ghost"
+                            className="w-9 rounded-full p-0 hover:bg-white/20 hover:text-white shrink-0"
+                            size="sm"
+                            onClick={dismissPanel}
+                        >
+                            <div className="h-4 w-4">
+                                <X size={16} />
+                            </div>
+                            <span className="sr-only">Close sidebar</span>
+                        </Button>
+                        {items && items.length > 0 ? (
+                            <>
+                                <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+                                    {items[0].title}
+                                </div>
+                                {items.length > 1 ? (
+                                    <div className="bg-white text-black font-medium px-1 rounded-md">
+                                        +{items.length - 1}
+                                    </div>
+                                ) : null}
+                            </>
+                        ) : null}
+                    </div>
+                    {items && items.length > 0 && items[0].thumbnail ? (
+                        <ExternalLink href={items[0].thumbnail}>
+                            <div className="mx-auto aspect-[16/9] shrink-0">
+                                <img
+                                    src={items[0].thumbnail}
+                                    alt="Image"
+                                    className="object-cover object-center relative w-full h-full"
+                                />
+                            </div>
+                        </ExternalLink>
+                    ) : null}
                 </div>
-
-                {ids.length === 1 ? (
-                    <SingleItem itemId={ids[0]} />
+                {items ? (
+                    items.length > 0 ? (
+                        <>
+                            <div className="text-xl font-bold">
+                                {items.map((item, i) => (
+                                    <>
+                                        {i ? (
+                                            <span className="text-gray-500 mr-2">
+                                                ,
+                                            </span>
+                                        ) : null}
+                                        <ExternalLink
+                                            key={item.id}
+                                            href={item.url}
+                                        >
+                                            {item.title}
+                                        </ExternalLink>
+                                    </>
+                                ))}
+                            </div>
+                        </>
+                    ) : null
                 ) : (
-                    <div>Select {ids.length} items</div>
+                    <Loader varient="ellipsis" />
                 )}
+                <SingleItem itemId={itemIds[0]} />
             </Card>
         </div>
     );
@@ -166,27 +216,11 @@ export function SingleItem({ itemId }: { itemId: string }) {
         <div>
             {data ? (
                 <div>
-                    <div className="text-xl font-bold">
-                        <ExternalLink href={data.url}>
-                            {data.title}
-                        </ExternalLink>
-                    </div>
                     <div className="mt-1 mb-3 text-slate-450 ">
                         <ExternalLink href={data.url}>
                             {data.siteName}
                         </ExternalLink>
                     </div>
-                    {data.thumbnail ? (
-                        <div className="w-full max-w-[240px] mx-auto aspect-[16/9] my-4 shrink-0">
-                            <ExternalLink href={data.url}>
-                                <img
-                                    src={data.thumbnail}
-                                    alt="Image"
-                                    className="rounded-lg object-cover object-center relative w-full h-full"
-                                />
-                            </ExternalLink>
-                        </div>
-                    ) : null}
                     <div className="mt-3">{data.description}</div>
 
                     <Separator className="my-4" />
