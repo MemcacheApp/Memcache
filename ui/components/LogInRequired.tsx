@@ -1,7 +1,9 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
+import { Link } from "./Link";
 import { Loader } from "./Loader";
+import { PageTitle } from "./typography";
 
 interface LogInRequiredProps {
     children?: React.ReactNode;
@@ -12,13 +14,20 @@ export function LogInRequired(props: LogInRequiredProps) {
 
     if (data === undefined) {
         return (
-            <div className="w-full h-screen flex justify-center items-center">
+            <div className="flex items-center justify-center w-full h-screen">
                 <Loader varient="ellipsis" />
             </div>
         );
     } else if (data) {
         return <>{props.children}</>;
     } else {
-        return <div>Log in required</div>;
+        return (
+            <>
+                <PageTitle>Log in required</PageTitle>
+                <Link href={"/auth/login"} className="mx-8">
+                    Back to Login
+                </Link>
+            </>
+        );
     }
 }
