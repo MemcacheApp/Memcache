@@ -301,7 +301,7 @@ export function FlashcardsDialog({
                 console.log("Successfully generated flashcards:");
                 console.log(data);
                 ctx.flashcards.getUserFlashcards.invalidate();
-                ctx.item.getUserItemsWithFlashcards.invalidate();
+                ctx.item.getUserItemsIncludeFlashcards.invalidate();
                 ctx.flashcards.getUserRevisionQueue.invalidate();
             },
             onError: (err) => {
