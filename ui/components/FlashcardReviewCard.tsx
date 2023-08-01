@@ -30,19 +30,30 @@ interface FlashcardReviewCardProps {
         };
         reviews: FlashcardReview[];
     };
+    onSubmit?: (rating: FlashcardReviewRating) => void;
     onNext?: () => void;
     viewOnly?: boolean;
 }
 
 export default function FlashcardReviewCard({
     flashcard,
+    onSubmit,
     onNext,
     viewOnly = false,
 }: FlashcardReviewCardProps) {
+    const ctx = trpc.useContext();
+
     const [showAnswer, setShowAnswer] = useState(false);
 
     const startTime = new Date();
-    const addReviewMutation = trpc.flashcards.addReview.useMutation();
+    const addReviewMutation = trpc.flashcards.addReview.useMutation({
+        onSuccess: () => {
+            ctx.item.getUserItemsIncludeFlashcards.invalidate();
+            ctx.flashcards.getUserFlashcards.invalidate;
+            ctx.flashcards.getUserRecentlyReviewed.invalidate();
+            ctx.flashcards.getUserRevisionQueue.invalidate();
+        },
+    });
 
     const handleRateReview = async (rating: FlashcardReviewRating) => {
         await addReviewMutation.mutateAsync({
@@ -52,6 +63,7 @@ export default function FlashcardReviewCard({
             reviewRating: rating,
         });
         setShowAnswer(false);
+        onSubmit?.(rating);
         onNext?.();
     };
 

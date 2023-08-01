@@ -36,6 +36,14 @@ export const options = {
             display: false,
             text: "Ratings Horizontal Bar Chart",
         },
+        tooltip: {
+            titleSpacing: 1,
+            titleMarginBottom: 3,
+            bodySpacing: 1,
+            footerSpacing: 1,
+            padding: 3,
+            boxPadding: 0,
+        },
     },
     scales: {
         x: {
@@ -49,8 +57,6 @@ export const options = {
     },
 };
 
-// const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
 export function HorizontalBarSingle({
     ratingsCount,
 }: {
@@ -63,25 +69,29 @@ export function HorizontalBarSingle({
         datasets: [
             {
                 label: "Easy",
-                data: ratingsCount[FlashcardReviewRating.Easy],
+                data: [ratingsCount[FlashcardReviewRating.Easy]],
                 backgroundColor: "rgba(135, 217, 192, 0.5)",
             },
             {
                 label: "Medium",
-                data: ratingsCount[FlashcardReviewRating.Medium],
+                data: [ratingsCount[FlashcardReviewRating.Medium]],
                 backgroundColor: "rgba(135, 175, 222, 0.5)",
             },
             {
-                label: "Easy",
-                data: ratingsCount[FlashcardReviewRating.Hard],
+                label: "Hard",
+                data: [ratingsCount[FlashcardReviewRating.Hard]],
                 backgroundColor: "rgba(181, 136, 225, 0.5)",
             },
             {
-                label: "Medium",
-                data: ratingsCount[FlashcardReviewRating.Forgot],
+                label: "Forgot",
+                data: [ratingsCount[FlashcardReviewRating.Forgot]],
                 backgroundColor: "rgba(225, 138, 154, 0.5)",
             },
         ],
     };
-    return <Bar options={options} data={data} />;
+    return (
+        <div className="h-full w-auto relative">
+            <Bar width="320px" height="36px" options={options} data={data} />
+        </div>
+    );
 }

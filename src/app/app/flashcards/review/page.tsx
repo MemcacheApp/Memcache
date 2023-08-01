@@ -31,6 +31,15 @@ export default function Review() {
         }, {} as { [key in FlashcardReviewRating]: number }),
     );
 
+    const handleSubmitReview = (rating: FlashcardReviewRating) => {
+        setRatingsCount((prev) => {
+            return {
+                ...prev,
+                [rating]: prev[rating] + 1,
+            };
+        });
+    };
+
     const handleNextFlashcard = () => {
         setCurrentFlashcard((prev) => Math.min(prev + 1, revisionQueue.length));
     };
@@ -63,6 +72,7 @@ export default function Review() {
                     <CardFooter>
                         <FlashcardReviewCard
                             flashcard={revisionQueue[currentFlashcard]}
+                            onSubmit={handleSubmitReview}
                             onNext={handleNextFlashcard}
                         />
                     </CardFooter>
