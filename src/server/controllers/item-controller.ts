@@ -17,7 +17,7 @@ export default class ItemController {
     static async fetchMetadata(url: string): Promise<ItemMetadata> {
         let result;
         try {
-            result = (await ogs({ url: url })).result;
+            result = (await ogs({ url: encodeURI(url) })).result;
         } catch (e) {
             throw new FetchURLError("FetchError", undefined, { cause: e });
         }
