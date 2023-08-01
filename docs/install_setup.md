@@ -2,13 +2,13 @@
 
 ## Guide
 
-- [Introduction](#introduction)
-- [Section 1](#section-1)
-- [Section 2](#section-2)
+-   [Introduction](#introduction)
+-   [Section 1](#section-1)
+-   [Section 2](#section-2)
 
 ## Introduction
 
-Section intro 
+Section intro
 
 ## Section 1
 
