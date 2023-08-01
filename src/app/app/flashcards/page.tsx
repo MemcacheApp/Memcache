@@ -85,19 +85,25 @@ function FlashcardSearchResult({
 export default function FlashcardsPage() {
     const router = useRouter();
 
-    const [itemInput, setItemInput] = useState("");
-    const itemsQuery = trpc.item.getUserItemsWithFlashcards.useQuery();
-    const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
     const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
     const revisionQueue = revisionQueueQuery.data ?? [];
 
-    const recentlyViewed = flashcardsQuery.data?.sort((a, b) =>
-        a.reviews.length > 0 && b.reviews.length > 0
-            ? b.reviews.slice(-1)[0].end.valueOf() -
-              a.reviews.slice(-1)[0].end.valueOf()
-            : 0,
-    );
+    const recentlyReviewedQuery =
+        trpc.flashcards.getUserRecentlyReviewed.useQuery();
+    const recentlyReviewed =
+        recentlyReviewedQuery.data
+            ?.sort((a, b) =>
+                a.reviews.length > 0 && b.reviews.length > 0
+                    ? b.reviews.slice(-1)[0].end.valueOf() -
+                      a.reviews.slice(-1)[0].end.valueOf()
+                    : 0,
+            )
+            .slice(0, 8) ?? [];
 
+    const [itemInput, setItemInput] = useState("");
+    const itemsQuery = trpc.item.getUserItemsIncludeFlashcards.useQuery();
+
+    // Suggest items to generate flashcards for
     const suggestedItems =
         itemsQuery.data
             // sort in reverse chronological order of creation date
@@ -192,29 +198,46 @@ export default function FlashcardsPage() {
                         Start Review
                     </Button>
                 </div>
+
                 <H4>Revision Queue</H4>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
-                        {revisionQueue?.map((flashcard) => (
-                            <FlashcardPreviewCard
-                                key={flashcard.id}
-                                data={flashcard}
-                                onClick={() => setSelectedFlashcard(flashcard)}
-                            />
-                        ))}
+                        {revisionQueue?.length > 0 ? (
+                            revisionQueue.map((flashcard) => (
+                                <FlashcardPreviewCard
+                                    key={flashcard.id}
+                                    data={flashcard}
+                                    onClick={() =>
+                                        setSelectedFlashcard(flashcard)
+                                    }
+                                />
+                            ))
+                        ) : (
+                            <div className="flex justify-center items-center w-full h-[180px]">
+                                No flashcards due for review
+                            </div>
+                        )}
                     </div>
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>
                 <H4 className="mt-3">Recently Viewed</H4>
                 <ScrollArea type="scroll">
                     <div className="flex gap-3 p-1">
-                        {recentlyViewed?.map((flashcard) => (
-                            <FlashcardPreviewCard
-                                key={flashcard.id}
-                                data={flashcard}
-                                onClick={() => setSelectedFlashcard(flashcard)}
-                            />
-                        ))}
+                        {recentlyReviewed?.length > 0 ? (
+                            recentlyReviewed?.map((flashcard) => (
+                                <FlashcardPreviewCard
+                                    key={flashcard.id}
+                                    data={flashcard}
+                                    onClick={() =>
+                                        setSelectedFlashcard(flashcard)
+                                    }
+                                />
+                            ))
+                        ) : (
+                            <div className="flex justify-center items-center w-full h-[180px]">
+                                No recently reviewed flashcards
+                            </div>
+                        )}
                     </div>
                     <ScrollBar orientation="horizontal" />
                 </ScrollArea>
