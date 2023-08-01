@@ -22,7 +22,7 @@ import { useMemo, useState } from "react";
 import { CardHeader, CardTitle } from "./Card";
 import LastReview from "./LastReview";
 
-interface FlashcardQAProps {
+interface FlashcardReviewCardProps {
     flashcard: Flashcard & {
         item: Item & {
             collection: Collection;
@@ -38,7 +38,7 @@ export default function FlashcardReviewCard({
     flashcard,
     onNext,
     viewOnly = false,
-}: FlashcardQAProps) {
+}: FlashcardReviewCardProps) {
     const [showAnswer, setShowAnswer] = useState(false);
 
     const startTime = new Date();
@@ -73,7 +73,7 @@ export default function FlashcardReviewCard({
     );
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full">
             <div
                 className={cn(
                     "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]",
