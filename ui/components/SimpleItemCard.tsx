@@ -162,7 +162,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                         {props.collection ? (
                             <Link
                                 className="flex items-center gap-2 my-2"
-                                href={`/app/collection/${props.collection.id}`}
+                                href={`/app/collections/${props.collection.id}`}
                             >
                                 <Package2 size={16} />
                                 {props.collection.name}
@@ -175,7 +175,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                                     <Link
                                         tabIndex={-1}
                                         key={tag.id}
-                                        href={`/app/tag/${tag.id}`}
+                                        href={`/app/saves?tag=${tag.name}`}
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <SimpleTag size="sm" value={tag.name} />

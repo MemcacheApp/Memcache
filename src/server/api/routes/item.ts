@@ -19,6 +19,18 @@ export const itemRouter = router({
                 });
             }
         }),
+    getItems: protectedProcedure
+        .input(z.object({ itemIds: z.string().array() }))
+        .query(async ({ input }) => {
+            try {
+                return ItemController.getItems(input.itemIds);
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }),
     getUserItems: protectedProcedure
         .input(
             z
