@@ -119,7 +119,7 @@ export default function Revise() {
                 {userFlashcardsQuery.isLoading ? (
                     <LoadingMessage message={"Loading flashcards..."} />
                 ) : (
-                    <div className="flex justify-around gap-5 mb-8">
+                    <div className="flex justify-between gap-5 p-6 ">
                         <div className="flex flex-col gap-5">
                             <div className="flex gap-3 items-center">
                                 <Layers size={36} />
@@ -190,8 +190,8 @@ export default function Revise() {
                                 </div>
                             </div>
                         </div>
-                        <div className="ml-[2.5rem] ">
-                            <div className="grid grid-cols-2 gap-2 justify-items-center mb-3">
+                        <div className="ml-[2.5rem] flex flex-col  @md:flex-row">
+                            <div className="grid grid-cols-2 @md:grid-cols-1 gap-4 justify-items-center mb-3">
                                 <div className="text-easy">
                                     <span className="font-mono text-3xl font-bold">
                                         {
