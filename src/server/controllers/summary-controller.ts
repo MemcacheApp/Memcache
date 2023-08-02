@@ -1,5 +1,5 @@
-import { Experience, Finetuning } from "@/src/datatypes/summary";
 import ContentScraper from "@/src/utils/content-scraper";
+import { SummaryExperience, SummaryFinetuning } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../db/prisma";
 import openai from "../utils/openai";
@@ -130,8 +130,8 @@ export default class SummaryController {
     static async generateSummary(
         itemId: string,
         numOfWords: number,
-        experience: Experience,
-        finetuning: Finetuning,
+        experience: SummaryExperience,
+        finetuning: SummaryFinetuning,
     ) {
         const item = await ItemController.getItem(itemId);
         const content = await ContentScraper.scrapeContent({
@@ -170,14 +170,14 @@ export default class SummaryController {
 
         // Modify Prompt Depending on Experience
         switch (experience) {
-            case 0:
+            case SummaryExperience.Beginner:
                 gptrequest += `I want you to summarise the content so that a complete novice 
                                can understand what's going on, someone that's only in middle school 
                                with no background knowledge should be able to completely grasp the 
                                text using your summary, so use language that you deem fitting for such 
                                an audience.`;
                 break;
-            case 1:
+            case SummaryExperience.Intermediate:
                 gptrequest += `I want you to summarise the content so that a undergraduate college 
                                freshman at Harvard can understand what's going on, someone that's 
                                bright and relatively smart but has no background or previous experience 
@@ -186,7 +186,7 @@ export default class SummaryController {
                                summary MUST use technical words and vocabulary fitting of a college 
                                textbook, your lexical density must be intermediate to dense`;
                 break;
-            case 2:
+            case SummaryExperience.Advanced:
                 gptrequest += `I want you to summarise the content in the style of a tenured MIT professor 
                                who is writing a memo for another tenured professor at Harvard university. 
                                It is a memo amongst experts, so there's no need to explain basic concepts, 
@@ -198,19 +198,19 @@ export default class SummaryController {
 
         // Modify Prompt Depending on Finetuning
         switch (finetuning) {
-            case 0:
+            case SummaryFinetuning.Qualitative:
                 gptrequest += `Furthermore, I want your summary to be as descriptive and illustrious 
                                as possible, so you MUST use vibrant metaphors, hypotheticals scenarios, 
                                and similes that don't take away from the content but add to it by 
                                expanding upon it`;
                 break;
-            case 1:
+            case SummaryFinetuning.Quantitative:
                 gptrequest += `Furthermore, I want your summary to be as technical and quantitative 
                                as possible, focusing on statistics, hard facts, hard data, and technical 
                                manual descriptions that could bolster the summary while refraining from 
                                using any metaphors or hypotheticals whatsoever.`;
                 break;
-            case 2:
+            case SummaryFinetuning.Balanced:
                 gptrequest += `Furthermore, I want your summary to strike the perfect balance between 
                                detailed technical explanations with hard facts that are backed by 
                                quantitative descriptions and statistics while also using illustrious 
