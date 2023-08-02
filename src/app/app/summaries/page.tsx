@@ -34,6 +34,13 @@ export default function SummariesPage() {
 function MySummaries() {
     const latestSummariesQuery = trpc.summary.getLatestSummaries.useQuery();
 
+    if (
+        latestSummariesQuery.data &&
+        latestSummariesQuery.data.summaries.length === 0
+    ) {
+        return null;
+    }
+
     return (
         <div className="bg-background mx-8 p-6 border rounded-lg">
             <div className="flex items-center">

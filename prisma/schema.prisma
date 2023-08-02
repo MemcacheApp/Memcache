@@ -68,8 +68,8 @@ model Summary {
   item       Item     @relation(fields: [itemId], references: [id])
   itemId     String
   wordCount  Int
-  experience Int
-  finetuning Int
+  experience SummaryExperience
+  finetuning SummaryFinetuning
 }
 
 model Collection {

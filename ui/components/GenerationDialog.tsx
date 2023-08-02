@@ -5,7 +5,6 @@ import {
     FlashcardExperienceNames,
     FlashcardRange,
 } from "@/src/datatypes/flashcard";
-import { Experience, Finetuning } from "@/src/datatypes/summary";
 import {
     Button,
     Dialog,
@@ -23,7 +22,13 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/ui/components";
-import { Collection, Item, Tag } from "@prisma/client";
+import {
+    Collection,
+    Item,
+    SummaryExperience,
+    SummaryFinetuning,
+    Tag,
+} from "@prisma/client";
 import { PlusIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
@@ -122,8 +127,12 @@ export function GenerateSummaryDialog({
     const ctx = trpc.useContext();
 
     const [numOfWords, setNumOfWords] = useState(150);
-    const [experience, setExperience] = useState(Experience.Intermediate);
-    const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
+    const [experience, setExperience] = useState<SummaryExperience>(
+        SummaryExperience.Intermediate,
+    );
+    const [finetuning, setFinetuning] = useState<SummaryFinetuning>(
+        SummaryFinetuning.Qualitative,
+    );
 
     // Unlock to allow generate next summary after 1.2s, even if the generateSummaryMutation is still loading
     const [generationLock, setGenerationLock] = useState(false);
@@ -137,7 +146,6 @@ export function GenerateSummaryDialog({
                 ctx.summary.getSuggestedItems.invalidate();
             }
             onOpenChange(false);
-            if (viewSummaries) viewSummaries();
         },
     });
 
@@ -211,25 +219,21 @@ export function GenerateSummaryDialog({
                         </div>
                         <Tabs
                             id="experience"
-                            value={experience.toString()}
+                            value={experience}
                             onValueChange={(value) =>
-                                setExperience(parseInt(value))
+                                setExperience(value as SummaryExperience)
                             }
                         >
                             <TabsList>
-                                <TabsTrigger
-                                    value={Experience.Beginner.toString()}
-                                >
+                                <TabsTrigger value={SummaryExperience.Beginner}>
                                     Beginner
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Experience.Intermediate.toString()}
+                                    value={SummaryExperience.Intermediate}
                                 >
                                     Intermediate
                                 </TabsTrigger>
-                                <TabsTrigger
-                                    value={Experience.Advanced.toString()}
-                                >
+                                <TabsTrigger value={SummaryExperience.Advanced}>
                                     Advanced
                                 </TabsTrigger>
                             </TabsList>
@@ -250,24 +254,22 @@ export function GenerateSummaryDialog({
                             id="finetuning"
                             value={finetuning.toString()}
                             onValueChange={(value) =>
-                                setFinetuning(parseInt(value))
+                                setFinetuning(value as SummaryFinetuning)
                             }
                         >
                             <TabsList>
                                 <TabsTrigger
-                                    value={Finetuning.Qualitative.toString()}
+                                    value={SummaryFinetuning.Qualitative}
                                 >
                                     Qualitative
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Finetuning.Quantitative.toString()}
+                                    value={SummaryFinetuning.Quantitative}
                                 >
                                     Quantitative
                                 </TabsTrigger>
-                                <TabsTrigger
-                                    value={Finetuning.Mixed.toString()}
-                                >
-                                    Mixed
+                                <TabsTrigger value={SummaryFinetuning.Balanced}>
+                                    Balanced
                                 </TabsTrigger>
                             </TabsList>
                         </Tabs>

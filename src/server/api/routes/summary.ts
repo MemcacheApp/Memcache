@@ -1,3 +1,4 @@
+import { SummaryExperience, SummaryFinetuning } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { GetSummaryError } from "../../controllers/errors/summary";
@@ -61,8 +62,8 @@ export const summaryRouter = router({
             z.object({
                 itemId: z.string(),
                 numOfWords: z.number(),
-                experience: z.number(),
-                finetuning: z.number(),
+                experience: z.nativeEnum(SummaryExperience),
+                finetuning: z.nativeEnum(SummaryFinetuning),
             }),
         )
         .mutation(async ({ input }) => {

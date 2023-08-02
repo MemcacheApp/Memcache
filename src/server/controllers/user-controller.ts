@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { createElement } from "react";
 import { Resend } from "resend";
 import { v4 as uuidv4 } from "uuid";
+import ResetPasswordEmail from "../../../react-email-templates/emails/reset-password-email";
 import { prisma } from "../db/prisma";
 import CollectionController from "./collection-controller";
 import {
@@ -17,7 +18,7 @@ import {
 } from "./errors/user";
 
 const SECRET_KEY = "superSecretTestKey"; // TODO: move to .env
-const resend = new Resend("re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c");
+const resend = new Resend("re_U6PbCMXV_NRrF4vTFmSsRjqG6phfcrtwA");
 
 export default class UserController {
     /**
@@ -233,6 +234,7 @@ export default class UserController {
         // Resend API keys
         // re_U6PbCMXV_NRrF4vTFmSsRjqG6phfcrtwA
         // re_GtdRBzuT_h45BGz4jbSN5bK2mrSL7GM8c
+        // demo: re_cNJGaKt2_NVL8pguqbXn1GCHqwZysVyos
 
         // memcache3900@gmail.com
         // bendermen3900
@@ -275,14 +277,9 @@ export default class UserController {
             },
         });
 
-        const ResetPasswordEmail = (
-            await import(
-                "../../../react-email-templates/emails/reset-password-email"
-            )
-        ).default;
-        resend.sendEmail({
-            from: "onboarding@resend.dev",
-            to: email,
+        await resend.emails.send({
+            from: "memcache@m-xue.dev",
+            to: [email],
             subject: "Memcache Password Reset Code",
             react: createElement(ResetPasswordEmail, {
                 code,

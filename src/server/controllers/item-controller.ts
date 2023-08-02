@@ -17,7 +17,7 @@ export default class ItemController {
     static async fetchMetadata(url: string): Promise<ItemMetadata> {
         let result;
         try {
-            result = (await ogs({ url: url })).result;
+            result = (await ogs({ url: encodeURI(url) })).result;
         } catch (e) {
             throw new FetchURLError("FetchError", undefined, { cause: e });
         }
@@ -111,6 +111,20 @@ export default class ItemController {
         }
 
         return item;
+    }
+
+    static async getItems(itemIds: string[]) {
+        return await prisma.item.findMany({
+            where: {
+                id: {
+                    in: itemIds,
+                },
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+        });
     }
 
     static async getUserItems(

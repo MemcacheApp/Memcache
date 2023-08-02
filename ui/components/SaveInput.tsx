@@ -228,6 +228,7 @@ function SaveInputDialog() {
                                 setTags={setTags}
                                 isPublic={isPublic}
                                 setIsPublic={setIsPublic}
+                                fixedHeight
                             />
                         </form>
                     </div>
@@ -246,9 +247,10 @@ interface SaveOptionsProps {
     setTags: (tags: string[]) => void;
     isPublic: boolean;
     setIsPublic: (isPublic: boolean) => void;
+    fixedHeight?: boolean;
 }
 
-function SaveOptions({
+export function SaveOptions({
     url,
     isCreating,
     collection,
@@ -257,6 +259,7 @@ function SaveOptions({
     setTags,
     isPublic,
     setIsPublic,
+    fixedHeight,
 }: SaveOptionsProps) {
     const [isHidden, setIsHidden] = useState(true);
     const [isCollapse, setIsCollapse] = useState(true);
@@ -325,8 +328,12 @@ function SaveOptions({
     return (
         <div
             className={cn(
-                "relative flex flex-col max-h-[75vh] overflow-auto gap-3 bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
-                { hidden: isHidden, "-translate-y-5 opacity-0": isCollapse },
+                "relative flex flex-col overflow-auto gap-3 bg-background p-3 max-w-xl rounded-b-lg border-b border-x shadow-lg transition-[transform,opacity] pointer-events-auto",
+                {
+                    hidden: isHidden,
+                    "-translate-y-5 opacity-0": isCollapse,
+                    "max-h-[75vh]": fixedHeight,
+                },
             )}
         >
             <SimpleItemCard

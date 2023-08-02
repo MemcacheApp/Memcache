@@ -43,11 +43,15 @@ export default function CollectionPage({ params }: CollectionPageProps) {
             <LogInRequired>
                 <WithPanel>
                     <Topbar startPos={200}>
-                        <TopbarTitle>Collection: {collection.name}</TopbarTitle>
-                        <ItemListOptions
-                            showSave
-                            className="grow ml-5 overflow-hidden"
-                        />
+                        <SaveInput className="flex items-center grow overflow-hidden">
+                            <TopbarTitle>
+                                Collection: {collection.name}
+                            </TopbarTitle>
+                            <ItemListOptions
+                                showSave
+                                className="grow ml-5 overflow-hidden"
+                            />
+                        </SaveInput>
                     </Topbar>
                     <PageTitle>Collection: {collection.name}</PageTitle>
                     <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
