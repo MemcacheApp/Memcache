@@ -40,7 +40,7 @@ export function ReviewRatingsDoughnut({
         ],
     };
     return (
-        <div className="h-full w-auto relative">
+        <div className="h-[240px] w-auto relative">
             <Doughnut
                 width="300px"
                 height="300px"

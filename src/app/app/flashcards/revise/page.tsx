@@ -190,8 +190,8 @@ export default function Revise() {
                                 </div>
                             </div>
                         </div>
-                        <div className="ml-[2.5rem] flex flex-col  @md:flex-row">
-                            <div className="grid grid-cols-2 @md:grid-cols-1 gap-4 justify-items-center mb-3">
+                        <div className="ml-[2.5rem] flex flex-col gap-3">
+                            <div className="grid grid-cols-2 gap-4 justify-items-center mb-3">
                                 <div className="text-easy">
                                     <span className="font-mono text-3xl font-bold">
                                         {
