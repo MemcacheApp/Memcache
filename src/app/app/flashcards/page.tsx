@@ -6,6 +6,7 @@ import {
     Input,
     ItemCard,
     Link,
+    LogInRequired,
     ScrollArea,
     ScrollBar,
 } from "@/ui/components";
@@ -122,146 +123,156 @@ export default function FlashcardsPage() {
     >(null);
 
     return (
-        <div className="flex flex-col gap-5">
-            <PageTitle>Flashcards</PageTitle>
+        <LogInRequired>
+            <div className="flex flex-col gap-5">
+                <PageTitle>Flashcards</PageTitle>
 
-            <Card className="p-6 mx-8 rounded-lg">
-                <H3>Generate Flashards</H3>
-                <div className="relative mt-3 mb-4">
-                    <Input
-                        className="text-base border-solid rounded-md"
-                        placeholder="Article title..."
-                        value={itemInput}
-                        onChange={(e) => setItemInput(e.target.value)}
+                <Card className="p-6 mx-8 rounded-lg">
+                    <H3>Generate Flashards</H3>
+                    <div className="relative mt-3 mb-4">
+                        <Input
+                            className="text-base border-solid rounded-md"
+                            placeholder="Article title..."
+                            value={itemInput}
+                            onChange={(e) => setItemInput(e.target.value)}
+                        />
+
+                        {itemInput &&
+                            itemsQuery.data &&
+                            itemsQuery.data.filter((item) => {
+                                return item.title
+                                    .toLowerCase()
+                                    .includes(itemInput.toLowerCase());
+                            }).length > 0 && (
+                                <div className="absolute z-10 w-full px-1 py-1 bg-white border border-solid rounded-md top-12 border-input">
+                                    {itemsQuery.data
+                                        ?.filter((item) => {
+                                            return item.title
+                                                .toLowerCase()
+                                                .includes(
+                                                    itemInput.toLowerCase(),
+                                                );
+                                        })
+                                        .map((item) => {
+                                            return (
+                                                <FlashcardSearchResult
+                                                    key={item.id}
+                                                    item={item}
+                                                />
+                                            );
+                                        })}
+                                </div>
+                            )}
+                    </div>
+                    <H4>Suggested</H4>
+                    <ScrollArea type="scroll">
+                        <div className="flex gap-3 p-1">
+                            {suggestedItems.map((item) => (
+                                <ItemCard
+                                    key={item.id}
+                                    className="w-[25rem] h-[30rem] max-h-[50vh] bg-transparent"
+                                    data={item}
+                                    selected={selectedItem?.id === item.id}
+                                    onSelect={() => setSelectedItem(item)}
+                                    hideOptions
+                                    format={{ growHeight: true }}
+                                />
+                            ))}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                </Card>
+                <Card className="p-6 mx-8 rounded-lg">
+                    <H3>My Flashcards</H3>
+                    <div className="flex flex-col items-center justify-center w-full h-24 gap-3">
+                        <div>
+                            <span className="text-lg font-bold">{`${revisionQueue.length}`}</span>
+                            &nbsp;{"flashcards due for review"}
+                        </div>
+                        <Button
+                            onClick={() =>
+                                router.push("/app/flashcards/review")
+                            }
+                            size="lg"
+                        >
+                            Start Review
+                        </Button>
+                    </div>
+                    <H4>Revision Queue</H4>
+                    <ScrollArea type="scroll">
+                        <div className="flex gap-3 p-1">
+                            {revisionQueue?.map((flashcard) => (
+                                <FlashcardPreviewCard
+                                    key={flashcard.id}
+                                    data={flashcard}
+                                    onClick={() =>
+                                        setSelectedFlashcard(flashcard)
+                                    }
+                                />
+                            ))}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                    <H4 className="mt-3">Recently Viewed</H4>
+                    <ScrollArea type="scroll">
+                        <div className="flex gap-3 p-1">
+                            {recentlyViewed?.map((flashcard) => (
+                                <FlashcardPreviewCard
+                                    key={flashcard.id}
+                                    data={flashcard}
+                                    onClick={() =>
+                                        setSelectedFlashcard(flashcard)
+                                    }
+                                />
+                            ))}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                </Card>
+                <Card className="p-6 mx-8 rounded-lg">
+                    <H3>Items with Flashcards</H3>
+                    <H4>Recently Created</H4>
+                    <ScrollArea type="scroll">
+                        <div className="flex gap-3 p-1">
+                            {itemsWithFlashcards.map((item) => (
+                                <ItemForFlashcards
+                                    key={item.id}
+                                    className="w-[25rem] h-[26.5rem] max-h-[50vh] bg-transparent"
+                                    data={item}
+                                    selected={false}
+                                    onSelect={(id: string) => {
+                                        router.push(`/app/flashcards/${id}`);
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                </Card>
+                {selectedItem && (
+                    <FlashcardsDialog
+                        data={selectedItem}
+                        open={selectedItem !== null}
+                        onOpenChange={(value: boolean) => {
+                            if (!value) {
+                                setSelectedItem(null);
+                            }
+                        }}
                     />
-
-                    {itemInput &&
-                        itemsQuery.data &&
-                        itemsQuery.data.filter((item) => {
-                            return item.title
-                                .toLowerCase()
-                                .includes(itemInput.toLowerCase());
-                        }).length > 0 && (
-                            <div className="absolute z-10 w-full px-1 py-1 bg-white border border-solid rounded-md top-12 border-input">
-                                {itemsQuery.data
-                                    ?.filter((item) => {
-                                        return item.title
-                                            .toLowerCase()
-                                            .includes(itemInput.toLowerCase());
-                                    })
-                                    .map((item) => {
-                                        return (
-                                            <FlashcardSearchResult
-                                                key={item.id}
-                                                item={item}
-                                            />
-                                        );
-                                    })}
-                            </div>
-                        )}
-                </div>
-                <H4>Suggested</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {suggestedItems.map((item) => (
-                            <ItemCard
-                                key={item.id}
-                                className="w-[25rem] h-[30rem] max-h-[50vh] bg-transparent"
-                                data={item}
-                                selected={selectedItem?.id === item.id}
-                                onSelect={() => setSelectedItem(item)}
-                                hideOptions
-                                format={{ growHeight: true }}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-            </Card>
-            <Card className="p-6 mx-8 rounded-lg">
-                <H3>My Flashcards</H3>
-                <div className="w-full h-24 flex flex-col justify-center items-center gap-3">
-                    <div>
-                        <span className="font-bold text-lg">{`${revisionQueue.length}`}</span>
-                        &nbsp;{"flashcards due for review"}
-                    </div>
-                    <Button
-                        onClick={() => router.push("/app/flashcards/review")}
-                        size="lg"
-                    >
-                        Start Review
-                    </Button>
-                </div>
-                <H4>Revision Queue</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {revisionQueue?.map((flashcard) => (
-                            <FlashcardPreviewCard
-                                key={flashcard.id}
-                                data={flashcard}
-                                onClick={() => setSelectedFlashcard(flashcard)}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-                <H4 className="mt-3">Recently Viewed</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {recentlyViewed?.map((flashcard) => (
-                            <FlashcardPreviewCard
-                                key={flashcard.id}
-                                data={flashcard}
-                                onClick={() => setSelectedFlashcard(flashcard)}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-            </Card>
-            <Card className="p-6 mx-8 rounded-lg">
-                <H3>Items with Flashcards</H3>
-                <H4>Recently Created</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {itemsWithFlashcards.map((item) => (
-                            <ItemForFlashcards
-                                key={item.id}
-                                className="w-[25rem] h-[26.5rem] max-h-[50vh] bg-transparent"
-                                data={item}
-                                selected={false}
-                                onSelect={(id: string) => {
-                                    router.push(`/app/flashcards/${id}`);
-                                }}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-            </Card>
-            {selectedItem && (
-                <FlashcardsDialog
-                    data={selectedItem}
-                    open={selectedItem !== null}
-                    onOpenChange={(value: boolean) => {
-                        if (!value) {
-                            setSelectedItem(null);
-                        }
-                    }}
-                />
-            )}
-            {selectedFlashcard && (
-                <FlashcardDialog
-                    flashcard={selectedFlashcard}
-                    open={selectedFlashcard !== null}
-                    onOpenChange={(value) => {
-                        if (!value) {
-                            setSelectedFlashcard(null);
-                        }
-                    }}
-                />
-            )}
-        </div>
+                )}
+                {selectedFlashcard && (
+                    <FlashcardDialog
+                        flashcard={selectedFlashcard}
+                        open={selectedFlashcard !== null}
+                        onOpenChange={(value) => {
+                            if (!value) {
+                                setSelectedFlashcard(null);
+                            }
+                        }}
+                    />
+                )}
+            </div>
+        </LogInRequired>
     );
 }
 
