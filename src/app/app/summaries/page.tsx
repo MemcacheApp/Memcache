@@ -7,6 +7,7 @@ import {
     ItemSelector,
     Link,
     Loader,
+    LogInRequired,
     PageTitle,
     ScrollArea,
     ScrollBar,
@@ -22,11 +23,13 @@ import { trpc } from "../../utils/trpc";
 export default function SummariesPage() {
     return (
         <div className="flex flex-col">
-            <PageTitle>Summaries</PageTitle>
-            <div className="flex flex-col gap-5">
-                <MySummaries />
-                <GenerateSummary />
-            </div>
+            <LogInRequired>
+                <PageTitle>Summaries</PageTitle>
+                <div className="flex flex-col gap-5">
+                    <MySummaries />
+                    <GenerateSummary />
+                </div>
+            </LogInRequired>
         </div>
     );
 }
@@ -42,12 +45,12 @@ function MySummaries() {
     }
 
     return (
-        <div className="bg-background mx-8 p-6 border rounded-lg">
+        <div className="p-6 mx-8 border rounded-lg bg-background">
             <div className="flex items-center">
                 <H3>My Summaries</H3>
                 <Link
                     href="/app/summaries/all"
-                    className="ml-auto mb-5 font-medium flex items-center gap-2"
+                    className="flex items-center gap-2 mb-5 ml-auto font-medium"
                 >
                     See All
                     <ArrowRightIcon size={20} />
@@ -71,10 +74,10 @@ function MySummaries() {
                             )}
                             {latestSummariesQuery.data.hasMore ? (
                                 <NextLink
-                                    className="group flex flex-col gap-3 items-center p-16 self-center outline-none"
+                                    className="flex flex-col items-center self-center gap-3 p-16 outline-none group"
                                     href="/app/summaries/all"
                                 >
-                                    <div className="border group-hover:border-foreground group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 transition-colors text-slate-600 p-3 rounded-full ">
+                                    <div className="p-3 transition-colors border rounded-full group-hover:border-foreground group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 text-slate-600 ">
                                         <ArrowRightIcon
                                             size={30}
                                             absoluteStrokeWidth
@@ -108,7 +111,7 @@ function GenerateSummary() {
     };
 
     return (
-        <div className="bg-background mx-8 p-6 border rounded-lg">
+        <div className="p-6 mx-8 border rounded-lg bg-background">
             <H3>Generate Summary</H3>
             <ItemSelector
                 className="w-full text-base font-normal text-slate-500"
