@@ -4,7 +4,6 @@ import { SuggestedItem } from "@/src/datatypes/item";
 import {
     Button,
     Loader,
-    LogInRequired,
     SuggestedCard,
     Topbar,
     TopbarTitle,
@@ -42,7 +41,7 @@ export default function DiscoverPage() {
     }, [getSuggestedItemsQuery.data]);
 
     return (
-        <LogInRequired>
+        <div>
             <Topbar>
                 <TopbarTitle>Discover</TopbarTitle>
                 <Button
@@ -91,6 +90,6 @@ export default function DiscoverPage() {
                     )}
                 </div>
             </div>
-        </LogInRequired>
+        </div>
     );
 }
