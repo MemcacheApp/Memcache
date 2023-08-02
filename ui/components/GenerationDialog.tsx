@@ -134,11 +134,16 @@ export function GenerateSummaryDialog({
         SummaryFinetuning.Qualitative,
     );
 
+    // Unlock to allow generate next summary after 1.2s, even if the generateSummaryMutation is still loading
+    const [generationLock, setGenerationLock] = useState(false);
+
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
         onSuccess() {
             if (data) {
                 ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
                 ctx.summary.getLatestSummaries.invalidate();
+                ctx.summary.getUserSummaries.invalidate();
+                ctx.summary.getSuggestedItems.invalidate();
             }
             onOpenChange(false);
         },
@@ -146,12 +151,16 @@ export function GenerateSummaryDialog({
 
     const handleSubmit = () => {
         if (data) {
+            setGenerationLock(true);
             generateSummaryMutation.mutate({
                 itemId: data.id,
                 numOfWords,
                 experience,
                 finetuning,
             });
+            setTimeout(() => {
+                setGenerationLock(false);
+            }, 1200);
         }
     };
 
@@ -164,7 +173,7 @@ export function GenerateSummaryDialog({
             <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl">
-                        Generate Summaries
+                        Generate Summary
                     </DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-6">
@@ -268,42 +277,53 @@ export function GenerateSummaryDialog({
                 </div>
                 <DialogFooter>
                     <Button
+                        size="lg"
                         onClick={handleSubmit}
-                        disabled={generateSummaryMutation.isLoading}
+                        disabled={
+                            generateSummaryMutation.isLoading && generationLock
+                        }
                     >
-                        Generate
+                        {generateSummaryMutation.isLoading && generationLock ? (
+                            <Loader varient="ring" colorWhite />
+                        ) : (
+                            "Generate"
+                        )}
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
-interface FlashcardsDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
+interface GenerateFlashcardsDialogProps {
+    data: (Item & { collection: Collection; tags: Tag[] }) | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export function FlashcardsDialog({
+export function GenerateFlashcardsDialog({
     data,
     open,
     onOpenChange,
-}: FlashcardsDialogProps) {
+}: GenerateFlashcardsDialogProps) {
+    const ctx = trpc.useContext();
+
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
     const [experience, setExperience] = useState<FlashcardExperience>(
         FlashcardExperience.Intermediate,
     );
     const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
-    const ctx = trpc.useContext();
+    // Unlock to allow generate next summary after 1.2s, even if the generateSummaryMutation is still loading
+    const [generationLock, setGenerationLock] = useState(false);
 
     const generateFlashcardsMutation =
         trpc.flashcards.generateFlashcards.useMutation({
-            onSuccess(data) {
-                console.log("Successfully generated flashcards:");
-                console.log(data);
+            onSuccess: () => {
                 ctx.flashcards.getUserFlashcards.invalidate();
-                ctx.item.getUserItemsWithFlashcards.invalidate();
+                ctx.item.getUserItemsIncludeFlashcards.invalidate();
+                ctx.flashcards.getUserRevisionQueue.invalidate();
+                ctx.flashcards.getUserRecentlyCreated.invalidate();
+                ctx.flashcards.getSuggestedItems.invalidate();
             },
             onError: (err) => {
                 console.error(err);
@@ -311,15 +331,24 @@ export function FlashcardsDialog({
         });
 
     const handleSubmit = () => {
-        generateFlashcardsMutation.mutate({
-            itemId: data.id,
-            numOfFlashcards,
-            experience,
-            range,
-        });
-        // TODO: show toast notification: "Generating flashcards..."
-        onOpenChange(false);
+        if (data) {
+            setGenerationLock(true);
+            generateFlashcardsMutation.mutate({
+                itemId: data.id,
+                numOfFlashcards,
+                experience,
+                range,
+            });
+            // TODO: show toast notification: "Generating flashcards..."
+            setTimeout(() => {
+                setGenerationLock(false);
+            }, 1200);
+        }
     };
+
+    if (!data) {
+        return null;
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -460,7 +489,21 @@ export function FlashcardsDialog({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
+                    <Button
+                        size="lg"
+                        onClick={handleSubmit}
+                        disabled={
+                            generateFlashcardsMutation.isLoading &&
+                            generationLock
+                        }
+                    >
+                        {generateFlashcardsMutation.isLoading &&
+                        generationLock ? (
+                            <Loader varient="ring" colorWhite />
+                        ) : (
+                            "Generate"
+                        )}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -1,33 +1,28 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
-import { Link } from "./Link";
-import { Loader } from "./Loader";
-import { PageTitle } from "./typography";
+import { useRouter } from "next/navigation";
+import { LoadingMessage } from "./LoadingMessage";
 
 interface LogInRequiredProps {
     children?: React.ReactNode;
 }
 
 export function LogInRequired(props: LogInRequiredProps) {
-    const { data } = trpc.user.isLoggedIn.useQuery();
+    const router = useRouter();
 
-    if (data === undefined) {
+    const isLoggedInQuery = trpc.user.isLoggedIn.useQuery();
+
+    if (isLoggedInQuery.isLoading) {
         return (
-            <div className="flex items-center justify-center w-full h-screen">
-                <Loader varient="ellipsis" />
+            <div className="w-full h-screen flex justify-center items-center">
+                <LoadingMessage message="Logging in..." />
             </div>
         );
-    } else if (data) {
+    } else if (isLoggedInQuery.data) {
         return <>{props.children}</>;
     } else {
-        return (
-            <>
-                <PageTitle>Log in required</PageTitle>
-                <Link href={"/auth/login"} className="mx-8">
-                    Back to Login
-                </Link>
-            </>
-        );
+        router.push("/auth/login");
+        return null;
     }
 }

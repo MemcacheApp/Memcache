@@ -56,8 +56,11 @@ function MySummaries() {
                     <ArrowRightIcon size={20} />
                 </Link>
             </div>
-            <ScrollArea type="scroll">
-                <div className="flex gap-3 p-1">
+            <ScrollArea
+                type="scroll"
+                className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+            >
+                <div className="flex gap-3 p-3">
                     {latestSummariesQuery.data ? (
                         <>
                             {latestSummariesQuery.data.summaries.map(
@@ -95,18 +98,16 @@ function MySummaries() {
 }
 
 function GenerateSummary() {
-    const [itemData, setItemData] = useState<
+    const [selectedItem, setSelectedItem] = useState<
         (Item & { collection: Collection; tags: Tag[] }) | null
     >(null);
-    const [openDialog, setOpenDialog] = useState(false);
 
     const suggestedItemsQuery = trpc.summary.getSuggestedItems.useQuery();
 
     const onSelectItem = (
         item: Item & { collection: Collection; tags: Tag[] },
     ) => {
-        setItemData(item);
-        setOpenDialog(true);
+        setSelectedItem(item);
     };
 
     return (
@@ -118,13 +119,16 @@ function GenerateSummary() {
             />
             <div className="flex flex-col mt-5">
                 <H4>Suggested Items</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
+                <ScrollArea
+                    type="scroll"
+                    className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                >
+                    <div className="flex gap-3 p-3">
                         {suggestedItemsQuery.data ? (
                             <>
                                 {suggestedItemsQuery.data?.map((item) => (
                                     <ItemCard
-                                        className="w-[25rem] h-[30rem] max-h-[50vh]"
+                                        className="w-[25rem] h-[30rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
                                         key={item.id}
                                         data={item}
                                         format={{ growHeight: true }}
@@ -141,9 +145,13 @@ function GenerateSummary() {
                 </ScrollArea>
             </div>
             <GenerateSummaryDialog
-                data={itemData}
-                open={openDialog}
-                onOpenChange={setOpenDialog}
+                data={selectedItem}
+                open={selectedItem !== null}
+                onOpenChange={(value) => {
+                    if (!value) {
+                        setSelectedItem(null);
+                    }
+                }}
             />
         </div>
     );

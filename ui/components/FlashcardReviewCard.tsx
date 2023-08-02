@@ -17,12 +17,11 @@ import {
     Item,
     Tag,
 } from "@prisma/client";
-import { Progress } from "@radix-ui/react-progress";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CardHeader, CardTitle } from "./Card";
 import LastReview from "./LastReview";
 
-interface FlashcardQAProps {
+interface FlashcardReviewCardProps {
     flashcard: Flashcard & {
         item: Item & {
             collection: Collection;
@@ -30,19 +29,34 @@ interface FlashcardQAProps {
         };
         reviews: FlashcardReview[];
     };
+    onSubmit?: (rating: FlashcardReviewRating) => void;
     onNext?: () => void;
     viewOnly?: boolean;
 }
 
 export default function FlashcardReviewCard({
     flashcard,
+    onSubmit,
     onNext,
     viewOnly = false,
-}: FlashcardQAProps) {
-    const [showAnswer, setShowAnswer] = useState(false);
+}: FlashcardReviewCardProps) {
+    const ctx = trpc.useContext();
 
-    const startTime = new Date();
-    const addReviewMutation = trpc.flashcards.addReview.useMutation();
+    const [showAnswer, setShowAnswer] = useState(false);
+    const [startTime, setStartTime] = useState(new Date());
+
+    useEffect(() => {
+        setStartTime(new Date());
+    }, [flashcard.id]);
+
+    const addReviewMutation = trpc.flashcards.addReview.useMutation({
+        onSuccess: () => {
+            ctx.item.getUserItemsIncludeFlashcards.invalidate();
+            ctx.flashcards.getUserFlashcards.invalidate;
+            ctx.flashcards.getUserRecentlyReviewed.invalidate();
+            ctx.flashcards.getUserRevisionQueue.invalidate();
+        },
+    });
 
     const handleRateReview = async (rating: FlashcardReviewRating) => {
         await addReviewMutation.mutateAsync({
@@ -52,6 +66,7 @@ export default function FlashcardReviewCard({
             reviewRating: rating,
         });
         setShowAnswer(false);
+        onSubmit?.(rating);
         onNext?.();
     };
 
@@ -73,7 +88,7 @@ export default function FlashcardReviewCard({
     );
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full">
             <div
                 className={cn(
                     "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]",
@@ -162,10 +177,10 @@ export default function FlashcardReviewCard({
                                 reviewTime={flashcard.reviews.at(-1)?.end}
                             />
                         </div>
-                        <div className="flex items-center justify-between py-1">
+                        {/* <div className="flex items-center justify-between py-1">
                             <div className="px-1 mr-2 text-xl">{"65%"}</div>
                             <Progress value={65} />
-                        </div>
+                        </div> */}
                         <div className="flex gap-2 py-1 text-sm text-slate-400/90">
                             <span>
                                 {FlashcardExperienceNames[flashcard.experience]}
