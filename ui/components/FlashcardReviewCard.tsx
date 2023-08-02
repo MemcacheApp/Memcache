@@ -17,7 +17,7 @@ import {
     Item,
     Tag,
 } from "@prisma/client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CardHeader, CardTitle } from "./Card";
 import LastReview from "./LastReview";
 
@@ -43,8 +43,12 @@ export default function FlashcardReviewCard({
     const ctx = trpc.useContext();
 
     const [showAnswer, setShowAnswer] = useState(false);
+    const [startTime, setStartTime] = useState(new Date());
 
-    const startTime = new Date();
+    useEffect(() => {
+        setStartTime(new Date());
+    }, [flashcard.id]);
+
     const addReviewMutation = trpc.flashcards.addReview.useMutation({
         onSuccess: () => {
             ctx.item.getUserItemsIncludeFlashcards.invalidate();
