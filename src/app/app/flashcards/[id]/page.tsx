@@ -66,7 +66,7 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
                             {data.collection ? (
                                 <Link
                                     className="flex items-center gap-2 my-2"
-                                    href={`/app/collection/${data.collection.id}`}
+                                    href={`/app/collections/${data.collection.id}`}
                                 >
                                     <Package2 size={16} />
                                     {data.collection.name}
