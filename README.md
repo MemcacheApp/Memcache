@@ -14,19 +14,16 @@ A dedicated application designed to _organise your saved internet content_ and _
 
 ## :book: Documentation
 
-Detailed documentation and instructions for the app can be found as follows:
+Detailed descriptions of app features can be found as follows:
 
--   [**Code Map**](./docs/codemap.md)
--   [**Objectives and Features**](./docs/features.md)
-    -   [Accounts and Authentication](./docs/accounts_auth.md)
-    -   [Content Saver](./docs/content_saver.md)
-    -   [Content Home](./docs/content_home.md)
-    -   [Tags and Collections](./docs/tags_collections.md)
-    -   [Content Summariser](./docs/content_summariser.md)
-    -   [Flash Card Generator and Interface](./docs/flashcard_generator.md)
-    -   [Spaced Repetition Review](./docs/spaced_repetition.md)
-    -   [Content Discovery](./docs/content_discovery.md)
--   [**Troubleshooting and FAQs**](./docs/troubleshooting.md)
+-   [Accounts and Authentication](./docs/accounts_auth.md)
+-   [Content Saver](./docs/content_saver.md)
+-   [Content Home](./docs/content_home.md)
+-   [Tags and Collections](./docs/tags_collections.md)
+-   [Content Summariser](./docs/content_summariser.md)
+-   [Flash Card Generator and Interface](./docs/flashcard_generator.md)
+-   [Spaced Repetition Review](./docs/spaced_repetition.md)
+-   [Content Discovery](./docs/content_discovery.md)
 
 ## :rocket: Quick Start
 
