@@ -2,24 +2,24 @@
 
 ## Guide
 
-- [Introduction](#introduction)
-- [Section 1](#section-1)
-- [Section 2](#section-2)
+-   [Introduction](#introduction)
+-   [Page](#page)
+-   [Summary Generator](#summary-generator)
 
 ## Introduction
 
-Section intro 
+The content summariser takes a saved item and generates a text-based summary of the content at the item's URL, using ChatGPT.
 
-## Section 1
+It is accessible by clicking the 'Summaries' tab on the sidebar, or navigating to `/app/summaries`.
 
-Section
+## Page
 
-```bash
-$ blah
-$ foo
-```
+The content summariser's page contains a list of summaries that the user has created, as well as a summary generator card that allows the user to select an item from which a summary can be created:
 
-## Section 2
+![Content Summariser Page](../assets/content-summariser-page.png)
 
-Section
+## Summary Generator
 
+The summary generator provides a few options for customising how the summary is generated:
+
+![Summary Generator](../assets/summary-generator.png)

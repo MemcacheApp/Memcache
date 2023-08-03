@@ -5,7 +5,7 @@ import {
     Album,
     ArrowRight,
     Globe2,
-    LayoutDashboard,
+    Layers,
     Newspaper,
     Package2,
 } from "lucide-react";
@@ -44,7 +44,7 @@ export function Navigation() {
                 </NavigationItem>
                 <NavigationItem
                     href="/app/flashcards"
-                    icon={<LayoutDashboard size={20} />}
+                    icon={<Layers size={20} />}
                 >
                     Flashcards
                 </NavigationItem>

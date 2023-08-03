@@ -1,10 +1,12 @@
-import { Experience, Finetuning } from "@/src/datatypes/summary";
 import ContentScraper from "@/src/utils/content-scraper";
+import { SummaryExperience, SummaryFinetuning } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../db/prisma";
 import openai from "../utils/openai";
 import { GetSummaryError } from "./errors/summary";
 import ItemController from "./item-controller";
+
+const TEST_OPENAI_API = true;
 
 export default class SummaryController {
     static async getSummary(summaryId: string) {
@@ -128,8 +130,8 @@ export default class SummaryController {
     static async generateSummary(
         itemId: string,
         numOfWords: number,
-        experience: Experience,
-        finetuning: Finetuning,
+        experience: SummaryExperience,
+        finetuning: SummaryFinetuning,
     ) {
         const item = await ItemController.getItem(itemId);
         const content = await ContentScraper.scrapeContent({
@@ -168,14 +170,14 @@ export default class SummaryController {
 
         // Modify Prompt Depending on Experience
         switch (experience) {
-            case 0:
+            case SummaryExperience.Beginner:
                 gptrequest += `I want you to summarise the content so that a complete novice 
                                can understand what's going on, someone that's only in middle school 
                                with no background knowledge should be able to completely grasp the 
                                text using your summary, so use language that you deem fitting for such 
                                an audience.`;
                 break;
-            case 1:
+            case SummaryExperience.Intermediate:
                 gptrequest += `I want you to summarise the content so that a undergraduate college 
                                freshman at Harvard can understand what's going on, someone that's 
                                bright and relatively smart but has no background or previous experience 
@@ -184,7 +186,7 @@ export default class SummaryController {
                                summary MUST use technical words and vocabulary fitting of a college 
                                textbook, your lexical density must be intermediate to dense`;
                 break;
-            case 2:
+            case SummaryExperience.Advanced:
                 gptrequest += `I want you to summarise the content in the style of a tenured MIT professor 
                                who is writing a memo for another tenured professor at Harvard university. 
                                It is a memo amongst experts, so there's no need to explain basic concepts, 
@@ -196,19 +198,19 @@ export default class SummaryController {
 
         // Modify Prompt Depending on Finetuning
         switch (finetuning) {
-            case 0:
+            case SummaryFinetuning.Qualitative:
                 gptrequest += `Furthermore, I want your summary to be as descriptive and illustrious 
                                as possible, so you MUST use vibrant metaphors, hypotheticals scenarios, 
                                and similes that don't take away from the content but add to it by 
                                expanding upon it`;
                 break;
-            case 1:
+            case SummaryFinetuning.Quantitative:
                 gptrequest += `Furthermore, I want your summary to be as technical and quantitative 
                                as possible, focusing on statistics, hard facts, hard data, and technical 
                                manual descriptions that could bolster the summary while refraining from 
                                using any metaphors or hypotheticals whatsoever.`;
                 break;
-            case 2:
+            case SummaryFinetuning.Balanced:
                 gptrequest += `Furthermore, I want your summary to strike the perfect balance between 
                                detailed technical explanations with hard facts that are backed by 
                                quantitative descriptions and statistics while also using illustrious 
@@ -232,12 +234,8 @@ export default class SummaryController {
 
         let summaryContent;
 
-        if (process.env.NODE_ENV === "development") {
-            summaryContent = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sit amet vulputate arcu. Suspendisse blandit nunc et vulputate pellentesque. Quisque non neque blandit, facilisis lectus tempus, ullamcorper elit. Nulla facilisi. Ut vel justo metus. Nulla placerat mi tortor, vitae rhoncus felis luctus eget. Phasellus sit amet elit bibendum, elementum erat in, luctus orci. Praesent vel lorem dui. Integer blandit molestie sem condimentum fringilla.
-            Curabitur pharetra purus ac ante gravida semper. Nam sit amet sapien enim. Phasellus blandit et sem non pellentesque. Nulla dictum orci at scelerisque tempor. Proin ultricies luctus odio, nec pellentesque arcu blandit vitae. Ut quis varius eros. Morbi vitae suscipit nisl, ut rutrum lorem. Donec tincidunt elementum imperdiet.
-            Quisque dictum nisl mi, non posuere mi egestas et. Pellentesque pellentesque sem id quam hendrerit tincidunt. Morbi volutpat fringilla lorem id venenatis. Nunc hendrerit lorem ut lacus egestas dapibus. Nullam non luctus urna. Duis convallis tincidunt ipsum, at pretium dui dapibus sit amet. Nam justo est, aliquet a vulputate fringilla, gravida eleifend eros. Sed vel accumsan neque. Maecenas vitae laoreet elit. Fusce quis dapibus lectus, eu fringilla lacus. Quisque eget ipsum pellentesque, porta augue euismod, efficitur turpis. Cras ut venenatis libero. Duis nulla ante, vulputate fringilla ante in, semper consequat metus. Quisque at tempor sem, sit amet porta libero. Fusce semper, sem eu commodo porttitor, dolor nunc ultrices elit, eget tincidunt lectus nunc non tortor.
-            Donec congue elit est. Donec vitae eros ut ipsum dapibus blandit. Pellentesque fringilla, lectus tempor pretium condimentum, nibh elit semper risus, at dapibus ipsum massa eget nisl. In placerat elit eu pellentesque luctus. Phasellus rhoncus erat eros, et egestas lectus consectetur vel. Nullam at maximus ante, id tristique mi. Aliquam sollicitudin justo odio, vitae aliquam metus vestibulum ac.
-            Pellentesque semper nec quam ac dignissim. Maecenas vestibulum sollicitudin fermentum. Praesent dignissim dolor nec nisl consectetur, at euismod nisl euismod. Donec tincidunt tincidunt felis quis volutpat. In facilisis a ligula ac vehicula. Integer ut mauris in nulla vehicula fringilla. Etiam a erat tempus massa mollis facilisis. In nec erat vitae tortor suscipit congue nec ac dui. Phasellus non elementum ligula.`;
+        if (process.env.NODE_ENV === "development" && !TEST_OPENAI_API) {
+            summaryContent = PLACEHOLDER_SUMMARY;
         } else {
             // TODO: Lengths over 13000 chars but under 18000 chars work, > 18000 chars don't
             const chatCompletion = await openai.createChatCompletion({
@@ -252,14 +250,16 @@ export default class SummaryController {
                 temperature: 1, // Neutral temperature due to extensive prompt
             });
             summaryContent =
-                chatCompletion.data.choices[0].message?.content || "";
+                chatCompletion.data.choices[0].message?.content ||
+                "No content was generated by OpenAI API. Using placeholder text:\n" +
+                    PLACEHOLDER_SUMMARY;
         }
 
         await prisma.summary.create({
             data: {
                 id: uuidv4(),
-                content: summaryContent,
                 createdAt: new Date(),
+                content: summaryContent,
                 itemId,
                 wordCount: summaryContent.split(" ").length,
                 experience: experience,
@@ -307,3 +307,9 @@ export default class SummaryController {
         return result;
     }
 }
+
+const PLACEHOLDER_SUMMARY = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sit amet vulputate arcu. Suspendisse blandit nunc et vulputate pellentesque. Quisque non neque blandit, facilisis lectus tempus, ullamcorper elit. Nulla facilisi. Ut vel justo metus. Nulla placerat mi tortor, vitae rhoncus felis luctus eget. Phasellus sit amet elit bibendum, elementum erat in, luctus orci. Praesent vel lorem dui. Integer blandit molestie sem condimentum fringilla.
+Curabitur pharetra purus ac ante gravida semper. Nam sit amet sapien enim. Phasellus blandit et sem non pellentesque. Nulla dictum orci at scelerisque tempor. Proin ultricies luctus odio, nec pellentesque arcu blandit vitae. Ut quis varius eros. Morbi vitae suscipit nisl, ut rutrum lorem. Donec tincidunt elementum imperdiet.
+Quisque dictum nisl mi, non posuere mi egestas et. Pellentesque pellentesque sem id quam hendrerit tincidunt. Morbi volutpat fringilla lorem id venenatis. Nunc hendrerit lorem ut lacus egestas dapibus. Nullam non luctus urna. Duis convallis tincidunt ipsum, at pretium dui dapibus sit amet. Nam justo est, aliquet a vulputate fringilla, gravida eleifend eros. Sed vel accumsan neque. Maecenas vitae laoreet elit. Fusce quis dapibus lectus, eu fringilla lacus. Quisque eget ipsum pellentesque, porta augue euismod, efficitur turpis. Cras ut venenatis libero. Duis nulla ante, vulputate fringilla ante in, semper consequat metus. Quisque at tempor sem, sit amet porta libero. Fusce semper, sem eu commodo porttitor, dolor nunc ultrices elit, eget tincidunt lectus nunc non tortor.
+Donec congue elit est. Donec vitae eros ut ipsum dapibus blandit. Pellentesque fringilla, lectus tempor pretium condimentum, nibh elit semper risus, at dapibus ipsum massa eget nisl. In placerat elit eu pellentesque luctus. Phasellus rhoncus erat eros, et egestas lectus consectetur vel. Nullam at maximus ante, id tristique mi. Aliquam sollicitudin justo odio, vitae aliquam metus vestibulum ac.
+Pellentesque semper nec quam ac dignissim. Maecenas vestibulum sollicitudin fermentum. Praesent dignissim dolor nec nisl consectetur, at euismod nisl euismod. Donec tincidunt tincidunt felis quis volutpat. In facilisis a ligula ac vehicula. Integer ut mauris in nulla vehicula fringilla. Etiam a erat tempus massa mollis facilisis. In nec erat vitae tortor suscipit congue nec ac dui. Phasellus non elementum ligula.`;

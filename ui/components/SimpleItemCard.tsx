@@ -6,19 +6,23 @@ import {
     CardHeader,
     CardTitle,
     ExternalLink,
-    ItemCardFormat,
     Link,
     SimpleTag,
     Skeleton,
 } from ".";
 import { cn } from "../utils";
 
+export interface SimpleItemCardFormat {
+    growHeight?: boolean; // Height of SimpleItemCard grows to fit container
+    forceList?: boolean;
+}
+
 interface SimpleItemCardProps {
-    type?: string;
-    title?: string;
-    url?: string;
     className?: string;
+    url?: string;
+    title?: string;
     description?: string;
+    type?: string;
     collection?: Collection;
     tags?: Tag[];
     thumbnail?: string | null;
@@ -33,11 +37,10 @@ interface SimpleItemCardProps {
     };
     footerLeft?: React.ReactNode;
     footerRight?: React.ReactNode;
+    thumbnailOverlay?: React.ReactNode;
     format?: SimpleItemCardFormat;
     titleOpenLink?: boolean;
 }
-
-type SimpleItemCardFormat = ItemCardFormat;
 
 export function SimpleItemCard(props: SimpleItemCardProps) {
     return (
@@ -92,7 +95,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                 )
                             ) : null}
                             {props.description ? (
-                                <p className="mt-3 overflow-hidden">
+                                <p className="mt-3 overflow-hidden text-slate-500">
                                     {props.description}
                                 </p>
                             ) : null}
@@ -104,6 +107,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                     loading={props.loading}
                     thumbnail={props.thumbnail}
                     format={props.format}
+                    thumbnailOverlay={props.thumbnailOverlay}
                 />
             </div>
             <SimpleItemCardFooter {...props} />
@@ -115,7 +119,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
     return (
         <CardFooter
             className={cn(
-                "items-start flex-col gap-5 mt-3 mb-1",
+                "w-full items-start flex-col gap-5 mt-3 mb-1",
                 props.format?.forceList
                     ? "flex-row justify-between items-end"
                     : "@lg:flex-row @lg:justify-between @lg:items-end",
@@ -158,7 +162,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                         {props.collection ? (
                             <Link
                                 className="flex items-center gap-2 my-2"
-                                href={`/app/collection/${props.collection.id}`}
+                                href={`/app/collections/${props.collection.id}`}
                             >
                                 <Package2 size={16} />
                                 {props.collection.name}
@@ -171,7 +175,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                                     <Link
                                         tabIndex={-1}
                                         key={tag.id}
-                                        href={`/app/tag/${tag.id}`}
+                                        href={`/app/saves?tag=${tag.name}`}
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <SimpleTag size="sm" value={tag.name} />
@@ -184,7 +188,7 @@ export function SimpleItemCardFooter(props: SimpleItemCardProps) {
                 {props.footerLeft}
             </div>
             {props.footerRight ? (
-                <div className="flex gap-3">{props.footerRight}</div>
+                <div className="flex gap-3 @lg:w-auto">{props.footerRight}</div>
             ) : null}
         </CardFooter>
     );
@@ -194,7 +198,8 @@ interface ThumbnailProps {
     type?: string;
     loading?: boolean;
     thumbnail?: string | null;
-    format?: ItemCardFormat;
+    format?: SimpleItemCardFormat;
+    thumbnailOverlay?: React.ReactNode;
 }
 
 function Thumbnail(props: ThumbnailProps) {
@@ -206,7 +211,7 @@ function Thumbnail(props: ThumbnailProps) {
         return (
             <div
                 className={cn(
-                    "order-1 max-h-64 shrink-0 rounded-t-lg overflow-hidden",
+                    "order-1 max-h-64 shrink-0 rounded-t-lg overflow-hidden relative",
                     props.format?.forceList
                         ? "order-2 max-w-[32%] max-h-48 m-6 border rounded-lg"
                         : "@lg:order-2 @lg:max-w-[32%] @lg:max-h-48 @lg:m-6 @lg:border @lg:rounded-lg",
@@ -220,6 +225,9 @@ function Thumbnail(props: ThumbnailProps) {
                     alt="Image"
                     className="object-cover object-center relative w-full h-full"
                 />
+                <div className="absolute left-5 bottom-4">
+                    {props.thumbnailOverlay ?? null}
+                </div>
             </div>
         );
     } else {

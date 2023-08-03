@@ -20,11 +20,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
     SimpleItemCard,
+    SimpleItemCardFormat,
 } from ".";
 import { trpc } from "../../src/app/utils/trpc";
 import { cn } from "../utils";
 import {
-    FlashcardsDialog,
+    GenerateFlashcardsDialog,
     GenerateSummaryDialog,
     SummariesDialog,
 } from "./GenerationDialog";
@@ -36,12 +37,7 @@ interface ItemCardProps {
     onSelect?: (id: string) => void;
     className?: string;
     hideOptions?: boolean;
-    format?: ItemCardFormat;
-}
-
-export interface ItemCardFormat {
-    growHeight?: boolean; // Height of SimpleItemCardFormat grows to fit container of the SimpleItemCard
-    forceList?: boolean;
+    format?: SimpleItemCardFormat;
 }
 
 export function ItemCard({
@@ -148,10 +144,13 @@ export function ItemCard({
             <GenerateSummaryDialog
                 data={data}
                 open={isOpenGenrateSummary}
-                onOpenChange={setIsOpenGenerateSummary}
+                onOpenChange={(value) => {
+                    setIsOpenGenerateSummary(value);
+                    if (!value) setIsOpenSummaries(false);
+                }}
                 viewSummaries={() => setIsOpenSummaries(true)}
             />
-            <FlashcardsDialog
+            <GenerateFlashcardsDialog
                 data={data}
                 open={isOpenFlashcards}
                 onOpenChange={setIsOpenFlashcards}

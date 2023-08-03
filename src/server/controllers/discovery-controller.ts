@@ -86,6 +86,13 @@ export default class DiscoveryController {
                                 equals: false,
                             },
                         },
+                        {
+                            collection: {
+                                name: {
+                                    equals: "Default",
+                                },
+                            },
+                        },
                     ],
                 },
             },

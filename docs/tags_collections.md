@@ -2,23 +2,22 @@
 
 ## Guide
 
-- [Introduction](#introduction)
-- [Section 1](#section-1)
-- [Section 2](#section-2)
+-   [Introduction](#introduction)
+-   [Tag Filtering](#tag-filtering)
+-   [Collection Pages](#collection-pages)
 
 ## Introduction
 
-Section intro 
+Tags and collections are used for organising items, and are user-created. Each item can have as many tags as a user wants (it has none by default), but can only belong to one collection ('Default' by default).
 
-## Section 1
+Tags are added to or removed from an item through the item panel. An item can be moved to a collection through the item panel as well as through multi-select.
 
-Section
+## Tag Filtering
 
-```bash
-$ blah
-$ foo
-```
+Items may be filtered by tags on the content home. This is done by using the tag filter:
 
-## Section 2
+![Tag Filter](../assets/tag-filter.png)
 
-Section
+## Collection Pages
+
+Each collection has its own page located at `/app/collections/[id]`, which features a content home identical to the one at `/app/saves` except that only items belonging to the collection in question are displayed. Collection pages can be accessed by selecting a collection's name either on the sidebar or on an item card.

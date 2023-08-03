@@ -5,25 +5,32 @@ import {
     FlashcardExperienceNames,
     FlashcardRange,
 } from "@/src/datatypes/flashcard";
-import { Experience, Finetuning } from "@/src/datatypes/summary";
-import { Collection, Item, Tag } from "@prisma/client";
-import { PlusIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 import {
     Button,
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
     Input,
     Label,
     Loader,
+    SimpleItemCard,
     SummaryCard,
     Tabs,
     TabsList,
     TabsTrigger,
-} from ".";
+} from "@/ui/components";
+import {
+    Collection,
+    Item,
+    SummaryExperience,
+    SummaryFinetuning,
+    Tag,
+} from "@prisma/client";
+import { PlusIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
 
 interface SummariesDialogProps {
@@ -119,41 +126,76 @@ export function GenerateSummaryDialog({
 }: GenerateSummaryDialogProps) {
     const ctx = trpc.useContext();
 
-    const [numOfWords, setNumOfWords] = useState(250);
-    const [experience, setExperience] = useState(Experience.Intermediate);
-    const [finetuning, setFinetuning] = useState(Finetuning.Qualitative);
+    const [numOfWords, setNumOfWords] = useState(150);
+    const [experience, setExperience] = useState<SummaryExperience>(
+        SummaryExperience.Intermediate,
+    );
+    const [finetuning, setFinetuning] = useState<SummaryFinetuning>(
+        SummaryFinetuning.Qualitative,
+    );
+
+    // Unlock to allow generate next summary after 1.2s, even if the generateSummaryMutation is still loading
+    const [generationLock, setGenerationLock] = useState(false);
 
     const generateSummaryMutation = trpc.summary.generateSummary.useMutation({
         onSuccess() {
             if (data) {
                 ctx.summary.getItemSummaries.invalidate({ itemId: data.id });
                 ctx.summary.getLatestSummaries.invalidate();
+                ctx.summary.getUserSummaries.invalidate();
+                ctx.summary.getSuggestedItems.invalidate();
             }
             onOpenChange(false);
-            if (viewSummaries) viewSummaries();
         },
     });
 
     const handleSubmit = () => {
         if (data) {
+            setGenerationLock(true);
             generateSummaryMutation.mutate({
                 itemId: data.id,
                 numOfWords,
                 experience,
                 finetuning,
             });
+            setTimeout(() => {
+                setGenerationLock(false);
+            }, 1200);
         }
     };
 
+    if (!data) {
+        return null;
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
-                    <DialogTitle>Generate Summary</DialogTitle>
+                    <DialogTitle className="text-xl">
+                        Generate Summary
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="numofwords">Number of words</Label>
+                <div className="flex flex-col gap-6">
+                    <SimpleItemCard
+                        url={data.url}
+                        title={data.title}
+                        description={data.description}
+                        type={data.type}
+                        thumbnail={data.thumbnail}
+                        siteName={data.siteName}
+                        favicon={data.favicon}
+                        className="bg-slate-100 border-none h-auto"
+                    />
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="numofwords">
+                                Number of words
+                            </Label>
+                            <DialogDescription>
+                                {"Specify the length of your summary in words."}
+                            </DialogDescription>
+                        </div>
                         <Input
                             className="w-32"
                             id="numofwords"
@@ -164,58 +206,70 @@ export function GenerateSummaryDialog({
                             }
                         />
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="experience">Experience</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="experience">
+                                Experience
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Level of expertise that the content in the summary will assume of the reader."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="experience"
-                            value={experience.toString()}
+                            value={experience}
                             onValueChange={(value) =>
-                                setExperience(parseInt(value))
+                                setExperience(value as SummaryExperience)
                             }
                         >
                             <TabsList>
-                                <TabsTrigger
-                                    value={Experience.Beginner.toString()}
-                                >
+                                <TabsTrigger value={SummaryExperience.Beginner}>
                                     Beginner
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Experience.Intermediate.toString()}
+                                    value={SummaryExperience.Intermediate}
                                 >
                                     Intermediate
                                 </TabsTrigger>
-                                <TabsTrigger
-                                    value={Experience.Advanced.toString()}
-                                >
+                                <TabsTrigger value={SummaryExperience.Advanced}>
                                     Advanced
                                 </TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="finetuning">Finetuning</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="finetuning">
+                                Finetuning
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Qualitative summaries emphasise the literary form and meaning of the content, whereas quantitative summaries emphasise hard facts and data."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="finetuning"
                             value={finetuning.toString()}
                             onValueChange={(value) =>
-                                setFinetuning(parseInt(value))
+                                setFinetuning(value as SummaryFinetuning)
                             }
                         >
                             <TabsList>
                                 <TabsTrigger
-                                    value={Finetuning.Qualitative.toString()}
+                                    value={SummaryFinetuning.Qualitative}
                                 >
                                     Qualitative
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    value={Finetuning.Quantitative.toString()}
+                                    value={SummaryFinetuning.Quantitative}
                                 >
                                     Quantitative
                                 </TabsTrigger>
-                                <TabsTrigger
-                                    value={Finetuning.Mixed.toString()}
-                                >
-                                    Mixed
+                                <TabsTrigger value={SummaryFinetuning.Balanced}>
+                                    Balanced
                                 </TabsTrigger>
                             </TabsList>
                         </Tabs>
@@ -223,41 +277,53 @@ export function GenerateSummaryDialog({
                 </div>
                 <DialogFooter>
                     <Button
+                        size="lg"
                         onClick={handleSubmit}
-                        disabled={generateSummaryMutation.isLoading}
+                        disabled={
+                            generateSummaryMutation.isLoading && generationLock
+                        }
                     >
-                        Generate
+                        {generateSummaryMutation.isLoading && generationLock ? (
+                            <Loader varient="ring" colorWhite />
+                        ) : (
+                            "Generate"
+                        )}
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
-interface FlashcardsDialogProps {
-    data: Item & { collection: Collection; tags: Tag[] };
+interface GenerateFlashcardsDialogProps {
+    data: (Item & { collection: Collection; tags: Tag[] }) | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export function FlashcardsDialog({
+export function GenerateFlashcardsDialog({
     data,
     open,
     onOpenChange,
-}: FlashcardsDialogProps) {
+}: GenerateFlashcardsDialogProps) {
+    const ctx = trpc.useContext();
+
     const [numOfFlashcards, setNumOfFlashcards] = useState(3);
     const [experience, setExperience] = useState<FlashcardExperience>(
         FlashcardExperience.Intermediate,
     );
     const [range, setRange] = useState<FlashcardRange>(FlashcardRange.Balanced);
 
-    const ctx = trpc.useContext();
+    // Unlock to allow generate next summary after 1.2s, even if the generateSummaryMutation is still loading
+    const [generationLock, setGenerationLock] = useState(false);
 
     const generateFlashcardsMutation =
         trpc.flashcards.generateFlashcards.useMutation({
-            onSuccess(data) {
-                console.log("Successfully generated flashcards:");
-                console.log(data);
+            onSuccess: () => {
                 ctx.flashcards.getUserFlashcards.invalidate();
+                ctx.item.getUserItemsIncludeFlashcards.invalidate();
+                ctx.flashcards.getUserRevisionQueue.invalidate();
+                ctx.flashcards.getUserRecentlyCreated.invalidate();
+                ctx.flashcards.getSuggestedItems.invalidate();
             },
             onError: (err) => {
                 console.error(err);
@@ -265,27 +331,58 @@ export function FlashcardsDialog({
         });
 
     const handleSubmit = () => {
-        generateFlashcardsMutation.mutate({
-            itemId: data.id,
-            numOfFlashcards,
-            experience,
-            range,
-        });
-        // TODO: show toast notification: "Generating flashcards..."
-        onOpenChange(false);
+        if (data) {
+            setGenerationLock(true);
+            generateFlashcardsMutation.mutate({
+                itemId: data.id,
+                numOfFlashcards,
+                experience,
+                range,
+            });
+            // TODO: show toast notification: "Generating flashcards..."
+            setTimeout(() => {
+                setGenerationLock(false);
+            }, 1200);
+        }
     };
+
+    if (!data) {
+        return null;
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[760px]">
                 <DialogHeader>
-                    <DialogTitle>Generate Flashcards</DialogTitle>
+                    <DialogTitle className="text-xl">
+                        Generate Flashcards
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="numofflashcards">
-                            Number of flashcards
-                        </Label>
+                <div className="flex flex-col gap-6">
+                    <SimpleItemCard
+                        url={data.url}
+                        title={data.title}
+                        description={data.description}
+                        type={data.type}
+                        thumbnail={data.thumbnail}
+                        siteName={data.siteName}
+                        favicon={data.favicon}
+                        className="bg-slate-100 border-none h-auto"
+                    />
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label
+                                className="text-base"
+                                htmlFor="numofflashcards"
+                            >
+                                Number of flashcards
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "All flashcards generated in this batch will use the options below."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Input
                             className="w-32"
                             id="numofflashcards"
@@ -296,8 +393,17 @@ export function FlashcardsDialog({
                             }
                         />
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="experience">Experience</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="experience">
+                                Experience
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Level of expertise that the questions and answers in the generated flashcards will assume."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="experience"
                             value={experience}
@@ -346,8 +452,17 @@ export function FlashcardsDialog({
                             </TabsList>
                         </Tabs>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="range">range</Label>
+                    <div className="flex justify-between items-end gap-6">
+                        <div className="flex flex-col gap-1">
+                            <Label className="text-base" htmlFor="range">
+                                Range
+                            </Label>
+                            <DialogDescription>
+                                {
+                                    "Depth flashcards focus narrowly on the subject matter, whereas breadth flashcards explore a wider range of related topics."
+                                }
+                            </DialogDescription>
+                        </div>
                         <Tabs
                             id="range"
                             value={range}
@@ -374,7 +489,21 @@ export function FlashcardsDialog({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSubmit}>Generate</Button>
+                    <Button
+                        size="lg"
+                        onClick={handleSubmit}
+                        disabled={
+                            generateFlashcardsMutation.isLoading &&
+                            generationLock
+                        }
+                    >
+                        {generateFlashcardsMutation.isLoading &&
+                        generationLock ? (
+                            <Loader varient="ring" colorWhite />
+                        ) : (
+                            "Generate"
+                        )}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

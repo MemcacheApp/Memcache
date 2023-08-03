@@ -1,10 +1,11 @@
+import { FlashcardReviewRating } from "@prisma/client";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "../utils";
 
 const buttonVariants = cva(
-    "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
+    "inline-flex items-center justify-center font-medium transition-colors transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
     {
         variants: {
             variant: {
@@ -26,6 +27,7 @@ const buttonVariants = cva(
                 sm: "h-9 px-3 py-2 rounded-md text-sm",
                 default: "h-10 px-4 py-2 rounded-md text-sm",
                 lg: "h-11 px-8 rounded-lg text-sm",
+                pillmd: "px-8 py-2 rounded-full text-lg",
                 none: "",
             },
         },
@@ -56,4 +58,43 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button, buttonVariants };
+interface ReviewRatingButtonProps
+    extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+        ButtonProps {
+    rating: FlashcardReviewRating;
+}
+
+const ReviewRatingButton = React.forwardRef<
+    HTMLButtonElement,
+    ReviewRatingButtonProps
+>(({ className, rating, ...props }, ref) => {
+    // Can't use this approach because otherwise tailwind class compiler doesn't
+    // include these template-literal-constructed classes in the bundle
+    // const colorName = reviewRatingToColor(rating);
+    // const colorClasses = `bg-${colorName}/50 shadow-[0_0_24px_-16px_rgba(0,0,0,0.53)] hover:bg-${colorName}/60 hover:shadow-[0_0_28px_-12px_rgba(0,0,0,0.53)] shadow-${colorName} hover:shadow-${colorName} text-slate-100/80 hover:text-slate-50/90`;
+    return (
+        <Button
+            className={cn(
+                {
+                    "bg-easy/50 shadow-[0_0_24px_-16px_rgba(0,0,0,0.53)] hover:bg-easy/60 hover:shadow-[0_0_28px_-12px_rgba(0,0,0,0.53)] shadow-easy hover:shadow-easy text-slate-100/80 hover:text-slate-50/90":
+                        rating === FlashcardReviewRating.Easy,
+                    "bg-medium/50 shadow-[0_0_24px_-16px_rgba(0,0,0,0.53)] hover:bg-medium/60 hover:shadow-[0_0_28px_-12px_rgba(0,0,0,0.53)] shadow-medium hover:shadow-medium text-slate-100/80 hover:text-slate-50/90":
+                        rating === FlashcardReviewRating.Medium,
+                    "bg-hard/50 shadow-[0_0_24px_-16px_rgba(0,0,0,0.53)] hover:bg-hard/60 hover:shadow-[0_0_28px_-12px_rgba(0,0,0,0.53)] shadow-hard hover:shadow-hard text-slate-100/80 hover:text-slate-50/90":
+                        rating === FlashcardReviewRating.Hard,
+                    "bg-forgot/50 shadow-[0_0_24px_-16px_rgba(0,0,0,0.53)] hover:bg-forgot/60 hover:shadow-[0_0_28px_-12px_rgba(0,0,0,0.53)] shadow-forgot hover:shadow-forgot text-slate-100/80 hover:text-slate-50/90":
+                        rating === FlashcardReviewRating.Forgot,
+                },
+                className,
+            )}
+            ref={ref}
+            {...props}
+        >
+            {rating.toString()}
+        </Button>
+    );
+});
+
+ReviewRatingButton.displayName = "ReviewRatingButton";
+
+export { Button, buttonVariants, ReviewRatingButton };

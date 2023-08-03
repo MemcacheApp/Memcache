@@ -5,18 +5,27 @@ import { cn } from "../utils";
 interface LoaderProps {
     className?: string;
     varient: "ellipsis" | "ring";
+    colorWhite?: boolean;
 }
 
 export function Loader(props: LoaderProps) {
     if (props.varient === "ellipsis") {
-        return <Ellipsis className={props.className} />;
+        return (
+            <Ellipsis
+                className={props.className}
+                colorWhite={props.colorWhite}
+            />
+        );
     } else {
-        return <Ring className={props.className} />;
+        return (
+            <Ring className={props.className} colorWhite={props.colorWhite} />
+        );
     }
 }
 
 interface LoaderImplProps {
     className?: string;
+    colorWhite?: boolean;
 }
 
 /**
@@ -31,10 +40,30 @@ function Ellipsis(props: LoaderImplProps) {
                 props.className,
             )}
         >
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
         </div>
     );
 }
@@ -51,10 +80,30 @@ function Ring(props: LoaderImplProps) {
                 props.className,
             )}
         >
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
+            <div
+                className={cn(
+                    props.colorWhite &&
+                        "!border-[white_transparent_transparent_transparent]",
+                )}
+            ></div>
         </div>
     );
 }

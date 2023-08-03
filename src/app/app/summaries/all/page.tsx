@@ -9,7 +9,7 @@ export default function AllSummariesPage() {
     return (
         <div className="@container">
             <PageTitle>All Summaries</PageTitle>
-            <div className="md:mx-8 mb-8 grid grid-cols-1 @xl:grid-cols-2 @3xl:grid-cols-3 gap-3">
+            <div className="md:mx-8 mb-8 grid grid-cols-1 @3xl:grid-cols-2 @5xl:grid-cols-3 gap-3">
                 {getUserSummariesQuery.data ? (
                     getUserSummariesQuery.data.map((summary) => (
                         <SummaryCard key={summary.id} summary={summary} />

@@ -1,345 +1,204 @@
 "use client";
 
 import {
-    FlashcardExperience,
-    FlashcardExperienceNames,
-    FlashcardRange,
-    FlashcardRangeNames,
-} from "@/src/datatypes/flashcard";
-import {
     Button,
     Card,
-    CardHeader,
-    CardTitle,
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    Input,
     ItemCard,
-    Link,
+    ItemSelector,
+    LogInRequired,
     ScrollArea,
     ScrollBar,
-    SimpleItemCardFooter,
 } from "@/ui/components";
-import { FlashcardsDialog } from "@/ui/components/GenerationDialog";
-import { Progress } from "@/ui/components/Progress";
+import FlashcardDialog from "@/ui/components/FlashcardDialog";
+import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
+import { GenerateFlashcardsDialog } from "@/ui/components/GenerationDialog";
+import { LoadingMessage } from "@/ui/components/LoadingMessage";
 import { H4 } from "@/ui/components/typography";
-import { cn } from "@/ui/utils";
-import { Collection, Flashcard, Item, ItemStatus, Tag } from "@prisma/client";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReview,
+    Item,
+    Tag,
+} from "@prisma/client";
+import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { H3, PageTitle } from "../../../../ui/components/typography";
-import { ReviewRatingEnum } from "../../utils/ReviewRating";
 import { trpc } from "../../utils/trpc";
 
-interface DummyFlashcard {
-    id: number;
-    question: string;
-    answer: string;
-    experience: FlashcardExperience;
-    range: FlashcardRange;
-    due: string;
-    reviews: DummyFlashcardReview[];
-    item: Item & { collection: Collection; tags: Tag[] };
-}
-
-interface DummyFlashcardReview {
-    id: number;
-    timestamp: string;
-    rating: ReviewRatingEnum;
-}
-
-const dummyFlashcardsData: DummyFlashcard[] = [
-    {
-        id: 1,
-        question:
-            "What is the purpose of the protocol parameter in the WebSocket constructor?",
-        answer: "The protocol parameter is used to indicate sub-protocols, allowing a server to implement multiple WebSocket sub-protocols.",
-        experience: FlashcardExperience.Intermediate,
-        range: FlashcardRange.Depth,
-        due: "2023-07-23T18:20:36.970+10:00",
-        reviews: [
-            {
-                id: 1,
-                timestamp: "2023-07-13T18:20:36.970+10:00",
-                rating: ReviewRatingEnum.Forgot,
-            },
-            {
-                id: 2,
-                timestamp: "2023-07-14T18:20:36.970+10:00",
-                rating: ReviewRatingEnum.Hard,
-            },
-            {
-                id: 3,
-                timestamp: "2023-07-15T18:20:36.970+10:00",
-                rating: ReviewRatingEnum.Medium,
-            },
-            {
-                id: 4,
-                timestamp: "2023-07-17T16:20:36.970+10:00",
-                rating: ReviewRatingEnum.Easy,
-            },
-        ],
-        item: {
-            id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
-            type: "article",
-            public: true,
-            status: ItemStatus.Inbox,
-            collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
-            title: "Writing WebSocket client applications - Web APIs | MDN",
-            url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",
-            description:
-                "WebSocket client applications use the WebSocket API to communicate with WebSocket servers using the WebSocket protocol.",
-            thumbnail:
-                "https://images.nightcafe.studio/jobs/UUCFR8ZnsnXKdbDPXntw/UUCFR8ZnsnXKdbDPXntw_7.4977x.jpg?tr=w-1600,c-at_max",
-            createdAt: new Date("2023-07-17T05:22:07.265Z"),
-            userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
-            siteName: "developer.mozilla.org",
-            duration: null,
-            releaseTime: null,
-            author: null,
-            favicon: null,
-            tags: [],
-			public: true,
-            collection: {
-                id: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
-                name: "Default",
-                userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
-            },
-        },
-    },
-    {
-        id: 2,
-        question: "What parameter does the WebSocket constructor accept?",
-        answer: "The WebSocket constructor accepts a URL and an optional protocol parameter.",
-        experience: FlashcardExperience.Intermediate,
-        range: FlashcardRange.Depth,
-        due: "2023-07-27T20:45:18.758+10:00",
-        reviews: [
-            {
-                id: 1,
-                timestamp: "2023-07-05T14:38:36.970+10:00",
-                rating: ReviewRatingEnum.Medium,
-            },
-            {
-                id: 2,
-                timestamp: "2023-07-10T13:20:28.520+10:00",
-                rating: ReviewRatingEnum.Easy,
-            },
-        ],
-        item: {
-            id: "f8b70a1d-806d-4e33-a599-fa8418f714b1",
-            type: "article",
-            public: true,
-            status: ItemStatus.Inbox,
-            collectionId: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
-            title: "Writing WebSocket client applications - Web APIs | MDN",
-            url: "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications",
-            description:
-                "WebSocket client applications use the WebSocket API to communicate with WebSocket servers using the WebSocket protocol.",
-            thumbnail:
-                "https://images.nightcafe.studio/jobs/UUCFR8ZnsnXKdbDPXntw/UUCFR8ZnsnXKdbDPXntw_7.4977x.jpg?tr=w-1600,c-at_max",
-            createdAt: new Date("2023-07-17T05:22:07.265Z"),
-            userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
-            siteName: "developer.mozilla.org",
-            duration: null,
-            releaseTime: null,
-            author: null,
-            favicon: null,
-            tags: [],
-			public: true,
-            collection: {
-                id: "c1fba9e8-5c90-4486-9f9a-e4e198ab59bc",
-                name: "Default",
-                userId: "4fa44a7f-f76f-4687-9f18-4f3991aed370",
-            },
-        },
-    },
-];
-
-function FlashcardSearchResult({
-    item,
-}: {
-    item: Item & { tags: Tag[]; collection: Collection };
-}) {
-    const [isOpenFlashcards, setIsOpenFlashcards] = useState(false);
-
-    return (
-        <>
-            <div
-                key={item.id}
-                onClick={() => setIsOpenFlashcards(true)}
-                className="flex justify-between h-24 px-2 py-3 rounded-md hover:bg-slate-100"
-            >
-                <div className="flex flex-col justify-between">
-                    <div className="flex">
-                        <h3 className="mr-2 text-lg font-semibold leading-6 tracking-tight">
-                            {item.title}
-                        </h3>
-                        {/* <ExternalLink /> */}
-                    </div>
-                    <div>
-                        {item.tags.map((tag: Tag) => {
-                            return (
-                                <div key={tag.id}>
-                                    <Link
-                                        className="flex items-center px-3 py-1.5 rounded-lg hover:no-underline hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border shadow-sm w-fit"
-                                        href={`/app/tag/${tag.id}`}
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        {tag.name}
-                                    </Link>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-                {item.thumbnail ? (
-                    <img
-                        src={item.thumbnail}
-                        alt="Image"
-                        className="rounded-sm w-36"
-                    />
-                ) : (
-                    ""
-                )}
-            </div>
-            <FlashcardsDialog
-                data={item}
-                open={isOpenFlashcards}
-                onOpenChange={setIsOpenFlashcards}
-            />
-        </>
-    );
-}
-
 export default function FlashcardsPage() {
-    const [itemInput, setItemInput] = useState("");
-    const itemsQuery = trpc.item.getUserItems.useQuery();
-    const flashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
+    const router = useRouter();
 
-    const revisionQueue =
-        flashcardsQuery.data?.sort(
-            (a, b) => a.dueDate.valueOf() - b.dueDate.valueOf(),
-        ) ?? [];
+    const recentlyCreatedQuery =
+        trpc.flashcards.getUserRecentlyCreated.useQuery();
+    const recentlyCreated = recentlyCreatedQuery.data ?? [];
 
-    const recentlyViewed = flashcardsQuery.data?.sort((a, b) =>
-        a.reviews.length > 0 && b.reviews.length > 0
-            ? b.reviews.slice(-1)[0].timestamp.valueOf() -
-              a.reviews.slice(-1)[0].timestamp.valueOf()
-            : 0,
-    );
+    const recentlyReviewedQuery =
+        trpc.flashcards.getUserRecentlyReviewed.useQuery();
+    const recentlyReviewed = recentlyReviewedQuery.data ?? [];
 
-    const suggestedItems =
-        itemsQuery.data
-            // sort in reverse chronological order of creation date
-            // Could sort by more complex combinations of factors to suggest items
-            // to generate flashcards for e.g. articles rather than social media posts
-            ?.sort((a, b) => b.createdAt.valueOf() - a.createdAt.valueOf())
-            .slice(0, 8) ?? [];
+    const suggestedItemsQuery = trpc.flashcards.getSuggestedItems.useQuery();
 
     const [selectedItem, setSelectedItem] = useState<
         (Item & { collection: Collection; tags: Tag[] }) | null
     >(null);
 
+    const onSelectItem = (
+        item: Item & { collection: Collection; tags: Tag[] },
+    ) => {
+        setSelectedItem(item);
+    };
+
     const [selectedFlashcard, setSelectedFlashcard] = useState<
-        | (Flashcard & { item: Item & { collection: Collection; tags: Tag[] } })
+        | (Flashcard & {
+              item: Item & { collection: Collection; tags: Tag[] };
+              reviews: FlashcardReview[];
+          })
         | null
     >(null);
 
     return (
         <div className="flex flex-col gap-5">
-            <PageTitle>Flashcards</PageTitle>
+            <LogInRequired>
+                <PageTitle>Flashcards</PageTitle>
 
-            <Card className="p-6 mx-8 rounded-lg">
-                <H3>Generate Flashards</H3>
-                <div className="relative mt-3 mb-4">
-                    <Input
-                        className="text-base border-solid rounded-md"
-                        placeholder="Article title..."
-                        value={itemInput}
-                        onChange={(e) => setItemInput(e.target.value)}
-                    />
+                <Card className="p-6 mx-8 rounded-lg">
+                    <H3>My Flashcards</H3>
+                    <div className="w-full h-24 flex flex-col justify-center items-center gap-3">
+                        <Button
+                            className="group/revise"
+                            onClick={() =>
+                                router.push("/app/flashcards/revise")
+                            }
+                            size="lg"
+                        >
+                            Revise Flashcards&nbsp;
+                            <ChevronRight className="relative left-0 group-hover/revise:left-2 transition-left" />
+                        </Button>
+                    </div>
 
-                    {itemInput &&
-                        itemsQuery.data &&
-                        itemsQuery.data.filter((item) => {
-                            return item.title
-                                .toLowerCase()
-                                .includes(itemInput.toLowerCase());
-                        }).length > 0 && (
-                            <div className="absolute z-10 w-full px-1 py-1 bg-white border border-solid rounded-md top-12 border-input">
-                                {itemsQuery.data
-                                    ?.filter((item) => {
-                                        return item.title
-                                            .toLowerCase()
-                                            .includes(itemInput.toLowerCase());
-                                    })
-                                    .map((item) => {
-                                        return (
-                                            <FlashcardSearchResult
-                                                key={item.id}
-                                                item={item}
-                                            />
-                                        );
-                                    })}
+                    <H4 className="mt-3">Recently Created</H4>
+                    {recentlyCreatedQuery.isLoading ? (
+                        <LoadingMessage
+                            message={"Loading recently created flashcards..."}
+                        />
+                    ) : (
+                        <ScrollArea
+                            type="scroll"
+                            className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                        >
+                            <div className="flex gap-3 p-3">
+                                {recentlyCreated?.length > 0 ? (
+                                    recentlyCreated?.map((flashcard) => (
+                                        <FlashcardPreviewCard
+                                            key={flashcard.id}
+                                            data={flashcard}
+                                            onClick={() =>
+                                                setSelectedFlashcard(flashcard)
+                                            }
+                                            className="shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="flex justify-center items-center w-full h-[180px]">
+                                        No recently created flashcards
+                                    </div>
+                                )}
                             </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
+                    )}
+
+                    <H4 className="mt-3">Recently Reviewed</H4>
+                    {recentlyReviewedQuery.isLoading ? (
+                        <LoadingMessage message="Loading recently reviewed flashcards..." />
+                    ) : (
+                        <ScrollArea
+                            type="scroll"
+                            className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                        >
+                            <div className="flex gap-3 p-3">
+                                {recentlyReviewed?.length > 0 ? (
+                                    recentlyReviewed?.map((flashcard) => (
+                                        <FlashcardPreviewCard
+                                            key={flashcard.id}
+                                            data={flashcard}
+                                            onClick={() =>
+                                                setSelectedFlashcard(flashcard)
+                                            }
+                                            className="shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="flex justify-center items-center w-full h-[180px]">
+                                        No recently reviewed flashcards
+                                    </div>
+                                )}
+                            </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
+                    )}
+                </Card>
+                <Card className="p-6 mx-8 rounded-lg">
+                    <H3>Generate Flashards</H3>
+
+                    <ItemSelector
+                        className="w-full text-base font-normal text-slate-500"
+                        onSelect={onSelectItem}
+                    />
+                    <div className="flex flex-col mt-5">
+                        <H4 className="mb-2">Suggested Items</H4>
+                        <p className="text-sm text-slate-500 mb-4">
+                            Items suggested for generating flashcards based on
+                            recently added items, number of existing flashcards,
+                            item type and other factors.
+                        </p>
+                        {suggestedItemsQuery.isLoading ? (
+                            <LoadingMessage
+                                message={"Loading suggested items..."}
+                            />
+                        ) : (
+                            <ScrollArea
+                                type="scroll"
+                                className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
+                            >
+                                <div className="flex gap-3 p-3">
+                                    {(suggestedItemsQuery.data ?? []).map(
+                                        (item) => (
+                                            <ItemCard
+                                                key={item.id}
+                                                className="w-[25rem] h-[30rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                                data={item}
+                                                selected={
+                                                    selectedItem?.id === item.id
+                                                }
+                                                onSelect={() =>
+                                                    setSelectedItem(item)
+                                                }
+                                                hideOptions
+                                                format={{
+                                                    growHeight: true,
+                                                }}
+                                            />
+                                        ),
+                                    )}
+                                </div>
+                                <ScrollBar orientation="horizontal" />
+                            </ScrollArea>
                         )}
-                </div>
-                <H4>Suggested</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {suggestedItems.map((item) => (
-                            <ItemCard
-                                key={item.id}
-                                className="w-[25rem] h-[30rem] max-h-[50vh] bg-transparent"
-                                data={item}
-                                selected={selectedItem?.id === item.id}
-                                onSelect={() => setSelectedItem(item)}
-                                hideOptions
-                                format={{ growHeight: true }}
-                            />
-                        ))}
                     </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-            </Card>
-            <Card className="p-6 mx-8 rounded-lg">
-                <H3>My Flashcards</H3>
-                <H4>Revision Queue</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {revisionQueue?.map((flashcard) => (
-                            <FlashcardPreviewCard
-                                key={flashcard.id}
-                                data={flashcard}
-                                onClick={() => setSelectedFlashcard(flashcard)}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-                <H4 className="mt-3">Recently Viewed</H4>
-                <ScrollArea type="scroll">
-                    <div className="flex gap-3 p-1">
-                        {recentlyViewed?.map((flashcard) => (
-                            <FlashcardPreviewCard
-                                key={flashcard.id}
-                                data={flashcard}
-                                onClick={() => setSelectedFlashcard(flashcard)}
-                            />
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-            </Card>
-            {/* <Card className="p-6 mx-8 rounded-lg">
-                <H3>Items with Flashcards</H3>
-                <H4>Recently Created</H4>
-            </Card> */}
-            {selectedItem && (
-                <FlashcardsDialog
+                </Card>
+                <FlashcardDialog
+                    flashcard={selectedFlashcard}
+                    open={selectedFlashcard !== null}
+                    onOpenChange={(value) => {
+                        if (!value) {
+                            setSelectedFlashcard(null);
+                        }
+                    }}
+                />
+                <GenerateFlashcardsDialog
                     data={selectedItem}
                     open={selectedItem !== null}
                     onOpenChange={(value: boolean) => {
@@ -348,265 +207,8 @@ export default function FlashcardsPage() {
                         }
                     }}
                 />
-            )}
-            {selectedFlashcard && (
-                <FlashcardDialog
-                    flashcard={selectedFlashcard}
-                    item={selectedFlashcard.item}
-                    open={selectedFlashcard !== null}
-                    onOpenChange={(value) => {
-                        if (!value) {
-                            setSelectedFlashcard(null);
-                        }
-                    }}
-                />
-            )}
+            </LogInRequired>
         </div>
-    );
-}
-
-function FlashcardPreviewCard({
-    data,
-    onClick,
-}: {
-    data: Flashcard & { item: Item & { collection: Collection; tags: Tag[] } };
-    onClick?: React.MouseEventHandler<HTMLDivElement>;
-}) {
-    return (
-        <Card
-            key={data.id}
-            className="w-[30rem] h-[26rem] max-h-[50vh] bg-transparent"
-        >
-            <div
-                className={cn(
-                    "group/flashcardpreview w-full relative border rounded-t-lg overflow-hidden aspect-[16/9] hover:",
-                    "transition-[transform,border-color,border-radius]",
-                    "hover:scale-[101%] hover:shadow-md hover:border-slate-500 hover:rounded-lg hover:cursor-pointer",
-                )}
-                onClick={onClick}
-            >
-                <img
-                    src={
-                        data.item.thumbnail ??
-                        "https://www.maxpixel.net/static/photo/2x/Snow-Peaks-Ai-Generated-Artwork-Mountains-Forest-7903258.jpg"
-                    }
-                    alt="Image"
-                    className="absolute w-full h-full object-cover object-center blur group-hover/flashcardpreview:blur-[6px] transition"
-                />
-                <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 flex flex-col justify-between items-center shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset] group-hover/flashcardpreview:bg-black/40 transition">
-                    <div className="px-4 pt-4 pb-3 w-[75%] max-w-[24rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center">
-                        {data.question}
-                    </div>
-                    <div className="px-4 py-2">
-                        <button className="py-2 rounded-full bg-slate-200/20 px-7 hover:bg-slate-100/30">
-                            View
-                        </button>
-                    </div>
-                    <div className="flex gap-2 px-4 py-3 text-sm text-slate-400/90">
-                        <span>{FlashcardExperienceNames[data.experience]}</span>
-                        <span>&#183;</span>
-                        <span>{FlashcardRangeNames[data.range]}</span>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <CardHeader className="pt-2 overflow-y-hidden">
-                    <div className="flex items-center justify-between py-1 text-sm">
-                        {data.dueDate.valueOf() < Date.now().valueOf() ? (
-                            <div className="flex items-center gap-1 font-semibold text-orange-600">
-                                {"Due now"}
-                            </div>
-                        ) : (
-                            "Due tomorrow"
-                        )}
-                        <div className="text-slate-500">
-                            Last revisited 3 days ago
-                        </div>
-                    </div>
-                    {data.item.title ? (
-                        <CardTitle>{data.item.title}</CardTitle>
-                    ) : null}
-                </CardHeader>
-                <SimpleItemCardFooter
-                    url={data.item.url}
-                    type={data.item.type}
-                    title={data.item.title}
-                    collection={data.item.collection}
-                    tags={data.item.tags}
-                    description={data.item.description}
-                    thumbnail={data.item.thumbnail}
-                    siteName={data.item.siteName}
-                    favicon={data.item.favicon}
-                />
-            </div>
-        </Card>
-    );
-}
-
-function FlashcardDialog({
-    flashcard,
-    item,
-    open,
-    onOpenChange,
-}: {
-    flashcard: Flashcard & {
-        item: Item & { collection: Collection; tags: Tag[] };
-    };
-    item: Item & { collection: Collection; tags: Tag[] };
-    open: boolean;
-    onOpenChange: (value: boolean) => void;
-}) {
-    const [showAnswer, setShowAnswer] = useState(false);
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="w-[85%] sm:max-w-[860px]">
-                <DialogHeader>
-                    <DialogTitle>Flashcard</DialogTitle>
-                </DialogHeader>
-                <div
-                    className={cn(
-                        "group/flashcarddialog w-full relative border rounded-lg overflow-hidden aspect-[16/9]",
-                    )}
-                >
-                    <img
-                        src={
-                            flashcard.item.thumbnail ??
-                            "https://www.maxpixel.net/static/photo/2x/Snow-Peaks-Ai-Generated-Artwork-Mountains-Forest-7903258.jpg"
-                        }
-                        alt="Image"
-                        className="absolute object-cover object-center w-full h-full blur"
-                    />
-                    <div className="absolute w-full h-full text-slate-100/90 text-lg bg-black/50 shadow-[0_-32px_83px_-25px_rgba(0,0,0,0.65)_inset]">
-                        <div className="flex flex-col items-center w-full h-full px-4 py-16 justify-evenly ">
-                            <div
-                                className={cn(
-                                    "px-4 pt-4 pb-3 w-[80%] max-w-[52rem] h-full grow text-xl text-center font-medium tracking-wide flex items-center",
-                                )}
-                            >
-                                {flashcard.question}
-                            </div>
-
-                            <div
-                                className={cn(
-                                    "px-4 py-2 h-full grow transition-[height,width,border-style,transform]",
-                                    {
-                                        "h-1 py-0 w-[45%] border-solid border-t-2":
-                                            showAnswer,
-                                    },
-                                )}
-                            >
-                                <button
-                                    className={cn(
-                                        "bg-slate-200/20 px-10 py-4 rounded-full hover:bg-slate-100/30",
-                                        { "hidden ": showAnswer },
-                                    )}
-                                    onClick={() => {
-                                        setShowAnswer(true);
-                                        console.log("clicked");
-                                    }}
-                                >
-                                    Answer
-                                </button>
-                            </div>
-                            <div
-                                className={cn(
-                                    "px-4 py-0 h-0 w-[90%] max-w-[56rem] opacity-0 text-center flex items-center transition-[height,opacity] overflow-y-hidden",
-                                    {
-                                        "h-full grow py-2 opacity-1":
-                                            showAnswer,
-                                    },
-                                )}
-                            >
-                                {flashcard.answer}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex w-full ">
-                    <div className="w-[70%] ">
-                        <div className="flex flex-col justify-between w-full">
-                            <div className="flex items-center justify-between py-1">
-                                {flashcard.dueDate.valueOf() <
-                                Date.now().valueOf() ? (
-                                    <div className="flex items-center gap-1 font-semibold text-orange-600">
-                                        {"Due now"}
-                                    </div>
-                                ) : (
-                                    "Due tomorrow"
-                                )}
-                                <div className="text-slate-500">
-                                    Last revisited 3 days ago
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between py-1">
-                                <div className="px-1 mr-2 text-xl">{"65%"}</div>
-                                <Progress value={65} />
-                            </div>
-                            <div className="flex gap-2 py-1 text-sm text-slate-400/90">
-                                <span>
-                                    {
-                                        FlashcardExperienceNames[
-                                            flashcard.experience
-                                        ]
-                                    }
-                                </span>
-                                <span>&#183;</span>
-                                <span>
-                                    {FlashcardRangeNames[flashcard.range]}
-                                </span>
-                            </div>
-                        </div>
-                        <CardHeader className="px-0 overflow-y-hidden">
-                            {item.title ? (
-                                <CardTitle>{item.title}</CardTitle>
-                            ) : null}
-                        </CardHeader>
-                        <SimpleItemCardFooter
-                            url={item.url}
-                            type={item.type}
-                            title={item.title}
-                            collection={item.collection}
-                            tags={item.tags}
-                            description={item.description}
-                            thumbnail={item.thumbnail}
-                            siteName={item.siteName}
-                            favicon={item.favicon}
-                            className="px-0"
-                        />
-                    </div>
-                    <div className="ml-[2.5rem] flex flex-col gap-2">
-                        <div className="text-easy">
-                            <span className="font-mono text-3xl font-bold">
-                                1
-                            </span>
-                            <span className="ml-2">easy</span>
-                        </div>
-                        <div className="text-medium">
-                            <span className="font-mono text-3xl font-bold">
-                                4
-                            </span>
-                            <span className="ml-2">medium</span>
-                        </div>
-                        <div className="text-hard">
-                            <span className="font-mono text-3xl font-bold">
-                                3
-                            </span>
-                            <span className="ml-2">hard</span>
-                        </div>
-                        <div className="text-forgot">
-                            <span className="font-mono text-3xl font-bold">
-                                2
-                            </span>
-                            <span className="ml-2">forgot</span>
-                        </div>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={() => onOpenChange(false)}>Return</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     );
 }
 

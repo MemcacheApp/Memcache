@@ -1,15 +1,15 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Input } from "../../../../ui/components/Input";
-import { Button } from "../../../../ui/components/Button";
 import { Eye, EyeOff, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "../../../../ui/components/Button";
+import { Input } from "../../../../ui/components/Input";
 
 const loginSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).email({
@@ -59,7 +59,7 @@ export default function page() {
                 </div>
                 <div>
                     <Input
-                        type="email"
+                        type="text"
                         title="Email"
                         placeholder="Email"
                         id="login-email-input"
@@ -103,9 +103,16 @@ export default function page() {
                         </span>
                     ) : (
                         loginMutation.error?.message ===
-                            "Incorrect password" && (
+                            "The password is incorrect" && (
                             <span className="text-sm text-red-600/60">
-                                {loginMutation.error.message}
+                                {loginMutation.error.message}.
+                                {" Forgot password? "}
+                                <Link
+                                    className="underline"
+                                    href={"/auth/reset-password"}
+                                >
+                                    {"Reset here"}
+                                </Link>
                             </span>
                         )
                     )}

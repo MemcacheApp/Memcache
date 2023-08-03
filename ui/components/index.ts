@@ -10,6 +10,7 @@ export * from "./Command";
 export * from "./Dialog";
 export * from "./DropdownMenu";
 export * from "./ExternalLink";
+export * from "./FlashcardReviewCard";
 export * from "./Input";
 export * from "./ItemCard";
 export * from "./ItemList";
@@ -37,4 +38,3 @@ export * from "./Tooltip";
 export * from "./Topbar";
 export * from "./WithPanel";
 export * from "./typography";
-

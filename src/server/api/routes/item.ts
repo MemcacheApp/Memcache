@@ -19,6 +19,18 @@ export const itemRouter = router({
                 });
             }
         }),
+    getItems: protectedProcedure
+        .input(z.object({ itemIds: z.string().array() }))
+        .query(async ({ input }) => {
+            try {
+                return ItemController.getItems(input.itemIds);
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }),
     getUserItems: protectedProcedure
         .input(
             z
@@ -42,6 +54,37 @@ export const itemRouter = router({
                 });
             }
         }),
+    getItemFlashcards: protectedProcedure
+        .input(
+            z.object({
+                itemId: z.string(),
+            }),
+        )
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ItemController.getItemFlashcards(
+                    ctx.userId,
+                    input.itemId,
+                );
+            } catch (e) {
+                console.error(e);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                });
+            }
+        }),
+    getUserItemsIncludeFlashcards: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return await ItemController.getUserItemsIncludeFlashcards(
+                ctx.userId,
+            );
+        } catch (e) {
+            console.error(e);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+            });
+        }
+    }),
     createItem: protectedProcedure
         .input(
             z.object({

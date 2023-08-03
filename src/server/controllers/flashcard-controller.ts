@@ -1,6 +1,6 @@
 import { FlashcardExperience, FlashcardRange } from "@/src/datatypes/flashcard";
 import ContentScraper from "@/src/utils/content-scraper";
-import { Flashcard } from "@prisma/client";
+import { Flashcard, FlashcardReviewRating } from "@prisma/client";
 import {
     ChatCompletionFunctions,
     ChatCompletionRequestMessage,
@@ -79,6 +79,162 @@ export default class FlashcardController {
                 },
             });
             return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    /**
+     * Gets flashcards sorted by the most recently created.
+     * @param userId
+     * @returns
+     */
+    static async getUserRecentlyCreated(userId: string) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+                include: {
+                    reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
+                },
+            });
+
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    /**
+     * Gets all flashcards that have been reviewed at least once, sorted by the most recently reviewed.
+     * @param userId
+     * @returns
+     */
+    static async getUserRecentlyReviewed(userId: string) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                    reviews: {
+                        some: {}, // returns true if there is at least one review
+                    },
+                },
+                include: {
+                    reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
+                },
+            });
+
+            return flashcards.sort((a, b) =>
+                a.reviews.length > 0 && b.reviews.length > 0
+                    ? b.reviews.slice(-1)[0].end.valueOf() -
+                      a.reviews.slice(-1)[0].end.valueOf()
+                    : 0,
+            );
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    static async getUserRevisionQueue(userId: string) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                    dueDate: {
+                        lte: new Date(),
+                    },
+                },
+                orderBy: {
+                    dueDate: "desc",
+                },
+                include: {
+                    reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
+                },
+            });
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    static async getSuggestedItems(userId: string) {
+        let result = await prisma.item.findMany({
+            where: {
+                AND: {
+                    userId,
+                    flashcards: {
+                        none: {},
+                    },
+                },
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: 6,
+        });
+
+        if (result.length < 3) {
+            result = await prisma.item.findMany({
+                where: {
+                    userId,
+                },
+                include: {
+                    tags: true,
+                    collection: true,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+                take: 6,
+            });
+        }
+
+        return result;
+    }
+
+    static async addReview(
+        userId: string,
+        flashcardId: string,
+        start: Date,
+        end: Date,
+        rating: FlashcardReviewRating,
+    ) {
+        try {
+            await prisma.flashcardReview.create({
+                data: {
+                    id: uuidv4(),
+                    start,
+                    end,
+                    rating,
+                    flashcardId,
+                },
+            });
         } catch (e) {
             console.log(e);
         }
@@ -169,6 +325,7 @@ export default class FlashcardController {
                         }
                         const newFlashcard: Flashcard = {
                             id: functionCallResult.id,
+                            createdAt: new Date(),
                             question: functionCallResult.question,
                             answer: functionCallResult.answer,
                             itemId,

@@ -17,7 +17,7 @@ export default class ItemController {
     static async fetchMetadata(url: string): Promise<ItemMetadata> {
         let result;
         try {
-            result = (await ogs({ url: url })).result;
+            result = (await ogs({ url: encodeURI(url) })).result;
         } catch (e) {
             throw new FetchURLError("FetchError", undefined, { cause: e });
         }
@@ -113,6 +113,20 @@ export default class ItemController {
         return item;
     }
 
+    static async getItems(itemIds: string[]) {
+        return await prisma.item.findMany({
+            where: {
+                id: {
+                    in: itemIds,
+                },
+            },
+            include: {
+                tags: true,
+                collection: true,
+            },
+        });
+    }
+
     static async getUserItems(
         userId: string,
         includedTags?: string[],
@@ -143,6 +157,47 @@ export default class ItemController {
             include: {
                 tags: true,
                 collection: true,
+            },
+        });
+
+        return items;
+    }
+
+    static async getItemFlashcards(userId: string, itemId: string) {
+        const item = await prisma.item.findUnique({
+            where: {
+                id: itemId,
+            },
+            include: {
+                tags: true,
+                collection: true,
+                flashcards: { include: { reviews: true } },
+            },
+        });
+
+        if (item === null) {
+            throw new GetItemError("ItemNotExist");
+        }
+
+        if (item.userId !== userId) {
+            throw new AuthError("NoPermission");
+        }
+
+        return item;
+    }
+
+    static async getUserItemsIncludeFlashcards(userId: string) {
+        const items = await prisma.item.findMany({
+            where: {
+                userId,
+            },
+            include: {
+                tags: true,
+                collection: true,
+                flashcards: true,
+            },
+            orderBy: {
+                createdAt: "desc",
             },
         });
 
@@ -308,7 +363,7 @@ export default class ItemController {
 
         return await prisma.item.findMany({
             where: {
-                userId,
+                userId: targetId,
                 public: true,
             },
             select: {
