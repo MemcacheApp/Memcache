@@ -11,7 +11,7 @@ import {
 } from "@/ui/components";
 import { EditIcon, LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import PerferencesDialog from "../../components/PerferencesDialog";
+import PreferencesDialog from "../../components/PreferencesDialog";
 
 interface UserProfilePageProps {
     params: {
@@ -21,7 +21,7 @@ interface UserProfilePageProps {
 
 export default function UserProfilePage(props: UserProfilePageProps) {
     const [isVisible, setIsVisible] = useState(true);
-    const [isOpenPerferences, setIsOpenPerferences] = useState(false);
+    const [isOpenPreferences, setIsOpenPreferences] = useState(false);
 
     const userInfoQuery = trpc.user.getUserInfo.useQuery();
     const userInfoByIdQuery = trpc.user.getUserInfoById.useQuery({
@@ -62,7 +62,7 @@ export default function UserProfilePage(props: UserProfilePageProps) {
                         className="ml-auto"
                         variant="shadow"
                         size="sm"
-                        onClick={() => setIsOpenPerferences(true)}
+                        onClick={() => setIsOpenPreferences(true)}
                     >
                         <EditIcon size={18} />
                     </Button>
@@ -83,7 +83,7 @@ export default function UserProfilePage(props: UserProfilePageProps) {
                             className="mt-16 mr-5 md:mr-8 ml-auto"
                             variant="shadow"
                             size="sm"
-                            onClick={() => setIsOpenPerferences(true)}
+                            onClick={() => setIsOpenPreferences(true)}
                         >
                             <EditIcon size={18} />
                         </Button>
@@ -105,9 +105,9 @@ export default function UserProfilePage(props: UserProfilePageProps) {
                     <p>This user&apos;s profile is private.</p>
                 </div>
             )}
-            <PerferencesDialog
-                open={isOpenPerferences}
-                onOpenChange={setIsOpenPerferences}
+            <PreferencesDialog
+                open={isOpenPreferences}
+                onOpenChange={setIsOpenPreferences}
             />
         </div>
     );

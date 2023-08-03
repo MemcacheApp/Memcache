@@ -5,13 +5,13 @@ import { cn } from "@/ui/utils";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import "../app/app.css";
-import { usePerferences } from "../utils/procedures";
+import { usePreferences } from "../utils/procedures";
 import { trpc } from "../utils/trpc";
 
 export default function BrowserSavePage() {
     const ctx = trpc.useContext();
     const searchParams = useSearchParams();
-    const perferences = usePerferences();
+    const preferences = usePreferences();
 
     const [url, setUrl] = useState(searchParams.get("url") || "");
     const [collection, setCollection] = useState("");
@@ -23,10 +23,10 @@ export default function BrowserSavePage() {
     });
 
     useEffect(() => {
-        if (perferences) {
-            setIsPublic(perferences.publicNewItem);
+        if (preferences) {
+            setIsPublic(preferences.publicNewItem);
         }
-    }, [perferences]);
+    }, [preferences]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

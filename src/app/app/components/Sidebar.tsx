@@ -24,7 +24,7 @@ import { useSidebarStore } from "../../store/sidebar";
 import { useTopbarStore } from "../../store/topbar";
 import { trpc } from "../../utils/trpc";
 import { Navigation } from "./Navigation";
-import PerferencesDialog from "./PerferencesDialog";
+import PreferencesDialog from "./PreferencesDialog";
 
 export function Sidebar() {
     const { isExpand, toggle, collapse } = useSidebarStore();
@@ -75,7 +75,7 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
     const [isHidden, setIsHidden] = useState(false);
     const [isCollapse, setIsCollapse] = useState(false);
 
-    const [isOpenPerferences, setIsOpenPerferences] = useState(false);
+    const [isOpenPreferences, setIsOpenPreferences] = useState(false);
 
     useEffect(() => {
         if (isExpand) {
@@ -122,7 +122,7 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem
                                         onClick={() =>
-                                            setIsOpenPerferences(true)
+                                            setIsOpenPreferences(true)
                                         }
                                     >
                                         <SettingsIcon className="mr-2 h-4 w-4" />
@@ -143,9 +143,9 @@ function SidebarInner({ isExpand }: { isExpand: boolean }) {
                     <SidebarItem href="/auth/login">Log in</SidebarItem>
                 )}
             </div>
-            <PerferencesDialog
-                open={isOpenPerferences}
-                onOpenChange={setIsOpenPerferences}
+            <PreferencesDialog
+                open={isOpenPreferences}
+                onOpenChange={setIsOpenPreferences}
             />
         </div>
     );
