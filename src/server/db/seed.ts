@@ -149,15 +149,25 @@ const ITEMS: {
         tagNames: ["gravity", "pulsars"],
     },
     {
-        url: "https://www.astronomy.com/science/nessie-nebula-shows-how-shocks-can-birth-new-stars/",
-        collectionName: "Space",
-        tagNames: ["nebulae", "stars"],
-        userEmail: USERS[1].email,
+        url: "https://www.sciencefocus.com/future-technology/a-guide-to-mesh-networks/",
+        collectionName: "Technology",
+        tagNames: ["networks", "wifi"],
     },
     {
         url: "https://www.quantamagazine.org/the-sum-product-problem-shows-how-addition-and-multiplication-constrain-each-other-20190206/",
         collectionName: "Mathematics",
-        tagNames: ["conjecture"],
+        tagNames: ["algorithms"],
+    },
+    {
+        url: "https://www.quantamagazine.org/to-move-fast-quantum-maze-solvers-must-forget-the-past-20230720/",
+        collectionName: "Quantum",
+        tagNames: ["algorithms"],
+        userEmail: USERS[1].email,
+    },
+    {
+        url: "https://www.astronomy.com/science/nessie-nebula-shows-how-shocks-can-birth-new-stars/",
+        collectionName: "Space",
+        tagNames: ["nebulae", "stars"],
         userEmail: USERS[1].email,
     },
     {
@@ -174,9 +184,9 @@ const ITEMS: {
         userEmail: USERS[1].email,
     },
     {
-        url: "https://www.sciencefocus.com/future-technology/a-guide-to-mesh-networks/",
+        url: "https://www.sciencefocus.com/future-technology/now-the-nft-scams-are-over-heres-how-the-tech-will-become-a-big-part-of-your-life/",
         collectionName: "Technology",
-        tagNames: ["networks", "wifi"],
+        tagNames: ["NFT"],
         userEmail: USERS[1].email,
     },
 ];
@@ -225,7 +235,9 @@ async function main() {
                 );
                 console.log(`Created new item for user ${userId}`);
             } else {
-                console.log(`User not found for item ${item.url}`);
+                console.log(
+                    `Invalid userId while attempting to create item ${item.url}`,
+                );
             }
         }
     } else {
