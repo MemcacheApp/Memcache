@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import { createElement } from "react";
 import { Resend } from "resend";
 import { v4 as uuidv4 } from "uuid";
-import ResetPasswordEmail from "../../../react-email-templates/emails/reset-password-email";
 import { prisma } from "../db/prisma";
 import CollectionController from "./collection-controller";
 import {
@@ -276,6 +275,12 @@ export default class UserController {
                 createAt: now,
             },
         });
+
+        const ResetPasswordEmail = (
+            await import(
+                "../../../react-email-templates/emails/reset-password-email"
+            )
+        ).default;
 
         await resend.emails.send({
             from: "memcache@m-xue.dev",
