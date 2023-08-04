@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/ui/components";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
