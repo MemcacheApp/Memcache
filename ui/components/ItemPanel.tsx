@@ -4,14 +4,22 @@ import { useItemListStore } from "@/src/app/store/item-list";
 import { trpc } from "@/src/app/utils/trpc";
 import { ItemExt } from "@/src/datatypes/item";
 import { ItemStatus } from "@prisma/client";
-import { EditIcon, Eye, Globe, Package2, TagIcon, X } from "lucide-react";
-import Link from "next/link";
+import {
+    CheckIcon,
+    EditIcon,
+    Eye,
+    Globe,
+    Package2,
+    TagIcon,
+    X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import {
     AddTag,
     CollectionSelector,
     ExternalLink,
+    Link,
     Loader,
     SimpleTag,
     Switch,
@@ -345,6 +353,11 @@ function Collection({ itemIds, items }: OptionsProps) {
                     collections={collectionsQuery.data}
                     value={collection === "Mixed" ? undefined : collection.name}
                     onSelect={handleChange}
+                    trigger={
+                        <Button variant="icon" size="none">
+                            <EditIcon size={18} />
+                        </Button>
+                    }
                 />
             </div>
         </div>
@@ -382,41 +395,47 @@ function Tags({ itemIds, items }: OptionsProps) {
     return (
         <div>
             <Subtitle Icon={<TagIcon size={18} />}>Tags</Subtitle>
+            <div className="flex flex-wrap mt-2">
+                <div className="flex flex-wrap gap-3 grow">
+                    {item.tags.map((tag, index) => (
+                        <SimpleTag
+                            key={tag.id}
+                            value={tag.name}
+                            onClick={() => push(`/app/saves?tag=${tag.name}`)}
+                            remove={() => {
+                                removeTagFromItemMutation.mutate({
+                                    itemId: item.id,
+                                    tagId: item.tags[index].id,
+                                });
+                            }}
+                            editMode={isEditMode}
+                        />
+                    ))}
+                    {isEditMode ? (
+                        <AddTag
+                            tags={tagsQuery.data}
+                            onSelect={(newTag) => {
+                                addTagToItemMutation.mutate({
+                                    itemId: item.id,
+                                    tagName: newTag,
+                                });
+                            }}
+                            selectedTags={item.tags.map((tag) => tag.name)}
+                        />
+                    ) : null}
+                </div>
 
-            <div className="flex flex-wrap gap-3">
                 <Button
                     variant="icon"
                     size="none"
                     onClick={() => setIsEditMode((state) => !state)}
                 >
-                    <EditIcon size={18} />
+                    {isEditMode ? (
+                        <CheckIcon size={18} />
+                    ) : (
+                        <EditIcon size={18} />
+                    )}
                 </Button>
-                {item.tags.map((tag, index) => (
-                    <SimpleTag
-                        key={tag.id}
-                        value={tag.name}
-                        onClick={() => push(`/app/saves?tag=${tag.name}`)}
-                        remove={() => {
-                            removeTagFromItemMutation.mutate({
-                                itemId: item.id,
-                                tagId: item.tags[index].id,
-                            });
-                        }}
-                        editMode={isEditMode}
-                    />
-                ))}
-                {isEditMode ? (
-                    <AddTag
-                        tags={tagsQuery.data}
-                        onSelect={(newTag) => {
-                            addTagToItemMutation.mutate({
-                                itemId: item.id,
-                                tagName: newTag,
-                            });
-                        }}
-                        selectedTags={item.tags.map((tag) => tag.name)}
-                    />
-                ) : null}
             </div>
         </div>
     );
