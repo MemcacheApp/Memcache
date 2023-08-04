@@ -4,6 +4,7 @@ import {
     FlashcardExperienceNames,
     FlashcardRangeNames,
 } from "@/src/datatypes/flashcard";
+import { ItemExt } from "@/src/datatypes/item";
 import {
     Card,
     CardHeader,
@@ -11,19 +12,13 @@ import {
     SimpleItemCardFooter,
 } from "@/ui/components";
 import { cn } from "@/ui/utils";
-import {
-    Collection,
-    Flashcard,
-    FlashcardReview,
-    Item,
-    Tag,
-} from "@prisma/client";
+import { Flashcard, FlashcardReview } from "@prisma/client";
 import DueStatus from "./DueStatus";
 import LastReview from "./LastReview";
 
 interface FlashcardPreviewCardProps {
     data: Flashcard & {
-        item: Item & { collection: Collection; tags: Tag[] };
+        item: ItemExt;
         reviews: FlashcardReview[];
     };
     onClick?: React.MouseEventHandler<HTMLDivElement>;

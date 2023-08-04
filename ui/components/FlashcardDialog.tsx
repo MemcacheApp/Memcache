@@ -1,5 +1,6 @@
 "use client";
 
+import { ItemExt } from "@/src/datatypes/item";
 import {
     Button,
     Dialog,
@@ -9,18 +10,12 @@ import {
     DialogTitle,
 } from "@/ui/components";
 import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
-import {
-    Collection,
-    Flashcard,
-    FlashcardReview,
-    Item,
-    Tag,
-} from "@prisma/client";
+import { Flashcard, FlashcardReview } from "@prisma/client";
 
 interface FlashcardDialogProps {
     flashcard:
         | (Flashcard & {
-              item: Item & { collection: Collection; tags: Tag[] };
+              item: ItemExt;
               reviews: FlashcardReview[];
           })
         | null;

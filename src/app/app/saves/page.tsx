@@ -36,7 +36,7 @@ export default function SavesPage() {
             <LogInRequired>
                 <WithPanel>
                     <Topbar startPos={200}>
-                        <SaveInput className="flex items-center grow overflow-hidden">
+                        <SaveInput className="flex items-center grow">
                             <TopbarTitle>Saves</TopbarTitle>
                             <ItemListOptions
                                 showSave

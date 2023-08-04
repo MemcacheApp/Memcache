@@ -1,6 +1,7 @@
 "use client";
 
-import { Collection, Item, ItemStatus, Tag } from "@prisma/client";
+import { ItemExt } from "@/src/datatypes/item";
+import { ItemStatus } from "@prisma/client";
 import {
     ExternalLink as ExternalLinkIcon,
     LayoutDashboard,
@@ -32,7 +33,7 @@ import {
 import { StatusIcon } from "./StatusIcon";
 
 interface ItemCardProps {
-    data: Item & { collection: Collection; tags: Tag[] };
+    data: ItemExt;
     selected?: boolean;
     onSelect?: (id: string) => void;
     className?: string;
@@ -160,7 +161,7 @@ export function ItemCard({
 }
 
 interface ItemDropdownMenuProps {
-    data: Item & { collection: Collection; tags: Tag[] };
+    data: ItemExt;
     openSummaries: () => void;
     openFlashcards: () => void;
 }

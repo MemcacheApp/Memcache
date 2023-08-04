@@ -1,5 +1,6 @@
 "use client";
 
+import { ItemExt } from "@/src/datatypes/item";
 import {
     Button,
     Card,
@@ -15,11 +16,8 @@ import { GenerateFlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { LoadingMessage } from "@/ui/components/LoadingMessage";
 import { H4 } from "@/ui/components/typography";
 import {
-    Collection,
     Flashcard,
-    FlashcardReview,
-    Item,
-    Tag,
+    FlashcardReview
 } from "@prisma/client";
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -40,19 +38,15 @@ export default function FlashcardsPage() {
 
     const suggestedItemsQuery = trpc.flashcards.getSuggestedItems.useQuery();
 
-    const [selectedItem, setSelectedItem] = useState<
-        (Item & { collection: Collection; tags: Tag[] }) | null
-    >(null);
+    const [selectedItem, setSelectedItem] = useState<ItemExt | null>(null);
 
-    const onSelectItem = (
-        item: Item & { collection: Collection; tags: Tag[] },
-    ) => {
+    const onSelectItem = (item: ItemExt) => {
         setSelectedItem(item);
     };
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
-              item: Item & { collection: Collection; tags: Tag[] };
+              item: ItemExt;
               reviews: FlashcardReview[];
           })
         | null

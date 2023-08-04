@@ -1,6 +1,7 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
+import { ItemExt } from "@/src/datatypes/item";
 import {
     Button,
     Card,
@@ -17,12 +18,9 @@ import { LoadingMessage } from "@/ui/components/LoadingMessage";
 import { ReviewRatingsDoughnut } from "@/ui/components/ReviewRatingsDoughnut";
 import RevisionSession from "@/ui/components/RevisionSession";
 import {
-    Collection,
     Flashcard,
     FlashcardReview,
     FlashcardReviewRating,
-    Item,
-    Tag,
 } from "@prisma/client";
 import { intervalToDuration } from "date-fns";
 import { BarChart4, ChevronRight, Layers } from "lucide-react";
@@ -95,7 +93,7 @@ export default function Revise() {
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
-              item: Item & { collection: Collection; tags: Tag[] };
+              item: ItemExt;
               reviews: FlashcardReview[];
           })
         | null

@@ -5,6 +5,7 @@ import {
     FlashcardExperienceNames,
     FlashcardRange,
 } from "@/src/datatypes/flashcard";
+import { ItemExt } from "@/src/datatypes/item";
 import {
     Button,
     Dialog,
@@ -22,13 +23,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/ui/components";
-import {
-    Collection,
-    Item,
-    SummaryExperience,
-    SummaryFinetuning,
-    Tag,
-} from "@prisma/client";
+import { SummaryExperience, SummaryFinetuning } from "@prisma/client";
 import { PlusIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { trpc } from "../../src/app/utils/trpc";
@@ -36,7 +31,7 @@ import { trpc } from "../../src/app/utils/trpc";
 interface SummariesDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    data: Item & { collection: Collection; tags: Tag[] };
+    data: ItemExt;
     newSummary: () => void;
 }
 
@@ -112,7 +107,7 @@ export function SummariesDialog({
 }
 
 interface GenerateSummaryDialogProps {
-    data: (Item & { collection: Collection; tags: Tag[] }) | null;
+    data: ItemExt | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
     viewSummaries?: () => void;
@@ -295,7 +290,7 @@ export function GenerateSummaryDialog({
     );
 }
 interface GenerateFlashcardsDialogProps {
-    data: (Item & { collection: Collection; tags: Tag[] }) | null;
+    data: ItemExt | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }

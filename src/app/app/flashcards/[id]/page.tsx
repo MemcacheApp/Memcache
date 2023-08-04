@@ -1,16 +1,11 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
+import { ItemExt } from "@/src/datatypes/item";
 import { Button, ExternalLink, PageTitle } from "@/ui/components";
 import FlashcardDialog from "@/ui/components/FlashcardDialog";
 import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
-import {
-    Collection,
-    Flashcard,
-    FlashcardReview,
-    Item,
-    Tag,
-} from "@prisma/client";
+import { Flashcard, FlashcardReview } from "@prisma/client";
 import { Globe, Package2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -29,7 +24,7 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
-              item: Item & { collection: Collection; tags: Tag[] };
+              item: ItemExt;
               reviews: FlashcardReview[];
           })
         | null

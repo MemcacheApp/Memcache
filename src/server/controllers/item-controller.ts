@@ -228,18 +228,24 @@ export default class ItemController {
      */
     static async updateItemStatus(
         userId: string,
-        itemId: string,
+        itemId: string | string[],
         status: ItemStatus,
     ) {
-        const item = await this.getItem(itemId);
+        if (!Array.isArray(itemId)) {
+            itemId = [itemId];
+        }
 
-        if (item.userId !== userId) {
+        const items = await this.getItems(itemId);
+
+        if (items.find((item) => item.userId !== userId)) {
             throw new AuthError("NoPermission");
         }
 
-        await prisma.item.update({
+        await prisma.item.updateMany({
             where: {
-                id: itemId,
+                id: {
+                    in: itemId,
+                },
             },
             data: {
                 status: status,
@@ -253,23 +259,29 @@ export default class ItemController {
      */
     static async setItemCollection(
         userId: string,
-        itemId: string,
+        itemId: string | string[],
         collectionName: string,
     ) {
+        if (!Array.isArray(itemId)) {
+            itemId = [itemId];
+        }
+
         const collection = await CollectionController.getOrCreateCollection(
             userId,
             collectionName,
         );
 
-        const item = await this.getItem(itemId);
+        const items = await this.getItems(itemId);
 
-        if (item.userId !== userId) {
+        if (items.find((item) => item.userId !== userId)) {
             throw new AuthError("NoPermission");
         }
 
-        await prisma.item.update({
+        await prisma.item.updateMany({
             where: {
-                id: itemId,
+                id: {
+                    in: itemId,
+                },
             },
             data: {
                 collectionId: collection.id,
@@ -331,18 +343,23 @@ export default class ItemController {
      */
     static async setItemVibility(
         userId: string,
-        itemId: string,
+        itemId: string | string[],
         isPublic: boolean,
     ) {
-        const item = await this.getItem(itemId);
+        if (!Array.isArray(itemId)) {
+            itemId = [itemId];
+        }
+        const items = await this.getItems(itemId);
 
-        if (item.userId !== userId) {
+        if (items.find((item) => item.userId !== userId)) {
             throw new AuthError("NoPermission");
         }
 
-        await prisma.item.update({
+        await prisma.item.updateMany({
             where: {
-                id: itemId,
+                id: {
+                    in: itemId,
+                },
             },
             data: {
                 public: isPublic,
