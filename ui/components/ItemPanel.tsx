@@ -355,7 +355,7 @@ function Collection({ itemIds, items }: OptionsProps) {
                     onSelect={handleChange}
                     trigger={
                         <Button variant="icon" size="none">
-                            <EditIcon size={18} />
+                            <EditIcon size={16} />
                         </Button>
                     }
                 />
@@ -433,7 +433,7 @@ function Tags({ itemIds, items }: OptionsProps) {
                     {isEditMode ? (
                         <CheckIcon size={18} />
                     ) : (
-                        <EditIcon size={18} />
+                        <EditIcon size={16} />
                     )}
                 </Button>
             </div>
