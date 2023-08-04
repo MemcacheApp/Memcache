@@ -21,13 +21,13 @@ import {
     ExternalLink,
     Link,
     Loader,
+    MultiToggle,
     SimpleTag,
     Switch,
 } from ".";
 import { cn } from "../utils";
 import { Button } from "./Button";
 import { Card } from "./Card";
-import MultiToggle from "./MultiToggle";
 import { Separator } from "./Separator";
 import { StatusIcon } from "./StatusIcon";
 import { Table, TableBody, TableCell, TableRow } from "./Table";
