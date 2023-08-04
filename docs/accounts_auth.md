@@ -6,6 +6,7 @@
 -   [Logging in](#logging-in)
 -   [Signing up](#signing-up)
 -   [Profile](#profile)
+-   [Profile Options](#profile-options)
 
 ## Introduction
 
@@ -29,7 +30,17 @@ Page: `/app/signup`
 
 ## Profile
 
-This page is accessible by clicking the profile tab at the bottom of the sidebar. Here, a user may view their profile details and change them by clicking on the edit buttons for each one.
+This page is accessible by clicking the profile tab at the bottom of the sidebar. Here, a user is shown a list of their publicly saved items.
 
-Page: `/app/profile`
+Page: `/app/profile/[id]`
 ![Profile](../assets/profile.png)
+
+## Profile Options
+
+A user may also change their preferences or log out by clicking the profile options button next to the profile tab:
+
+![Profile Options](../assets/profile-options.png)
+
+This is the dialog box for setting user preferences:
+
+![Preferences](../assets/preferences.png)

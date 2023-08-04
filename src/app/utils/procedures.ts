@@ -1,6 +1,6 @@
 import { trpc } from "./trpc";
 
-export const usePerferences = () => {
-    const getPerferencesQuery = trpc.user.getPerferences.useQuery();
-    return getPerferencesQuery.data;
+export const usePreferences = () => {
+    const getPreferencesQuery = trpc.user.getPreferences.useQuery();
+    return getPreferencesQuery.data;
 };
