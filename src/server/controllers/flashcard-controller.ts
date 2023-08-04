@@ -156,12 +156,9 @@ export default class FlashcardController {
             const flashcards = await prisma.flashcard.findMany({
                 where: {
                     userId,
-                    dueDate: {
-                        lte: new Date(),
-                    },
                 },
                 orderBy: {
-                    dueDate: "desc",
+                    dueDate: "asc",
                 },
                 include: {
                     reviews: true,
@@ -248,21 +245,15 @@ export default class FlashcardController {
             if (flashcard) {
                 let newInterval = flashcard.interval;
                 let newEFactor = 2.5;
-                if (flashcard.reviews.length === 1) {
-                    // After first review, interval to next review is 1 day
-                    newInterval = 1;
-                } else if (flashcard.reviews.length === 2) {
-                    // After second review, interval to next review is 6 days
-                    newInterval = 6;
-                } else {
-                    // Subsequent reviews, calculate interval to next review
-                    // using SM-2 algorithm
-                    newEFactor = FlashcardController.calculateEasinessFactor(
-                        flashcard.eFactor,
-                        rating,
-                    );
-                    newInterval = flashcard.interval * newEFactor;
-                }
+
+                // Subsequent reviews, calculate interval to next review
+                // using SM-2 algorithm
+                newEFactor = FlashcardController.calculateEasinessFactor(
+                    flashcard.eFactor,
+                    rating,
+                );
+                newInterval = flashcard.interval * newEFactor;
+                // }
 
                 console.log(`new interval: ${newInterval}`);
                 console.log(
@@ -270,13 +261,24 @@ export default class FlashcardController {
                         Date.now() + newInterval * 24 * 60 * 60 * 1000,
                     )}`,
                 );
+
+                // Scale intervals so that they are small enough to be observable
+                // during a demonstration. E.g. only need to wait 3 mins for a
+                // true interval of 1 day
+                const TEST_SCALING_FACTOR = 1 / (24 * 20); // 1 day = 3 mins
                 await prisma.flashcard.update({
                     where: {
                         id: flashcardId,
                     },
                     data: {
                         dueDate: new Date(
-                            Date.now() + newInterval * 24 * 60 * 60 * 1000,
+                            Date.now() +
+                                newInterval *
+                                    24 *
+                                    60 *
+                                    60 *
+                                    1000 *
+                                    TEST_SCALING_FACTOR,
                         ),
                         interval: newInterval,
                         eFactor: newEFactor,
@@ -405,7 +407,7 @@ export default class FlashcardController {
                             itemId,
                             userId,
                             dueDate: new Date(), // Initial due date is time of creation
-                            interval: 0, // Initial interval is immediately after creation
+                            interval: 1, // Initial interval is immediately after creation
                             eFactor: 2.5, // Initial easiness factor
                             experience,
                             range,
