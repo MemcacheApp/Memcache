@@ -1,5 +1,6 @@
 "use client";
 
+import { trpc } from "@/src/app/utils/trpc";
 import { ItemExt } from "@/src/datatypes/item";
 import {
     Button,
@@ -24,6 +25,7 @@ import { ChevronLeft, Layers, SkipForward, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import FlashcardDialog from "./FlashcardDialog";
 import FlashcardPreviewCard from "./FlashcardPreviewCard";
+import { LoadingMessage } from "./LoadingMessage";
 import { ReviewRatingsDoughnut } from "./ReviewRatingsDoughnut";
 
 export default function RevisionSession({
@@ -36,8 +38,21 @@ export default function RevisionSession({
     })[];
     onComplete: () => void;
 }) {
+    const ctx = trpc.useContext();
     const [currentFlashcard, setCurrentFlashcard] = useState<number>(0);
     const [skipped, setSkipped] = useState<number[]>([]);
+    const reviewedFlashcardsQuery =
+        trpc.flashcards.getUserFlashcardsById.useQuery(
+            queue
+                .map((flashcard) => flashcard.id)
+                .slice(0, currentFlashcard)
+                .filter(
+                    (id) =>
+                        !skipped.includes(
+                            queue.findIndex((flashcard) => flashcard.id === id),
+                        ),
+                ),
+        );
 
     const [ratingsCount, setRatingsCount] = useState<{
         [key in FlashcardReviewRating]: number;
@@ -101,18 +116,6 @@ export default function RevisionSession({
         setCurrentFlashcard(queue.length);
     };
 
-    // if (revisionQueueQuery.isLoading) {
-    //     return (
-    //         <div className="flex flex-col h-full">
-    //             <PageTitle>Revision Session</PageTitle>
-    //             <div className="h-full flex flex-col gap-11 justify-center items-center">
-    //                 <Loader varient="ellipsis" />
-    //                 <div>Loading revision session...</div>
-    //             </div>
-    //         </div>
-    //     );
-    // }
-
     if (queue.length === 0) {
         return (
             <div className="flex flex-col h-full">
@@ -130,6 +133,9 @@ export default function RevisionSession({
 
     if (currentFlashcard >= queue.length) {
         intervalObj && clearInterval(intervalObj);
+
+        ctx.flashcards.getUserFlashcardsById.invalidate();
+
         return (
             <div className="flex flex-col">
                 <PageTitle>Revision Session</PageTitle>
@@ -246,18 +252,22 @@ export default function RevisionSession({
                         className="border rounded-lg shadow-[inset_0_0_5px_-2px_rgba(0,0,0,0.2)]"
                     >
                         <div className="flex gap-3 p-3">
-                            {queue
-                                .filter((_, idx) => !skipped.includes(idx))
-                                .map((flashcard) => (
-                                    <FlashcardPreviewCard
-                                        key={flashcard.id}
-                                        data={flashcard}
-                                        onClick={() =>
-                                            setSelectedFlashcard(flashcard)
-                                        }
-                                        className="shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
-                                    />
-                                ))}
+                            {reviewedFlashcardsQuery.data ? (
+                                reviewedFlashcardsQuery.data.map(
+                                    (flashcard) => (
+                                        <FlashcardPreviewCard
+                                            key={flashcard.id}
+                                            data={flashcard}
+                                            onClick={() =>
+                                                setSelectedFlashcard(flashcard)
+                                            }
+                                            className="shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                        />
+                                    ),
+                                )
+                            ) : (
+                                <LoadingMessage message="Loading reviewed flashcards from this session..." />
+                            )}
                         </div>
                         <ScrollBar orientation="horizontal" />
                     </ScrollArea>

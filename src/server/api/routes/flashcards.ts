@@ -6,18 +6,6 @@ import FlashcardController from "../../controllers/flashcard-controller";
 import { protectedProcedure, router } from "../trpc";
 
 export const flashcardsRouter = router({
-    /**
-     * Returns:
-     *  {
-     *     flashcards: [
-     *        {
-     *          id: string,
-     *          content: string,
-     *        },
-     *     ...  ]
-     *  }
-     */
-
     generateFlashcards: protectedProcedure
         .input(
             z.object({
@@ -55,6 +43,21 @@ export const flashcardsRouter = router({
             console.log(e);
         }
     }),
+
+    getUserFlashcardsById: protectedProcedure
+        .input(z.array(z.string()))
+        .query(async ({ ctx, input }) => {
+            try {
+                const flashcards =
+                    await FlashcardController.getUserFlashcardsById(
+                        ctx.userId,
+                        input,
+                    );
+                return flashcards;
+            } catch (e) {
+                console.log(e);
+            }
+        }),
 
     getUserRecentlyCreated: protectedProcedure.query(async ({ ctx }) => {
         try {

@@ -155,7 +155,7 @@ export default function FlashcardsPage() {
                                     (item) => (
                                         <ItemCard
                                             key={item.id}
-                                            className="w-[25rem] h-[30rem] max-h-[50vh] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
+                                            className="w-[25rem] h-[31rem] shadow-[0_0_5px_-1px_rgba(0,0,0,0.3)]"
                                             data={item}
                                             selected={
                                                 selectedItem?.id === item.id

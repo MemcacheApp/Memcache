@@ -44,6 +44,7 @@ export default function FlashcardReviewCard({
     const [startTime, setStartTime] = useState(new Date());
 
     useEffect(() => {
+        setShowAnswer(false);
         setStartTime(new Date());
     }, [flashcard.id]);
 
