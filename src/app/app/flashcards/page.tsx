@@ -14,10 +14,7 @@ import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
 import { GenerateFlashcardsDialog } from "@/ui/components/GenerationDialog";
 import { LoadingMessage } from "@/ui/components/LoadingMessage";
 import { H4 } from "@/ui/components/typography";
-import {
-    Flashcard,
-    FlashcardReview
-} from "@prisma/client";
+import { Flashcard, FlashcardReview } from "@prisma/client";
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
