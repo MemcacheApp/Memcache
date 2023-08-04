@@ -23,6 +23,7 @@ model User {
   flashcards    Flashcard[]
   publicProfile Boolean
   preferences   UserPreferences?
+  ResetCode     ResetCode?
 }
 
 model UserPreferences {
@@ -62,10 +63,10 @@ model Item {
 }
 
 model Summary {
-  id         String   @id
+  id         String            @id
   createdAt  DateTime
   content    String
-  item       Item     @relation(fields: [itemId], references: [id])
+  item       Item              @relation(fields: [itemId], references: [id])
   itemId     String
   wordCount  Int
   experience SummaryExperience
@@ -94,6 +95,7 @@ model Tag {
 
 model ResetCode {
   userId   String   @id
+  user     User?    @relation(fields: [userId], references: [id])
   code     String
   createAt DateTime
 }
