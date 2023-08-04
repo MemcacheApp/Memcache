@@ -166,7 +166,10 @@ export const itemRouter = router({
         }),
     setItemStatus: protectedProcedure
         .input(
-            z.object({ itemId: z.string(), status: z.nativeEnum(ItemStatus) }),
+            z.object({
+                itemId: z.string().or(z.string().array()),
+                status: z.nativeEnum(ItemStatus),
+            }),
         )
         .mutation(async ({ ctx, input }) => {
             try {
@@ -195,7 +198,12 @@ export const itemRouter = router({
             }
         }),
     setItemCollection: protectedProcedure
-        .input(z.object({ itemId: z.string(), collectionName: z.string() }))
+        .input(
+            z.object({
+                itemId: z.string().or(z.string().array()),
+                collectionName: z.string(),
+            }),
+        )
         .mutation(async ({ ctx, input }) => {
             try {
                 await ItemController.setItemCollection(
@@ -281,7 +289,7 @@ export const itemRouter = router({
     setItemVisibility: protectedProcedure
         .input(
             z.object({
-                itemId: z.string(),
+                itemId: z.string().or(z.string().array()),
                 isPublic: z.boolean(),
             }),
         )

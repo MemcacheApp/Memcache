@@ -1,4 +1,5 @@
-import { Collection, Item, Summary, Tag } from "@prisma/client";
+import { ItemExt } from "@/src/datatypes/item";
+import { Summary } from "@prisma/client";
 import {
     ChevronDownIcon,
     InfoIcon,
@@ -24,11 +25,11 @@ type SummaryCardProps = {
           item?: undefined;
           summary: Summary & {
               isFullText: boolean;
-              item: Item & { collection: Collection; tags: Tag[] };
+              item: ItemExt;
           };
       }
     | {
-          item: Item & { collection: Collection; tags: Tag[] };
+          item: ItemExt;
           summary: Summary & {
               isFullText: boolean;
           };

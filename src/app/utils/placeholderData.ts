@@ -1,11 +1,9 @@
+import { ItemExt } from "@/src/datatypes/item";
 import {
-    Collection,
     FlashcardExperience,
     FlashcardRange,
     FlashcardReviewRating,
-    Item,
     ItemStatus,
-    Tag,
 } from "@prisma/client";
 
 interface DummyFlashcard {
@@ -16,7 +14,7 @@ interface DummyFlashcard {
     range: FlashcardRange;
     due: string;
     reviews: DummyFlashcardReview[];
-    item: Item & { collection: Collection; tags: Tag[] };
+    item: ItemExt;
 }
 
 interface DummyFlashcardReview {

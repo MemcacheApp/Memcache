@@ -1,3 +1,5 @@
+import { Collection, Item, Tag } from "@prisma/client";
+
 export interface ItemMetadata {
     url: string;
     siteName: string;
@@ -24,3 +26,5 @@ export interface SuggestedItem {
         lastName: string;
     };
 }
+
+export type ItemExt = Item & { collection: Collection; tags: Tag[] };

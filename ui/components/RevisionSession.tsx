@@ -1,5 +1,6 @@
 "use client";
 
+import { ItemExt } from "@/src/datatypes/item";
 import {
     Button,
     Card,
@@ -15,12 +16,9 @@ import { Duration } from "@/ui/components/Duration";
 import FlashcardReviewCard from "@/ui/components/FlashcardReviewCard";
 import { ReviewRatingsHorizontalBarSingle } from "@/ui/components/ReviewRatingsHorizontalBarSingle";
 import {
-    Collection,
     Flashcard,
     FlashcardReview,
     FlashcardReviewRating,
-    Item,
-    Tag,
 } from "@prisma/client";
 import { ChevronLeft, Layers, SkipForward, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -33,7 +31,7 @@ export default function RevisionSession({
     onComplete,
 }: {
     queue: (Flashcard & {
-        item: Item & { collection: Collection; tags: Tag[] };
+        item: ItemExt;
         reviews: FlashcardReview[];
     })[];
     onComplete: () => void;
@@ -61,7 +59,7 @@ export default function RevisionSession({
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
-              item: Item & { collection: Collection; tags: Tag[] };
+              item: ItemExt;
               reviews: FlashcardReview[];
           })
         | null

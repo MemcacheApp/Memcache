@@ -34,7 +34,7 @@ export default function SavesPage() {
         <div className="flex flex-col">
             <WithPanel>
                 <Topbar startPos={200}>
-                    <SaveInput className="flex items-center grow overflow-hidden">
+                    <SaveInput className="flex items-center grow">
                         <TopbarTitle>Saves</TopbarTitle>
                         <ItemListOptions
                             showSave

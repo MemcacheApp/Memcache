@@ -1,25 +1,33 @@
 "use client";
 
 import { useItemListStore } from "@/src/app/store/item-list";
-import { DEBUG } from "@/src/app/utils/constants";
 import { trpc } from "@/src/app/utils/trpc";
+import { ItemExt } from "@/src/datatypes/item";
 import { ItemStatus } from "@prisma/client";
 import {
-    ArrowLeftRightIcon,
+    CheckIcon,
     EditIcon,
     Eye,
+    Globe,
     Package2,
     TagIcon,
     X,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { AddTag, CollectionSelector, ExternalLink, Loader, SimpleTag } from ".";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import {
+    AddTag,
+    CollectionSelector,
+    ExternalLink,
+    Link,
+    Loader,
+    MultiToggle,
+    SimpleTag,
+    Switch,
+} from ".";
 import { cn } from "../utils";
 import { Button } from "./Button";
 import { Card } from "./Card";
-import MultiToggle from "./MultiToggle";
 import { Separator } from "./Separator";
 import { StatusIcon } from "./StatusIcon";
 import { Table, TableBody, TableCell, TableRow } from "./Table";
@@ -77,103 +85,295 @@ export function ItemPanel() {
                     },
                 )}
             >
-                <div className="max-h-64 min-h-[3.5rem] shrink-0 overflow-hidden -mt-4 -mx-4 mb-4">
-                    <div className="flex absolute top-0 w-full h-14 p-2 gap-2 items-center bg-gradient-to-b z-10 from-black/50 to-black/0 text-white">
-                        <Button
-                            variant="ghost"
-                            className="w-9 rounded-full p-0 hover:bg-white/20 hover:text-white shrink-0"
-                            size="sm"
-                            onClick={dismissPanel}
-                        >
-                            <div className="h-4 w-4">
-                                <X size={16} />
-                            </div>
-                            <span className="sr-only">Close sidebar</span>
-                        </Button>
-                        {items && items.length > 0 ? (
-                            <>
-                                <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-                                    {items[0].title}
-                                </div>
-                                {items.length > 1 ? (
-                                    <div className="bg-white text-black font-medium px-1 rounded-md">
-                                        +{items.length - 1}
-                                    </div>
-                                ) : null}
-                            </>
-                        ) : null}
-                    </div>
-                    {items && items.length > 0 && items[0].thumbnail ? (
-                        <ExternalLink href={items[0].thumbnail}>
-                            <div className="mx-auto aspect-[16/9] shrink-0">
-                                <img
-                                    src={items[0].thumbnail}
-                                    alt="Image"
-                                    className="object-cover object-center relative w-full h-full"
-                                />
-                            </div>
-                        </ExternalLink>
-                    ) : null}
-                </div>
+                <Header items={items} dismissPanel={dismissPanel} />
                 {items ? (
                     items.length > 0 ? (
-                        <>
-                            <div className="text-xl font-bold">
-                                {items.map((item, i) => (
-                                    <>
-                                        {i ? (
-                                            <span className="text-gray-500 mr-2">
-                                                ,
-                                            </span>
-                                        ) : null}
-                                        <ExternalLink
-                                            key={item.id}
-                                            href={item.url}
-                                        >
-                                            {item.title}
-                                        </ExternalLink>
-                                    </>
-                                ))}
-                            </div>
-                        </>
+                        <div className="flex flex-col gap-3">
+                            <Title items={items} />
+                            <SiteName items={items} />
+                            {items.length === 1 ? (
+                                <div>{items[0].description}</div>
+                            ) : null}
+                            <Separator className="my-4" />
+                            <Options itemIds={itemIds} items={items} />
+                            <Separator className="my-4" />
+                            <Metadata items={items} />
+                        </div>
                     ) : null
                 ) : (
                     <Loader varient="ellipsis" />
                 )}
-                <SingleItem itemId={itemIds[0]} />
             </Card>
         </div>
     );
 }
 
-export function SingleItem({ itemId }: { itemId: string }) {
-    const ctx = trpc.useContext();
-    const { push } = useRouter();
+interface HeaderProps {
+    items: ItemExt[] | undefined;
+    dismissPanel: () => void;
+}
 
-    const itemQuery = trpc.item.getItem.useQuery({ itemId });
-    const data = itemQuery.data;
+function Header({ items, dismissPanel }: HeaderProps) {
+    return (
+        <div className="max-h-64 min-h-[3.5rem] shrink-0 overflow-hidden -mt-4 -mx-4 mb-4">
+            <div className="flex absolute top-0 w-full h-14 p-2 gap-2 items-center bg-gradient-to-b z-10 from-black/50 to-black/0 text-white">
+                <Button
+                    variant="ghost"
+                    className="w-9 rounded-full p-0 hover:bg-white/20 hover:text-white shrink-0"
+                    size="sm"
+                    onClick={dismissPanel}
+                >
+                    <div className="h-4 w-4">
+                        <X size={16} />
+                    </div>
+                    <span className="sr-only">Close sidebar</span>
+                </Button>
+                {items && items.length > 0 ? (
+                    <>
+                        <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+                            {items[0].title}
+                        </div>
+                        {items.length > 1 ? (
+                            <div className="bg-white text-black font-medium px-1 rounded-md">
+                                +{items.length - 1}
+                            </div>
+                        ) : null}
+                    </>
+                ) : null}
+            </div>
+            {items && items.length > 0 && items[0].thumbnail ? (
+                <div className="mx-auto aspect-[16/9] shrink-0">
+                    <img
+                        src={items[0].thumbnail}
+                        alt="Image"
+                        className="object-cover object-center relative w-full h-full"
+                    />
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
+function Title({ items }: { items: ItemExt[] }) {
+    return (
+        <div className="text-xl font-bold">
+            {items.slice(0, 3).map((item, i) => (
+                <Fragment key={item.id}>
+                    {i ? <span className="text-gray-500 mr-3">,</span> : null}
+                    <ExternalLink href={item.url}>{item.title}</ExternalLink>
+                </Fragment>
+            ))}
+            {items.length > 3 ? (
+                <span className="ml-2 text-gray-500 mr-2">
+                    +{items.length - 3}
+                </span>
+            ) : null}
+        </div>
+    );
+}
+
+function SiteName({ items }: { items: ItemExt[] }) {
+    return (
+        <div className="text-slate-450">
+            {items.slice(0, 3).map((item, i) => (
+                <Fragment key={item.id}>
+                    {i ? <span className="text-gray-500 mr-3">,</span> : null}
+                    <ExternalLink key={item.id} href={item.url}>
+                        {item.favicon ? (
+                            <img
+                                className="inline-block mr-2"
+                                width={16}
+                                height={16}
+                                src={item.favicon}
+                            />
+                        ) : (
+                            <Globe className="inline-block mr-2" size={16} />
+                        )}
+                        {item.siteName}
+                    </ExternalLink>
+                </Fragment>
+            ))}
+            {items.length > 3 ? (
+                <span className="ml-2 text-gray-500 mr-2">
+                    +{items.length - 3}
+                </span>
+            ) : null}
+        </div>
+    );
+}
+
+interface OptionsProps {
+    itemIds: string[];
+    items: ItemExt[];
+}
+
+function Options(props: OptionsProps) {
+    return (
+        <div className="flex flex-col gap-4">
+            <Visibility {...props} />
+            <Status {...props} />
+            <Collection {...props} />
+            <Tags {...props} />
+        </div>
+    );
+}
+
+function Visibility({ itemIds, items }: OptionsProps) {
+    const ctx = trpc.useContext();
+
+    const setItemVisibilityMutation = trpc.item.setItemVisibility.useMutation({
+        onSuccess: async () => {
+            ctx.item.getItems.invalidate({ itemIds });
+        },
+    });
+
+    const visibility = useMemo(() => {
+        const publics = items.map((item) => item.public);
+        if (publics.every((i) => i)) {
+            return "Public";
+        } else if (publics.every((i) => !i)) {
+            return "Private";
+        } else {
+            return "Mixed";
+        }
+    }, [items]);
+
+    const handleChange = (isPublic: boolean) => {
+        setItemVisibilityMutation.mutate({
+            itemId: itemIds,
+            isPublic,
+        });
+    };
+
+    return (
+        <div className="flex flex-col">
+            <Subtitle Icon={<Eye size={18} />}>Visibility</Subtitle>
+            <div className="flex justify-between items-center my-1">
+                <p className="text-slate-600 font-medium">{visibility}</p>
+                <Switch
+                    className={cn({
+                        "opacity-60": visibility === "Mixed",
+                    })}
+                    checked={visibility === "Public"}
+                    onCheckedChange={handleChange}
+                />
+            </div>
+        </div>
+    );
+}
+
+function Status({ itemIds, items }: OptionsProps) {
+    const ctx = trpc.useContext();
+
+    const status = useMemo(() => {
+        if (items.every((item) => item.status === items[0].status)) {
+            return items[0].status;
+        } else {
+            return "Mixed";
+        }
+    }, [items]);
+
+    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
+        onSuccess: async () => {
+            ctx.item.getItems.invalidate({ itemIds });
+            ctx.item.getUserItems.invalidate();
+        },
+    });
+
+    const handleChange = (newStatus: ItemStatus) => {
+        updateItemStatusMutation.mutateAsync({
+            itemId: itemIds,
+            status: newStatus,
+        });
+    };
+
+    return (
+        <div className="flex flex-col">
+            <Subtitle Icon={<StatusIcon status={"Inbox"} size={18} />}>
+                Status
+            </Subtitle>
+            <div className="flex justify-between items-center">
+                <Link
+                    href={`/app/saves`}
+                    className="text-slate-600 font-medium underline"
+                >
+                    {status}
+                </Link>
+                <MultiToggle currentStatus={status} setStatus={handleChange} />
+            </div>
+        </div>
+    );
+}
+
+function Collection({ itemIds, items }: OptionsProps) {
+    const ctx = trpc.useContext();
 
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
-    const tagsQuery = trpc.tag.getUserTags.useQuery();
-
-    const [isTagEditMode, setIsTagEditMode] = useState(false);
-
-    DEBUG &&
-        console.log(
-            `Rendering single item ${data?.title}, status is ${data?.status}}`,
-        );
 
     const setCollectionOnItem = trpc.item.setItemCollection.useMutation({
         onSuccess: () => {
-            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getItems.invalidate({ itemIds });
             ctx.item.getUserItems.invalidate();
             ctx.collection.getUserCollections.invalidate();
         },
     });
 
+    const collection = useMemo(() => {
+        if (
+            items.every((item) => item.collectionId === items[0].collectionId)
+        ) {
+            return items[0].collection;
+        } else {
+            return "Mixed";
+        }
+    }, [items]);
+
+    const handleChange = (newCollection: string) => {
+        setCollectionOnItem.mutate({
+            itemId: itemIds,
+            collectionName: newCollection,
+        });
+    };
+
+    return (
+        <div className="flex flex-col">
+            <Subtitle Icon={<Package2 size={18} />}>Collection</Subtitle>
+            <div className="flex justify-between items-center">
+                <Link
+                    href={
+                        collection === "Mixed"
+                            ? "#"
+                            : `/app/collections/${collection.id}`
+                    }
+                    className="text-slate-600 font-medium underline"
+                >
+                    {collection === "Mixed" ? "Mixed" : collection.name}
+                </Link>
+                <CollectionSelector
+                    collections={collectionsQuery.data}
+                    value={collection === "Mixed" ? undefined : collection.name}
+                    onSelect={handleChange}
+                    trigger={
+                        <Button variant="icon" size="none">
+                            <EditIcon size={16} />
+                        </Button>
+                    }
+                />
+            </div>
+        </div>
+    );
+}
+
+function Tags({ itemIds, items }: OptionsProps) {
+    const ctx = trpc.useContext();
+    const { push } = useRouter();
+
+    const [isEditMode, setIsEditMode] = useState(false);
+
+    const tagsQuery = trpc.tag.getUserTags.useQuery();
     const addTagToItemMutation = trpc.item.addTag.useMutation({
         onSuccess: () => {
-            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getItems.invalidate({ itemIds });
             ctx.item.getUserItems.invalidate();
             ctx.tag.getUserTags.invalidate();
         },
@@ -181,212 +381,148 @@ export function SingleItem({ itemId }: { itemId: string }) {
 
     const removeTagFromItemMutation = trpc.item.removeTag.useMutation({
         onSuccess: () => {
-            ctx.item.getItem.invalidate({ itemId });
+            ctx.item.getItems.invalidate({ itemIds });
             ctx.item.getUserItems.invalidate();
         },
     });
 
-    const updateItemStatusMutation = trpc.item.setItemStatus.useMutation({
-        onSuccess: async () => {
-            ctx.item.getItem.invalidate({ itemId });
-            ctx.item.getUserItems.invalidate();
-        },
-    });
+    if (items.length > 1) {
+        return null;
+    }
 
-    const setItemVisibilityMutation = trpc.item.setItemVisibility.useMutation({
-        onSuccess: async () => {
-            ctx.item.getItem.invalidate({ itemId });
-        },
-    });
-
-    const handleUpdateItemStatus = async (newStatus: ItemStatus) => {
-        if (!data) {
-            return;
-        }
-        try {
-            await updateItemStatusMutation.mutateAsync({
-                itemId: data.id,
-                status: newStatus,
-            });
-            DEBUG && console.log(`Updated item status to ${newStatus}`);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    const item = items[0];
 
     return (
         <div>
-            {data ? (
-                <div>
-                    <div className="mt-1 mb-3 text-slate-450 ">
-                        <ExternalLink href={data.url}>
-                            {data.siteName}
-                        </ExternalLink>
-                    </div>
-                    <div className="mt-3">{data.description}</div>
-
-                    <Separator className="my-4" />
-
-                    <Subtitle Icon={<Eye size={18} />}>Visibility</Subtitle>
-                    <div className="flex justify-between items-center my-1">
-                        <p className="text-slate-600 font-medium">
-                            {data.public ? "Public" : "Private"}
-                        </p>
-                        <Button
-                            variant="icon"
-                            size="none"
-                            onClick={() => {
-                                setItemVisibilityMutation.mutate({
-                                    itemId: data.id,
-                                    isPublic: !data.public,
+            <Subtitle Icon={<TagIcon size={18} />}>Tags</Subtitle>
+            <div className="flex flex-wrap mt-2">
+                <div className="flex flex-wrap gap-3 grow">
+                    {item.tags.map((tag, index) => (
+                        <SimpleTag
+                            key={tag.id}
+                            value={tag.name}
+                            onClick={() => push(`/app/saves?tag=${tag.name}`)}
+                            remove={() => {
+                                removeTagFromItemMutation.mutate({
+                                    itemId: item.id,
+                                    tagId: item.tags[index].id,
                                 });
                             }}
-                        >
-                            <ArrowLeftRightIcon size={18} />
-                        </Button>
-                    </div>
-
-                    <Subtitle
-                        Icon={<StatusIcon status={data.status} size={18} />}
-                    >
-                        Status
-                    </Subtitle>
-                    <div className="flex justify-between items-center">
-                        <Link
-                            href={`/app/saves`}
-                            className="text-slate-600 font-medium underline"
-                        >
-                            {ItemStatus[data.status]}
-                        </Link>
-                        <MultiToggle
-                            currentStatus={data.status}
-                            setStatus={(newStatus) =>
-                                handleUpdateItemStatus(newStatus)
-                            }
+                            editMode={isEditMode}
                         />
-                    </div>
-
-                    <Subtitle Icon={<Package2 size={18} />}>
-                        Collection
-                    </Subtitle>
-                    <div className="flex justify-between items-center">
-                        <Link
-                            href={`/app/collections/${data.collection.id}`}
-                            className="text-slate-600 font-medium underline"
-                        >
-                            {data.collection.name}
-                        </Link>
-                        <CollectionSelector
-                            collections={collectionsQuery.data}
-                            value={data.collection.name}
-                            onSelect={(newCollection) => {
-                                setCollectionOnItem.mutate({
-                                    itemId: data.id,
-                                    collectionName: newCollection,
+                    ))}
+                    {isEditMode ? (
+                        <AddTag
+                            tags={tagsQuery.data}
+                            onSelect={(newTag) => {
+                                addTagToItemMutation.mutate({
+                                    itemId: item.id,
+                                    tagName: newTag,
                                 });
                             }}
+                            selectedTags={item.tags.map((tag) => tag.name)}
                         />
-                    </div>
-                    <Subtitle Icon={<TagIcon size={18} />}>Tags</Subtitle>
-
-                    <div className="flex flex-wrap gap-3">
-                        <Button
-                            variant="icon"
-                            size="none"
-                            onClick={() => setIsTagEditMode((state) => !state)}
-                        >
-                            <EditIcon size={18} />
-                        </Button>
-                        {data.tags.map((tag, index) => (
-                            <SimpleTag
-                                key={tag.id}
-                                value={tag.name}
-                                onClick={() =>
-                                    push(`/app/saves?tag=${tag.name}`)
-                                }
-                                remove={() => {
-                                    removeTagFromItemMutation.mutate({
-                                        itemId: data.id,
-                                        tagId: data.tags[index].id,
-                                    });
-                                }}
-                                editMode={isTagEditMode}
-                            />
-                        ))}
-                        {isTagEditMode ? (
-                            <AddTag
-                                tags={tagsQuery.data}
-                                onSelect={(newTag) => {
-                                    addTagToItemMutation.mutate({
-                                        itemId: data.id,
-                                        tagName: newTag,
-                                    });
-                                }}
-                                selectedTags={data.tags.map((tag) => tag.name)}
-                            />
-                        ) : null}
-                    </div>
-                    <Separator className="my-4" />
-                    <Subtitle>Metadata</Subtitle>
-                    <Table className="mt-2 pb-2">
-                        <TableBody>
-                            <TableRow divider={false} interactive={false}>
-                                <TableCell className="text-slate-450 min-w-56px">
-                                    Type
-                                </TableCell>
-                                <TableCell className="capitalize">
-                                    {data.type}
-                                </TableCell>
-                            </TableRow>
-                            <TableRow divider={false} interactive={false}>
-                                <TableCell className="text-slate-450">
-                                    URL
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                    {data.url}
-                                </TableCell>
-                            </TableRow>
-                            {data.releaseTime ? (
-                                <TableRow divider={false} interactive={false}>
-                                    <TableCell className="text-slate-450">
-                                        Published
-                                    </TableCell>
-                                    <TableCell className="whitespace-nowrap">
-                                        <div>{`${data.releaseTime.toLocaleDateString(
-                                            undefined,
-                                            {
-                                                weekday: "long",
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
-                                            },
-                                        )}`}</div>
-                                    </TableCell>
-                                </TableRow>
-                            ) : null}
-                            <TableRow divider={false} interactive={false}>
-                                <TableCell className="text-slate-450">
-                                    Date added
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                    <div>{`${data.createdAt.toLocaleDateString(
-                                        undefined,
-                                        {
-                                            weekday: "long",
-                                            year: "numeric",
-                                            month: "long",
-                                            day: "numeric",
-                                        },
-                                    )}`}</div>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-
-                    {data.duration ? <div>{data.duration}</div> : null}
-                    {data.author ? <div>{data.author}</div> : null}
+                    ) : null}
                 </div>
-            ) : null}
+
+                <Button
+                    variant="icon"
+                    size="none"
+                    onClick={() => setIsEditMode((state) => !state)}
+                >
+                    {isEditMode ? (
+                        <CheckIcon size={18} />
+                    ) : (
+                        <EditIcon size={16} />
+                    )}
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+function Metadata({ items }: { items: ItemExt[] }) {
+    if (items.length > 1) {
+        return null;
+    }
+
+    const item = items[0];
+
+    return (
+        <div>
+            <Subtitle>Metadata</Subtitle>
+            <Table className="mt-2 pb-2">
+                <TableBody>
+                    <TableRow divider={false} interactive={false}>
+                        <TableCell className="text-slate-450 min-w-56px">
+                            Type
+                        </TableCell>
+                        <TableCell className="capitalize">
+                            {item.type}
+                        </TableCell>
+                    </TableRow>
+                    <TableRow divider={false} interactive={false}>
+                        <TableCell className="text-slate-450">URL</TableCell>
+                        <TableCell className="whitespace-nowrap">
+                            {item.url}
+                        </TableCell>
+                    </TableRow>
+                    {item.releaseTime ? (
+                        <TableRow divider={false} interactive={false}>
+                            <TableCell className="text-slate-450">
+                                Published
+                            </TableCell>
+                            <TableCell className="whitespace-nowrap">
+                                <div>{`${item.releaseTime.toLocaleDateString(
+                                    undefined,
+                                    {
+                                        weekday: "long",
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    },
+                                )}`}</div>
+                            </TableCell>
+                        </TableRow>
+                    ) : null}
+                    <TableRow divider={false} interactive={false}>
+                        <TableCell className="text-slate-450">
+                            Date added
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                            <div>{`${item.createdAt.toLocaleDateString(
+                                undefined,
+                                {
+                                    weekday: "long",
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                },
+                            )}`}</div>
+                        </TableCell>
+                    </TableRow>
+                    {item.duration ? (
+                        <TableRow divider={false} interactive={false}>
+                            <TableCell className="text-slate-450">
+                                Duration
+                            </TableCell>
+                            <TableCell className="whitespace-nowrap">
+                                <div>{item.duration}</div>
+                            </TableCell>
+                        </TableRow>
+                    ) : null}
+                    {item.author ? (
+                        <TableRow divider={false} interactive={false}>
+                            <TableCell className="text-slate-450">
+                                Author
+                            </TableCell>
+                            <TableCell className="whitespace-nowrap">
+                                <div>{item.author}</div>
+                            </TableCell>
+                        </TableRow>
+                    ) : null}
+                </TableBody>
+            </Table>
         </div>
     );
 }
@@ -399,7 +535,7 @@ function Subtitle({
     children: React.ReactNode;
 }) {
     return (
-        <div className="mt-4 mb-1 text-slate-450 text-sm tracking-wide uppercase flex items-center">
+        <div className="mb-1 text-slate-450 text-sm tracking-wide uppercase flex items-center">
             {Icon ? <div className="inline mr-2">{Icon}</div> : null}
             {children}
         </div>

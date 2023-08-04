@@ -24,6 +24,7 @@ model User {
   flashcards    Flashcard[]
   publicProfile Boolean
   preferences   UserPreferences?
+  ResetCode     ResetCode?
 }
 
 model UserPreferences {
@@ -95,6 +96,7 @@ model Tag {
 
 model ResetCode {
   userId   String   @id
+  user     User?    @relation(fields: [userId], references: [id])
   code     String
   createAt DateTime
 }

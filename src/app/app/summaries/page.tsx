@@ -1,5 +1,6 @@
 "use client";
 
+import { ItemExt } from "@/src/datatypes/item";
 import {
     H3,
     H4,
@@ -13,7 +14,6 @@ import {
     SummaryCard,
 } from "@/ui/components";
 import { GenerateSummaryDialog } from "@/ui/components/GenerationDialog";
-import { Collection, Item, Tag } from "@prisma/client";
 import { ArrowRightIcon } from "lucide-react";
 import NextLink from "next/link";
 import { useState } from "react";
@@ -95,15 +95,11 @@ function MySummaries() {
 }
 
 function GenerateSummary() {
-    const [selectedItem, setSelectedItem] = useState<
-        (Item & { collection: Collection; tags: Tag[] }) | null
-    >(null);
+    const [selectedItem, setSelectedItem] = useState<ItemExt | null>(null);
 
     const suggestedItemsQuery = trpc.summary.getSuggestedItems.useQuery();
 
-    const onSelectItem = (
-        item: Item & { collection: Collection; tags: Tag[] },
-    ) => {
+    const onSelectItem = (item: ItemExt) => {
         setSelectedItem(item);
     };
 
