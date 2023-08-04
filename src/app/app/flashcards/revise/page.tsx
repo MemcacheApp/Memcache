@@ -25,7 +25,7 @@ import {
 import { intervalToDuration } from "date-fns";
 import { BarChart4, ChevronLeft, ChevronRight, Layers } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Revise() {
     const ctx = trpc.useContext();
@@ -43,75 +43,58 @@ export default function Revise() {
         console.log(flashcard.dueDate);
     });
 
-    const [ratingsCount, setRatingsCount] = useState({
+    const totalReviewTime =
+        userFlashcardsQuery.data?.reduce((totalTime, flashcard) => {
+            totalTime += flashcard.reviews.reduce((time, review) => {
+                const reviewDuration = intervalToDuration({
+                    start: review.start,
+                    end: review.end,
+                });
+                if (reviewDuration) {
+                    return (
+                        time +
+                        (reviewDuration.seconds ?? 0) +
+                        (reviewDuration.minutes ?? 0) * 60 +
+                        (reviewDuration.hours ?? 0) * 3600 +
+                        (reviewDuration.days ?? 0) * 86400 +
+                        (reviewDuration.months ?? 0) * 2592000 +
+                        (reviewDuration.years ?? 0) * 31536000
+                    );
+                } else {
+                    return time;
+                }
+            }, 0);
+            return totalTime;
+        }, 0) ?? 0;
+    console.log(`Total time reviewed: ${totalReviewTime}`);
+
+    const ratingsCount = userFlashcardsQuery.data?.reduce(
+        (total, flashcard) => {
+            for (const review of flashcard.reviews) {
+                const rating = review.rating;
+                total[rating] += 1;
+            }
+            return total;
+        },
+        {
+            [FlashcardReviewRating.Easy]: 0,
+            [FlashcardReviewRating.Medium]: 0,
+            [FlashcardReviewRating.Hard]: 0,
+            [FlashcardReviewRating.Forgot]: 0,
+        },
+    ) ?? {
         [FlashcardReviewRating.Easy]: 0,
         [FlashcardReviewRating.Medium]: 0,
         [FlashcardReviewRating.Hard]: 0,
         [FlashcardReviewRating.Forgot]: 0,
-    });
-    const [totalReviewTime, setTotalReviewTime] = useState(0);
-
-    const handleUpdateStats = () => {
-        if (userFlashcardsQuery.data) {
-            const newTime = userFlashcardsQuery.data.reduce(
-                (totalTime, flashcard) => {
-                    totalTime += flashcard.reviews.reduce((time, review) => {
-                        const reviewDuration = intervalToDuration({
-                            start: review.start,
-                            end: review.end,
-                        });
-                        if (reviewDuration) {
-                            return (
-                                time +
-                                (reviewDuration.seconds ?? 0) +
-                                (reviewDuration.minutes ?? 0) * 60 +
-                                (reviewDuration.hours ?? 0) * 3600 +
-                                (reviewDuration.days ?? 0) * 86400 +
-                                (reviewDuration.months ?? 0) * 2592000 +
-                                (reviewDuration.years ?? 0) * 31536000
-                            );
-                        } else {
-                            return time;
-                        }
-                    }, 0);
-                    return totalTime;
-                },
-                0,
-            );
-
-            console.log(`Total time reviewed: ${newTime}`);
-            setTotalReviewTime(newTime);
-
-            const newRatingsCount = userFlashcardsQuery.data.reduce(
-                (total, flashcard) => {
-                    for (const review of flashcard.reviews) {
-                        const rating = review.rating;
-                        total[rating] += 1;
-                    }
-                    return total;
-                },
-                {
-                    [FlashcardReviewRating.Easy]: 0,
-                    [FlashcardReviewRating.Medium]: 0,
-                    [FlashcardReviewRating.Hard]: 0,
-                    [FlashcardReviewRating.Forgot]: 0,
-                },
-            );
-            console.log(`Ratings count: ${newRatingsCount}`);
-            setRatingsCount(newRatingsCount);
-        }
     };
-
-    useEffect(() => {
-        handleUpdateStats();
-    }, []);
+    console.log(`Ratings count: ${ratingsCount}`);
 
     const handleCompleteRevisionSession = () => {
         ctx.item.getUserItemsIncludeFlashcards.invalidate();
         ctx.flashcards.getUserFlashcards.invalidate();
         ctx.flashcards.getUserRecentlyReviewed.invalidate();
         ctx.flashcards.getUserRevisionQueue.invalidate();
-        handleUpdateStats();
         setIsRevising(false);
     };
 
@@ -142,9 +125,9 @@ export default function Revise() {
                     <LoadingMessage message={"Loading flashcards..."} />
                 ) : (
                     <div className="flex justify-between gap-5 p-6 ">
-                        <div className="flex flex-col gap-5">
+                        <div className="flex flex-col gap-8 w-full @container/leftStats">
                             <Button
-                                className="group/backToFlashcards"
+                                className="group/backToFlashcards w-[200px]"
                                 onClick={() => {
                                     router.push("/app/flashcards");
                                 }}
@@ -152,70 +135,73 @@ export default function Revise() {
                                 <ChevronLeft className="relative right-0 group-hover/backToFlashcards:right-2 transition-right" />
                                 Back to flashcards
                             </Button>
-                            <div className="flex gap-3 items-center">
-                                <Layers size={36} />
-                                <span className="text-6xl font-bold">
-                                    {userFlashcardsQuery.data?.length ?? 0}
-                                </span>
-                                <div className="grid grid-cols-1">
-                                    <span className="leading-[1.2rem]">
-                                        flashcards
+                            <div className="grid grid-cols-1 @sm/leftStats:grid-cols-2 gap-5 @sm/leftStats:gap-9 @lg/leftStats:gap-12">
+                                <div className="flex gap-3 items-center">
+                                    <BarChart4 size={36} />
+                                    <span className="text-6xl font-semibold">
+                                        {userFlashcardsQuery.data?.reduce(
+                                            (total, flashcard) =>
+                                                total +
+                                                flashcard.reviews.length,
+                                            0,
+                                        )}
                                     </span>
-                                    <span className="leading-[1.2rem]">
-                                        created
-                                    </span>
+                                    <div className="grid grid-cols-1">
+                                        <span className="leading-[1.2rem]">
+                                            review
+                                        </span>
+                                        <span className="leading-[1.2rem]">
+                                            count
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex gap-3 items-center">
-                                <Layers size={36} />
-                                <span className="text-6xl font-bold">
-                                    {userFlashcardsQuery.data?.filter(
-                                        (flashcard) =>
-                                            flashcard.reviews.length > 0,
-                                    ).length ?? 0}
-                                </span>
-                                <div className="grid grid-cols-1">
-                                    <span className="leading-[1.2rem]">
-                                        flashcards
-                                    </span>
-                                    <span className="leading-[1.2rem]">
-                                        reviewed
-                                    </span>
+                                <div className="flex gap-3 items-center">
+                                    <Duration
+                                        time={totalReviewTime}
+                                        iconSize={36}
+                                        className="gap-3"
+                                        textNumSize="text-6xl"
+                                        textUnitsSize="text-lg"
+                                    />
+                                    <div className="grid grid-cols-1">
+                                        <span className="leading-[1.2rem]">
+                                            time spent
+                                        </span>
+                                        <span className="leading-[1.2rem]">
+                                            reviewing
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex gap-3 items-center">
-                                <BarChart4 size={32} />
-                                <span className="text-4xl font-semibold">
-                                    {userFlashcardsQuery.data?.reduce(
-                                        (total, flashcard) =>
-                                            total + flashcard.reviews.length,
-                                        0,
-                                    )}
-                                </span>
-                                <div className="grid grid-cols-1">
-                                    <span className="leading-[1rem] text-sm">
-                                        review
+                                <div className="flex gap-3 items-center">
+                                    <Layers size={32} />
+                                    <span className="text-4xl font-bold">
+                                        {userFlashcardsQuery.data?.length ?? 0}
                                     </span>
-                                    <span className="leading-[1rem] text-sm">
-                                        count
-                                    </span>
+                                    <div className="grid grid-cols-1">
+                                        <span className="leading-[1rem] text-sm">
+                                            flashcards
+                                        </span>
+                                        <span className="leading-[1rem] text-sm">
+                                            created
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex gap-3 items-center">
-                                <Duration
-                                    time={totalReviewTime}
-                                    iconSize={32}
-                                    className="gap-3"
-                                    textNumSize="text-4xl"
-                                    textUnitsSize="text-lg"
-                                />
-                                <div className="grid grid-cols-1">
-                                    <span className="leading-[1rem] text-sm">
-                                        time spent
+                                <div className="flex gap-3 items-center">
+                                    <Layers size={32} />
+                                    <span className="text-4xl font-bold">
+                                        {userFlashcardsQuery.data?.filter(
+                                            (flashcard) =>
+                                                flashcard.reviews.length > 0,
+                                        ).length ?? 0}
                                     </span>
-                                    <span className="leading-[1rem] text-sm">
-                                        reviewing
-                                    </span>
+                                    <div className="grid grid-cols-1">
+                                        <span className="leading-[1rem] text-sm">
+                                            flashcards
+                                        </span>
+                                        <span className="leading-[1rem] text-sm">
+                                            reviewed
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
