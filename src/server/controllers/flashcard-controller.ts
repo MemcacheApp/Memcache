@@ -235,9 +235,90 @@ export default class FlashcardController {
                     flashcardId,
                 },
             });
+
+            const flashcard = await prisma.flashcard.findUnique({
+                where: {
+                    id: flashcardId,
+                },
+                include: {
+                    reviews: true,
+                },
+            });
+
+            if (flashcard) {
+                let newInterval = flashcard.interval;
+                let newEFactor = 2.5;
+                if (flashcard.reviews.length === 1) {
+                    // After first review, interval to next review is 1 day
+                    newInterval = 1;
+                } else if (flashcard.reviews.length === 2) {
+                    // After second review, interval to next review is 6 days
+                    newInterval = 6;
+                } else {
+                    // Subsequent reviews, calculate interval to next review
+                    // using SM-2 algorithm
+                    newEFactor = FlashcardController.calculateEasinessFactor(
+                        flashcard.eFactor,
+                        rating,
+                    );
+                    newInterval = flashcard.interval * newEFactor;
+                }
+
+                console.log(`new interval: ${newInterval}`);
+                console.log(
+                    `next due in: ${new Date(
+                        Date.now() + newInterval * 24 * 60 * 60 * 1000,
+                    )}`,
+                );
+                await prisma.flashcard.update({
+                    where: {
+                        id: flashcardId,
+                    },
+                    data: {
+                        dueDate: new Date(
+                            Date.now() + newInterval * 24 * 60 * 60 * 1000,
+                        ),
+                        interval: newInterval,
+                        eFactor: newEFactor,
+                    },
+                });
+            } else {
+                console.log("Flashcard not found");
+            }
         } catch (e) {
             console.log(e);
         }
+    }
+
+    /**
+     * Calculate flashcard easiness factor using SM-2 space repetition algorithm,
+     * based on the previous easiness factor and the user's rating of the flashcard.
+     * See https://www.supermemo.com/en/blog/application-of-a-computer-to-improve-the-results-obtained-in-working-with-the-supermemo-method
+     * for the original algorithm.
+     */
+    static calculateEasinessFactor(
+        oldEFactor: number,
+        rating: FlashcardReviewRating,
+    ) {
+        let q = 4;
+        switch (rating) {
+            case FlashcardReviewRating.Easy:
+                q = 5;
+                break;
+            case FlashcardReviewRating.Medium:
+                q = 4;
+                break;
+            case FlashcardReviewRating.Hard:
+                q = 3;
+                break;
+            case FlashcardReviewRating.Forgot:
+                q = 2;
+                break;
+        }
+        return Math.max(
+            1.3,
+            oldEFactor + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)),
+        );
     }
 
     static async generateFlashcards(
@@ -311,18 +392,11 @@ export default class FlashcardController {
                     try {
                         const parsedGetFlashcardParams =
                             GetFlashcardParams.parse(functionArguments);
-                        // Call the function
+                        // Call the function with the parsed arguments
                         const functionCallResult = getFlashcard(
                             parsedGetFlashcardParams,
                         );
 
-                        // console.dir(functionCallResult, { depth: null });
-                        const today = new Date();
-                        const dueDate = new Date(today);
-                        if (Math.random() > 0.5) {
-                            // 50% change due tomorrow / due now (LATTER FOR DEMO PURPOSES ONLY)
-                            dueDate.setDate(dueDate.getDate() + 1);
-                        }
                         const newFlashcard: Flashcard = {
                             id: functionCallResult.id,
                             createdAt: new Date(),
@@ -330,7 +404,9 @@ export default class FlashcardController {
                             answer: functionCallResult.answer,
                             itemId,
                             userId,
-                            dueDate, // For demo purposes, due date is some random time
+                            dueDate: new Date(), // Initial due date is time of creation
+                            interval: 0, // Initial interval is immediately after creation
+                            eFactor: 2.5, // Initial easiness factor
                             experience,
                             range,
                         };

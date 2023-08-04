@@ -15,28 +15,28 @@ import {
 import { cn } from "@/ui/utils";
 import { ArrowDownToLineIcon, UserIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { usePerferences } from "../../utils/procedures";
+import { usePreferences } from "../../utils/procedures";
 import { trpc } from "../../utils/trpc";
 
-interface PerferencesDialogProps {
+interface PreferencesDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export default function PerferencesDialog({
+export default function PreferencesDialog({
     open,
     onOpenChange,
-}: PerferencesDialogProps) {
+}: PreferencesDialogProps) {
     const [currTab, setCurrTab] = useState("profile");
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="flex flex-col min-h-[30rem]">
                 <DialogHeader>
-                    <DialogTitle>Perferences</DialogTitle>
+                    <DialogTitle>Preferences</DialogTitle>
                 </DialogHeader>
                 <div className="flex grow">
-                    <PerferencesNav currTab={currTab} setCurrTab={setCurrTab} />
+                    <PreferencesNav currTab={currTab} setCurrTab={setCurrTab} />
                     <Separator className="h-auto" orientation="vertical" />
                     <Tabs className="ml-5 grow" value={currTab}>
                         <TabsContent tabIndex={-1} value="profile">
@@ -52,41 +52,41 @@ export default function PerferencesDialog({
     );
 }
 
-interface PerferencesNavProps {
+interface PreferencesNavProps {
     currTab: string;
     setCurrTab: (currTab: string) => void;
 }
 
-function PerferencesNav({ currTab, setCurrTab }: PerferencesNavProps) {
+function PreferencesNav({ currTab, setCurrTab }: PreferencesNavProps) {
     return (
         <div className="flex flex-col min-w-[10rem] gap-1 mr-3">
-            <PerferencesNavItem
+            <PreferencesNavItem
                 currTab={currTab}
                 setCurrTab={setCurrTab}
                 value="profile"
             >
                 <UserIcon className="mr-2 h-4 w-4" />
                 Profile
-            </PerferencesNavItem>
-            <PerferencesNavItem
+            </PreferencesNavItem>
+            <PreferencesNavItem
                 currTab={currTab}
                 setCurrTab={setCurrTab}
                 value="save"
             >
                 <ArrowDownToLineIcon className="mr-2 h-4 w-4" />
                 Save
-            </PerferencesNavItem>
+            </PreferencesNavItem>
         </div>
     );
 }
 
-interface PerferencesNavItemProsp extends ButtonProps {
+interface PreferencesNavItemProsp extends ButtonProps {
     currTab: string;
     setCurrTab: (currTab: string) => void;
     value: string;
 }
 
-function PerferencesNavItem(props: PerferencesNavItemProsp) {
+function PreferencesNavItem(props: PreferencesNavItemProsp) {
     const { className, children, value, currTab, setCurrTab, ...other } = props;
 
     return (
@@ -203,10 +203,10 @@ function Profile() {
 function Save() {
     const ctx = trpc.useContext();
 
-    const updatePreferenceMutation = trpc.user.updatePerferences.useMutation({
-        onSuccess: () => ctx.user.getPerferences.invalidate(),
+    const updatePreferenceMutation = trpc.user.updatePreferences.useMutation({
+        onSuccess: () => ctx.user.getPreferences.invalidate(),
     });
-    const preferences = usePerferences();
+    const preferences = usePreferences();
 
     const [publicNewItem, setPublicNewItem] = useState(true);
 

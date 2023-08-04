@@ -8,7 +8,6 @@ import {
     ItemSelector,
     Link,
     Loader,
-    LogInRequired,
     PageTitle,
     ScrollArea,
     ScrollBar,
@@ -23,13 +22,11 @@ import { trpc } from "../../utils/trpc";
 export default function SummariesPage() {
     return (
         <div className="flex flex-col">
-            <LogInRequired>
-                <PageTitle>Summaries</PageTitle>
-                <div className="flex flex-col gap-5">
-                    <MySummaries />
-                    <GenerateSummary />
-                </div>
-            </LogInRequired>
+            <PageTitle>Summaries</PageTitle>
+            <div className="flex flex-col gap-5">
+                <MySummaries />
+                <GenerateSummary />
+            </div>
         </div>
     );
 }

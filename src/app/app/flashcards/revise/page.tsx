@@ -23,11 +23,13 @@ import {
     FlashcardReviewRating,
 } from "@prisma/client";
 import { intervalToDuration } from "date-fns";
-import { BarChart4, ChevronRight, Layers } from "lucide-react";
+import { BarChart4, ChevronLeft, ChevronRight, Layers } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Revise() {
+    const ctx = trpc.useContext();
+
     const router = useRouter();
 
     const itemsQuery = trpc.item.getUserItemsIncludeFlashcards.useQuery();
@@ -35,27 +37,21 @@ export default function Revise() {
         itemsQuery.data?.filter((item) => item.flashcards.length > 0) ?? [];
 
     const userFlashcardsQuery = trpc.flashcards.getUserFlashcards.useQuery();
-    const userFlashcards = userFlashcardsQuery.data ?? [];
 
-    const ratingsCount = userFlashcards.reduce(
-        (total, flashcard) => {
-            for (const review of flashcard.reviews) {
-                const rating = review.rating;
-                total[rating] += 1;
-            }
-            return total;
-        },
-        {
-            [FlashcardReviewRating.Easy]: 0,
-            [FlashcardReviewRating.Medium]: 0,
-            [FlashcardReviewRating.Hard]: 0,
-            [FlashcardReviewRating.Forgot]: 0,
-        },
-    );
+    const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
+    revisionQueueQuery.data?.forEach((flashcard) => {
+        console.log(flashcard.dueDate);
+    });
 
+    const [ratingsCount, setRatingsCount] = useState({
+        [FlashcardReviewRating.Easy]: 0,
+        [FlashcardReviewRating.Medium]: 0,
+        [FlashcardReviewRating.Hard]: 0,
+        [FlashcardReviewRating.Forgot]: 0,
+    });
     const [totalReviewTime, setTotalReviewTime] = useState(0);
 
-    useEffect(() => {
+    const handleUpdateStats = () => {
         if (userFlashcardsQuery.data) {
             const newTime = userFlashcardsQuery.data.reduce(
                 (totalTime, flashcard) => {
@@ -83,13 +79,41 @@ export default function Revise() {
                 0,
             );
 
-            console.log(newTime);
-
+            console.log(`Total time reviewed: ${newTime}`);
             setTotalReviewTime(newTime);
-        }
-    }, [userFlashcardsQuery.data]);
 
-    const revisionQueueQuery = trpc.flashcards.getUserRevisionQueue.useQuery();
+            const newRatingsCount = userFlashcardsQuery.data.reduce(
+                (total, flashcard) => {
+                    for (const review of flashcard.reviews) {
+                        const rating = review.rating;
+                        total[rating] += 1;
+                    }
+                    return total;
+                },
+                {
+                    [FlashcardReviewRating.Easy]: 0,
+                    [FlashcardReviewRating.Medium]: 0,
+                    [FlashcardReviewRating.Hard]: 0,
+                    [FlashcardReviewRating.Forgot]: 0,
+                },
+            );
+            console.log(`Ratings count: ${newRatingsCount}`);
+            setRatingsCount(newRatingsCount);
+        }
+    };
+
+    useEffect(() => {
+        handleUpdateStats();
+    }, []);
+
+    const handleCompleteRevisionSession = () => {
+        ctx.item.getUserItemsIncludeFlashcards.invalidate();
+        ctx.flashcards.getUserFlashcards.invalidate();
+        ctx.flashcards.getUserRecentlyReviewed.invalidate();
+        ctx.flashcards.getUserRevisionQueue.invalidate();
+        handleUpdateStats();
+        setIsRevising(false);
+    };
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
@@ -105,7 +129,7 @@ export default function Revise() {
         return (
             <RevisionSession
                 queue={revisionQueueQuery.data}
-                onComplete={() => setIsRevising(false)}
+                onComplete={handleCompleteRevisionSession}
             />
         );
     }
@@ -119,10 +143,19 @@ export default function Revise() {
                 ) : (
                     <div className="flex justify-between gap-5 p-6 ">
                         <div className="flex flex-col gap-5">
+                            <Button
+                                className="group/backToFlashcards"
+                                onClick={() => {
+                                    router.push("/app/flashcards");
+                                }}
+                            >
+                                <ChevronLeft className="relative right-0 group-hover/backToFlashcards:right-2 transition-right" />
+                                Back to flashcards
+                            </Button>
                             <div className="flex gap-3 items-center">
                                 <Layers size={36} />
                                 <span className="text-6xl font-bold">
-                                    {userFlashcards.length}
+                                    {userFlashcardsQuery.data?.length ?? 0}
                                 </span>
                                 <div className="grid grid-cols-1">
                                     <span className="leading-[1.2rem]">
@@ -136,12 +169,10 @@ export default function Revise() {
                             <div className="flex gap-3 items-center">
                                 <Layers size={36} />
                                 <span className="text-6xl font-bold">
-                                    {
-                                        userFlashcards.filter(
-                                            (flashcard) =>
-                                                flashcard.reviews.length > 0,
-                                        ).length
-                                    }
+                                    {userFlashcardsQuery.data?.filter(
+                                        (flashcard) =>
+                                            flashcard.reviews.length > 0,
+                                    ).length ?? 0}
                                 </span>
                                 <div className="grid grid-cols-1">
                                     <span className="leading-[1.2rem]">
@@ -155,11 +186,11 @@ export default function Revise() {
                             <div className="flex gap-3 items-center">
                                 <BarChart4 size={32} />
                                 <span className="text-4xl font-semibold">
-                                    {userFlashcards.reduce(
+                                    {userFlashcardsQuery.data?.reduce(
                                         (total, flashcard) =>
                                             total + flashcard.reviews.length,
                                         0,
-                                    )}{" "}
+                                    )}
                                 </span>
                                 <div className="grid grid-cols-1">
                                     <span className="leading-[1rem] text-sm">

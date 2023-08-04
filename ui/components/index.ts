@@ -1,3 +1,5 @@
+"use client";
+
 export * from "./AddTag";
 export * from "./AspectRatio";
 export * from "./Badge";

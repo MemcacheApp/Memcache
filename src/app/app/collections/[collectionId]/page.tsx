@@ -6,7 +6,6 @@ import {
     ItemList,
     ItemListOptions,
     ItemPanel,
-    LogInRequired,
     PageTitle,
     SaveInput,
     SaveInputTrigger,
@@ -40,28 +39,24 @@ export default function CollectionPage({ params }: CollectionPageProps) {
 
     return (
         <div className="flex flex-col">
-            <LogInRequired>
-                <WithPanel>
-                    <Topbar startPos={200}>
-                        <SaveInput className="flex items-center grow overflow-hidden">
-                            <TopbarTitle>
-                                Collection: {collection.name}
-                            </TopbarTitle>
-                            <ItemListOptions
-                                showSave
-                                className="grow ml-5 overflow-hidden"
-                            />
-                        </SaveInput>
-                    </Topbar>
-                    <PageTitle>Collection: {collection.name}</PageTitle>
-                    <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
-                        <SaveInputTrigger />
+            <WithPanel>
+                <Topbar startPos={200}>
+                    <SaveInput className="flex items-center grow overflow-hidden">
+                        <TopbarTitle>Collection: {collection.name}</TopbarTitle>
+                        <ItemListOptions
+                            showSave
+                            className="grow ml-5 overflow-hidden"
+                        />
                     </SaveInput>
-                    <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
-                    <ItemList collectionId={params.collectionId} />
-                </WithPanel>
-                <ItemPanel />
-            </LogInRequired>
+                </Topbar>
+                <PageTitle>Collection: {collection.name}</PageTitle>
+                <SaveInput className="flex flex-col max-md:mx-5 mx-8 mb-5">
+                    <SaveInputTrigger />
+                </SaveInput>
+                <ItemListOptions className="mb-3 max-md:mx-5 mx-8" />
+                <ItemList collectionId={params.collectionId} />
+            </WithPanel>
+            <ItemPanel />
         </div>
     );
 }

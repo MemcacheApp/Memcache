@@ -40,8 +40,6 @@ export default function FlashcardReviewCard({
     onNext,
     viewOnly = false,
 }: FlashcardReviewCardProps) {
-    const ctx = trpc.useContext();
-
     const [showAnswer, setShowAnswer] = useState(false);
     const [startTime, setStartTime] = useState(new Date());
 
@@ -51,15 +49,12 @@ export default function FlashcardReviewCard({
 
     const addReviewMutation = trpc.flashcards.addReview.useMutation({
         onSuccess: () => {
-            ctx.item.getUserItemsIncludeFlashcards.invalidate();
-            ctx.flashcards.getUserFlashcards.invalidate;
-            ctx.flashcards.getUserRecentlyReviewed.invalidate();
-            ctx.flashcards.getUserRevisionQueue.invalidate();
+            console.log(`Added review for flashcard ${flashcard.id}}`);
         },
     });
 
-    const handleRateReview = async (rating: FlashcardReviewRating) => {
-        await addReviewMutation.mutateAsync({
+    const handleRateReview = (rating: FlashcardReviewRating) => {
+        addReviewMutation.mutate({
             flashcardId: flashcard.id,
             reviewStart: startTime,
             reviewEnd: new Date(),

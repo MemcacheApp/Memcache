@@ -1,11 +1,16 @@
 "use client";
 
 import { trpc } from "@/src/app/utils/trpc";
-import { ItemExt } from "@/src/datatypes/item";
-import { Button, ExternalLink, PageTitle } from "@/ui/components";
+import { ExternalLink, PageTitle } from "@/ui/components";
 import FlashcardDialog from "@/ui/components/FlashcardDialog";
 import FlashcardPreviewCard from "@/ui/components/FlashcardPreviewCard";
-import { Flashcard, FlashcardReview } from "@prisma/client";
+import {
+    Collection,
+    Flashcard,
+    FlashcardReview,
+    Item,
+    Tag,
+} from "@prisma/client";
 import { Globe, Package2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -24,7 +29,7 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
 
     const [selectedFlashcard, setSelectedFlashcard] = useState<
         | (Flashcard & {
-              item: ItemExt;
+              item: Item & { collection: Collection; tags: Tag[] };
               reviews: FlashcardReview[];
           })
         | null
@@ -74,7 +79,7 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
             <div className="mx-8 pt-6 w-full ">
                 <div className="mx-auto w-[80%] grid grid-cols-2">
                     <div className="grid grid-cols-1 justify-items-center">
-                        <span className="text-6xl font-bold">
+                        <span className="text-5xl font-bold">
                             {
                                 data?.flashcards.filter(
                                     (flashcard) =>
@@ -82,15 +87,13 @@ export default function FlashcardSetPage({ params }: FlashcardSetPageProps) {
                                 ).length
                             }
                         </span>
-                        <span className="text-3xl">&nbsp;{"due"}</span>
-                        <Button className="w-[180px]">Review Due</Button>
+                        <span className="text-2xl">&nbsp;{"due"}</span>
                     </div>
                     <div className="grid grid-cols-1 justify-items-center">
-                        <span className="text-6xl font-bold">
+                        <span className="text-5xl font-bold">
                             {data?.flashcards.length}
                         </span>
-                        <span className="text-3xl">&nbsp;{"total"}</span>
-                        <Button className="w-[180px]">Review All</Button>
+                        <span className="text-2xl">&nbsp;{"total"}</span>
                     </div>
                 </div>
             </div>

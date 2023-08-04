@@ -1,6 +1,6 @@
 "use client";
 
-import { usePerferences } from "@/src/app/utils/procedures";
+import { usePreferences } from "@/src/app/utils/procedures";
 import { trpc } from "@/src/app/utils/trpc";
 import { SuggestedItem } from "@/src/datatypes/item";
 import { CheckIcon, Package2, PlusIcon, TagIcon } from "lucide-react";
@@ -96,7 +96,7 @@ function CreateItemDialog({
             setIsAdded(true);
         },
     });
-    const perferences = usePerferences();
+    const preferences = usePreferences();
 
     const collectionsQuery = trpc.collection.getUserCollections.useQuery();
     const tagsQuery = trpc.tag.getUserTags.useQuery();
@@ -106,10 +106,10 @@ function CreateItemDialog({
     const [isPublic, setIsPublic] = useState(true);
 
     useEffect(() => {
-        if (perferences) {
-            setIsPublic(perferences.publicNewItem);
+        if (preferences) {
+            setIsPublic(preferences.publicNewItem);
         }
-    }, [perferences]);
+    }, [preferences]);
 
     useEffect(() => {
         if (collectionsQuery.data && !collection) {

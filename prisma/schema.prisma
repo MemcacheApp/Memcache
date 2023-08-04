@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -106,6 +107,8 @@ model Flashcard {
   question   String
   answer     String
   dueDate    DateTime
+  interval   Float
+  eFactor    Float
   reviews    FlashcardReview[]
   userId     String
   user       User                @relation(fields: [userId], references: [id])

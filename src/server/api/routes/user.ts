@@ -250,7 +250,7 @@ export const userRouter = router({
                 }
             }
         }),
-    getPerferences: protectedProcedure.query(async ({ ctx }) => {
+    getPreferences: protectedProcedure.query(async ({ ctx }) => {
         try {
             return await UserController.getPreferences(ctx.userId);
         } catch (e) {
@@ -267,7 +267,7 @@ export const userRouter = router({
             }
         }
     }),
-    updatePerferences: protectedProcedure
+    updatePreferences: protectedProcedure
         .input(
             z
                 .object({
