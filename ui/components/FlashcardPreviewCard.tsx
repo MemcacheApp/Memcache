@@ -96,7 +96,7 @@ export default function FlashcardPreviewCard({
                         <span>{FlashcardRangeNames[data.range]}</span>
                     </div>
                 </div>
-            </div>{" "}
+            </div>
             <div>
                 <CardHeader
                     className={cn(

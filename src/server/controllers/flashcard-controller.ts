@@ -240,23 +240,44 @@ export default class FlashcardController {
                 where: {
                     id: flashcardId,
                 },
+                include: {
+                    reviews: true,
+                },
             });
 
             if (flashcard) {
-                // TODO: special cases I(1), I(2))
-                const oldEFactor = flashcard.eFactor;
-                const newEFactor = FlashcardController.calculateEasinessFactor(
-                    oldEFactor,
-                    rating,
-                );
-                const newInterval = flashcard.interval * newEFactor;
+                let newInterval = flashcard.interval;
+                let newEFactor = 2.5;
+                if (flashcard.reviews.length === 1) {
+                    // After first review, interval to next review is 1 day
+                    newInterval = 1;
+                } else if (flashcard.reviews.length === 2) {
+                    // After second review, interval to next review is 6 days
+                    newInterval = 6;
+                } else {
+                    // Subsequent reviews, calculate interval to next review
+                    // using SM-2 algorithm
+                    newEFactor = FlashcardController.calculateEasinessFactor(
+                        flashcard.eFactor,
+                        rating,
+                    );
+                    newInterval = flashcard.interval * newEFactor;
+                }
 
+                console.log(`new interval: ${newInterval}`);
+                console.log(
+                    `next due in: ${new Date(
+                        Date.now() + newInterval * 24 * 60 * 60 * 1000,
+                    )}`,
+                );
                 await prisma.flashcard.update({
                     where: {
                         id: flashcardId,
                     },
                     data: {
-                        dueDate: new Date(Date.now() + newInterval),
+                        dueDate: new Date(
+                            Date.now() + newInterval * 24 * 60 * 60 * 1000,
+                        ),
                         interval: newInterval,
                         eFactor: newEFactor,
                     },
@@ -384,7 +405,7 @@ export default class FlashcardController {
                             itemId,
                             userId,
                             dueDate: new Date(), // Initial due date is time of creation
-                            interval: 1, // Initial interval is 1 day
+                            interval: 0, // Initial interval is immediately after creation
                             eFactor: 2.5, // Initial easiness factor
                             experience,
                             range,
