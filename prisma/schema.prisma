@@ -62,10 +62,10 @@ model Item {
 }
 
 model Summary {
-  id         String   @id
+  id         String            @id
   createdAt  DateTime
   content    String
-  item       Item     @relation(fields: [itemId], references: [id])
+  item       Item              @relation(fields: [itemId], references: [id])
   itemId     String
   wordCount  Int
   experience SummaryExperience
@@ -104,6 +104,8 @@ model Flashcard {
   question   String
   answer     String
   dueDate    DateTime
+  interval   Float
+  eFactor    Float
   reviews    FlashcardReview[]
   userId     String
   user       User                @relation(fields: [userId], references: [id])
