@@ -22,7 +22,7 @@ Detailed descriptions of app features can be found as follows:
 -   [Tags and Collections](./docs/tags_collections.md)
 -   [Content Summariser](./docs/content_summariser.md)
 -   [Flash Card Generator and Interface](./docs/flashcard_generator.md)
--   [Spaced Repetition Review](./docs/spaced_repetition.md)
+-   [Spaced Repetition Review](./docs/spaced_repetition_review.md)
 -   [Content Discovery](./docs/content_discovery.md)
 
 ## :rocket: Quick Start (Method 1: Docker)
