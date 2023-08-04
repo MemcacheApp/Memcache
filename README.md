@@ -25,7 +25,100 @@ Detailed descriptions of app features can be found as follows:
 -   [Spaced Repetition Review](./docs/spaced_repetition.md)
 -   [Content Discovery](./docs/content_discovery.md)
 
-## :rocket: Quick Start
+## :rocket: Quick Start (Method 1: Docker)
+
+We first need to set up the environment variables, so in the root directory create a new file called `.env`
+
+```
+vi .env
+```
+
+From there, we need to define the database as well as the OpenAI key by adding the following lines to `.env`:
+
+```
+DATABASE_URL="postgres://postgres:postgres@db:5432/3900DB"
+OPENAI_API_KEY="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"
+```
+
+After saving the above, in the root directory, we need to build and run the Docker Container, using the following command:
+
+```
+docker-compose up --build
+```
+
+On completion of the command, Memcache should be hosted and running on `http://localhost:3000/`. Therefore, open the link in Google Chrome to access Memcache. 
+
+If you want to exit Memcache, simply use the command `Ctrl + C` and Docker will exit. 
+
+Running Memcache again, after building for the first time, all you need to do is use the command: 
+
+```
+docker-compose up
+```
+
+## :rocket: Quick Start (Method 2: Running on the Lubuntu 20.04.1 LTS virtual machine)
+
+1. Change the current working directory to the root folder of the project.
+
+```
+cd /path/to/project-root
+```
+
+2. Install required system packages.
+
+```
+sudo apt update && sudo apt install -y curl
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs postgresql
+```
+
+You may need to enter your user password when prompted during this process.
+
+3. Install required npm dependencies.
+
+```
+npm i
+```
+
+4. Create a new postgres database and user.
+
+```
+sudo -u postgres -i
+createdb 3900DB
+createuser lubuntu
+psql
+alter user lubuntu with encrypted password '<password>';
+grant all privileges on database 3900DB to lubuntu;
+alter user lubuntu createdb;
+```
+Then press Ctrl+D twice to exit subshells.
+
+5. Set up environment variables in .env. This is the same as method 1, but replace username and password to the ones you just set.
+
+In `.env`:
+```
+DATABASE_URL="postgres://lubuntu:<password>@localhost:5432/3900DB"
+OPENAI_API_KEY="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"
+```
+
+6. Initialise the database.
+
+```
+npx prisma migrate reset
+```
+
+You may need to press ‘y’ when prompted during this process.
+
+7. Build and run.
+
+```
+npm run build
+npm run start
+```
+
+Done! Memcache should be hosted and running on `http://localhost:3000/`.
+
+## :rocket: Quick Start (Method 3: Standard)
 
 Getting started with Memcache is easy if you follow these steps:
 
