@@ -111,6 +111,12 @@ function CreateItemDialog({
         }
     }, [perferences]);
 
+    useEffect(() => {
+        if (collectionsQuery.data && !collection) {
+            setCollection(collectionsQuery.data[0].name);
+        }
+    }, [collectionsQuery.data]);
+
     const addTag = (name: string) => {
         if (!tags.includes(name)) {
             setTags([...tags, name]);
