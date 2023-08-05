@@ -1,5 +1,7 @@
 import scrapeIt from "scrape-it";
 import { z } from "zod";
+import { normaliseURL } from ".";
+import { ItemMetadata } from "../datatypes/item";
 
 export const ScrapedData = z.object({
     headers: z
@@ -16,6 +18,13 @@ export const ScrapedData = z.object({
 
 export default class ContentScraper {
     static async scrapeContent({ url }: { url: string }) {
+        const tweetMatch = url.match(
+            /^(https?:\/\/)?(www.)?(twitter|x)\.com\/.+\/status\/(\d+)/,
+        );
+        if (tweetMatch) {
+            return (await fetchTweetMetadata(url, tweetMatch[4])).description;
+        }
+
         const { data } = await scrapeIt(url, {
             headers: {
                 listItem: "h1,h2,h3,h4,h5,h6",
@@ -49,4 +58,28 @@ export default class ContentScraper {
 
         return content;
     }
+}
+
+export async function fetchTweetMetadata(
+    url: string,
+    tweetId: string,
+): Promise<ItemMetadata> {
+    url = normaliseURL(url);
+    const result = await fetch(
+        `https://cdn.syndication.twimg.com/tweet-result?id=${tweetId}`,
+    ).then((res) => res.json());
+
+    return {
+        type: "post",
+        url,
+        siteName: "Twitter",
+        title: "Tweet",
+        description: result.text,
+        favicon: "https://abs.twimg.com/favicons/twitter.3.ico",
+        thumbnail: result.mediaDetails
+            ? result.mediaDetails[0]["media_url_https"]
+            : undefined,
+        author: result.user?.name,
+        releaseTime: result["created_at"],
+    };
 }

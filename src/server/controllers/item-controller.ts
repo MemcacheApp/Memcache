@@ -1,3 +1,4 @@
+import { fetchTweetMetadata } from "@/src/utils/content-scraper";
 import { ItemStatus } from "@prisma/client";
 import ogs from "open-graph-scraper";
 import { v4 as uuidv4 } from "uuid";
@@ -15,6 +16,13 @@ export default class ItemController {
      * @throws {FetchURLError}
      */
     static async fetchMetadata(url: string): Promise<ItemMetadata> {
+        const tweetMatch = url.match(
+            /^(https?:\/\/)?(www.)?(twitter|x)\.com\/.+\/status\/(\d+)/,
+        );
+        if (tweetMatch) {
+            return fetchTweetMetadata(url, tweetMatch[4]);
+        }
+
         let result;
         try {
             result = (await ogs({ url: encodeURI(url) })).result;
