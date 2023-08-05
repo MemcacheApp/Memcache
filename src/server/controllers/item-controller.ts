@@ -1,9 +1,9 @@
-import { fetchTweetMetadata } from "@/src/utils/content-scraper";
 import { ItemStatus } from "@prisma/client";
 import ogs from "open-graph-scraper";
 import { v4 as uuidv4 } from "uuid";
 import { ItemMetadata } from "../../datatypes/item";
 import { hostname } from "../../utils";
+import { fetchTweetMetadata } from "../../utils/content-scraper";
 import { prisma } from "../db/prisma";
 import CollectionController from "./collection-controller";
 import { FetchURLError, GetItemError } from "./errors/item";
