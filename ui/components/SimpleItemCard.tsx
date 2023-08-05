@@ -95,7 +95,7 @@ export function SimpleItemCard(props: SimpleItemCardProps) {
                                 )
                             ) : null}
                             {props.description ? (
-                                <p className="mt-3 overflow-hidden text-slate-500">
+                                <p className="mt-3 line-clamp-3 text-slate-500">
                                     {props.description}
                                 </p>
                             ) : null}

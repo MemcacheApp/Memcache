@@ -84,6 +84,31 @@ export default class FlashcardController {
         }
     }
 
+    static async getUserFlashcardsById(userId: string, ids: string[]) {
+        try {
+            const flashcards = await prisma.flashcard.findMany({
+                where: {
+                    userId,
+                    id: {
+                        in: ids,
+                    },
+                },
+                include: {
+                    reviews: true,
+                    item: {
+                        include: {
+                            tags: true,
+                            collection: true,
+                        },
+                    },
+                },
+            });
+            return flashcards;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     /**
      * Gets flashcards sorted by the most recently created.
      * @param userId

@@ -43,9 +43,7 @@ export default function FlashcardPreviewCard({
             className={cn(
                 "bg-transparent",
                 className,
-                format?.fixedDimensions
-                    ? "w-[28rem] h-[27.5rem] max-h-[50vh]"
-                    : "w-full",
+                format?.fixedDimensions ? "w-[28rem]" : "w-full",
             )}
         >
             <div
@@ -92,7 +90,7 @@ export default function FlashcardPreviewCard({
                     </div>
                 </div>
             </div>
-            <div>
+            <div className="flex flex-col justify-between">
                 <CardHeader
                     className={cn(
                         "pt-2 overflow-y-hidden",
