@@ -202,3 +202,9 @@ The seeded data also has the following default user:
 }
 ```
 
+## Troubleshooting the Docker container
+
+- Delete your `.next` folder which contains the build and restart the Docker container
+- Delete the Docker container via the desktop app and restart
+
+![Delete Docker ccontainer](../assets/../capstone-project-3900w16bendermen/assets/delete-docker-container.png)

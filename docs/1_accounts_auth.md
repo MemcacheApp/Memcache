@@ -2,11 +2,13 @@
 
 ## Guide
 
--   [Introduction](#introduction)
--   [Logging in](#logging-in)
--   [Signing up](#signing-up)
--   [Profile](#profile)
--   [Profile Options](#profile-options)
+- [Accounts and Authentication](#accounts-and-authentication)
+  - [Guide](#guide)
+  - [Introduction](#introduction)
+  - [Logging In](#logging-in)
+  - [Signing Up](#signing-up)
+  - [Profile](#profile)
+  - [Profile Options](#profile-options)
 
 ## Introduction
 
