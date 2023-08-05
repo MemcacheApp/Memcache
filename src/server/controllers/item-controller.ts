@@ -407,13 +407,9 @@ async function fetchTweetMetadata(
     tweetId: string,
 ): Promise<ItemMetadata> {
     url = normaliseURL(url);
-    console.log(url);
-
     const result = await fetch(
         `https://cdn.syndication.twimg.com/tweet-result?id=${tweetId}`,
     ).then((res) => res.json());
-
-    console.log(result);
 
     return {
         type: "post",
