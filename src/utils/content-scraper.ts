@@ -22,7 +22,9 @@ export default class ContentScraper {
             /^(https?:\/\/)?(www.)?(twitter|x)\.com\/.+\/status\/(\d+)/,
         );
         if (tweetMatch) {
-            return (await fetchTweetMetadata(url, tweetMatch[4])).description;
+            return (
+                (await fetchTweetMetadata(url, tweetMatch[4])).description || ""
+            );
         }
 
         const { data } = await scrapeIt(url, {
