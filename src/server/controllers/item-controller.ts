@@ -2,7 +2,7 @@ import { ItemStatus } from "@prisma/client";
 import ogs from "open-graph-scraper";
 import { v4 as uuidv4 } from "uuid";
 import { ItemMetadata } from "../../datatypes/item";
-import { hostname } from "../../utils";
+import { hostname, normaliseURL } from "../../utils";
 import { prisma } from "../db/prisma";
 import CollectionController from "./collection-controller";
 import { FetchURLError, GetItemError } from "./errors/item";
@@ -15,6 +15,13 @@ export default class ItemController {
      * @throws {FetchURLError}
      */
     static async fetchMetadata(url: string): Promise<ItemMetadata> {
+        const tweetMatch = url.match(
+            /^(https?:\/\/)?(www.)?(twitter|x)\.com\/.+\/status\/(\d+)/,
+        );
+        if (tweetMatch) {
+            return fetchTweetMetadata(url, tweetMatch[4]);
+        }
+
         let result;
         try {
             result = (await ogs({ url: encodeURI(url) })).result;
@@ -393,4 +400,32 @@ export default class ItemController {
             },
         });
     }
+}
+
+async function fetchTweetMetadata(
+    url: string,
+    tweetId: string,
+): Promise<ItemMetadata> {
+    url = normaliseURL(url);
+    console.log(url);
+
+    const result = await fetch(
+        `https://cdn.syndication.twimg.com/tweet-result?id=${tweetId}`,
+    ).then((res) => res.json());
+
+    console.log(result);
+
+    return {
+        type: "post",
+        url,
+        siteName: "Twitter",
+        title: "Tweet",
+        description: result.text,
+        favicon: "https://abs.twimg.com/favicons/twitter.3.ico",
+        thumbnail: result.mediaDetails
+            ? result.mediaDetails[0]["media_url_https"]
+            : undefined,
+        author: result.user?.name,
+        releaseTime: result["created_at"],
+    };
 }
